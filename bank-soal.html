@@ -1,5 +1,5 @@
+```html
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -9,7 +9,23 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<!-- MathJax untuk menampilkan rumus matematika -->
+<script>
+window.MathJax = {
+    tex: {
+        inlineMath: [['\\(','\\)'], ['$', '$']],
+        displayMath: [['\\[','\\]'], ['$$','$$']]
+    },
+    svg: {
+        fontCache: 'global'
+    }
+};
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
 <style>
+
 *{
     box-sizing:border-box;
     margin:0;
@@ -22,6 +38,8 @@ body{
     color:#0f172a;
     min-height:100vh;
 }
+
+/* HEADER */
 
 .header{
     background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
@@ -68,11 +86,15 @@ body{
     color:white;
 }
 
+/* CONTAINER */
+
 .container{
-    max-width:1250px;
+    max-width:1350px;
     margin:25px auto;
     padding:0 20px;
 }
+
+/* MESSAGE */
 
 .message{
     display:none;
@@ -95,6 +117,8 @@ body{
     color:#991b1b;
 }
 
+/* TOOLBAR */
+
 .toolbar{
     background:white;
     padding:18px;
@@ -109,7 +133,7 @@ body{
 
 .search{
     flex:1;
-    min-width:220px;
+    min-width:250px;
 }
 
 .search input{
@@ -121,7 +145,7 @@ body{
 }
 
 .filter{
-    width:260px;
+    min-width:240px;
 }
 
 .filter select{
@@ -138,9 +162,11 @@ body{
     padding:12px 18px;
 }
 
+/* SUMMARY */
+
 .summary{
     display:grid;
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(4,1fr);
     gap:12px;
     margin-bottom:18px;
 }
@@ -163,6 +189,8 @@ body{
     font-size:12px;
 }
 
+/* TABLE */
+
 .table-box{
     background:white;
     border-radius:15px;
@@ -173,7 +201,7 @@ body{
 table{
     width:100%;
     border-collapse:collapse;
-    min-width:1050px;
+    min-width:1100px;
 }
 
 th{
@@ -202,6 +230,8 @@ tr:hover td{
     color:#64748b;
 }
 
+/* TYPE BADGE */
+
 .badge{
     display:inline-block;
     padding:6px 10px;
@@ -216,14 +246,16 @@ tr:hover td{
 }
 
 .bs{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.esai{
     background:#dcfce7;
     color:#166534;
 }
 
-.esai{
-    background:#fef3c7;
-    color:#92400e;
-}
+/* ACTION */
 
 .action{
     display:flex;
@@ -250,11 +282,24 @@ tr:hover td{
     color:white;
 }
 
+/* IMAGE */
+
+.question-image{
+    max-width:180px;
+    max-height:120px;
+    object-fit:contain;
+    border-radius:8px;
+    border:1px solid #cbd5e1;
+    margin-top:8px;
+}
+
+/* MODAL */
+
 .modal{
     display:none;
     position:fixed;
     inset:0;
-    background:rgba(15,23,42,.6);
+    background:rgba(15,23,42,.65);
     justify-content:center;
     align-items:center;
     padding:20px;
@@ -265,7 +310,7 @@ tr:hover td{
 .modal-box{
     background:white;
     width:100%;
-    max-width:700px;
+    max-width:850px;
     border-radius:18px;
     padding:25px;
     box-shadow:0 20px 60px rgba(0,0,0,.25);
@@ -288,8 +333,8 @@ tr:hover td{
 }
 
 .form-group input,
-.form-group textarea,
-.form-group select{
+.form-group select,
+.form-group textarea{
     width:100%;
     padding:11px 12px;
     border:1px solid #cbd5e1;
@@ -300,22 +345,127 @@ tr:hover td{
 }
 
 .form-group textarea{
-    min-height:110px;
+    min-height:150px;
     resize:vertical;
+    line-height:1.6;
 }
 
 .form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus{
+.form-group select:focus,
+.form-group textarea:focus{
     border-color:#2563eb;
     box-shadow:0 0 0 3px rgba(37,99,235,.1);
 }
 
-.pilihan-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
+/* EDITOR */
+
+.editor-tools{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    background:#f8fafc;
+    padding:10px;
+    border:1px solid #cbd5e1;
+    border-bottom:none;
+    border-radius:9px 9px 0 0;
 }
+
+.editor-tools button{
+    border:1px solid #cbd5e1;
+    background:white;
+    border-radius:6px;
+    padding:7px 10px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.editor-tools button:hover{
+    background:#eff6ff;
+    border-color:#60a5fa;
+}
+
+.editor-tools .math{
+    background:#eef2ff;
+    color:#3730a3;
+}
+
+.question-editor{
+    min-height:170px;
+    border:1px solid #cbd5e1;
+    border-radius:0 0 9px 9px;
+    padding:14px;
+    outline:none;
+    line-height:1.7;
+    background:white;
+}
+
+.question-editor:focus{
+    border-color:#2563eb;
+}
+
+.question-editor img{
+    max-width:100%;
+    max-height:350px;
+    display:block;
+    margin:10px 0;
+}
+
+/* IMAGE PREVIEW */
+
+.image-preview{
+    margin-top:10px;
+}
+
+.image-preview img{
+    max-width:250px;
+    max-height:180px;
+    border-radius:9px;
+    border:1px solid #cbd5e1;
+}
+
+.remove-image{
+    margin-top:7px;
+    border:none;
+    background:#ef4444;
+    color:white;
+    padding:7px 10px;
+    border-radius:7px;
+    cursor:pointer;
+}
+
+/* OPTIONS */
+
+.option-row{
+    margin-bottom:12px;
+}
+
+.option-label{
+    font-weight:bold;
+    margin-bottom:5px;
+    display:block;
+}
+
+.correct-box{
+    margin-top:12px;
+    padding:12px;
+    background:#f0fdf4;
+    border:1px solid #bbf7d0;
+    border-radius:9px;
+}
+
+/* INFO */
+
+.info{
+    background:#eff6ff;
+    color:#1e40af;
+    padding:11px;
+    border-radius:9px;
+    font-size:12px;
+    line-height:1.5;
+    margin-bottom:18px;
+}
+
+/* BUTTONS */
 
 .modal-buttons{
     display:flex;
@@ -334,15 +484,29 @@ tr:hover td{
     color:white;
 }
 
-.info{
-    background:#eff6ff;
-    color:#1e40af;
-    padding:11px;
-    border-radius:9px;
-    font-size:12px;
-    line-height:1.5;
-    margin-bottom:18px;
+/* PREVIEW */
+
+.preview-box{
+    background:#f8fafc;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    padding:18px;
+    margin-top:15px;
+    line-height:1.7;
 }
+
+.preview-box h3{
+    margin-bottom:12px;
+}
+
+.preview-option{
+    padding:8px 10px;
+    background:white;
+    border-radius:7px;
+    margin:6px 0;
+}
+
+/* FOOTER */
 
 .footer{
     text-align:center;
@@ -352,14 +516,24 @@ tr:hover td{
     padding:30px;
 }
 
-@media(max-width:700px){
+/* RESPONSIVE */
+
+@media(max-width:800px){
 
     .summary{
-        grid-template-columns:1fr;
+        grid-template-columns:repeat(2,1fr);
     }
 
-    .pilihan-grid{
-        grid-template-columns:1fr;
+}
+
+@media(max-width:600px){
+
+    .header{
+        padding:18px;
+    }
+
+    .container{
+        padding:0 12px;
     }
 
     .toolbar{
@@ -375,235 +549,413 @@ tr:hover td{
     .btn-add{
         width:100%;
     }
-}
-</style>
 
+    .summary{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .modal-box{
+        padding:18px;
+    }
+
+}
+
+</style>
 </head>
 
 <body>
 
 <header class="header">
 
-```
-<div>
-    <h1>📚 BANK SOAL</h1>
-    <p>RUANG EXAM — SMP Negeri 3 Sibolga</p>
-</div>
+    <div>
+        <h1>📚 BANK SOAL</h1>
 
-<div class="header-buttons">
+        <p>
+            RUANG EXAM — SMP Negeri 3 Sibolga
+        </p>
+    </div>
 
-    <button class="btn btn-back"
+    <div class="header-buttons">
+
+        <button
+            class="btn btn-back"
             onclick="kembaliDashboard()">
-        ← Dashboard
-    </button>
 
-    <button class="btn btn-refresh"
-            onclick="loadData()">
-        🔄 Refresh
-    </button>
+            ← Dashboard
 
-</div>
-```
+        </button>
+
+        <button
+            class="btn btn-refresh"
+            onclick="loadSemuaData()">
+
+            🔄 Refresh
+
+        </button>
+
+    </div>
 
 </header>
 
+
 <main class="container">
 
-```
-<div id="message" class="message"></div>
-
-<div class="summary">
-
-    <div class="summary-card">
-        <strong id="totalSoal">0</strong>
-        <span>Total Soal</span>
+    <div
+        id="message"
+        class="message">
     </div>
 
-    <div class="summary-card">
-        <strong id="totalPG">0</strong>
-        <span>Pilihan Ganda</span>
+
+    <!-- SUMMARY -->
+
+    <div class="summary">
+
+        <div class="summary-card">
+            <strong id="totalSoal">0</strong>
+            <span>Total Soal</span>
+        </div>
+
+        <div class="summary-card">
+            <strong id="totalPG">0</strong>
+            <span>Pilihan Ganda</span>
+        </div>
+
+        <div class="summary-card">
+            <strong id="totalBS">0</strong>
+            <span>Benar / Salah</span>
+        </div>
+
+        <div class="summary-card">
+            <strong id="totalEsai">0</strong>
+            <span>Esai</span>
+        </div>
+
     </div>
 
-    <div class="summary-card">
-        <strong id="totalUjian">0</strong>
-        <span>Ujian</span>
-    </div>
 
-</div>
+    <!-- TOOLBAR -->
 
-<div class="toolbar">
+    <div class="toolbar">
 
-    <div class="search">
+        <div class="search">
 
-        <input
-            type="text"
-            id="searchInput"
-            placeholder="🔍 Cari pertanyaan..."
-            oninput="filterSoal()">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="🔍 Cari pertanyaan..."
+                oninput="filterSoal()">
 
-    </div>
+        </div>
 
-    <div class="filter">
+        <div class="filter">
 
-        <select id="ujianFilter"
+            <select
+                id="ujianFilter"
                 onchange="filterSoal()">
 
-            <option value="">
-                Semua Ujian
-            </option>
+                <option value="">
+                    Semua Ujian
+                </option>
 
-        </select>
+            </select>
+
+        </div>
+
+        <button
+            class="btn btn-add"
+            onclick="bukaTambah()">
+
+            ➕ Tambah Soal
+
+        </button>
 
     </div>
 
-    <button class="btn btn-add"
-            onclick="bukaTambah()">
 
-        ➕ Tambah Soal
+    <!-- TABLE -->
 
-    </button>
+    <div class="table-box">
 
-</div>
+        <table>
 
-<div class="table-box">
+            <thead>
 
-    <table>
+                <tr>
 
-        <thead>
+                    <th>No</th>
+                    <th>Ujian</th>
+                    <th>Pertanyaan</th>
+                    <th>Tipe</th>
+                    <th>Kunci</th>
+                    <th>Bobot</th>
+                    <th>Aksi</th>
 
-            <tr>
-                <th>No</th>
-                <th>Ujian</th>
-                <th>No. Soal</th>
-                <th>Pertanyaan</th>
-                <th>Tipe</th>
-                <th>Kunci</th>
-                <th>Bobot</th>
-                <th>Aksi</th>
-            </tr>
+                </tr>
 
-        </thead>
+            </thead>
 
-        <tbody id="soalBody">
+            <tbody id="soalBody">
 
-            <tr>
-                <td colspan="8" class="empty">
-                    ⏳ Memuat bank soal...
-                </td>
-            </tr>
+                <tr>
 
-        </tbody>
+                    <td
+                        colspan="7"
+                        class="empty">
 
-    </table>
+                        ⏳ Memuat data soal...
 
-</div>
-```
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 </main>
 
+
 <footer class="footer">
 
-```
-RUANG EXAM Online<br>
+    RUANG EXAM Online<br>
 
-Dibuat oleh Mr. Rahmat Batubara, S.T.P
-```
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
 
 </footer>
 
-<!-- MODAL -->
 
-<div class="modal" id="modal">
+<!-- =====================================================
+     MODAL SOAL
+===================================================== -->
 
-```
-<div class="modal-box">
+<div
+    class="modal"
+    id="modal">
 
-    <h2 id="modalTitle">
-        Tambah Soal
-    </h2>
+    <div class="modal-box">
 
-    <div class="info">
+        <h2 id="modalTitle">
+            ➕ Tambah Soal
+        </h2>
 
-        Pilih ujian terlebih dahulu.
-        Nomor soal tidak boleh sama dalam satu ujian.
+        <div class="info">
 
-    </div>
+            <strong>Tips:</strong><br>
 
+            Untuk rumus matematika, gunakan tombol
+            matematika di bawah editor atau tulis rumus
+            menggunakan format LaTeX.
 
-    <div class="form-group">
+            Contoh:
+            <strong>\(x^2 + 2x + 1 = 0\)</strong>
 
-        <label>
-            Ujian
-        </label>
-
-        <select id="ujianId">
-
-            <option value="">
-                ⏳ Memuat ujian...
-            </option>
-
-        </select>
-
-    </div>
+        </div>
 
 
-    <div class="form-group">
+        <!-- UJIAN -->
 
-        <label>
-            Nomor Soal
-        </label>
+        <div class="form-group">
 
-        <input
-            type="number"
-            id="nomor"
-            min="1"
-            value="1">
+            <label>
+                Pilih Ujian *
+            </label>
 
-    </div>
+            <select id="ujianId">
 
+                <option value="">
+                    ⏳ Memuat ujian...
+                </option>
 
-    <div class="form-group">
+            </select>
 
-        <label>
-            Tipe Soal
-        </label>
-
-        <select id="tipe"
-                onchange="aturTipeSoal()">
-
-            <option value="pilihan_ganda">
-                Pilihan Ganda
-            </option>
-
-            <option value="benar_salah">
-                Benar / Salah
-            </option>
-
-            <option value="esai">
-                Esai
-            </option>
-
-        </select>
-
-    </div>
+        </div>
 
 
-    <div class="form-group">
+        <!-- NOMOR -->
 
-        <label>
-            Pertanyaan
-        </label>
+        <div class="form-group">
 
-        <textarea
-            id="pertanyaan"
-            placeholder="Tulis pertanyaan di sini..."></textarea>
+            <label>
+                Nomor Soal *
+            </label>
 
-    </div>
+            <input
+                type="number"
+                id="nomor"
+                min="1"
+                value="1">
+
+        </div>
 
 
-    <div id="pilihanArea">
+        <!-- TIPE -->
 
-        <div class="pilihan-grid">
+        <div class="form-group">
+
+            <label>
+                Tipe Soal *
+            </label>
+
+            <select
+                id="tipe"
+                onchange="ubahTipeSoal()">
+
+                <option value="pilihan_ganda">
+                    Pilihan Ganda
+                </option>
+
+                <option value="benar_salah">
+                    Benar / Salah
+                </option>
+
+                <option value="esai">
+                    Esai
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- PERTANYAAN -->
+
+        <div class="form-group">
+
+            <label>
+                Pertanyaan *
+            </label>
+
+
+            <div class="editor-tools">
+
+                <button
+                    type="button"
+                    onclick="formatText('bold')">
+                    B
+                </button>
+
+                <button
+                    type="button"
+                    onclick="formatText('italic')">
+                    I
+                </button>
+
+                <button
+                    type="button"
+                    onclick="formatText('underline')">
+                    U
+                </button>
+
+                <button
+                    type="button"
+                    onclick="masukkanSimbol('²')">
+                    x²
+                </button>
+
+                <button
+                    type="button"
+                    onclick="masukkanSimbol('√')">
+                    √
+                </button>
+
+                <button
+                    type="button"
+                    onclick="masukkanSimbol('π')">
+                    π
+                </button>
+
+                <button
+                    type="button"
+                    onclick="masukkanSimbol('≤')">
+                    ≤
+                </button>
+
+                <button
+                    type="button"
+                    onclick="masukkanSimbol('≥')">
+                    ≥
+                </button>
+
+                <button
+                    type="button"
+                    onclick="masukkanSimbol('≠')">
+                    ≠
+                </button>
+
+                <button
+                    type="button"
+                    onclick="masukkanSimbol('±')">
+                    ±
+                </button>
+
+                <button
+                    type="button"
+                    onclick="masukkanSimbol('×')">
+                    ×
+                </button>
+
+                <button
+                    type="button"
+                    onclick="masukkanSimbol('÷')">
+                    ÷
+                </button>
+
+                <button
+                    type="button"
+                    class="math"
+                    onclick="masukkanRumusKuadrat()">
+                    x²
+                </button>
+
+                <button
+                    type="button"
+                    class="math"
+                    onclick="masukkanPecahan()">
+                    Pecahan
+                </button>
+
+                <button
+                    type="button"
+                    class="math"
+                    onclick="masukkanAkar()">
+                    Akar
+                </button>
+
+                <button
+                    type="button"
+                    onclick="document.getElementById('gambarInput').click()">
+
+                    🖼️ Gambar
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="pertanyaan"
+                class="question-editor"
+                contenteditable="true"
+                spellcheck="false"
+                data-placeholder="Tulis pertanyaan di sini...">
+            </div>
+
+
+            <input
+                type="file"
+                id="gambarInput"
+                accept="image/*"
+                style="display:none"
+                onchange="masukkanGambar(event)">
+
+        </div>
+
+
+        <!-- PILIHAN -->
+
+        <div id="pilihanContainer">
 
             <div class="form-group">
 
@@ -618,6 +970,7 @@ Dibuat oleh Mr. Rahmat Batubara, S.T.P
 
             </div>
 
+
             <div class="form-group">
 
                 <label>
@@ -630,6 +983,7 @@ Dibuat oleh Mr. Rahmat Batubara, S.T.P
                     placeholder="Jawaban B">
 
             </div>
+
 
             <div class="form-group">
 
@@ -644,6 +998,7 @@ Dibuat oleh Mr. Rahmat Batubara, S.T.P
 
             </div>
 
+
             <div class="form-group">
 
                 <label>
@@ -657,84 +1012,173 @@ Dibuat oleh Mr. Rahmat Batubara, S.T.P
 
             </div>
 
+
+            <div class="correct-box">
+
+                <label>
+                    Kunci Jawaban *
+                </label>
+
+                <select id="kunci">
+
+                    <option value="">
+                        -- Pilih Kunci --
+                    </option>
+
+                    <option value="A">
+                        A
+                    </option>
+
+                    <option value="B">
+                        B
+                    </option>
+
+                    <option value="C">
+                        C
+                    </option>
+
+                    <option value="D">
+                        D
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- BENAR SALAH -->
+
+        <div
+            id="benarSalahContainer"
+            style="display:none">
+
+            <div class="correct-box">
+
+                <label>
+                    Jawaban Benar / Salah *
+                </label>
+
+                <select id="kunciBS">
+
+                    <option value="">
+                        -- Pilih Jawaban --
+                    </option>
+
+                    <option value="BENAR">
+                        BENAR
+                    </option>
+
+                    <option value="SALAH">
+                        SALAH
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- ESAI -->
+
+        <div
+            id="esaiContainer"
+            style="display:none">
+
+            <div class="info">
+
+                Soal esai tidak menggunakan pilihan
+                A, B, C, D. Kunci jawaban dapat diisi
+                sebagai pedoman pemeriksaan.
+
+            </div>
+
+            <div class="form-group">
+
+                <label>
+                    Pedoman / Kunci Jawaban Esai
+                </label>
+
+                <textarea
+                    id="kunciEsai"
+                    placeholder="Masukkan jawaban atau pedoman penilaian..."></textarea>
+
+            </div>
+
+        </div>
+
+
+        <!-- BOBOT -->
+
+        <div class="form-group">
+
+            <label>
+                Bobot Soal
+            </label>
+
+            <input
+                type="number"
+                id="bobot"
+                min="0.1"
+                step="0.1"
+                value="1">
+
+        </div>
+
+
+        <!-- PREVIEW -->
+
+        <div
+            id="previewBox"
+            class="preview-box"
+            style="display:none">
+
+            <h3>
+                👁️ Pratinjau
+            </h3>
+
+            <div id="previewContent"></div>
+
+        </div>
+
+
+        <!-- BUTTON -->
+
+        <div class="modal-buttons">
+
+            <button
+                class="btn cancel"
+                onclick="tutupModal()">
+
+                Batal
+
+            </button>
+
+            <button
+                class="btn"
+                style="background:#7c3aed;color:white"
+                onclick="previewSoal()">
+
+                👁️ Pratinjau
+
+            </button>
+
+            <button
+                class="btn save"
+                onclick="simpanSoal()">
+
+                💾 Simpan Soal
+
+            </button>
+
         </div>
 
     </div>
 
-
-    <div class="form-group">
-
-        <label>
-            Kunci Jawaban
-        </label>
-
-        <select id="kunci">
-
-            <option value="">
-                -- Pilih Kunci --
-            </option>
-
-            <option value="A">
-                A
-            </option>
-
-            <option value="B">
-                B
-            </option>
-
-            <option value="C">
-                C
-            </option>
-
-            <option value="D">
-                D
-            </option>
-
-        </select>
-
-    </div>
-
-
-    <div class="form-group">
-
-        <label>
-            Bobot Nilai
-        </label>
-
-        <input
-            type="number"
-            id="bobot"
-            min="0.01"
-            step="0.01"
-            value="1">
-
-    </div>
-
-
-    <div class="modal-buttons">
-
-        <button
-            class="btn cancel"
-            onclick="tutupModal()">
-
-            Batal
-
-        </button>
-
-        <button
-            class="btn save"
-            onclick="simpanSoal()">
-
-            💾 Simpan Soal
-
-        </button>
-
-    </div>
-
 </div>
-```
 
-</div>
 
 <script>
 
@@ -756,7 +1200,7 @@ const supabaseClient =
 
 
 /* =====================================================
-   CEK ADMIN
+   CEK LOGIN
 ===================================================== */
 
 const sessionRaw =
@@ -768,6 +1212,7 @@ if(!sessionRaw){
         "login.html";
 
 }
+
 
 let currentUser = null;
 
@@ -813,7 +1258,8 @@ function showMessage(text,type){
     const message =
         document.getElementById("message");
 
-    message.textContent = text;
+    message.textContent =
+        text;
 
     message.className =
         "message " + type;
@@ -825,7 +1271,8 @@ function hideMessage(){
     const message =
         document.getElementById("message");
 
-    message.textContent = "";
+    message.textContent =
+        "";
 
     message.className =
         "message";
@@ -837,7 +1284,7 @@ function hideMessage(){
    LOAD DATA
 ===================================================== */
 
-async function loadData(){
+async function loadSemuaData(){
 
     hideMessage();
 
@@ -845,11 +1292,12 @@ async function loadData(){
         "soalBody"
     ).innerHTML = `
         <tr>
-            <td colspan="8" class="empty">
+            <td colspan="7" class="empty">
                 ⏳ Memuat data...
             </td>
         </tr>
     `;
+
 
     try{
 
@@ -858,7 +1306,9 @@ async function loadData(){
             .from("ujian")
             .select(`
                 id,
-                judul
+                judul,
+                status,
+                kelas_id
             `)
             .order(
                 "created_at",
@@ -892,16 +1342,8 @@ async function loadData(){
                 pilihan_d,
                 kunci_jawaban,
                 bobot,
-                created_at,
-                ujian (
-                    id,
-                    judul
-                )
+                created_at
             `)
-            .order(
-                "ujian_id",
-                {ascending:true}
-            )
             .order(
                 "nomor",
                 {ascending:true}
@@ -919,7 +1361,7 @@ async function loadData(){
             hasilSoal.data || [];
 
 
-        isiPilihanUjian();
+        isiDropdownUjian();
 
         updateSummary();
 
@@ -936,8 +1378,8 @@ async function loadData(){
             "soalBody"
         ).innerHTML = `
             <tr>
-                <td colspan="8" class="empty">
-                    ❌ Gagal memuat bank soal.
+                <td colspan="7" class="empty">
+                    ❌ Gagal memuat data soal.
                 </td>
             </tr>
         `;
@@ -957,7 +1399,7 @@ async function loadData(){
    DROPDOWN UJIAN
 ===================================================== */
 
-function isiPilihanUjian(){
+function isiDropdownUjian(){
 
     const select =
         document.getElementById(
@@ -975,6 +1417,7 @@ function isiPilihanUjian(){
             -- Pilih Ujian --
         </option>
     `;
+
 
     filter.innerHTML = `
         <option value="">
@@ -1019,20 +1462,33 @@ function updateSummary(){
         "totalPG"
     ).textContent =
         semuaSoal.filter(
-            s => s.tipe === "pilihan_ganda"
+            x =>
+            x.tipe === "pilihan_ganda"
         ).length;
 
 
     document.getElementById(
-        "totalUjian"
+        "totalBS"
     ).textContent =
-        semuaUjian.length;
+        semuaSoal.filter(
+            x =>
+            x.tipe === "benar_salah"
+        ).length;
+
+
+    document.getElementById(
+        "totalEsai"
+    ).textContent =
+        semuaSoal.filter(
+            x =>
+            x.tipe === "esai"
+        ).length;
 
 }
 
 
 /* =====================================================
-   TAMPILKAN
+   TAMPILKAN SOAL
 ===================================================== */
 
 function tampilkanSoal(data){
@@ -1047,7 +1503,7 @@ function tampilkanSoal(data){
 
         body.innerHTML = `
             <tr>
-                <td colspan="8" class="empty">
+                <td colspan="7" class="empty">
                     📚 Belum ada soal.
                 </td>
             </tr>
@@ -1060,6 +1516,13 @@ function tampilkanSoal(data){
 
     body.innerHTML =
         data.map((soal,index)=>{
+
+            const ujian =
+                semuaUjian.find(
+                    u =>
+                    u.id === soal.ujian_id
+                );
+
 
             let tipeText =
                 "Pilihan Ganda";
@@ -1101,9 +1564,9 @@ function tampilkanSoal(data){
                     <td>
                         <strong>
                             ${
-                                soal.ujian
+                                ujian
                                 ? escapeHtml(
-                                    soal.ujian.judul
+                                    ujian.judul
                                   )
                                 : "-"
                             }
@@ -1111,35 +1574,34 @@ function tampilkanSoal(data){
                     </td>
 
                     <td>
+
+                        <div>
+                            ${soal.pertanyaan || "-"}
+                        </div>
+
+                    </td>
+
+                    <td>
+
+                        <span
+                            class="badge ${tipeClass}">
+
+                            ${tipeText}
+
+                        </span>
+
+                    </td>
+
+                    <td>
                         <strong>
-                            ${soal.nomor}
+                            ${escapeHtml(
+                                soal.kunci_jawaban || "-"
+                            )}
                         </strong>
                     </td>
 
                     <td>
-                        ${escapeHtml(
-                            soal.pertanyaan
-                        )}
-                    </td>
-
-                    <td>
-                        <span class="badge ${tipeClass}">
-                            ${tipeText}
-                        </span>
-                    </td>
-
-                    <td>
-                        ${
-                            soal.kunci_jawaban
-                            ? escapeHtml(
-                                soal.kunci_jawaban
-                              )
-                            : "-"
-                        }
-                    </td>
-
-                    <td>
-                        ${soal.bobot}
+                        ${soal.bobot || 1}
                     </td>
 
                     <td>
@@ -1172,6 +1634,13 @@ function tampilkanSoal(data){
 
         }).join("");
 
+
+    if(window.MathJax){
+
+        MathJax.typesetPromise();
+
+    }
+
 }
 
 
@@ -1198,9 +1667,11 @@ function filterSoal(){
     const hasil =
         semuaSoal.filter(soal=>{
 
-            const cocokPertanyaan =
+            const cocokText =
                 !keyword ||
-                (soal.pertanyaan || "")
+                stripHtml(
+                    soal.pertanyaan || ""
+                )
                 .toLowerCase()
                 .includes(keyword);
 
@@ -1211,13 +1682,15 @@ function filterSoal(){
 
 
             return
-                cocokPertanyaan &&
+                cocokText &&
                 cocokUjian;
 
         });
 
 
-    tampilkanSoal(hasil);
+    tampilkanSoal(
+        hasil
+    );
 
 }
 
@@ -1234,8 +1707,25 @@ function bukaTambah(){
     document.getElementById(
         "modalTitle"
     ).textContent =
-        "Tambah Soal";
+        "➕ Tambah Soal";
 
+
+    resetForm();
+
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* =====================================================
+   RESET
+===================================================== */
+
+function resetForm(){
 
     document.getElementById(
         "ujianId"
@@ -1255,7 +1745,7 @@ function bukaTambah(){
 
     document.getElementById(
         "pertanyaan"
-    ).value = "";
+    ).innerHTML = "";
 
 
     document.getElementById(
@@ -1280,16 +1770,17 @@ function bukaTambah(){
 
     document.getElementById(
         "kunci"
-    ).innerHTML = `
-        <option value="">
-            -- Pilih Kunci --
-        </option>
+    ).value = "";
 
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-        <option value="D">D</option>
-    `;
+
+    document.getElementById(
+        "kunciBS"
+    ).value = "";
+
+
+    document.getElementById(
+        "kunciEsai"
+    ).value = "";
 
 
     document.getElementById(
@@ -1297,22 +1788,22 @@ function bukaTambah(){
     ).value = 1;
 
 
-    aturTipeSoal();
-
-
     document.getElementById(
-        "modal"
+        "previewBox"
     ).style.display =
-        "flex";
+        "none";
+
+
+    ubahTipeSoal();
 
 }
 
 
 /* =====================================================
-   ATUR TIPE SOAL
+   UBAH TIPE
 ===================================================== */
 
-function aturTipeSoal(){
+function ubahTipeSoal(){
 
     const tipe =
         document.getElementById(
@@ -1320,78 +1811,40 @@ function aturTipeSoal(){
         ).value;
 
 
-    const pilihanArea =
+    const pilihan =
         document.getElementById(
-            "pilihanArea"
+            "pilihanContainer"
         );
 
 
-    const kunci =
+    const benarSalah =
         document.getElementById(
-            "kunci"
+            "benarSalahContainer"
         );
 
 
-    if(tipe === "pilihan_ganda"){
-
-        pilihanArea.style.display =
-            "block";
-
-
-        kunci.innerHTML = `
-            <option value="">
-                -- Pilih Kunci --
-            </option>
-
-            <option value="A">A</option>
-            <option value="B">B</option>
-            <option value="C">C</option>
-            <option value="D">D</option>
-        `;
-
-    }
+    const esai =
+        document.getElementById(
+            "esaiContainer"
+        );
 
 
-    else if(tipe === "benar_salah"){
-
-        pilihanArea.style.display =
-            "none";
-
-
-        kunci.innerHTML = `
-            <option value="">
-                -- Pilih Kunci --
-            </option>
-
-            <option value="BENAR">
-                BENAR
-            </option>
-
-            <option value="SALAH">
-                SALAH
-            </option>
-        `;
-
-    }
+    pilihan.style.display =
+        tipe === "pilihan_ganda"
+        ? "block"
+        : "none";
 
 
-    else{
+    benarSalah.style.display =
+        tipe === "benar_salah"
+        ? "block"
+        : "none";
 
-        pilihanArea.style.display =
-            "none";
 
-
-        kunci.innerHTML = `
-            <option value="">
-                -- Pilih Kunci --
-            </option>
-
-            <option value="ESAI">
-                ESAI
-            </option>
-        `;
-
-    }
+    esai.style.display =
+        tipe === "esai"
+        ? "block"
+        : "none";
 
 }
 
@@ -1404,14 +1857,15 @@ function editSoal(id){
 
     const soal =
         semuaSoal.find(
-            item => item.id === id
+            x =>
+            x.id === id
         );
 
 
     if(!soal){
 
         alert(
-            "Data soal tidak ditemukan."
+            "Soal tidak ditemukan."
         );
 
         return;
@@ -1425,30 +1879,30 @@ function editSoal(id){
     document.getElementById(
         "modalTitle"
     ).textContent =
-        "Edit Soal";
+        "✏️ Edit Soal";
 
 
     document.getElementById(
         "ujianId"
     ).value =
-        soal.ujian_id || "";
+        soal.ujian_id;
 
 
     document.getElementById(
         "nomor"
     ).value =
-        soal.nomor || 1;
+        soal.nomor;
 
 
     document.getElementById(
         "tipe"
     ).value =
-        soal.tipe || "pilihan_ganda";
+        soal.tipe;
 
 
     document.getElementById(
         "pertanyaan"
-    ).value =
+    ).innerHTML =
         soal.pertanyaan || "";
 
 
@@ -1477,18 +1931,30 @@ function editSoal(id){
 
 
     document.getElementById(
+        "kunci"
+    ).value =
+        soal.kunci_jawaban || "";
+
+
+    document.getElementById(
+        "kunciBS"
+    ).value =
+        soal.kunci_jawaban || "";
+
+
+    document.getElementById(
+        "kunciEsai"
+    ).value =
+        soal.kunci_jawaban || "";
+
+
+    document.getElementById(
         "bobot"
     ).value =
         soal.bobot || 1;
 
 
-    aturTipeSoal();
-
-
-    document.getElementById(
-        "kunci"
-    ).value =
-        soal.kunci_jawaban || "";
+    ubahTipeSoal();
 
 
     document.getElementById(
@@ -1528,37 +1994,7 @@ async function simpanSoal(){
     const pertanyaan =
         document.getElementById(
             "pertanyaan"
-        ).value.trim();
-
-
-    const pilihanA =
-        document.getElementById(
-            "pilihanA"
-        ).value.trim();
-
-
-    const pilihanB =
-        document.getElementById(
-            "pilihanB"
-        ).value.trim();
-
-
-    const pilihanC =
-        document.getElementById(
-            "pilihanC"
-        ).value.trim();
-
-
-    const pilihanD =
-        document.getElementById(
-            "pilihanD"
-        ).value.trim();
-
-
-    const kunci =
-        document.getElementById(
-            "kunci"
-        ).value;
+        ).innerHTML.trim();
 
 
     const bobot =
@@ -1605,7 +2041,7 @@ async function simpanSoal(){
     if(!bobot || bobot <= 0){
 
         alert(
-            "Bobot harus lebih dari 0."
+            "Bobot soal tidak valid."
         );
 
         return;
@@ -1613,7 +2049,44 @@ async function simpanSoal(){
     }
 
 
+    let pilihanA = null;
+    let pilihanB = null;
+    let pilihanC = null;
+    let pilihanD = null;
+    let kunci = null;
+
+
     if(tipe === "pilihan_ganda"){
+
+        pilihanA =
+            document.getElementById(
+                "pilihanA"
+            ).value.trim() || null;
+
+
+        pilihanB =
+            document.getElementById(
+                "pilihanB"
+            ).value.trim() || null;
+
+
+        pilihanC =
+            document.getElementById(
+                "pilihanC"
+            ).value.trim() || null;
+
+
+        pilihanD =
+            document.getElementById(
+                "pilihanD"
+            ).value.trim() || null;
+
+
+        kunci =
+            document.getElementById(
+                "kunci"
+            ).value;
+
 
         if(
             !pilihanA ||
@@ -1623,7 +2096,7 @@ async function simpanSoal(){
         ){
 
             alert(
-                "Pilihan A sampai D wajib diisi."
+                "Semua pilihan A, B, C, dan D harus diisi."
             );
 
             return;
@@ -1634,7 +2107,7 @@ async function simpanSoal(){
         if(!kunci){
 
             alert(
-                "Kunci jawaban wajib dipilih."
+                "Silakan pilih kunci jawaban."
             );
 
             return;
@@ -1644,94 +2117,80 @@ async function simpanSoal(){
     }
 
 
-    if(tipe === "benar_salah" && !kunci){
+    if(tipe === "benar_salah"){
 
-        alert(
-            "Pilih kunci BENAR atau SALAH."
-        );
+        kunci =
+            document.getElementById(
+                "kunciBS"
+            ).value;
 
-        return;
+
+        if(!kunci){
+
+            alert(
+                "Silakan pilih jawaban Benar atau Salah."
+            );
+
+            return;
+
+        }
 
     }
 
 
+    if(tipe === "esai"){
+
+        kunci =
+            document.getElementById(
+                "kunciEsai"
+            ).value.trim() || null;
+
+    }
+
+
+    const payload = {
+
+        ujian_id:
+            ujianId,
+
+        nomor:
+            nomor,
+
+        pertanyaan:
+            pertanyaan,
+
+        tipe:
+            tipe,
+
+        pilihan_a:
+            pilihanA,
+
+        pilihan_b:
+            pilihanB,
+
+        pilihan_c:
+            pilihanC,
+
+        pilihan_d:
+            pilihanD,
+
+        kunci_jawaban:
+            kunci,
+
+        bobot:
+            bobot
+
+    };
+
+
     try{
 
-        const payload = {
-
-            ujian_id:
-                ujianId,
-
-            nomor:
-                nomor,
-
-            pertanyaan:
-                pertanyaan,
-
-            tipe:
-                tipe,
-
-            pilihan_a:
-                tipe === "pilihan_ganda"
-                ? pilihanA
-                : null,
-
-            pilihan_b:
-                tipe === "pilihan_ganda"
-                ? pilihanB
-                : null,
-
-            pilihan_c:
-                tipe === "pilihan_ganda"
-                ? pilihanC
-                : null,
-
-            pilihan_d:
-                tipe === "pilihan_ganda"
-                ? pilihanD
-                : null,
-
-            kunci_jawaban:
-                kunci || null,
-
-            bobot:
-                bobot
-
-        };
+        let error;
 
 
-        if(!editId){
+        if(editId){
 
-            const {error} =
-                await supabaseClient
-                .from("soal")
-                .insert(payload);
-
-
-            if(error){
-
-                console.error(error);
-
-                alert(
-                    "Gagal menyimpan soal:\n" +
-                    error.message
-                );
-
-                return;
-
-            }
-
-
-            showMessage(
-                "Soal berhasil ditambahkan.",
-                "success"
-            );
-
-        }
-
-        else{
-
-            const {error} =
+            const hasil =
                 await supabaseClient
                 .from("soal")
                 .update(payload)
@@ -1740,32 +2199,59 @@ async function simpanSoal(){
                     editId
                 );
 
+            error =
+                hasil.error;
 
-            if(error){
+        }else{
 
-                console.error(error);
+            const hasil =
+                await supabaseClient
+                .from("soal")
+                .insert(payload);
 
-                alert(
-                    "Gagal mengubah soal:\n" +
-                    error.message
-                );
-
-                return;
-
-            }
-
-
-            showMessage(
-                "Soal berhasil diperbarui.",
-                "success"
-            );
+            error =
+                hasil.error;
 
         }
 
 
+        if(error){
+
+            console.error(error);
+
+            if(
+                error.code === "23505"
+            ){
+
+                alert(
+                    "Nomor soal tersebut sudah ada pada ujian ini. Gunakan nomor lain."
+                );
+
+            }else{
+
+                alert(
+                    "Gagal menyimpan soal:\n\n" +
+                    error.message
+                );
+
+            }
+
+            return;
+
+        }
+
+
+        showMessage(
+            editId
+            ? "Soal berhasil diperbarui."
+            : "Soal berhasil disimpan.",
+            "success"
+        );
+
+
         tutupModal();
 
-        await loadData();
+        await loadSemuaData();
 
 
     }catch(error){
@@ -1773,7 +2259,7 @@ async function simpanSoal(){
         console.error(error);
 
         alert(
-            "Terjadi kesalahan:\n" +
+            "Terjadi kesalahan:\n\n" +
             error.message
         );
 
@@ -1790,7 +2276,8 @@ async function hapusSoal(id){
 
     const soal =
         semuaSoal.find(
-            item => item.id === id
+            x =>
+            x.id === id
         );
 
 
@@ -1806,7 +2293,7 @@ async function hapusSoal(id){
             "Hapus soal nomor " +
             soal.nomor +
             "?\n\n" +
-            "Soal yang dihapus tidak dapat dikembalikan."
+            "Data yang dihapus tidak dapat dikembalikan."
         );
 
 
@@ -1831,10 +2318,8 @@ async function hapusSoal(id){
 
         if(error){
 
-            console.error(error);
-
             alert(
-                "Gagal menghapus soal:\n" +
+                "Gagal menghapus soal:\n\n" +
                 error.message
             );
 
@@ -1849,7 +2334,7 @@ async function hapusSoal(id){
         );
 
 
-        await loadData();
+        await loadSemuaData();
 
 
     }catch(error){
@@ -1857,9 +2342,336 @@ async function hapusSoal(id){
         console.error(error);
 
         alert(
-            "Terjadi kesalahan:\n" +
+            "Terjadi kesalahan:\n\n" +
             error.message
         );
+
+    }
+
+}
+
+
+/* =====================================================
+   EDITOR
+===================================================== */
+
+function formatText(command){
+
+    document.execCommand(
+        command,
+        false,
+        null
+    );
+
+    document.getElementById(
+        "pertanyaan"
+    ).focus();
+
+}
+
+
+/* =====================================================
+   SIMBOL MATEMATIKA
+===================================================== */
+
+function masukkanSimbol(simbol){
+
+    const editor =
+        document.getElementById(
+            "pertanyaan"
+        );
+
+    editor.focus();
+
+    document.execCommand(
+        "insertText",
+        false,
+        simbol
+    );
+
+}
+
+
+/* =====================================================
+   RUMUS KUADRAT
+===================================================== */
+
+function masukkanRumusKuadrat(){
+
+    const editor =
+        document.getElementById(
+            "pertanyaan"
+        );
+
+    editor.focus();
+
+    document.execCommand(
+        "insertText",
+        false,
+        "\\(x^2 + bx + c = 0\\)"
+    );
+
+}
+
+
+/* =====================================================
+   PECAHAN
+===================================================== */
+
+function masukkanPecahan(){
+
+    const editor =
+        document.getElementById(
+            "pertanyaan"
+        );
+
+    editor.focus();
+
+    document.execCommand(
+        "insertText",
+        false,
+        "\\(\\frac{a}{b}\\)"
+    );
+
+}
+
+
+/* =====================================================
+   AKAR
+===================================================== */
+
+function masukkanAkar(){
+
+    const editor =
+        document.getElementById(
+            "pertanyaan"
+        );
+
+    editor.focus();
+
+    document.execCommand(
+        "insertText",
+        false,
+        "\\(\\sqrt{x}\\)"
+    );
+
+}
+
+
+/* =====================================================
+   MASUKKAN GAMBAR
+===================================================== */
+
+function masukkanGambar(event){
+
+    const file =
+        event.target.files[0];
+
+
+    if(!file){
+
+        return;
+
+    }
+
+
+    if(
+        !file.type.startsWith("image/")
+    ){
+
+        alert(
+            "File harus berupa gambar."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        file.size > 2 * 1024 * 1024
+    ){
+
+        alert(
+            "Ukuran gambar maksimal 2 MB."
+        );
+
+        return;
+
+    }
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload =
+        function(e){
+
+            const editor =
+                document.getElementById(
+                    "pertanyaan"
+                );
+
+
+            editor.focus();
+
+
+            const img =
+                document.createElement(
+                    "img"
+                );
+
+
+            img.src =
+                e.target.result;
+
+
+            img.alt =
+                "Gambar soal";
+
+
+            img.style.maxWidth =
+                "100%";
+
+
+            img.style.maxHeight =
+                "350px";
+
+
+            editor.appendChild(
+                document.createElement(
+                    "br"
+                )
+            );
+
+
+            editor.appendChild(
+                img
+            );
+
+
+            editor.appendChild(
+                document.createElement(
+                    "br"
+                );
+
+            );
+
+        };
+
+
+    reader.readAsDataURL(
+        file
+    );
+
+
+    event.target.value = "";
+
+}
+
+
+/* =====================================================
+   PREVIEW
+===================================================== */
+
+function previewSoal(){
+
+    const pertanyaan =
+        document.getElementById(
+            "pertanyaan"
+        ).innerHTML;
+
+
+    const tipe =
+        document.getElementById(
+            "tipe"
+        ).value;
+
+
+    let html =
+        pertanyaan;
+
+
+    if(tipe === "pilihan_ganda"){
+
+        html += `
+
+            <div class="preview-option">
+                A. ${escapeHtml(
+                    document.getElementById("pilihanA").value
+                )}
+            </div>
+
+            <div class="preview-option">
+                B. ${escapeHtml(
+                    document.getElementById("pilihanB").value
+                )}
+            </div>
+
+            <div class="preview-option">
+                C. ${escapeHtml(
+                    document.getElementById("pilihanC").value
+                )}
+            </div>
+
+            <div class="preview-option">
+                D. ${escapeHtml(
+                    document.getElementById("pilihanD").value
+                )}
+            </div>
+
+        `;
+
+    }
+
+
+    if(tipe === "benar_salah"){
+
+        html += `
+
+            <div class="preview-option">
+                ○ Benar
+            </div>
+
+            <div class="preview-option">
+                ○ Salah
+            </div>
+
+        `;
+
+    }
+
+
+    if(tipe === "esai"){
+
+        html += `
+
+            <div class="preview-option">
+                ✍️ Jawaban:
+                __________________________
+            </div>
+
+        `;
+
+    }
+
+
+    document.getElementById(
+        "previewContent"
+    ).innerHTML =
+        html;
+
+
+    document.getElementById(
+        "previewBox"
+    ).style.display =
+        "block";
+
+
+    if(window.MathJax){
+
+        MathJax.typesetPromise();
 
     }
 
@@ -1881,6 +2693,10 @@ function tutupModal(){
 
 }
 
+
+/* =====================================================
+   LUAR MODAL
+===================================================== */
 
 document
 .getElementById("modal")
@@ -1911,12 +2727,12 @@ function kembaliDashboard(){
 
 
 /* =====================================================
-   ESCAPE HTML
+   ESCAPE
 ===================================================== */
 
 function escapeHtml(value){
 
-    return String(value)
+    return String(value || "")
         .replace(/&/g,"&amp;")
         .replace(/</g,"&lt;")
         .replace(/>/g,"&gt;")
@@ -1926,13 +2742,31 @@ function escapeHtml(value){
 }
 
 
+function stripHtml(html){
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+    div.innerHTML =
+        html;
+
+    return div.textContent ||
+        div.innerText ||
+        "";
+
+}
+
+
 /* =====================================================
    LOAD AWAL
 ===================================================== */
 
-loadData();
+loadSemuaData();
 
 </script>
 
 </body>
 </html>
+```
