@@ -23,7 +23,6 @@ body{
     min-height:100vh;
 }
 
-/* HEADER */
 .header{
     background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
     color:white;
@@ -69,14 +68,12 @@ body{
     color:white;
 }
 
-/* CONTAINER */
 .container{
-    max-width:1100px;
+    max-width:1000px;
     margin:25px auto;
     padding:0 20px;
 }
 
-/* MESSAGE */
 .message{
     display:none;
     padding:12px;
@@ -98,7 +95,6 @@ body{
     color:#991b1b;
 }
 
-/* TOOLBAR */
 .toolbar{
     background:white;
     padding:18px;
@@ -134,33 +130,25 @@ body{
     padding:12px 18px;
 }
 
-/* SUMMARY */
 .summary{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-    margin-bottom:18px;
-}
-
-.summary-card{
     background:white;
     border-radius:13px;
     padding:15px 20px;
+    margin-bottom:18px;
     box-shadow:0 4px 15px rgba(0,0,0,.05);
 }
 
-.summary-card strong{
+.summary strong{
     display:block;
-    font-size:22px;
+    font-size:24px;
     color:#2563eb;
 }
 
-.summary-card span{
+.summary span{
     color:#64748b;
     font-size:12px;
 }
 
-/* TABLE */
 .table-box{
     background:white;
     border-radius:15px;
@@ -171,7 +159,7 @@ body{
 table{
     width:100%;
     border-collapse:collapse;
-    min-width:650px;
+    min-width:600px;
 }
 
 th{
@@ -198,11 +186,9 @@ tr:hover td{
     color:#64748b;
 }
 
-/* ACTION */
 .action{
     display:flex;
     gap:6px;
-    flex-wrap:wrap;
 }
 
 .action button{
@@ -224,7 +210,6 @@ tr:hover td{
     color:white;
 }
 
-/* MODAL */
 .modal{
     display:none;
     position:fixed;
@@ -285,7 +270,6 @@ tr:hover td{
     color:white;
 }
 
-/* FOOTER */
 .footer{
     text-align:center;
     color:#94a3b8;
@@ -294,7 +278,6 @@ tr:hover td{
     padding:30px;
 }
 
-/* RESPONSIVE */
 @media(max-width:600px){
 
     .header{
@@ -317,10 +300,6 @@ tr:hover td{
     .btn-add{
         width:100%;
     }
-
-    .summary{
-        grid-template-columns:1fr;
-    }
 }
 </style>
 </head>
@@ -331,10 +310,7 @@ tr:hover td{
 
     <div>
         <h1>📚 MATA PELAJARAN</h1>
-
-        <p>
-            RUANG EXAM — SMP Negeri 3 Sibolga
-        </p>
+        <p>RUANG EXAM — SMP Negeri 3 Sibolga</p>
     </div>
 
     <div class="header-buttons">
@@ -360,39 +336,16 @@ tr:hover td{
 
     <div id="message" class="message"></div>
 
-
-    <!-- SUMMARY -->
-
     <div class="summary">
 
-        <div class="summary-card">
+        <strong id="jumlahMapel">0</strong>
 
-            <strong id="totalMapel">
-                0
-            </strong>
-
-            <span>
-                Total Mata Pelajaran
-            </span>
-
-        </div>
-
-        <div class="summary-card">
-
-            <strong>
-                📚
-            </strong>
-
-            <span>
-                Data dari Supabase
-            </span>
-
-        </div>
+        <span>
+            Total Mata Pelajaran
+        </span>
 
     </div>
 
-
-    <!-- TOOLBAR -->
 
     <div class="toolbar">
 
@@ -417,8 +370,6 @@ tr:hover td{
     </div>
 
 
-    <!-- TABLE -->
-
     <div class="table-box">
 
         <table>
@@ -426,19 +377,10 @@ tr:hover td{
             <thead>
 
                 <tr>
-
-                    <th style="width:80px">
-                        No
-                    </th>
-
-                    <th>
-                        Nama Mata Pelajaran
-                    </th>
-
-                    <th style="width:220px">
-                        Aksi
-                    </th>
-
+                    <th>No</th>
+                    <th>Mata Pelajaran</th>
+                    <th>Dibuat</th>
+                    <th>Aksi</th>
                 </tr>
 
             </thead>
@@ -446,15 +388,11 @@ tr:hover td{
             <tbody id="mapelBody">
 
                 <tr>
-
                     <td
-                        colspan="3"
+                        colspan="4"
                         class="empty">
-
                         ⏳ Memuat data...
-
                     </td>
-
                 </tr>
 
             </tbody>
@@ -496,8 +434,8 @@ tr:hover td{
             <input
                 type="text"
                 id="namaMapel"
-                placeholder="Contoh: Matematika"
-                maxlength="150">
+                maxlength="150"
+                placeholder="Contoh: Prakarya">
 
         </div>
 
@@ -554,8 +492,7 @@ const sessionRaw =
 
 if(!sessionRaw){
 
-    window.location.href =
-        "login.html";
+    window.location.href = "login.html";
 
 }
 
@@ -566,9 +503,7 @@ try{
 
     if(user.role !== "admin"){
 
-        localStorage.removeItem(
-            "exam_user"
-        );
+        localStorage.removeItem("exam_user");
 
         window.location.href =
             "login.html";
@@ -577,9 +512,7 @@ try{
 
 }catch(error){
 
-    localStorage.removeItem(
-        "exam_user"
-    );
+    localStorage.removeItem("exam_user");
 
     window.location.href =
         "login.html";
@@ -602,49 +535,38 @@ let editId = null;
 
 function showMessage(text,type){
 
-    const message =
-        document.getElementById(
-            "message"
-        );
+    const el =
+        document.getElementById("message");
 
-    message.textContent =
-        text;
+    el.textContent = text;
 
-    message.className =
+    el.className =
         "message " + type;
 
-}
+    setTimeout(()=>{
 
-function hideMessage(){
+        el.className = "message";
 
-    const message =
-        document.getElementById(
-            "message"
-        );
+        el.textContent = "";
 
-    message.textContent =
-        "";
-
-    message.className =
-        "message";
+    },3000);
 
 }
 
 
 /* =====================================================
-   LOAD MAPEL
+   LOAD DATA
 ===================================================== */
 
 async function loadMapel(){
 
-    hideMessage();
+    const body =
+        document.getElementById("mapelBody");
 
-    document.getElementById(
-        "mapelBody"
-    ).innerHTML = `
+    body.innerHTML = `
         <tr>
-            <td colspan="3" class="empty">
-                ⏳ Memuat data mata pelajaran...
+            <td colspan="4" class="empty">
+                ⏳ Memuat mata pelajaran...
             </td>
         </tr>
     `;
@@ -655,10 +577,7 @@ async function loadMapel(){
             await supabaseClient
             .from("mata_pelajaran")
             .select("id,nama,created_at")
-            .order(
-                "nama",
-                {ascending:true}
-            );
+            .order("nama",{ascending:true});
 
         if(error){
 
@@ -670,7 +589,7 @@ async function loadMapel(){
             data || [];
 
         document.getElementById(
-            "totalMapel"
+            "jumlahMapel"
         ).textContent =
             semuaMapel.length;
 
@@ -682,11 +601,9 @@ async function loadMapel(){
 
         console.error(error);
 
-        document.getElementById(
-            "mapelBody"
-        ).innerHTML = `
+        body.innerHTML = `
             <tr>
-                <td colspan="3" class="empty">
+                <td colspan="4" class="empty">
                     ❌ Gagal memuat data.
                 </td>
             </tr>
@@ -704,7 +621,7 @@ async function loadMapel(){
 
 
 /* =====================================================
-   TAMPILKAN MAPEL
+   TAMPILKAN DATA
 ===================================================== */
 
 function tampilkanMapel(data){
@@ -718,8 +635,8 @@ function tampilkanMapel(data){
 
         body.innerHTML = `
             <tr>
-                <td colspan="3" class="empty">
-                    📚 Belum ada data mata pelajaran.
+                <td colspan="4" class="empty">
+                    📚 Belum ada mata pelajaran.
                 </td>
             </tr>
         `;
@@ -732,6 +649,7 @@ function tampilkanMapel(data){
         data.map((item,index)=>{
 
             return `
+
                 <tr>
 
                     <td>
@@ -742,6 +660,10 @@ function tampilkanMapel(data){
                         <strong>
                             ${escapeHtml(item.nama)}
                         </strong>
+                    </td>
+
+                    <td>
+                        ${formatTanggal(item.created_at)}
                     </td>
 
                     <td>
@@ -769,6 +691,7 @@ function tampilkanMapel(data){
                     </td>
 
                 </tr>
+
             `;
 
         }).join("");
@@ -791,16 +714,12 @@ function filterMapel(){
 
     const hasil =
         semuaMapel.filter(item =>
-
             (item.nama || "")
             .toLowerCase()
             .includes(keyword)
-
         );
 
-    tampilkanMapel(
-        hasil
-    );
+    tampilkanMapel(hasil);
 
 }
 
@@ -820,8 +739,7 @@ function bukaTambah(){
 
     document.getElementById(
         "namaMapel"
-    ).value =
-        "";
+    ).value = "";
 
     document.getElementById(
         "modal"
@@ -903,9 +821,38 @@ async function simpanMapel(){
 
     try{
 
-        /* TAMBAH */
+        /* ================================
+           EDIT
+        ================================= */
 
-        if(!editId){
+        if(editId){
+
+            const {error} =
+                await supabaseClient
+                .from("mata_pelajaran")
+                .update({
+                    nama:nama
+                })
+                .eq("id",editId);
+
+            if(error){
+
+                throw error;
+
+            }
+
+            showMessage(
+                "Mata pelajaran berhasil diperbarui.",
+                "success"
+            );
+
+        }
+
+        /* ================================
+           TAMBAH
+        ================================= */
+
+        else{
 
             const {error} =
                 await supabaseClient
@@ -922,64 +869,16 @@ async function simpanMapel(){
                         "Mata pelajaran tersebut sudah ada."
                     );
 
-                }else{
-
-                    alert(
-                        "Gagal menambahkan:\n" +
-                        error.message
-                    );
+                    return;
 
                 }
 
-                return;
+                throw error;
 
             }
 
             showMessage(
                 "Mata pelajaran berhasil ditambahkan.",
-                "success"
-            );
-
-        }
-
-        /* EDIT */
-
-        else{
-
-            const {error} =
-                await supabaseClient
-                .from("mata_pelajaran")
-                .update({
-                    nama:nama
-                })
-                .eq(
-                    "id",
-                    editId
-                );
-
-            if(error){
-
-                if(error.code === "23505"){
-
-                    alert(
-                        "Nama mata pelajaran tersebut sudah ada."
-                    );
-
-                }else{
-
-                    alert(
-                        "Gagal memperbarui:\n" +
-                        error.message
-                    );
-
-                }
-
-                return;
-
-            }
-
-            showMessage(
-                "Mata pelajaran berhasil diperbarui.",
                 "success"
             );
 
@@ -994,7 +893,7 @@ async function simpanMapel(){
         console.error(error);
 
         alert(
-            "Terjadi kesalahan:\n" +
+            "Gagal menyimpan:\n" +
             error.message
         );
 
@@ -1022,10 +921,10 @@ async function hapusMapel(id){
 
     const yakin =
         confirm(
-            "Hapus mata pelajaran berikut?\n\n" +
+            "Hapus mata pelajaran:\n\n" +
             item.nama +
             "\n\n" +
-            "Jika mata pelajaran sudah digunakan pada ujian, penghapusan dapat ditolak oleh database."
+            "Data yang dihapus tidak dapat dikembalikan."
         );
 
     if(!yakin){
@@ -1040,19 +939,11 @@ async function hapusMapel(id){
             await supabaseClient
             .from("mata_pelajaran")
             .delete()
-            .eq(
-                "id",
-                id
-            );
+            .eq("id",id);
 
         if(error){
 
-            alert(
-                "Gagal menghapus:\n" +
-                error.message
-            );
-
-            return;
+            throw error;
 
         }
 
@@ -1068,7 +959,7 @@ async function hapusMapel(id){
         console.error(error);
 
         alert(
-            "Terjadi kesalahan:\n" +
+            "Gagal menghapus:\n" +
             error.message
         );
 
@@ -1094,6 +985,41 @@ function tutupModal(){
 
 
 /* =====================================================
+   FORMAT TANGGAL
+===================================================== */
+
+function formatTanggal(value){
+
+    if(!value){
+
+        return "-";
+
+    }
+
+    try{
+
+        return new Date(value)
+        .toLocaleString(
+            "id-ID",
+            {
+                day:"2-digit",
+                month:"2-digit",
+                year:"numeric",
+                hour:"2-digit",
+                minute:"2-digit"
+            }
+        );
+
+    }catch(error){
+
+        return "-";
+
+    }
+
+}
+
+
+/* =====================================================
    ESCAPE HTML
 ===================================================== */
 
@@ -1110,7 +1036,7 @@ function escapeHtml(value){
 
 
 /* =====================================================
-   DASHBOARD
+   KEMBALI
 ===================================================== */
 
 function kembaliDashboard(){
