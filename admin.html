@@ -1,0 +1,710 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard Admin - RUANG EXAM</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f5f9;
+    color:#0f172a;
+    min-height:100vh;
+}
+
+/* HEADER */
+.header{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    color:white;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+    box-shadow:0 5px 20px rgba(0,0,0,.18);
+}
+
+.header-title h1{
+    font-size:25px;
+    margin-bottom:5px;
+}
+
+.header-title p{
+    font-size:13px;
+    opacity:.85;
+}
+
+.admin-area{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.admin-info{
+    text-align:right;
+}
+
+.admin-info strong{
+    display:block;
+    font-size:14px;
+}
+
+.admin-info span{
+    font-size:12px;
+    opacity:.8;
+}
+
+.avatar{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:white;
+    color:#1d4ed8;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-weight:bold;
+    font-size:18px;
+}
+
+.logout-btn{
+    border:none;
+    background:#ef4444;
+    color:white;
+    padding:10px 15px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.logout-btn:hover{
+    background:#dc2626;
+}
+
+/* CONTAINER */
+.container{
+    max-width:1250px;
+    margin:28px auto;
+    padding:0 20px;
+}
+
+/* WELCOME */
+.welcome{
+    background:white;
+    border-radius:18px;
+    padding:23px;
+    margin-bottom:23px;
+    box-shadow:0 4px 18px rgba(15,23,42,.07);
+}
+
+.welcome h2{
+    font-size:22px;
+    margin-bottom:7px;
+}
+
+.welcome p{
+    color:#64748b;
+    font-size:14px;
+}
+
+/* MENU */
+.menu-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:17px;
+}
+
+.menu-card{
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:17px;
+    padding:22px;
+    min-height:150px;
+    cursor:pointer;
+    transition:.2s;
+    box-shadow:0 3px 12px rgba(15,23,42,.05);
+}
+
+.menu-card:hover{
+    transform:translateY(-4px);
+    border-color:#93c5fd;
+    box-shadow:0 10px 25px rgba(15,23,42,.12);
+}
+
+.menu-icon{
+    font-size:35px;
+    margin-bottom:12px;
+}
+
+.menu-card h3{
+    font-size:16px;
+    margin-bottom:7px;
+}
+
+.menu-card p{
+    color:#64748b;
+    font-size:12px;
+    line-height:1.5;
+}
+
+/* STATUS */
+.status{
+    margin-top:23px;
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:15px;
+    padding:17px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.status-dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#22c55e;
+}
+
+.status span{
+    color:#475569;
+    font-size:13px;
+}
+
+/* FOOTER */
+.footer{
+    text-align:center;
+    color:#94a3b8;
+    font-size:12px;
+    line-height:1.6;
+    padding:30px 10px;
+}
+
+/* RESPONSIVE */
+@media(max-width:1000px){
+    .menu-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+}
+
+@media(max-width:700px){
+    .menu-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .header{
+        padding:18px;
+    }
+
+    .admin-info{
+        display:none;
+    }
+}
+
+@media(max-width:450px){
+    .menu-grid{
+        grid-template-columns:1fr;
+    }
+
+    .container{
+        padding:0 14px;
+    }
+
+    .welcome{
+        padding:18px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="header">
+
+    <div class="header-title">
+        <h1>👑 DASHBOARD ADMIN</h1>
+        <p>RUANG EXAM — SMP Negeri 3 Sibolga</p>
+    </div>
+
+    <div class="admin-area">
+
+        <div class="admin-info">
+            <strong id="namaAdmin">Administrator</strong>
+            <span id="usernameAdmin">Admin</span>
+        </div>
+
+        <div class="avatar">
+            A
+        </div>
+
+        <button
+            class="logout-btn"
+            onclick="logout()">
+            Keluar
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <!-- WELCOME -->
+    <section class="welcome">
+
+        <h2>
+            Selamat Datang,
+            <span id="sapaan">Administrator</span> 👋
+        </h2>
+
+        <p>
+            Kelola seluruh sistem ujian online melalui Dashboard Admin.
+        </p>
+
+    </section>
+
+
+    <!-- MENU -->
+    <section class="menu-grid">
+
+        <!-- 1 -->
+        <div
+            class="menu-card"
+            onclick="bukaMenu('siswa')">
+
+            <div class="menu-icon">
+                👨‍🎓
+            </div>
+
+            <h3>
+                Daftar Siswa
+            </h3>
+
+            <p>
+                Mengelola data siswa, NISN, kelas,
+                dan akun siswa.
+            </p>
+
+        </div>
+
+
+        <!-- 2 -->
+        <div
+            class="menu-card"
+            onclick="bukaMenu('guru')">
+
+            <div class="menu-icon">
+                👨‍🏫
+            </div>
+
+            <h3>
+                Daftar Guru
+            </h3>
+
+            <p>
+                Mengelola data guru, NIP/NIK,
+                dan akun guru.
+            </p>
+
+        </div>
+
+
+        <!-- 3 -->
+        <div
+            class="menu-card"
+            onclick="bukaMenu('kelas')">
+
+            <div class="menu-icon">
+                🏫
+            </div>
+
+            <h3>
+                Daftar Kelas
+            </h3>
+
+            <p>
+                Mengelola kelas VII, VIII,
+                dan IX.
+            </p>
+
+        </div>
+
+
+        <!-- 4 -->
+        <div
+            class="menu-card"
+            onclick="bukaMenu('ujian')">
+
+            <div class="menu-icon">
+                📝
+            </div>
+
+            <h3>
+                Daftar Ujian
+            </h3>
+
+            <p>
+                Membuat dan mengelola
+                ujian.
+            </p>
+
+        </div>
+
+
+        <!-- 5 -->
+        <div
+            class="menu-card"
+            onclick="bukaMenu('bank-soal')">
+
+            <div class="menu-icon">
+                📚
+            </div>
+
+            <h3>
+                Bank Soal
+            </h3>
+
+            <p>
+                Mengelola kumpulan soal
+                untuk ujian.
+            </p>
+
+        </div>
+
+
+        <!-- 6 -->
+        <div
+            class="menu-card"
+            onclick="bukaMenu('token')">
+
+            <div class="menu-icon">
+                🔑
+            </div>
+
+            <h3>
+                Token Ujian
+            </h3>
+
+            <p>
+                Membuat dan mengelola
+                token ujian.
+            </p>
+
+        </div>
+
+
+        <!-- 7 -->
+        <div
+            class="menu-card"
+            onclick="bukaMenu('kontrol')">
+
+            <div class="menu-icon">
+                ▶️
+            </div>
+
+            <h3>
+                Kontrol Ujian
+            </h3>
+
+            <p>
+                Membuka, menutup,
+                dan mengatur ujian.
+            </p>
+
+        </div>
+
+
+        <!-- 8 -->
+        <div
+            class="menu-card"
+            onclick="bukaMenu('monitor')">
+
+            <div class="menu-icon">
+                👀
+            </div>
+
+            <h3>
+                Monitor Peserta
+            </h3>
+
+            <p>
+                Memantau peserta
+                yang sedang ujian.
+            </p>
+
+        </div>
+
+
+        <!-- 9 -->
+        <div
+            class="menu-card"
+            onclick="bukaMenu('kartu')">
+
+            <div class="menu-icon">
+                🪪
+            </div>
+
+            <h3>
+                Kartu Ujian
+            </h3>
+
+            <p>
+                Membuat dan mencetak
+                kartu ujian peserta.
+            </p>
+
+        </div>
+
+
+        <!-- 10 -->
+        <div
+            class="menu-card"
+            onclick="bukaMenu('roster')">
+
+            <div class="menu-icon">
+                📋
+            </div>
+
+            <h3>
+                Roster Ujian
+            </h3>
+
+            <p>
+                Melihat dan mencetak
+                daftar peserta ujian.
+            </p>
+
+        </div>
+
+
+        <!-- 11 -->
+        <div
+            class="menu-card"
+            onclick="bukaMenu('hasil')">
+
+            <div class="menu-icon">
+                📊
+            </div>
+
+            <h3>
+                Hasil Ujian
+            </h3>
+
+            <p>
+                Melihat nilai dan
+                hasil ujian peserta.
+            </p>
+
+        </div>
+
+
+        <!-- 12 -->
+        <div
+            class="menu-card"
+            onclick="bukaMenu('download')">
+
+            <div class="menu-icon">
+                📥
+            </div>
+
+            <h3>
+                Download Hasil
+            </h3>
+
+            <p>
+                Mengunduh hasil ujian
+                untuk arsip.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- STATUS -->
+    <div class="status">
+
+        <div class="status-dot"></div>
+
+        <span>
+            Sistem Admin aktif — session login terverifikasi.
+        </span>
+
+    </div>
+
+</main>
+
+
+<!-- FOOTER -->
+<footer class="footer">
+
+    RUANG EXAM Online<br>
+
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+</footer>
+
+
+<script>
+
+/* =====================================================
+   CEK LOGIN ADMIN
+===================================================== */
+
+const sessionRaw =
+    localStorage.getItem("exam_user");
+
+
+if(!sessionRaw){
+
+    window.location.href =
+        "login.html";
+
+}else{
+
+    try{
+
+        const user =
+            JSON.parse(sessionRaw);
+
+
+        /* HARUS ADMIN */
+
+        if(user.role !== "admin"){
+
+            localStorage.removeItem(
+                "exam_user"
+            );
+
+            window.location.href =
+                "login.html";
+
+        }else{
+
+            document
+                .getElementById("namaAdmin")
+                .textContent =
+                user.nama || "Administrator";
+
+
+            document
+                .getElementById("sapaan")
+                .textContent =
+                user.nama || "Administrator";
+
+
+            document
+                .getElementById("usernameAdmin")
+                .textContent =
+                user.username || "Admin";
+
+        }
+
+    }catch(error){
+
+        localStorage.removeItem(
+            "exam_user"
+        );
+
+        window.location.href =
+            "login.html";
+
+    }
+
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+function bukaMenu(menu){
+
+    /*
+      Untuk sementara menu diberi pesan.
+      Nanti setiap menu kita hubungkan
+      dengan halaman Supabase masing-masing.
+    */
+
+    const nama = {
+
+        "siswa":
+        "Daftar Siswa",
+
+        "guru":
+        "Daftar Guru",
+
+        "kelas":
+        "Daftar Kelas",
+
+        "ujian":
+        "Daftar Ujian",
+
+        "bank-soal":
+        "Bank Soal",
+
+        "token":
+        "Token Ujian",
+
+        "kontrol":
+        "Kontrol Ujian",
+
+        "monitor":
+        "Monitor Peserta",
+
+        "kartu":
+        "Kartu Ujian",
+
+        "roster":
+        "Roster Ujian",
+
+        "hasil":
+        "Hasil Ujian",
+
+        "download":
+        "Download Hasil"
+
+    };
+
+
+    alert(
+        "Menu " +
+        (nama[menu] || menu) +
+        " siap dikembangkan."
+    );
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function logout(){
+
+    localStorage.removeItem(
+        "exam_user"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+</script>
+
+</body>
+</html>
+```
