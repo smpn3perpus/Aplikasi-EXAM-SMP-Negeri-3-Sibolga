@@ -1,0 +1,1397 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Kontrol Ujian - Admin | RUANG EXAM</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f5f9;
+    color:#0f172a;
+    min-height:100vh;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    color:white;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+    box-shadow:0 5px 20px rgba(0,0,0,.18);
+}
+
+.header h1{
+    font-size:23px;
+}
+
+.header p{
+    font-size:13px;
+    opacity:.85;
+    margin-top:5px;
+}
+
+.header-buttons{
+    display:flex;
+    gap:8px;
+}
+
+.btn{
+    border:none;
+    border-radius:9px;
+    padding:10px 15px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-back{
+    background:white;
+    color:#1d4ed8;
+}
+
+.btn-refresh{
+    background:#22c55e;
+    color:white;
+}
+
+/* ================= CONTAINER ================= */
+
+.container{
+    max-width:1300px;
+    margin:25px auto;
+    padding:0 20px;
+}
+
+/* ================= MESSAGE ================= */
+
+.message{
+    display:none;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:18px;
+    text-align:center;
+    font-size:13px;
+}
+
+.message.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.message.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* ================= INFO ================= */
+
+.info{
+    background:#eff6ff;
+    color:#1e40af;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:20px;
+    font-size:13px;
+    line-height:1.6;
+}
+
+/* ================= TABLE ================= */
+
+.table-box{
+    background:white;
+    border-radius:16px;
+    overflow:auto;
+    box-shadow:0 4px 18px rgba(15,23,42,.07);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:1050px;
+}
+
+th{
+    background:#eff6ff;
+    color:#1e3a8a;
+    padding:14px;
+    text-align:left;
+    font-size:13px;
+    white-space:nowrap;
+}
+
+td{
+    padding:14px;
+    border-top:1px solid #e2e8f0;
+    font-size:13px;
+    vertical-align:middle;
+}
+
+tr:hover td{
+    background:#f8fafc;
+}
+
+/* ================= STATUS ================= */
+
+.status{
+    display:inline-block;
+    padding:7px 11px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.status.draft{
+    background:#e2e8f0;
+    color:#475569;
+}
+
+.status.dibuka{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status.dijeda{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status.selesai{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* ================= TIME ================= */
+
+.timer{
+    font-size:19px;
+    font-weight:bold;
+    color:#1d4ed8;
+    white-space:nowrap;
+}
+
+.timer.warning{
+    color:#d97706;
+}
+
+.timer.danger{
+    color:#dc2626;
+}
+
+/* ================= ACTION ================= */
+
+.actions{
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+}
+
+.action-btn{
+    border:none;
+    border-radius:7px;
+    padding:8px 10px;
+    cursor:pointer;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.open{
+    background:#22c55e;
+    color:white;
+}
+
+.pause{
+    background:#f59e0b;
+    color:white;
+}
+
+.resume{
+    background:#2563eb;
+    color:white;
+}
+
+.finish{
+    background:#ef4444;
+    color:white;
+}
+
+/* ================= EMPTY ================= */
+
+.empty{
+    text-align:center;
+    padding:45px !important;
+    color:#64748b;
+}
+
+/* ================= FOOTER ================= */
+
+.footer{
+    text-align:center;
+    color:#94a3b8;
+    font-size:12px;
+    line-height:1.6;
+    padding:30px;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:600px){
+
+    .header{
+        padding:18px;
+    }
+
+    .container{
+        padding:0 12px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div>
+        <h1>▶️ KONTROL UJIAN</h1>
+
+        <p>
+            RUANG EXAM — SMP Negeri 3 Sibolga
+        </p>
+    </div>
+
+    <div class="header-buttons">
+
+        <button
+            class="btn btn-back"
+            onclick="kembaliDashboard()">
+
+            ← Dashboard
+
+        </button>
+
+        <button
+            class="btn btn-refresh"
+            onclick="loadUjian()">
+
+            🔄 Refresh
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div id="message" class="message"></div>
+
+
+    <div class="info">
+
+        <strong>⏱️ Sistem Waktu Aktif</strong><br>
+
+        Waktu ujian hanya dihitung ketika status
+        <strong>DIBUKA</strong>.
+
+        Jika ujian dijeda karena mati lampu atau
+        kondisi lainnya, waktu akan berhenti.
+
+        Ketika ujian dibuka kembali, waktu akan
+        melanjutkan dari sisa waktu sebelumnya.
+
+    </div>
+
+
+    <div class="table-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>No</th>
+
+                    <th>Ujian</th>
+
+                    <th>Durasi</th>
+
+                    <th>Waktu Terpakai</th>
+
+                    <th>Sisa Waktu</th>
+
+                    <th>Status</th>
+
+                    <th>Aksi</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="ujianBody">
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="empty">
+
+                        ⏳ Memuat data ujian...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</main>
+
+
+<footer class="footer">
+
+    RUANG EXAM Online<br>
+
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+</footer>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =====================================================
+   SESSION ADMIN
+===================================================== */
+
+const sessionRaw =
+    localStorage.getItem("exam_user");
+
+if(!sessionRaw){
+
+    window.location.href =
+        "login.html";
+
+}
+
+try{
+
+    const user =
+        JSON.parse(sessionRaw);
+
+    if(user.role !== "admin"){
+
+        localStorage.removeItem(
+            "exam_user"
+        );
+
+        window.location.href =
+            "login.html";
+
+    }
+
+}catch(error){
+
+    localStorage.removeItem(
+        "exam_user"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let semuaUjian = [];
+
+let timerInterval = null;
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(text,type){
+
+    const el =
+        document.getElementById("message");
+
+    el.textContent =
+        text;
+
+    el.className =
+        "message " + type;
+
+}
+
+function hideMessage(){
+
+    const el =
+        document.getElementById("message");
+
+    el.textContent = "";
+
+    el.className =
+        "message";
+
+}
+
+
+/* =====================================================
+   LOAD UJIAN
+===================================================== */
+
+async function loadUjian(){
+
+    hideMessage();
+
+    const body =
+        document.getElementById(
+            "ujianBody"
+        );
+
+    body.innerHTML = `
+        <tr>
+            <td colspan="7" class="empty">
+                ⏳ Memuat data ujian...
+            </td>
+        </tr>
+    `;
+
+
+    try{
+
+        const hasil =
+            await supabaseClient
+            .from("ujian")
+            .select(`
+                id,
+                judul,
+                durasi_menit,
+                waktu_terpakai_detik,
+                waktu_mulai_aktif,
+                status_kontrol
+            `)
+            .order(
+                "created_at",
+                {ascending:false}
+            );
+
+
+        if(hasil.error){
+
+            throw hasil.error;
+
+        }
+
+
+        semuaUjian =
+            hasil.data || [];
+
+
+        tampilkanUjian();
+
+    }catch(error){
+
+        console.error(error);
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="7" class="empty">
+                    ❌ ${escapeHtml(error.message)}
+                </td>
+            </tr>
+        `;
+
+        showMessage(
+            "Gagal memuat ujian: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   TAMPILKAN UJIAN
+===================================================== */
+
+function tampilkanUjian(){
+
+    const body =
+        document.getElementById(
+            "ujianBody"
+        );
+
+
+    if(!semuaUjian.length){
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="7" class="empty">
+                    📝 Belum ada ujian.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    body.innerHTML =
+        semuaUjian.map(
+            (ujian,index)=>{
+
+                const waktu =
+                    hitungWaktu(ujian);
+
+
+                const durasi =
+                    Number(
+                        ujian.durasi_menit
+                    ) || 0;
+
+
+                const sisa =
+                    Math.max(
+                        0,
+                        durasi * 60 -
+                        waktu
+                    );
+
+
+                const status =
+                    ujian.status_kontrol ||
+                    "draft";
+
+
+                return `
+
+                    <tr>
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+                            <strong>
+                                ${escapeHtml(
+                                    ujian.judul || "-"
+                                )}
+                            </strong>
+                        </td>
+
+                        <td>
+                            ${durasi}
+                            menit
+                        </td>
+
+                        <td>
+                            <span
+                                id="terpakai-${ujian.id}">
+                                ${formatWaktu(waktu)}
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <span
+                                class="timer"
+                                id="sisa-${ujian.id}">
+
+                                ${formatWaktu(sisa)}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span
+                                class="status ${status}">
+
+                                ${statusText(status)}
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="actions">
+
+                                ${
+                                    status === "draft"
+                                    ?
+                                    `<button
+                                        class="action-btn open"
+                                        onclick="bukaUjian('${ujian.id}')">
+                                        ▶️ Buka
+                                    </button>`
+                                    :
+                                    ""
+                                }
+
+                                ${
+                                    status === "dibuka"
+                                    ?
+                                    `<button
+                                        class="action-btn pause"
+                                        onclick="jedaUjian('${ujian.id}')">
+                                        ⏸️ Jeda
+                                    </button>`
+                                    :
+                                    ""
+                                }
+
+                                ${
+                                    status === "dijeda"
+                                    ?
+                                    `<button
+                                        class="action-btn resume"
+                                        onclick="lanjutkanUjian('${ujian.id}')">
+                                        ▶️ Lanjutkan
+                                    </button>`
+                                    :
+                                    ""
+                                }
+
+                                ${
+                                    status !== "selesai"
+                                    ?
+                                    `<button
+                                        class="action-btn finish"
+                                        onclick="selesaikanUjian('${ujian.id}')">
+                                        ⛔ Selesai
+                                    </button>`
+                                    :
+                                    ""
+                                }
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+/* =====================================================
+   HITUNG WAKTU
+===================================================== */
+
+function hitungWaktu(ujian){
+
+    let terpakai =
+        Number(
+            ujian.waktu_terpakai_detik
+        ) || 0;
+
+
+    if(
+        ujian.status_kontrol ===
+        "dibuka" &&
+        ujian.waktu_mulai_aktif
+    ){
+
+        const mulai =
+            new Date(
+                ujian.waktu_mulai_aktif
+            ).getTime();
+
+
+        const sekarang =
+            Date.now();
+
+
+        const tambahan =
+            Math.max(
+                0,
+                Math.floor(
+                    (
+                        sekarang -
+                        mulai
+                    ) / 1000
+                )
+            );
+
+
+        terpakai += tambahan;
+
+    }
+
+
+    const maksimal =
+        (
+            Number(
+                ujian.durasi_menit
+            ) || 0
+        ) * 60;
+
+
+    return Math.min(
+        terpakai,
+        maksimal
+    );
+
+}
+
+
+/* =====================================================
+   BUKA UJIAN
+===================================================== */
+
+async function bukaUjian(id){
+
+    const ujian =
+        semuaUjian.find(
+            u => u.id === id
+        );
+
+
+    if(!ujian){
+
+        return;
+
+    }
+
+
+    const durasi =
+        Number(
+            ujian.durasi_menit
+        ) || 0;
+
+
+    const terpakai =
+        Number(
+            ujian.waktu_terpakai_detik
+        ) || 0;
+
+
+    if(
+        terpakai >=
+        durasi * 60
+    ){
+
+        alert(
+            "Waktu ujian sudah habis."
+        );
+
+        return;
+
+    }
+
+
+    const yakin =
+        confirm(
+            "Buka ujian:\n\n" +
+            ujian.judul +
+            "\n\nWaktu mulai dihitung sekarang."
+        );
+
+
+    if(!yakin){
+
+        return;
+
+    }
+
+
+    await ubahStatus(
+        id,
+        "dibuka",
+        terpakai
+    );
+
+}
+
+
+/* =====================================================
+   JEDA UJIAN
+===================================================== */
+
+async function jedaUjian(id){
+
+    const ujian =
+        semuaUjian.find(
+            u => u.id === id
+        );
+
+
+    if(!ujian){
+
+        return;
+
+    }
+
+
+    const waktuAktif =
+        hitungWaktu(ujian);
+
+
+    const yakin =
+        confirm(
+            "Jeda ujian:\n\n" +
+            ujian.judul +
+            "\n\nWaktu yang sudah digunakan: " +
+            formatWaktu(waktuAktif)
+        );
+
+
+    if(!yakin){
+
+        return;
+
+    }
+
+
+    await ubahStatus(
+        id,
+        "dijeda",
+        waktuAktif
+    );
+
+}
+
+
+/* =====================================================
+   LANJUTKAN UJIAN
+===================================================== */
+
+async function lanjutkanUjian(id){
+
+    const ujian =
+        semuaUjian.find(
+            u => u.id === id
+        );
+
+
+    if(!ujian){
+
+        return;
+
+    }
+
+
+    const waktuAktif =
+        hitungWaktu(ujian);
+
+
+    const durasi =
+        Number(
+            ujian.durasi_menit
+        ) || 0;
+
+
+    if(
+        waktuAktif >=
+        durasi * 60
+    ){
+
+        await ubahStatus(
+            id,
+            "selesai",
+            durasi * 60
+        );
+
+        return;
+
+    }
+
+
+    const yakin =
+        confirm(
+            "Lanjutkan ujian:\n\n" +
+            ujian.judul +
+            "\n\nSisa waktu: " +
+            formatWaktu(
+                durasi * 60 -
+                waktuAktif
+            )
+        );
+
+
+    if(!yakin){
+
+        return;
+
+    }
+
+
+    await ubahStatus(
+        id,
+        "dibuka",
+        waktuAktif
+    );
+
+}
+
+
+/* =====================================================
+   SELESAIKAN UJIAN
+===================================================== */
+
+async function selesaikanUjian(id){
+
+    const ujian =
+        semuaUjian.find(
+            u => u.id === id
+        );
+
+
+    if(!ujian){
+
+        return;
+
+    }
+
+
+    const waktuAktif =
+        hitungWaktu(ujian);
+
+
+    const yakin =
+        confirm(
+            "Tutup ujian sekarang?\n\n" +
+            ujian.judul +
+            "\n\nUjian akan berstatus SELESAI."
+        );
+
+
+    if(!yakin){
+
+        return;
+
+    }
+
+
+    await ubahStatus(
+        id,
+        "selesai",
+        waktuAktif
+    );
+
+}
+
+
+/* =====================================================
+   UPDATE STATUS
+===================================================== */
+
+async function ubahStatus(
+    id,
+    status,
+    waktu
+){
+
+    try{
+
+        let payload = {
+
+            status_kontrol:
+                status,
+
+            waktu_terpakai_detik:
+                Math.floor(
+                    waktu
+                )
+
+        };
+
+
+        if(status === "dibuka"){
+
+            payload.waktu_mulai_aktif =
+                new Date().toISOString();
+
+        }else{
+
+            payload.waktu_mulai_aktif =
+                null;
+
+        }
+
+
+        const hasil =
+            await supabaseClient
+            .from("ujian")
+            .update(payload)
+            .eq(
+                "id",
+                id
+            );
+
+
+        if(hasil.error){
+
+            throw hasil.error;
+
+        }
+
+
+        showMessage(
+            "Status ujian berhasil diperbarui.",
+            "success"
+        );
+
+
+        await loadUjian();
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal mengubah status: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   FORMAT WAKTU
+===================================================== */
+
+function formatWaktu(totalDetik){
+
+    totalDetik =
+        Math.max(
+            0,
+            Math.floor(
+                Number(totalDetik) || 0
+            )
+        );
+
+
+    const jam =
+        Math.floor(
+            totalDetik / 3600
+        );
+
+
+    const menit =
+        Math.floor(
+            (totalDetik % 3600) / 60
+        );
+
+
+    const detik =
+        totalDetik % 60;
+
+
+    return (
+        String(jam).padStart(2,"0") +
+        ":" +
+        String(menit).padStart(2,"0") +
+        ":" +
+        String(detik).padStart(2,"0")
+    );
+
+}
+
+
+/* =====================================================
+   STATUS TEXT
+===================================================== */
+
+function statusText(status){
+
+    const daftar = {
+
+        draft:
+            "DRAFT",
+
+        dibuka:
+            "DIBUKA",
+
+        dijeda:
+            "DIJEDA",
+
+        selesai:
+            "SELESAI"
+
+    };
+
+
+    return daftar[status] ||
+        status.toUpperCase();
+
+}
+
+
+/* =====================================================
+   TIMER OTOMATIS
+===================================================== */
+
+function updateTimer(){
+
+    semuaUjian.forEach(
+        ujian=>{
+
+            if(
+                ujian.status_kontrol !==
+                "dibuka"
+            ){
+
+                return;
+
+            }
+
+
+            const waktu =
+                hitungWaktu(ujian);
+
+
+            const durasi =
+                (
+                    Number(
+                        ujian.durasi_menit
+                    ) || 0
+                ) * 60;
+
+
+            const sisa =
+                Math.max(
+                    0,
+                    durasi -
+                    waktu
+                );
+
+
+            const terpakaiEl =
+                document.getElementById(
+                    "terpakai-" +
+                    ujian.id
+                );
+
+
+            const sisaEl =
+                document.getElementById(
+                    "sisa-" +
+                    ujian.id
+                );
+
+
+            if(terpakaiEl){
+
+                terpakaiEl.textContent =
+                    formatWaktu(waktu);
+
+            }
+
+
+            if(sisaEl){
+
+                sisaEl.textContent =
+                    formatWaktu(sisa);
+
+
+                sisaEl.classList.remove(
+                    "warning",
+                    "danger"
+                );
+
+
+                if(sisa <= 300){
+
+                    sisaEl.classList.add(
+                        "danger"
+                    );
+
+                }else if(sisa <= 600){
+
+                    sisaEl.classList.add(
+                        "warning"
+                    );
+
+                }
+
+            }
+
+
+            if(
+                sisa <= 0
+            ){
+
+                otomatisSelesai(
+                    ujian
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   OTOMATIS SELESAI
+===================================================== */
+
+async function otomatisSelesai(ujian){
+
+    if(
+        ujian.status_kontrol !==
+        "dibuka"
+    ){
+
+        return;
+
+    }
+
+
+    const maksimal =
+        (
+            Number(
+                ujian.durasi_menit
+            ) || 0
+        ) * 60;
+
+
+    ujian.status_kontrol =
+        "selesai";
+
+
+    ujian.waktu_terpakai_detik =
+        maksimal;
+
+
+    ujian.waktu_mulai_aktif =
+        null;
+
+
+    await supabaseClient
+    .from("ujian")
+    .update({
+
+        status_kontrol:
+            "selesai",
+
+        waktu_terpakai_detik:
+            maksimal,
+
+        waktu_mulai_aktif:
+            null
+
+    })
+    .eq(
+        "id",
+        ujian.id
+    );
+
+
+    showMessage(
+        "Waktu ujian habis. Ujian otomatis selesai.",
+        "success"
+    );
+
+
+    tampilkanUjian();
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function kembaliDashboard(){
+
+    window.location.href =
+        "admin.html";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadUjian();
+
+timerInterval =
+    setInterval(
+        updateTimer,
+        1000
+    );
+
+</script>
+
+</body>
+</html>
+```
