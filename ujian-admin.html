@@ -23,7 +23,6 @@ body{
     min-height:100vh;
 }
 
-/* HEADER */
 .header{
     background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
     color:white;
@@ -69,14 +68,12 @@ body{
     color:white;
 }
 
-/* CONTAINER */
 .container{
     max-width:1250px;
     margin:25px auto;
     padding:0 20px;
 }
 
-/* MESSAGE */
 .message{
     display:none;
     padding:12px;
@@ -98,7 +95,6 @@ body{
     color:#991b1b;
 }
 
-/* TOOLBAR */
 .toolbar{
     background:white;
     padding:18px;
@@ -124,10 +120,6 @@ body{
     outline:none;
 }
 
-.search input:focus{
-    border-color:#2563eb;
-}
-
 .filter{
     width:180px;
 }
@@ -146,7 +138,6 @@ body{
     padding:12px 18px;
 }
 
-/* SUMMARY */
 .summary{
     display:grid;
     grid-template-columns:repeat(4,1fr);
@@ -172,7 +163,6 @@ body{
     font-size:12px;
 }
 
-/* TABLE */
 .table-box{
     background:white;
     border-radius:15px;
@@ -212,7 +202,6 @@ tr:hover td{
     color:#64748b;
 }
 
-/* BADGE */
 .badge{
     display:inline-block;
     padding:6px 10px;
@@ -236,7 +225,6 @@ tr:hover td{
     color:#1e40af;
 }
 
-/* ACTION */
 .action{
     display:flex;
     gap:6px;
@@ -262,7 +250,6 @@ tr:hover td{
     color:white;
 }
 
-/* MODAL */
 .modal{
     display:none;
     position:fixed;
@@ -320,12 +307,6 @@ tr:hover td{
     background:white;
 }
 
-.form-group input:focus,
-.form-group select:focus{
-    border-color:#2563eb;
-    box-shadow:0 0 0 3px rgba(37,99,235,.1);
-}
-
 .info{
     background:#eff6ff;
     color:#1e40af;
@@ -353,7 +334,6 @@ tr:hover td{
     color:white;
 }
 
-/* FOOTER */
 .footer{
     text-align:center;
     color:#94a3b8;
@@ -362,7 +342,11 @@ tr:hover td{
     padding:30px;
 }
 
-/* RESPONSIVE */
+.loading{
+    color:#2563eb;
+    font-weight:bold;
+}
+
 @media(max-width:800px){
 
     .summary{
@@ -376,7 +360,6 @@ tr:hover td{
     .form-group.full{
         grid-column:auto;
     }
-
 }
 
 @media(max-width:600px){
@@ -402,11 +385,6 @@ tr:hover td{
     .btn-add{
         width:100%;
     }
-
-    .summary{
-        grid-template-columns:1fr 1fr;
-    }
-
 }
 </style>
 </head>
@@ -417,23 +395,16 @@ tr:hover td{
 
     <div>
         <h1>📝 DAFTAR UJIAN</h1>
-
-        <p>
-            RUANG EXAM — SMP Negeri 3 Sibolga
-        </p>
+        <p>RUANG EXAM — SMP Negeri 3 Sibolga</p>
     </div>
 
     <div class="header-buttons">
 
-        <button
-            class="btn btn-back"
-            onclick="kembaliDashboard()">
+        <button class="btn btn-back" onclick="kembaliDashboard()">
             ← Dashboard
         </button>
 
-        <button
-            class="btn btn-refresh"
-            onclick="loadSemuaData()">
+        <button class="btn btn-refresh" onclick="loadSemuaData()">
             🔄 Refresh
         </button>
 
@@ -441,16 +412,9 @@ tr:hover td{
 
 </header>
 
-
 <main class="container">
 
-    <div
-        id="message"
-        class="message">
-    </div>
-
-
-    <!-- RINGKASAN -->
+    <div id="message" class="message"></div>
 
     <div class="summary">
 
@@ -476,66 +440,36 @@ tr:hover td{
 
     </div>
 
-
-    <!-- TOOLBAR -->
-
     <div class="toolbar">
 
         <div class="search">
-
             <input
                 type="text"
                 id="searchInput"
                 placeholder="🔍 Cari judul ujian..."
                 oninput="filterUjian()">
-
         </div>
 
         <div class="filter">
-
-            <select
-                id="statusFilter"
-                onchange="filterUjian()">
-
-                <option value="">
-                    Semua Status
-                </option>
-
-                <option value="draft">
-                    Draft
-                </option>
-
-                <option value="aktif">
-                    Aktif
-                </option>
-
-                <option value="selesai">
-                    Selesai
-                </option>
-
+            <select id="statusFilter" onchange="filterUjian()">
+                <option value="">Semua Status</option>
+                <option value="draft">Draft</option>
+                <option value="aktif">Aktif</option>
+                <option value="selesai">Selesai</option>
             </select>
-
         </div>
 
-        <button
-            class="btn btn-add"
-            onclick="bukaTambah()">
-
+        <button class="btn btn-add" onclick="bukaTambah()">
             ➕ Buat Ujian
-
         </button>
 
     </div>
-
-
-    <!-- TABLE -->
 
     <div class="table-box">
 
         <table>
 
             <thead>
-
                 <tr>
                     <th>No</th>
                     <th>Judul Ujian</th>
@@ -548,15 +482,12 @@ tr:hover td{
                     <th>Status</th>
                     <th>Aksi</th>
                 </tr>
-
             </thead>
 
             <tbody id="ujianBody">
 
                 <tr>
-                    <td
-                        colspan="10"
-                        class="empty">
+                    <td colspan="10" class="empty loading">
                         ⏳ Memuat data ujian...
                     </td>
                 </tr>
@@ -569,44 +500,33 @@ tr:hover td{
 
 </main>
 
-
 <footer class="footer">
 
     RUANG EXAM Online<br>
-
     Dibuat oleh Mr. Rahmat Batubara, S.T.P
 
 </footer>
 
 
-<!-- MODAL TAMBAH / EDIT -->
-
-<div
-    class="modal"
-    id="modal">
+<div class="modal" id="modal">
 
     <div class="modal-box">
 
-        <h2 id="modalTitle">
-            Buat Ujian
-        </h2>
+        <h2 id="modalTitle">Buat Ujian</h2>
 
         <div class="info">
 
             Isi data ujian dengan lengkap.
-            Ujian baru akan dibuat dengan status
-            <strong>Draft</strong> secara default.
+            Ujian baru secara default dibuat sebagai
+            <strong>Draft</strong>.
 
         </div>
-
 
         <div class="form-grid">
 
             <div class="form-group full">
 
-                <label>
-                    Judul Ujian
-                </label>
+                <label>Judul Ujian</label>
 
                 <input
                     type="text"
@@ -619,16 +539,10 @@ tr:hover td{
 
             <div class="form-group">
 
-                <label>
-                    Mata Pelajaran
-                </label>
+                <label>Mata Pelajaran</label>
 
                 <select id="mataPelajaran">
-
-                    <option value="">
-                        ⏳ Memuat...
-                    </option>
-
+                    <option value="">⏳ Memuat...</option>
                 </select>
 
             </div>
@@ -636,16 +550,10 @@ tr:hover td{
 
             <div class="form-group">
 
-                <label>
-                    Kelas
-                </label>
+                <label>Kelas</label>
 
                 <select id="kelas">
-
-                    <option value="">
-                        ⏳ Memuat...
-                    </option>
-
+                    <option value="">⏳ Memuat...</option>
                 </select>
 
             </div>
@@ -653,16 +561,10 @@ tr:hover td{
 
             <div class="form-group">
 
-                <label>
-                    Guru
-                </label>
+                <label>Guru</label>
 
                 <select id="guru">
-
-                    <option value="">
-                        -- Pilih Guru --
-                    </option>
-
+                    <option value="">-- Pilih Guru --</option>
                 </select>
 
             </div>
@@ -670,9 +572,7 @@ tr:hover td{
 
             <div class="form-group">
 
-                <label>
-                    Durasi (menit)
-                </label>
+                <label>Durasi (menit)</label>
 
                 <input
                     type="number"
@@ -686,9 +586,7 @@ tr:hover td{
 
             <div class="form-group">
 
-                <label>
-                    Tanggal & Jam Mulai
-                </label>
+                <label>Tanggal & Jam Mulai</label>
 
                 <input
                     type="datetime-local"
@@ -699,9 +597,7 @@ tr:hover td{
 
             <div class="form-group">
 
-                <label>
-                    Tanggal & Jam Selesai
-                </label>
+                <label>Tanggal & Jam Selesai</label>
 
                 <input
                     type="datetime-local"
@@ -712,23 +608,13 @@ tr:hover td{
 
             <div class="form-group">
 
-                <label>
-                    Status
-                </label>
+                <label>Status</label>
 
                 <select id="status">
 
-                    <option value="draft">
-                        Draft
-                    </option>
-
-                    <option value="aktif">
-                        Aktif
-                    </option>
-
-                    <option value="selesai">
-                        Selesai
-                    </option>
+                    <option value="draft">Draft</option>
+                    <option value="aktif">Aktif</option>
+                    <option value="selesai">Selesai</option>
 
                 </select>
 
@@ -739,20 +625,12 @@ tr:hover td{
 
         <div class="modal-buttons">
 
-            <button
-                class="btn cancel"
-                onclick="tutupModal()">
-
+            <button class="btn cancel" onclick="tutupModal()">
                 Batal
-
             </button>
 
-            <button
-                class="btn save"
-                onclick="simpanUjian()">
-
+            <button class="btn save" onclick="simpanUjian()">
                 💾 Simpan Ujian
-
             </button>
 
         </div>
@@ -765,7 +643,7 @@ tr:hover td{
 <script>
 
 /* =====================================================
-   KONFIGURASI SUPABASE
+   SUPABASE
 ===================================================== */
 
 const SUPABASE_URL =
@@ -782,63 +660,52 @@ const supabaseClient =
 
 
 /* =====================================================
-   CEK LOGIN ADMIN
+   CEK LOGIN
 ===================================================== */
 
 const sessionRaw =
     localStorage.getItem("exam_user");
 
-
 if(!sessionRaw){
 
-    window.location.href =
-        "login.html";
+    window.location.href = "login.html";
 
 }
-
 
 let currentUser = null;
 
 try{
 
-    currentUser =
-        JSON.parse(sessionRaw);
+    currentUser = JSON.parse(sessionRaw);
 
-    if(currentUser.role !== "admin"){
+    if(
+        !currentUser ||
+        currentUser.role !== "admin"
+    ){
 
-        localStorage.removeItem(
-            "exam_user"
-        );
+        localStorage.removeItem("exam_user");
 
-        window.location.href =
-            "login.html";
+        window.location.href = "login.html";
 
     }
 
 }catch(error){
 
-    localStorage.removeItem(
-        "exam_user"
-    );
+    localStorage.removeItem("exam_user");
 
-    window.location.href =
-        "login.html";
+    window.location.href = "login.html";
 
 }
 
 
 /* =====================================================
-   DATA
+   VARIABEL
 ===================================================== */
 
 let semuaUjian = [];
-
 let semuaMapel = [];
-
 let semuaKelas = [];
-
 let semuaGuru = [];
-
 let editId = null;
 
 
@@ -865,43 +732,83 @@ function hideMessage(){
 
     message.textContent = "";
 
-    message.className =
-        "message";
+    message.className = "message";
 
 }
 
 
 /* =====================================================
-   LOAD SEMUA DATA
+   LOAD DATA
 ===================================================== */
 
 async function loadSemuaData(){
 
     hideMessage();
 
-    document.getElementById(
-        "ujianBody"
-    ).innerHTML = `
+    document.getElementById("ujianBody").innerHTML = `
         <tr>
-            <td colspan="10" class="empty">
+            <td colspan="10" class="empty loading">
                 ⏳ Memuat data...
             </td>
         </tr>
     `;
 
-
     try{
 
-        const [
+        const hasilMapel =
+            await supabaseClient
+            .from("mata_pelajaran")
+            .select("id,nama")
+            .order("nama",{ascending:true});
 
-            hasilUjian,
-            hasilMapel,
-            hasilKelas,
-            hasilGuru
 
-        ] = await Promise.all([
+        if(hasilMapel.error){
 
-            supabaseClient
+            throw new Error(
+                "Gagal mengambil mata pelajaran: " +
+                hasilMapel.error.message
+            );
+
+        }
+
+
+        const hasilKelas =
+            await supabaseClient
+            .from("kelas")
+            .select("id,nama_kelas,tingkat")
+            .order("tingkat",{ascending:true})
+            .order("nama_kelas",{ascending:true});
+
+
+        if(hasilKelas.error){
+
+            throw new Error(
+                "Gagal mengambil kelas: " +
+                hasilKelas.error.message
+            );
+
+        }
+
+
+        const hasilGuru =
+            await supabaseClient
+            .from("guru")
+            .select("id,nama,nip")
+            .order("nama",{ascending:true});
+
+
+        if(hasilGuru.error){
+
+            throw new Error(
+                "Gagal mengambil guru: " +
+                hasilGuru.error.message
+            );
+
+        }
+
+
+        const hasilUjian =
+            await supabaseClient
             .from("ujian")
             .select(`
                 id,
@@ -913,91 +820,23 @@ async function loadSemuaData(){
                 tanggal_mulai,
                 tanggal_selesai,
                 status,
-                created_at,
-                mata_pelajaran (
-                    id,
-                    nama
-                ),
-                kelas (
-                    id,
-                    nama_kelas,
-                    tingkat
-                ),
-                guru (
-                    id,
-                    nama,
-                    nip
-                )
+                created_at
             `)
             .order(
                 "created_at",
                 {ascending:false}
-            ),
-
-            supabaseClient
-            .from("mata_pelajaran")
-            .select(
-                "id,nama"
-            )
-            .order(
-                "nama",
-                {ascending:true}
-            ),
-
-            supabaseClient
-            .from("kelas")
-            .select(
-                "id,nama_kelas,tingkat"
-            )
-            .order(
-                "tingkat",
-                {ascending:true}
-            )
-            .order(
-                "nama_kelas",
-                {ascending:true}
-            ),
-
-            supabaseClient
-            .from("guru")
-            .select(
-                "id,nama,nip"
-            )
-            .order(
-                "nama",
-                {ascending:true}
-            )
-
-        ]);
+            );
 
 
         if(hasilUjian.error){
 
-            throw hasilUjian.error;
+            throw new Error(
+                "Gagal mengambil ujian: " +
+                hasilUjian.error.message
+            );
 
         }
 
-        if(hasilMapel.error){
-
-            throw hasilMapel.error;
-
-        }
-
-        if(hasilKelas.error){
-
-            throw hasilKelas.error;
-
-        }
-
-        if(hasilGuru.error){
-
-            throw hasilGuru.error;
-
-        }
-
-
-        semuaUjian =
-            hasilUjian.data || [];
 
         semuaMapel =
             hasilMapel.data || [];
@@ -1008,32 +847,35 @@ async function loadSemuaData(){
         semuaGuru =
             hasilGuru.data || [];
 
+        semuaUjian =
+            hasilUjian.data || [];
+
 
         isiPilihan();
 
         updateSummary();
 
-        tampilkanUjian(
-            semuaUjian
-        );
+        tampilkanUjian(semuaUjian);
 
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "ERROR LOAD:",
+            error
+        );
 
-        document.getElementById(
-            "ujianBody"
-        ).innerHTML = `
+        document.getElementById("ujianBody").innerHTML = `
             <tr>
                 <td colspan="10" class="empty">
-                    ❌ Gagal memuat data ujian.
+                    ❌ Gagal memuat data.
+                    <br><br>
+                    ${escapeHtml(error.message)}
                 </td>
             </tr>
         `;
 
         showMessage(
-            "Gagal mengambil data: " +
             error.message,
             "error"
         );
@@ -1044,7 +886,7 @@ async function loadSemuaData(){
 
 
 /* =====================================================
-   ISI DROPDOWN
+   DROPDOWN
 ===================================================== */
 
 function isiPilihan(){
@@ -1065,17 +907,16 @@ function isiPilihan(){
         );
 
 
-    mapel.innerHTML = `
-        <option value="">
+    mapel.innerHTML =
+        `<option value="">
             -- Pilih Mata Pelajaran --
-        </option>
-    `;
+        </option>`;
 
 
-    semuaMapel.forEach(item=>{
+    semuaMapel.forEach(item => {
 
         mapel.innerHTML += `
-            <option value="${item.id}">
+            <option value="${escapeHtml(item.id)}">
                 ${escapeHtml(item.nama)}
             </option>
         `;
@@ -1083,17 +924,16 @@ function isiPilihan(){
     });
 
 
-    kelas.innerHTML = `
-        <option value="">
+    kelas.innerHTML =
+        `<option value="">
             -- Pilih Kelas --
-        </option>
-    `;
+        </option>`;
 
 
-    semuaKelas.forEach(item=>{
+    semuaKelas.forEach(item => {
 
         kelas.innerHTML += `
-            <option value="${item.id}">
+            <option value="${escapeHtml(item.id)}">
                 ${escapeHtml(item.nama_kelas)}
             </option>
         `;
@@ -1101,19 +941,20 @@ function isiPilihan(){
     });
 
 
-    guru.innerHTML = `
-        <option value="">
+    guru.innerHTML =
+        `<option value="">
             -- Pilih Guru --
-        </option>
-    `;
+        </option>`;
 
 
-    semuaGuru.forEach(item=>{
+    semuaGuru.forEach(item => {
 
         guru.innerHTML += `
-            <option value="${item.id}">
+            <option value="${escapeHtml(item.id)}">
                 ${escapeHtml(item.nama)}
-                ${item.nip ? " — " + escapeHtml(item.nip) : ""}
+                ${item.nip
+                    ? " — " + escapeHtml(item.nip)
+                    : ""}
             </option>
         `;
 
@@ -1161,7 +1002,7 @@ function updateSummary(){
 
 
 /* =====================================================
-   TAMPILKAN UJIAN
+   TAMPILKAN DATA
 ===================================================== */
 
 function tampilkanUjian(data){
@@ -1178,6 +1019,9 @@ function tampilkanUjian(data){
             <tr>
                 <td colspan="10" class="empty">
                     📝 Belum ada data ujian.
+                    <br><br>
+                    Klik tombol <strong>➕ Buat Ujian</strong>
+                    untuk menambahkan ujian.
                 </td>
             </tr>
         `;
@@ -1188,18 +1032,37 @@ function tampilkanUjian(data){
 
 
     body.innerHTML =
-        data.map((ujian,index)=>{
+        data.map((ujian,index) => {
+
+            const mapel =
+                semuaMapel.find(
+                    m => m.id === ujian.mata_pelajaran_id
+                );
+
+
+            const kelas =
+                semuaKelas.find(
+                    k => k.id === ujian.kelas_id
+                );
+
+
+            const guru =
+                semuaGuru.find(
+                    g => g.id === ujian.guru_id
+                );
+
 
             const status =
                 ujian.status || "draft";
 
 
-            let statusText =
-                "Draft";
+            let statusText = "Draft";
+
 
             if(status === "aktif"){
                 statusText = "Aktif";
             }
+
 
             if(status === "selesai"){
                 statusText = "Selesai";
@@ -1224,30 +1087,24 @@ function tampilkanUjian(data){
 
                     <td>
                         ${
-                            ujian.mata_pelajaran
-                            ? escapeHtml(
-                                ujian.mata_pelajaran.nama
-                              )
+                            mapel
+                            ? escapeHtml(mapel.nama)
                             : "-"
                         }
                     </td>
 
                     <td>
                         ${
-                            ujian.kelas
-                            ? escapeHtml(
-                                ujian.kelas.nama_kelas
-                              )
+                            kelas
+                            ? escapeHtml(kelas.nama_kelas)
                             : "-"
                         }
                     </td>
 
                     <td>
                         ${
-                            ujian.guru
-                            ? escapeHtml(
-                                ujian.guru.nama
-                              )
+                            guru
+                            ? escapeHtml(guru.nama)
                             : "-"
                         }
                     </td>
@@ -1270,14 +1127,9 @@ function tampilkanUjian(data){
                     </td>
 
                     <td>
-
-                        <span
-                            class="badge ${status}">
-
+                        <span class="badge ${status}">
                             ${statusText}
-
                         </span>
-
                     </td>
 
                     <td>
@@ -1287,17 +1139,13 @@ function tampilkanUjian(data){
                             <button
                                 class="edit"
                                 onclick="editUjian('${ujian.id}')">
-
                                 ✏️ Edit
-
                             </button>
 
                             <button
                                 class="delete"
                                 onclick="hapusUjian('${ujian.id}')">
-
                                 🗑️ Hapus
-
                             </button>
 
                         </div>
@@ -1334,7 +1182,7 @@ function filterUjian(){
 
 
     const hasil =
-        semuaUjian.filter(ujian=>{
+        semuaUjian.filter(ujian => {
 
             const cocokJudul =
                 !keyword ||
@@ -1348,22 +1196,18 @@ function filterUjian(){
                 ujian.status === status;
 
 
-            return
-                cocokJudul &&
-                cocokStatus;
+            return cocokJudul && cocokStatus;
 
         });
 
 
-    tampilkanUjian(
-        hasil
-    );
+    tampilkanUjian(hasil);
 
 }
 
 
 /* =====================================================
-   TAMBAH
+   TAMBAH UJIAN
 ===================================================== */
 
 function bukaTambah(){
@@ -1419,14 +1263,13 @@ function bukaTambah(){
 
     document.getElementById(
         "modal"
-    ).style.display =
-        "flex";
+    ).style.display = "flex";
 
 }
 
 
 /* =====================================================
-   EDIT
+   EDIT UJIAN
 ===================================================== */
 
 function editUjian(id){
@@ -1511,14 +1354,13 @@ function editUjian(id){
 
     document.getElementById(
         "modal"
-    ).style.display =
-        "flex";
+    ).style.display = "flex";
 
 }
 
 
 /* =====================================================
-   SIMPAN
+   SIMPAN UJIAN
 ===================================================== */
 
 async function simpanUjian(){
@@ -1621,7 +1463,8 @@ async function simpanUjian(){
         tanggalMulai &&
         tanggalSelesai &&
         new Date(tanggalSelesai)
-        <= new Date(tanggalMulai)
+        <=
+        new Date(tanggalMulai)
     ){
 
         alert(
@@ -1633,111 +1476,92 @@ async function simpanUjian(){
     }
 
 
+    const payload = {
+
+        judul: judul,
+
+        mata_pelajaran_id:
+            mataPelajaranId,
+
+        kelas_id:
+            kelasId,
+
+        guru_id:
+            guruId || null,
+
+        durasi_menit:
+            durasi,
+
+        tanggal_mulai:
+            tanggalMulai
+            ? new Date(
+                tanggalMulai
+              ).toISOString()
+            : null,
+
+        tanggal_selesai:
+            tanggalSelesai
+            ? new Date(
+                tanggalSelesai
+              ).toISOString()
+            : null,
+
+        status:
+            status
+
+    };
+
+
     try{
 
-        const payload = {
+        if(editId === null){
 
-            judul:
-                judul,
-
-            mata_pelajaran_id:
-                mataPelajaranId,
-
-            kelas_id:
-                kelasId,
-
-            guru_id:
-                guruId || null,
-
-            durasi_menit:
-                durasi,
-
-            tanggal_mulai:
-                tanggalMulai
-                ? new Date(
-                    tanggalMulai
-                  ).toISOString()
-                : null,
-
-            tanggal_selesai:
-                tanggalSelesai
-                ? new Date(
-                    tanggalSelesai
-                  ).toISOString()
-                : null,
-
-            status:
-                status
-
-        };
-
-
-        /* =========================================
-           TAMBAH
-        ========================================= */
-
-        if(!editId){
-
-            const {error} =
+            const hasil =
                 await supabaseClient
                 .from("ujian")
-                .insert(payload);
+                .insert([payload]);
 
 
-            if(error){
+            if(hasil.error){
 
-                console.error(error);
-
-                alert(
-                    "Gagal membuat ujian:\n" +
-                    error.message
+                console.error(
+                    "INSERT ERROR:",
+                    hasil.error
                 );
 
-                return;
+                throw hasil.error;
 
             }
 
 
             showMessage(
-                "Ujian berhasil dibuat.",
+                "✅ Ujian berhasil dibuat.",
                 "success"
             );
 
-        }
+        }else{
 
-
-        /* =========================================
-           EDIT
-        ========================================= */
-
-        else{
-
-            const {error} =
+            const hasil =
                 await supabaseClient
                 .from("ujian")
                 .update(payload)
-                .eq(
-                    "id",
-                    editId
+                .eq("id",editId);
+
+
+            if(hasil.error){
+
+                console.error(
+                    "UPDATE ERROR:",
+                    hasil.error
                 );
 
-
-            if(error){
-
-                console.error(error);
-
-                alert(
-                    "Gagal mengubah ujian:\n" +
-                    error.message
-                );
-
-                return;
+                throw hasil.error;
 
             }
 
 
             showMessage(
-                "Ujian berhasil diperbarui.",
+                "✅ Ujian berhasil diperbarui.",
                 "success"
             );
 
@@ -1754,7 +1578,7 @@ async function simpanUjian(){
         console.error(error);
 
         alert(
-            "Terjadi kesalahan:\n" +
+            "❌ Gagal menyimpan ujian:\n\n" +
             error.message
         );
 
@@ -1764,7 +1588,7 @@ async function simpanUjian(){
 
 
 /* =====================================================
-   HAPUS
+   HAPUS UJIAN
 ===================================================== */
 
 async function hapusUjian(id){
@@ -1800,32 +1624,27 @@ async function hapusUjian(id){
 
     try{
 
-        const {error} =
+        const hasil =
             await supabaseClient
             .from("ujian")
             .delete()
-            .eq(
-                "id",
-                id
+            .eq("id",id);
+
+
+        if(hasil.error){
+
+            console.error(
+                "DELETE ERROR:",
+                hasil.error
             );
 
-
-        if(error){
-
-            console.error(error);
-
-            alert(
-                "Gagal menghapus ujian:\n" +
-                error.message
-            );
-
-            return;
+            throw hasil.error;
 
         }
 
 
         showMessage(
-            "Ujian berhasil dihapus.",
+            "✅ Ujian berhasil dihapus.",
             "success"
         );
 
@@ -1838,7 +1657,7 @@ async function hapusUjian(id){
         console.error(error);
 
         alert(
-            "Terjadi kesalahan:\n" +
+            "❌ Gagal menghapus ujian:\n\n" +
             error.message
         );
 
@@ -1848,7 +1667,7 @@ async function hapusUjian(id){
 
 
 /* =====================================================
-   MODAL
+   TUTUP MODAL
 ===================================================== */
 
 function tutupModal(){
@@ -1963,7 +1782,7 @@ function kembaliDashboard(){
 
 
 /* =====================================================
-   KLIK LUAR MODAL
+   KLIK DI LUAR MODAL
 ===================================================== */
 
 document
