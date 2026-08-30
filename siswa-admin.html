@@ -1,0 +1,1315 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Daftar Siswa - Admin | RUANG EXAM</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f5f9;
+    color:#0f172a;
+}
+
+/* HEADER */
+.header{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    color:white;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+}
+
+.header h1{
+    font-size:23px;
+}
+
+.header p{
+    font-size:13px;
+    opacity:.85;
+    margin-top:5px;
+}
+
+.header-buttons{
+    display:flex;
+    gap:8px;
+}
+
+.btn{
+    border:none;
+    border-radius:9px;
+    padding:10px 14px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-back{
+    background:white;
+    color:#1d4ed8;
+}
+
+.btn-refresh{
+    background:#22c55e;
+    color:white;
+}
+
+/* CONTAINER */
+.container{
+    max-width:1250px;
+    margin:25px auto;
+    padding:0 20px;
+}
+
+/* TOOLBAR */
+.toolbar{
+    background:white;
+    padding:18px;
+    border-radius:15px;
+    display:flex;
+    gap:12px;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    margin-bottom:18px;
+}
+
+.search{
+    flex:1;
+    min-width:230px;
+}
+
+.search input{
+    width:100%;
+    padding:12px 14px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    outline:none;
+}
+
+.search input:focus{
+    border-color:#2563eb;
+}
+
+.btn-add{
+    background:#2563eb;
+    color:white;
+    padding:12px 18px;
+}
+
+/* TABLE */
+.table-box{
+    background:white;
+    border-radius:15px;
+    overflow:auto;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:850px;
+}
+
+th{
+    background:#eff6ff;
+    color:#1e3a8a;
+    padding:14px;
+    text-align:left;
+    font-size:13px;
+}
+
+td{
+    padding:13px 14px;
+    border-top:1px solid #e2e8f0;
+    font-size:13px;
+}
+
+tr:hover td{
+    background:#f8fafc;
+}
+
+.empty{
+    text-align:center;
+    padding:35px;
+    color:#64748b;
+}
+
+/* ACTION */
+.action{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.action button{
+    border:none;
+    border-radius:7px;
+    padding:7px 9px;
+    cursor:pointer;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.edit{
+    background:#f59e0b;
+    color:white;
+}
+
+.reset{
+    background:#8b5cf6;
+    color:white;
+}
+
+.delete{
+    background:#ef4444;
+    color:white;
+}
+
+/* MODAL */
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.55);
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    z-index:100;
+}
+
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:480px;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+
+.modal-box h2{
+    margin-bottom:18px;
+}
+
+.form-group{
+    margin-bottom:15px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:6px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.form-group input,
+.form-group select{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    outline:none;
+    background:white;
+}
+
+.modal-buttons{
+    display:flex;
+    gap:10px;
+    justify-content:flex-end;
+    margin-top:20px;
+}
+
+.cancel{
+    background:#e2e8f0;
+    color:#334155;
+}
+
+.save{
+    background:#2563eb;
+    color:white;
+}
+
+/* MESSAGE */
+.message{
+    display:none;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:18px;
+    text-align:center;
+    font-size:13px;
+}
+
+.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.info{
+    display:block;
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+/* FOOTER */
+.footer{
+    text-align:center;
+    color:#94a3b8;
+    font-size:12px;
+    padding:30px;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+    .container{
+        padding:0 12px;
+    }
+
+    .header{
+        padding:18px;
+    }
+
+    .header-buttons{
+        width:100%;
+    }
+
+    .header-buttons .btn{
+        flex:1;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div>
+        <h1>👨‍🎓 DAFTAR SISWA</h1>
+        <p>RUANG EXAM — SMP Negeri 3 Sibolga</p>
+    </div>
+
+    <div class="header-buttons">
+
+        <button
+            class="btn btn-back"
+            onclick="kembaliDashboard()">
+            ← Dashboard
+        </button>
+
+        <button
+            class="btn btn-refresh"
+            onclick="loadSiswa()">
+            🔄 Refresh
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div id="message" class="message"></div>
+
+
+    <div class="toolbar">
+
+        <div class="search">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="🔍 Cari nama, NISN, atau kelas..."
+                oninput="filterSiswa()">
+
+        </div>
+
+        <button
+            class="btn btn-add"
+            onclick="bukaTambah()">
+            ➕ Tambah Siswa
+        </button>
+
+    </div>
+
+
+    <div class="table-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>No</th>
+                    <th>Nama</th>
+                    <th>NISN</th>
+                    <th>Kelas</th>
+                    <th>Aksi</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="siswaBody">
+
+                <tr>
+                    <td colspan="5" class="empty">
+                        Memuat data siswa...
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</main>
+
+
+<footer class="footer">
+
+    RUANG EXAM Online<br>
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+</footer>
+
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+
+    <div class="modal-box">
+
+        <h2 id="modalTitle">
+            Tambah Siswa
+        </h2>
+
+        <div class="form-group">
+
+            <label>
+                Nama Siswa
+            </label>
+
+            <input
+                type="text"
+                id="nama"
+                placeholder="Masukkan nama siswa">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                NISN
+            </label>
+
+            <input
+                type="text"
+                id="nisn"
+                placeholder="Masukkan NISN">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Kelas
+            </label>
+
+            <input
+                type="text"
+                id="kelas"
+                placeholder="Contoh: 7A">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Masukkan password">
+
+        </div>
+
+
+        <div class="modal-buttons">
+
+            <button
+                class="btn cancel"
+                onclick="tutupModal()">
+                Batal
+            </button>
+
+            <button
+                class="btn save"
+                onclick="simpanSiswa()">
+                💾 Simpan
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =====================================================
+   SESSION ADMIN
+===================================================== */
+
+const sessionRaw =
+    localStorage.getItem("exam_user");
+
+
+if(!sessionRaw){
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+let currentUser = null;
+
+try{
+
+    currentUser =
+        JSON.parse(sessionRaw);
+
+    if(currentUser.role !== "admin"){
+
+        localStorage.removeItem(
+            "exam_user"
+        );
+
+        window.location.href =
+            "login.html";
+
+    }
+
+}catch(error){
+
+    localStorage.removeItem(
+        "exam_user"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let semuaSiswa = [];
+
+let editId = null;
+
+
+/* =====================================================
+   PESAN
+===================================================== */
+
+function showMessage(text,type){
+
+    const message =
+        document.getElementById("message");
+
+    message.textContent = text;
+
+    message.className =
+        "message " + type;
+
+}
+
+function hideMessage(){
+
+    const message =
+        document.getElementById("message");
+
+    message.textContent = "";
+
+    message.className =
+        "message";
+
+}
+
+
+/* =====================================================
+   LOAD SISWA
+===================================================== */
+
+async function loadSiswa(){
+
+    hideMessage();
+
+    const body =
+        document.getElementById("siswaBody");
+
+    body.innerHTML = `
+        <tr>
+            <td colspan="5" class="empty">
+                ⏳ Memuat data siswa...
+            </td>
+        </tr>
+    `;
+
+
+    try{
+
+        const { data,error } =
+            await supabaseClient
+            .from("siswa")
+            .select("id,nama,nisn,kelas,password,created_at")
+            .order("nama",{ascending:true});
+
+
+        if(error){
+
+            console.error(error);
+
+            body.innerHTML = `
+                <tr>
+                    <td colspan="5" class="empty">
+                        Gagal memuat data siswa.
+                    </td>
+                </tr>
+            `;
+
+            showMessage(
+                "Gagal mengambil data siswa: " +
+                error.message,
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        semuaSiswa =
+            data || [];
+
+        tampilkanSiswa(
+            semuaSiswa
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Terjadi kesalahan sistem: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   TAMPILKAN SISWA
+===================================================== */
+
+function tampilkanSiswa(data){
+
+    const body =
+        document.getElementById("siswaBody");
+
+
+    if(!data.length){
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="5" class="empty">
+                    Belum ada data siswa.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    body.innerHTML =
+        data.map((siswa,index)=>{
+
+            return `
+
+                <tr>
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${escapeHtml(siswa.nama || "-")}
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${escapeHtml(siswa.nisn || "-")}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(siswa.kelas || "-")}
+                    </td>
+
+                    <td>
+
+                        <div class="action">
+
+                            <button
+                                class="edit"
+                                onclick="editSiswa('${siswa.id}')">
+                                ✏️ Edit
+                            </button>
+
+                            <button
+                                class="reset"
+                                onclick="resetPassword('${siswa.id}')">
+                                🔑 Reset
+                            </button>
+
+                            <button
+                                class="delete"
+                                onclick="hapusSiswa('${siswa.id}')">
+                                🗑️ Hapus
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }).join("");
+
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+function filterSiswa(){
+
+    const keyword =
+        document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    if(!keyword){
+
+        tampilkanSiswa(
+            semuaSiswa
+        );
+
+        return;
+
+    }
+
+
+    const hasil =
+        semuaSiswa.filter(siswa => {
+
+            return (
+
+                (siswa.nama || "")
+                .toLowerCase()
+                .includes(keyword)
+
+                ||
+
+                (siswa.nisn || "")
+                .toLowerCase()
+                .includes(keyword)
+
+                ||
+
+                (siswa.kelas || "")
+                .toLowerCase()
+                .includes(keyword)
+
+            );
+
+        });
+
+
+    tampilkanSiswa(
+        hasil
+    );
+
+}
+
+
+/* =====================================================
+   TAMBAH
+===================================================== */
+
+function bukaTambah(){
+
+    editId = null;
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Tambah Siswa";
+
+
+    document.getElementById(
+        "nama"
+    ).value = "";
+
+    document.getElementById(
+        "nisn"
+    ).value = "";
+
+    document.getElementById(
+        "kelas"
+    ).value = "";
+
+    document.getElementById(
+        "password"
+    ).value = "";
+
+
+    document.getElementById(
+        "password"
+    ).placeholder =
+        "Password siswa";
+
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* =====================================================
+   EDIT
+===================================================== */
+
+function editSiswa(id){
+
+    const siswa =
+        semuaSiswa.find(
+            item => item.id === id
+        );
+
+
+    if(!siswa){
+
+        showMessage(
+            "Data siswa tidak ditemukan.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    editId = id;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Edit Siswa";
+
+
+    document.getElementById(
+        "nama"
+    ).value =
+        siswa.nama || "";
+
+
+    document.getElementById(
+        "nisn"
+    ).value =
+        siswa.nisn || "";
+
+
+    document.getElementById(
+        "kelas"
+    ).value =
+        siswa.kelas || "";
+
+
+    document.getElementById(
+        "password"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "password"
+    ).placeholder =
+        "Kosongkan jika tidak diubah";
+
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* =====================================================
+   SIMPAN
+===================================================== */
+
+async function simpanSiswa(){
+
+    const nama =
+        document.getElementById("nama")
+        .value
+        .trim();
+
+    const nisn =
+        document.getElementById("nisn")
+        .value
+        .trim();
+
+    const kelas =
+        document.getElementById("kelas")
+        .value
+        .trim();
+
+    const password =
+        document.getElementById("password")
+        .value;
+
+
+    if(!nama || !nisn || !kelas){
+
+        alert(
+            "Nama, NISN, dan kelas wajib diisi."
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        /* TAMBAH */
+
+        if(!editId){
+
+            if(!password){
+
+                alert(
+                    "Password wajib diisi saat menambah siswa."
+                );
+
+                return;
+
+            }
+
+
+            const { data,error } =
+                await supabaseClient
+                .from("siswa")
+                .insert({
+
+                    nama:nama,
+
+                    nisn:nisn,
+
+                    kelas:kelas,
+
+                    password:password
+
+                })
+                .select();
+
+
+            if(error){
+
+                console.error(error);
+
+                alert(
+                    "Gagal menambah siswa:\n" +
+                    error.message
+                );
+
+                return;
+
+            }
+
+
+            showMessage(
+                "Siswa berhasil ditambahkan.",
+                "success"
+            );
+
+        }
+
+
+        /* EDIT */
+
+        else{
+
+            const updateData = {
+
+                nama:nama,
+
+                nisn:nisn,
+
+                kelas:kelas
+
+            };
+
+
+            if(password){
+
+                updateData.password =
+                    password;
+
+            }
+
+
+            const { error } =
+                await supabaseClient
+                .from("siswa")
+                .update(updateData)
+                .eq("id",editId);
+
+
+            if(error){
+
+                console.error(error);
+
+                alert(
+                    "Gagal mengubah siswa:\n" +
+                    error.message
+                );
+
+                return;
+
+            }
+
+
+            showMessage(
+                "Data siswa berhasil diperbarui.",
+                "success"
+            );
+
+        }
+
+
+        tutupModal();
+
+        await loadSiswa();
+
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Terjadi kesalahan:\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   RESET PASSWORD
+===================================================== */
+
+async function resetPassword(id){
+
+    const siswa =
+        semuaSiswa.find(
+            item => item.id === id
+        );
+
+
+    if(!siswa){
+
+        return;
+
+    }
+
+
+    const passwordBaru =
+        prompt(
+            "Masukkan password baru untuk " +
+            siswa.nama
+        );
+
+
+    if(passwordBaru === null){
+
+        return;
+
+    }
+
+
+    if(!passwordBaru.trim()){
+
+        alert(
+            "Password tidak boleh kosong."
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        const { error } =
+            await supabaseClient
+            .from("siswa")
+            .update({
+
+                password:
+                    passwordBaru.trim()
+
+            })
+            .eq("id",id);
+
+
+        if(error){
+
+            console.error(error);
+
+            alert(
+                "Gagal reset password:\n" +
+                error.message
+            );
+
+            return;
+
+        }
+
+
+        showMessage(
+            "Password " +
+            siswa.nama +
+            " berhasil diubah.",
+            "success"
+        );
+
+
+        await loadSiswa();
+
+
+    }catch(error){
+
+        alert(
+            "Terjadi kesalahan:\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   HAPUS
+===================================================== */
+
+async function hapusSiswa(id){
+
+    const siswa =
+        semuaSiswa.find(
+            item => item.id === id
+        );
+
+
+    if(!siswa){
+
+        return;
+
+    }
+
+
+    const yakin =
+        confirm(
+            "Hapus siswa \"" +
+            siswa.nama +
+            "\"?\n\n" +
+            "Data yang dihapus tidak dapat dikembalikan."
+        );
+
+
+    if(!yakin){
+
+        return;
+
+    }
+
+
+    try{
+
+        const { error } =
+            await supabaseClient
+            .from("siswa")
+            .delete()
+            .eq("id",id);
+
+
+        if(error){
+
+            console.error(error);
+
+            alert(
+                "Gagal menghapus siswa:\n" +
+                error.message
+            );
+
+            return;
+
+        }
+
+
+        showMessage(
+            "Siswa berhasil dihapus.",
+            "success"
+        );
+
+
+        await loadSiswa();
+
+
+    }catch(error){
+
+        alert(
+            "Terjadi kesalahan:\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function tutupModal(){
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "none";
+
+    editId = null;
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function kembaliDashboard(){
+
+    window.location.href =
+        "admin.html";
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   LOAD AWAL
+===================================================== */
+
+loadSiswa();
+
+</script>
+
+</body>
+</html>
+```
