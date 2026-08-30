@@ -1,0 +1,723 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Login EXAM - SMP Negeri 3 Sibolga</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    min-height:100vh;
+    font-family:Arial, Helvetica, sans-serif;
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.login-container{
+    width:100%;
+    max-width:430px;
+}
+
+.card{
+    background:#ffffff;
+    border-radius:24px;
+    padding:32px;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+
+.logo{
+    width:80px;
+    height:80px;
+    margin:0 auto 15px;
+    border-radius:50%;
+    background:#1d4ed8;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:32px;
+    font-weight:bold;
+}
+
+h1{
+    text-align:center;
+    color:#0f172a;
+    font-size:25px;
+    margin-bottom:5px;
+}
+
+.school{
+    text-align:center;
+    color:#64748b;
+    font-size:14px;
+    margin-bottom:25px;
+}
+
+.role-buttons{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-bottom:22px;
+}
+
+.role-btn{
+    border:1px solid #cbd5e1;
+    background:#f8fafc;
+    color:#334155;
+    padding:11px 5px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+    font-size:13px;
+}
+
+.role-btn.active{
+    background:#2563eb;
+    color:white;
+    border-color:#2563eb;
+}
+
+label{
+    display:block;
+    margin-bottom:7px;
+    color:#334155;
+    font-weight:bold;
+    font-size:14px;
+}
+
+.input-group{
+    position:relative;
+    margin-bottom:18px;
+}
+
+input{
+    width:100%;
+    padding:13px 45px 13px 14px;
+    border:1px solid #cbd5e1;
+    border-radius:11px;
+    outline:none;
+    font-size:15px;
+}
+
+input:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.12);
+}
+
+.password-toggle{
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    border:none;
+    background:none;
+    cursor:pointer;
+    font-size:18px;
+}
+
+.login-btn{
+    width:100%;
+    border:none;
+    background:#2563eb;
+    color:white;
+    padding:14px;
+    border-radius:11px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:5px;
+}
+
+.login-btn:hover{
+    background:#1d4ed8;
+}
+
+.login-btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.message{
+    display:none;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:17px;
+    font-size:14px;
+    text-align:center;
+}
+
+.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.info{
+    display:block;
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+.footer{
+    text-align:center;
+    margin-top:22px;
+    color:#94a3b8;
+    font-size:12px;
+    line-height:1.6;
+}
+
+.role-info{
+    text-align:center;
+    color:#64748b;
+    font-size:13px;
+    margin-bottom:18px;
+}
+
+@media(max-width:380px){
+    .card{
+        padding:24px 18px;
+    }
+
+    .role-btn{
+        font-size:11px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <div class="card">
+
+        <div class="logo">EX</div>
+
+        <h1>RUANG EXAM</h1>
+
+        <div class="school">
+            SMP Negeri 3 Sibolga
+        </div>
+
+        <div class="role-buttons">
+
+            <button
+                class="role-btn active"
+                id="btnAdmin"
+                onclick="pilihRole('admin')">
+                👑 Admin
+            </button>
+
+            <button
+                class="role-btn"
+                id="btnGuru"
+                onclick="pilihRole('guru')">
+                👨‍🏫 Guru
+            </button>
+
+            <button
+                class="role-btn"
+                id="btnSiswa"
+                onclick="pilihRole('siswa')">
+                👨‍🎓 Siswa
+            </button>
+
+        </div>
+
+        <div class="role-info" id="roleInfo">
+            Login Admin menggunakan username dan password
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <form id="loginForm">
+
+            <label id="usernameLabel">
+                Username Admin
+            </label>
+
+            <div class="input-group">
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="Masukkan username"
+                    autocomplete="username"
+                    required>
+            </div>
+
+            <label>
+                Password
+            </label>
+
+            <div class="input-group">
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Masukkan password"
+                    autocomplete="current-password"
+                    required>
+
+                <button
+                    type="button"
+                    class="password-toggle"
+                    onclick="togglePassword()"
+                    id="toggleBtn">
+                    👁️
+                </button>
+
+            </div>
+
+            <button
+                type="submit"
+                class="login-btn"
+                id="loginBtn">
+                🔐 LOGIN
+            </button>
+
+        </form>
+
+        <div class="footer">
+            EXAM Online<br>
+            Dibuat oleh Mr. Rahmat Batubara, S.T.P
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+// ======================================================
+// KONFIGURASI SUPABASE
+// ======================================================
+
+const SUPABASE_URL =
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+// ======================================================
+// ROLE LOGIN
+// ======================================================
+
+let roleAktif = "admin";
+
+
+// ======================================================
+// PILIH ROLE
+// ======================================================
+
+function pilihRole(role){
+
+    roleAktif = role;
+
+    document
+        .querySelectorAll(".role-btn")
+        .forEach(btn => btn.classList.remove("active"));
+
+    if(role === "admin"){
+
+        document
+            .getElementById("btnAdmin")
+            .classList.add("active");
+
+        document.getElementById("usernameLabel").textContent =
+            "Username Admin";
+
+        document.getElementById("username").placeholder =
+            "Contoh: admin1";
+
+        document.getElementById("roleInfo").textContent =
+            "Login Admin menggunakan username dan password";
+
+    }
+
+    else if(role === "guru"){
+
+        document
+            .getElementById("btnGuru")
+            .classList.add("active");
+
+        document.getElementById("usernameLabel").textContent =
+            "NIP / NIK Guru";
+
+        document.getElementById("username").placeholder =
+            "Masukkan NIP / NIK";
+
+        document.getElementById("roleInfo").textContent =
+            "Login Guru menggunakan NIP / NIK dan password";
+
+    }
+
+    else if(role === "siswa"){
+
+        document
+            .getElementById("btnSiswa")
+            .classList.add("active");
+
+        document.getElementById("usernameLabel").textContent =
+            "NISN Siswa";
+
+        document.getElementById("username").placeholder =
+            "Masukkan NISN";
+
+        document.getElementById("roleInfo").textContent =
+            "Login Siswa menggunakan NISN dan password";
+
+    }
+
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+
+    hideMessage();
+}
+
+
+// ======================================================
+// SHOW / HIDE PASSWORD
+// ======================================================
+
+function togglePassword(){
+
+    const input =
+        document.getElementById("password");
+
+    const button =
+        document.getElementById("toggleBtn");
+
+    if(input.type === "password"){
+
+        input.type = "text";
+        button.textContent = "🙈";
+
+    }else{
+
+        input.type = "password";
+        button.textContent = "👁️";
+
+    }
+}
+
+
+// ======================================================
+// PESAN
+// ======================================================
+
+function showMessage(text, type){
+
+    const message =
+        document.getElementById("message");
+
+    message.textContent = text;
+
+    message.className =
+        "message " + type;
+
+}
+
+function hideMessage(){
+
+    const message =
+        document.getElementById("message");
+
+    message.textContent = "";
+
+    message.className = "message";
+
+}
+
+
+// ======================================================
+// LOGIN
+// ======================================================
+
+document
+.getElementById("loginForm")
+.addEventListener("submit", async function(e){
+
+    e.preventDefault();
+
+    const username =
+        document
+        .getElementById("username")
+        .value
+        .trim();
+
+    const password =
+        document
+        .getElementById("password")
+        .value;
+
+    const loginBtn =
+        document.getElementById("loginBtn");
+
+    if(!username || !password){
+
+        showMessage(
+            "Username/NIP/NISN dan password wajib diisi.",
+            "error"
+        );
+
+        return;
+    }
+
+    loginBtn.disabled = true;
+    loginBtn.textContent = "⏳ MEMERIKSA...";
+
+    hideMessage();
+
+    try{
+
+        let data = null;
+        let error = null;
+
+        // ==================================================
+        // ADMIN
+        // ==================================================
+
+        if(roleAktif === "admin"){
+
+            const result =
+                await supabaseClient
+                .from("admin")
+                .select("id,nama,username,password")
+                .eq("username", username)
+                .eq("password", password)
+                .maybeSingle();
+
+            data = result.data;
+            error = result.error;
+
+        }
+
+        // ==================================================
+        // GURU
+        // ==================================================
+
+        else if(roleAktif === "guru"){
+
+            const result =
+                await supabaseClient
+                .from("guru")
+                .select("id,nama,nip,password,user_id")
+                .eq("nip", username)
+                .eq("password", password)
+                .maybeSingle();
+
+            data = result.data;
+            error = result.error;
+
+        }
+
+        // ==================================================
+        // SISWA
+        // ==================================================
+
+        else if(roleAktif === "siswa"){
+
+            const result =
+                await supabaseClient
+                .from("siswa")
+                .select("id,nama,nisn,kelas,password")
+                .eq("nisn", username)
+                .eq("password", password)
+                .maybeSingle();
+
+            data = result.data;
+            error = result.error;
+
+        }
+
+
+        if(error){
+
+            console.error(error);
+
+            showMessage(
+                "Terjadi kesalahan saat menghubungi database.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if(!data){
+
+            showMessage(
+                "Login gagal. Periksa username/NIP/NISN dan password.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        // ==================================================
+        // SIMPAN SESSION LOKAL
+        // ==================================================
+
+        const sessionData = {
+
+            id: data.id,
+
+            nama: data.nama,
+
+            role: roleAktif,
+
+            loginAt:
+                new Date().toISOString()
+
+        };
+
+
+        if(roleAktif === "admin"){
+
+            sessionData.username =
+                data.username;
+
+        }
+
+        if(roleAktif === "guru"){
+
+            sessionData.nip =
+                data.nip;
+
+        }
+
+        if(roleAktif === "siswa"){
+
+            sessionData.nisn =
+                data.nisn;
+
+            sessionData.kelas =
+                data.kelas;
+
+        }
+
+
+        localStorage.setItem(
+            "exam_user",
+            JSON.stringify(sessionData)
+        );
+
+
+        // ==================================================
+        // BERHASIL
+        // ==================================================
+
+        showMessage(
+            "Login berhasil. Membuka dashboard...",
+            "success"
+        );
+
+
+        setTimeout(function(){
+
+            if(roleAktif === "admin"){
+
+                window.location.href =
+                    "admin.html";
+
+            }
+
+            else if(roleAktif === "guru"){
+
+                window.location.href =
+                    "guru.html";
+
+            }
+
+            else if(roleAktif === "siswa"){
+
+                window.location.href =
+                    "siswa.html";
+
+            }
+
+        }, 700);
+
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+        showMessage(
+            "Terjadi kesalahan sistem: " + err.message,
+            "error"
+        );
+
+    }
+
+    finally{
+
+        loginBtn.disabled = false;
+        loginBtn.textContent = "🔐 LOGIN";
+
+    }
+
+});
+
+
+// ======================================================
+// CEK SESSION SAAT HALAMAN DIBUKA
+// ======================================================
+
+const userTersimpan =
+    localStorage.getItem("exam_user");
+
+if(userTersimpan){
+
+    try{
+
+        const user =
+            JSON.parse(userTersimpan);
+
+        console.log(
+            "Session ditemukan:",
+            user
+        );
+
+    }catch(e){
+
+        localStorage.removeItem("exam_user");
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
+```
