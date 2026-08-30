@@ -1,0 +1,696 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Data Guru - EXAM SMPN 3 Sibolga</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 min-h-screen text-slate-800">
+
+<!-- HEADER -->
+<header class="bg-blue-900 text-white shadow-md">
+  <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+
+    <div>
+      <h1 class="text-xl font-bold">
+        Data Guru
+      </h1>
+
+      <p class="text-xs text-blue-200">
+        EXAM SMP Negeri 3 Sibolga
+      </p>
+    </div>
+
+    <div class="flex gap-2">
+
+      <button
+        onclick="window.location.href='admin.html'"
+        class="bg-slate-600 hover:bg-slate-700 px-4 py-2 rounded-lg text-sm font-semibold">
+        ← Admin
+      </button>
+
+      <button
+        id="btnLogout"
+        class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-semibold">
+        Keluar
+      </button>
+
+    </div>
+  </div>
+</header>
+
+
+<main class="container mx-auto px-4 py-6">
+
+<!-- STATUS -->
+
+<div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
+
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+
+    <div>
+      <p class="text-sm text-slate-500">
+        Total Guru
+      </p>
+
+      <p
+        id="totalGuru"
+        class="text-3xl font-bold text-blue-700">
+        0
+      </p>
+    </div>
+
+    <div
+      id="statusKoneksi"
+      class="px-3 py-2 rounded-lg bg-yellow-100 text-yellow-800 text-sm font-semibold">
+      Memuat data...
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- SEARCH -->
+
+<div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
+
+  <div class="flex flex-col md:flex-row gap-3">
+
+    <input
+      id="searchGuru"
+      type="text"
+      placeholder="🔎 Cari nama, NIP/NIK, NUPTK..."
+      class="flex-1 px-4 py-3 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+
+    <button
+      onclick="loadGuru()"
+      class="bg-blue-700 hover:bg-blue-800 text-white px-5 py-3 rounded-lg font-semibold">
+      🔄 Refresh
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- TABLE -->
+
+<div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+
+  <div class="overflow-x-auto">
+
+    <table class="min-w-full text-sm">
+
+      <thead class="bg-slate-100 border-b">
+
+        <tr>
+
+          <th class="px-4 py-3 text-left">
+            No
+          </th>
+
+          <th class="px-4 py-3 text-left">
+            Nama
+          </th>
+
+          <th class="px-4 py-3 text-left">
+            NIP / NIK
+          </th>
+
+          <th class="px-4 py-3 text-left">
+            NUPTK
+          </th>
+
+          <th class="px-4 py-3 text-left">
+            JK
+          </th>
+
+          <th class="px-4 py-3 text-left">
+            Status Kepegawaian
+          </th>
+
+          <th class="px-4 py-3 text-left">
+            Jenis PTK
+          </th>
+
+          <th class="px-4 py-3 text-left">
+            Akun
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody id="tabelGuru">
+
+        <tr>
+
+          <td
+            colspan="8"
+            class="px-4 py-8 text-center text-slate-500">
+
+            Memuat data guru...
+
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+
+<!-- INFO -->
+
+<div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
+
+  <p class="text-sm font-semibold text-blue-900">
+    ℹ️ Informasi
+  </p>
+
+  <p class="text-xs text-blue-800 mt-1">
+    Data diambil langsung dari tabel
+    <b>guru_master</b>.
+    Jangan menghapus data guru dari halaman ini
+    sebelum fungsi administrasi lengkap dibuat.
+  </p>
+
+</div>
+
+</main>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+'https://sztfucrmjexoalyiwwnq.supabase.co';
+
+const SUPABASE_ANON_KEY =
+'sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn';
+
+const supabaseClient =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+
+/* =====================================================
+   ELEMENT
+===================================================== */
+
+const tabelGuru =
+document.getElementById('tabelGuru');
+
+const totalGuru =
+document.getElementById('totalGuru');
+
+const statusKoneksi =
+document.getElementById('statusKoneksi');
+
+const searchGuru =
+document.getElementById('searchGuru');
+
+
+let semuaGuru = [];
+
+
+/* =====================================================
+   CEK ADMIN
+===================================================== */
+
+async function cekAdmin(){
+
+  const {
+    data: {
+      session
+    },
+    error
+  } =
+  await supabaseClient.auth.getSession();
+
+
+  if(error){
+
+    console.error(error);
+
+    window.location.href =
+    'index.html';
+
+    return false;
+
+  }
+
+
+  if(!session){
+
+    alert(
+      'Silakan login sebagai Admin terlebih dahulu.'
+    );
+
+    window.location.href =
+    'index.html';
+
+    return false;
+
+  }
+
+
+  const {
+    data: profile,
+    error: profileError
+  } =
+  await supabaseClient
+    .from('profiles')
+    .select('role')
+    .eq(
+      'user_id',
+      session.user.id
+    )
+    .maybeSingle();
+
+
+  if(profileError){
+
+    console.error(profileError);
+
+    alert(
+      'Gagal memeriksa akun Admin.'
+    );
+
+    window.location.href =
+    'index.html';
+
+    return false;
+
+  }
+
+
+  if(!profile || profile.role !== 'admin'){
+
+    alert(
+      'Halaman ini khusus Admin.'
+    );
+
+    window.location.href =
+    'index.html';
+
+    return false;
+
+  }
+
+
+  return true;
+
+}
+
+
+/* =====================================================
+   LOAD GURU
+===================================================== */
+
+async function loadGuru(){
+
+  statusKoneksi.innerText =
+  'Memuat data...';
+
+  statusKoneksi.className =
+  'px-3 py-2 rounded-lg bg-yellow-100 text-yellow-800 text-sm font-semibold';
+
+
+  tabelGuru.innerHTML = `
+    <tr>
+      <td colspan="8"
+          class="px-4 py-8 text-center text-slate-500">
+        Memuat data guru...
+      </td>
+    </tr>
+  `;
+
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+    await supabaseClient
+      .from('guru_master')
+      .select(`
+        id,
+        nama,
+        nuptk,
+        jk,
+        tempat_lahir,
+        tanggal_lahir,
+        nip_nik,
+        status_kepegawaian,
+        jenis_ptk,
+        user_id,
+        is_active,
+        created_at
+      `)
+      .order(
+        'nama',
+        {
+          ascending:true
+        }
+      );
+
+
+    if(error){
+
+      console.error(
+        'GURU ERROR:',
+        error
+      );
+
+      statusKoneksi.innerText =
+      'Gagal membaca data ❌';
+
+      statusKoneksi.className =
+      'px-3 py-2 rounded-lg bg-red-100 text-red-800 text-sm font-semibold';
+
+
+      tabelGuru.innerHTML = `
+        <tr>
+          <td colspan="8"
+              class="px-4 py-8 text-center text-red-600">
+            Gagal membaca guru_master:
+            ${escapeHTML(error.message)}
+          </td>
+        </tr>
+      `;
+
+      return;
+
+    }
+
+
+    semuaGuru =
+    data || [];
+
+
+    totalGuru.innerText =
+    semuaGuru.length;
+
+
+    statusKoneksi.innerText =
+    'Terhubung ke Supabase ✅';
+
+    statusKoneksi.className =
+    'px-3 py-2 rounded-lg bg-emerald-100 text-emerald-800 text-sm font-semibold';
+
+
+    tampilkanGuru(
+      semuaGuru
+    );
+
+  }
+
+  catch(err){
+
+    console.error(err);
+
+    statusKoneksi.innerText =
+    'Terjadi kesalahan ❌';
+
+    statusKoneksi.className =
+    'px-3 py-2 rounded-lg bg-red-100 text-red-800 text-sm font-semibold';
+
+    tabelGuru.innerHTML = `
+      <tr>
+        <td colspan="8"
+            class="px-4 py-8 text-center text-red-600">
+          ${escapeHTML(err.message)}
+        </td>
+      </tr>
+    `;
+
+  }
+
+}
+
+
+/* =====================================================
+   TAMPILKAN GURU
+===================================================== */
+
+function tampilkanGuru(data){
+
+  if(!data.length){
+
+    tabelGuru.innerHTML = `
+      <tr>
+        <td colspan="8"
+            class="px-4 py-8 text-center text-slate-500">
+          Tidak ada data guru.
+        </td>
+      </tr>
+    `;
+
+    return;
+
+  }
+
+
+  tabelGuru.innerHTML =
+  data.map(
+    (guru,index)=>{
+
+      const aktif =
+      guru.is_active === true &&
+      !!guru.user_id;
+
+
+      return `
+
+      <tr class="border-b hover:bg-slate-50">
+
+        <td class="px-4 py-3">
+          ${index + 1}
+        </td>
+
+
+        <td class="px-4 py-3 font-semibold whitespace-nowrap">
+          ${escapeHTML(guru.nama || '-')}
+        </td>
+
+
+        <td class="px-4 py-3 whitespace-nowrap">
+          ${escapeHTML(guru.nip_nik || '-')}
+        </td>
+
+
+        <td class="px-4 py-3 whitespace-nowrap">
+          ${escapeHTML(guru.nuptk || '-')}
+        </td>
+
+
+        <td class="px-4 py-3">
+          ${escapeHTML(guru.jk || '-')}
+        </td>
+
+
+        <td class="px-4 py-3">
+          ${escapeHTML(guru.status_kepegawaian || '-')}
+        </td>
+
+
+        <td class="px-4 py-3">
+          ${escapeHTML(guru.jenis_ptk || '-')}
+        </td>
+
+
+        <td class="px-4 py-3">
+
+          ${
+            aktif
+
+            ?
+
+            `<span
+              class="inline-block px-2 py-1 rounded-full
+                     bg-emerald-100 text-emerald-700
+                     text-xs font-semibold">
+              Aktif
+            </span>`
+
+            :
+
+            `<span
+              class="inline-block px-2 py-1 rounded-full
+                     bg-orange-100 text-orange-700
+                     text-xs font-semibold">
+              Belum Aktif
+            </span>`
+          }
+
+        </td>
+
+      </tr>
+
+      `;
+
+    }
+  ).join('');
+
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+searchGuru.addEventListener(
+  'input',
+  function(){
+
+    const keyword =
+    this.value
+      .toLowerCase()
+      .trim();
+
+
+    if(!keyword){
+
+      tampilkanGuru(
+        semuaGuru
+      );
+
+      return;
+
+    }
+
+
+    const hasil =
+    semuaGuru.filter(
+      guru=>{
+
+        return (
+
+          String(
+            guru.nama || ''
+          ).toLowerCase().includes(keyword)
+
+          ||
+
+          String(
+            guru.nip_nik || ''
+          ).toLowerCase().includes(keyword)
+
+          ||
+
+          String(
+            guru.nuptk || ''
+          ).toLowerCase().includes(keyword)
+
+          ||
+
+          String(
+            guru.jenis_ptk || ''
+          ).toLowerCase().includes(keyword)
+
+        );
+
+      }
+    );
+
+
+    tampilkanGuru(
+      hasil
+    );
+
+  }
+);
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHTML(value){
+
+  return String(value)
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'","&#039;");
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+document
+.getElementById('btnLogout')
+.addEventListener(
+  'click',
+  async function(){
+
+    this.disabled =
+    true;
+
+    this.innerText =
+    'Keluar...';
+
+
+    await supabaseClient
+      .auth
+      .signOut();
+
+
+    window.location.href =
+    'index.html';
+
+  }
+);
+
+
+/* =====================================================
+   MULAI
+===================================================== */
+
+async function mulai(){
+
+  const boleh =
+  await cekAdmin();
+
+
+  if(!boleh){
+
+    return;
+
+  }
+
+
+  await loadGuru();
+
+}
+
+
+mulai();
+
+</script>
+
+</body>
+</html>
+```
