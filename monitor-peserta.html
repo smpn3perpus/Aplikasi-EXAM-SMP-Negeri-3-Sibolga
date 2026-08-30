@@ -1,0 +1,1512 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Monitor Peserta - Admin | RUANG EXAM</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f5f9;
+    color:#0f172a;
+    min-height:100vh;
+}
+
+.header{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    color:white;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+    box-shadow:0 5px 20px rgba(0,0,0,.18);
+}
+
+.header h1{
+    font-size:23px;
+}
+
+.header p{
+    font-size:13px;
+    opacity:.85;
+    margin-top:5px;
+}
+
+.header-buttons{
+    display:flex;
+    gap:8px;
+}
+
+.btn{
+    border:none;
+    border-radius:9px;
+    padding:10px 15px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-back{
+    background:white;
+    color:#1d4ed8;
+}
+
+.btn-refresh{
+    background:#22c55e;
+    color:white;
+}
+
+.container{
+    max-width:1350px;
+    margin:25px auto;
+    padding:0 20px;
+}
+
+.message{
+    display:none;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:18px;
+    text-align:center;
+    font-size:13px;
+}
+
+.message.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.message.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.info{
+    background:#eff6ff;
+    color:#1e40af;
+    padding:16px;
+    border-radius:12px;
+    margin-bottom:20px;
+    font-size:13px;
+    line-height:1.6;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.stat{
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 4px 15px rgba(15,23,42,.06);
+}
+
+.stat-icon{
+    font-size:28px;
+    margin-bottom:8px;
+}
+
+.stat-number{
+    font-size:25px;
+    font-weight:bold;
+    color:#1d4ed8;
+}
+
+.stat-label{
+    color:#64748b;
+    font-size:12px;
+    margin-top:4px;
+}
+
+.filter-box{
+    background:white;
+    padding:17px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 4px 15px rgba(15,23,42,.06);
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+select,
+input{
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    padding:10px 12px;
+    font-size:13px;
+    background:white;
+}
+
+.search{
+    flex:1;
+    min-width:220px;
+}
+
+.table-box{
+    background:white;
+    border-radius:16px;
+    overflow:auto;
+    box-shadow:0 4px 18px rgba(15,23,42,.07);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:1050px;
+}
+
+th{
+    background:#eff6ff;
+    color:#1e3a8a;
+    padding:14px;
+    text-align:left;
+    font-size:13px;
+    white-space:nowrap;
+}
+
+td{
+    padding:14px;
+    border-top:1px solid #e2e8f0;
+    font-size:13px;
+    vertical-align:middle;
+}
+
+tr:hover td{
+    background:#f8fafc;
+}
+
+.badge{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.aktif{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.selesai{
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+.belum{
+    background:#e2e8f0;
+    color:#475569;
+}
+
+.timer{
+    font-weight:bold;
+    color:#1d4ed8;
+    font-size:15px;
+}
+
+.progress-box{
+    width:130px;
+    height:8px;
+    background:#e2e8f0;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.progress-bar{
+    height:100%;
+    background:#2563eb;
+    border-radius:20px;
+}
+
+.empty{
+    text-align:center;
+    padding:45px !important;
+    color:#64748b;
+}
+
+.footer{
+    text-align:center;
+    color:#94a3b8;
+    font-size:12px;
+    line-height:1.6;
+    padding:30px;
+}
+
+@media(max-width:800px){
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .header{
+        padding:18px;
+    }
+
+    .container{
+        padding:0 12px;
+    }
+}
+
+@media(max-width:450px){
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div>
+        <h1>👀 MONITOR PESERTA</h1>
+
+        <p>
+            RUANG EXAM — SMP Negeri 3 Sibolga
+        </p>
+    </div>
+
+    <div class="header-buttons">
+
+        <button
+            class="btn btn-back"
+            onclick="kembaliDashboard()">
+
+            ← Dashboard
+
+        </button>
+
+        <button
+            class="btn btn-refresh"
+            onclick="loadPeserta()">
+
+            🔄 Refresh
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div id="message" class="message"></div>
+
+
+    <div class="info">
+
+        <strong>👀 Monitor Peserta Ujian</strong><br>
+
+        Admin dapat melihat siswa yang sedang mengikuti
+        ujian, status pengerjaan, waktu yang digunakan,
+        serta progress jawaban.
+
+        Halaman ini hanya untuk pemantauan dan
+        <strong>tidak mengubah waktu ujian.</strong>
+
+    </div>
+
+
+    <!-- STATISTIK -->
+
+    <section class="stats">
+
+        <div class="stat">
+
+            <div class="stat-icon">👥</div>
+
+            <div
+                class="stat-number"
+                id="totalPeserta">
+
+                0
+
+            </div>
+
+            <div class="stat-label">
+                Total Peserta
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-icon">🟢</div>
+
+            <div
+                class="stat-number"
+                id="pesertaAktif">
+
+                0
+
+            </div>
+
+            <div class="stat-label">
+                Sedang Ujian
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-icon">✅</div>
+
+            <div
+                class="stat-number"
+                id="pesertaSelesai">
+
+                0
+
+            </div>
+
+            <div class="stat-label">
+                Selesai
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-icon">⏳</div>
+
+            <div
+                class="stat-number"
+                id="pesertaBelum">
+
+                0
+
+            </div>
+
+            <div class="stat-label">
+                Belum Mulai
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FILTER -->
+
+    <section class="filter-box">
+
+        <select
+            id="filterUjian"
+            onchange="filterData()">
+
+            <option value="">
+                Semua Ujian
+            </option>
+
+        </select>
+
+
+        <select
+            id="filterStatus"
+            onchange="filterData()">
+
+            <option value="">
+                Semua Status
+            </option>
+
+            <option value="aktif">
+                Aktif
+            </option>
+
+            <option value="selesai">
+                Selesai
+            </option>
+
+            <option value="belum">
+                Belum Mulai
+            </option>
+
+        </select>
+
+
+        <input
+            id="searchInput"
+            class="search"
+            type="text"
+            placeholder="🔎 Cari nama siswa / NISN..."
+            oninput="filterData()">
+
+    </section>
+
+
+    <!-- TABLE -->
+
+    <div class="table-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>No</th>
+
+                    <th>Nama Siswa</th>
+
+                    <th>NISN</th>
+
+                    <th>Kelas</th>
+
+                    <th>Ujian</th>
+
+                    <th>Status</th>
+
+                    <th>Waktu Digunakan</th>
+
+                    <th>Progress</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="pesertaBody">
+
+                <tr>
+
+                    <td
+                        colspan="8"
+                        class="empty">
+
+                        ⏳ Memuat data peserta...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</main>
+
+
+<footer class="footer">
+
+    RUANG EXAM Online<br>
+
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+</footer>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =====================================================
+   SESSION ADMIN
+===================================================== */
+
+const sessionRaw =
+    localStorage.getItem("exam_user");
+
+if(!sessionRaw){
+
+    window.location.href =
+        "login.html";
+
+}
+
+try{
+
+    const user =
+        JSON.parse(sessionRaw);
+
+    if(user.role !== "admin"){
+
+        localStorage.removeItem(
+            "exam_user"
+        );
+
+        window.location.href =
+            "login.html";
+
+    }
+
+}catch(error){
+
+    localStorage.removeItem(
+        "exam_user"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let semuaPeserta = [];
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(text,type){
+
+    const el =
+        document.getElementById("message");
+
+    el.textContent =
+        text;
+
+    el.className =
+        "message " + type;
+
+}
+
+
+/* =====================================================
+   LOAD PESERTA
+===================================================== */
+
+async function loadPeserta(){
+
+    const body =
+        document.getElementById(
+            "pesertaBody"
+        );
+
+    body.innerHTML = `
+        <tr>
+            <td colspan="8" class="empty">
+                ⏳ Memuat data peserta...
+            </td>
+        </tr>
+    `;
+
+
+    try{
+
+        /*
+         * Mencoba membaca tabel peserta_ujian.
+         *
+         * Struktur yang digunakan:
+         * peserta_ujian
+         * - id
+         * - ujian_id
+         * - siswa_id
+         * - status
+         * - waktu_mulai
+         * - waktu_selesai
+         * - waktu_terpakai_detik
+         * - jumlah_dijawab
+         * - jumlah_soal
+         */
+
+
+        const hasil =
+            await supabaseClient
+            .from("peserta_ujian")
+            .select(`
+                id,
+                ujian_id,
+                siswa_id,
+                status,
+                waktu_mulai,
+                waktu_selesai,
+                waktu_terpakai_detik,
+                jumlah_dijawab,
+                jumlah_soal
+            `)
+            .order(
+                "waktu_mulai",
+                {ascending:false}
+            );
+
+
+        if(hasil.error){
+
+            throw hasil.error;
+
+        }
+
+
+        const peserta =
+            hasil.data || [];
+
+
+        if(!peserta.length){
+
+            semuaPeserta = [];
+
+            tampilkanPeserta();
+
+            return;
+
+        }
+
+
+        /* Ambil ID siswa */
+
+        const siswaIds =
+            [
+                ...new Set(
+                    peserta
+                    .map(p => p.siswa_id)
+                    .filter(Boolean)
+                )
+            ];
+
+
+        /* Ambil ID ujian */
+
+        const ujianIds =
+            [
+                ...new Set(
+                    peserta
+                    .map(p => p.ujian_id)
+                    .filter(Boolean)
+                )
+            ];
+
+
+        let siswaData = [];
+        let ujianData = [];
+
+
+        if(siswaIds.length){
+
+            const siswaHasil =
+                await supabaseClient
+                .from("siswa")
+                .select(`
+                    id,
+                    nama,
+                    nisn,
+                    kelas
+                `)
+                .in(
+                    "id",
+                    siswaIds
+                );
+
+
+            if(!siswaHasil.error){
+
+                siswaData =
+                    siswaHasil.data || [];
+
+            }
+
+        }
+
+
+        if(ujianIds.length){
+
+            const ujianHasil =
+                await supabaseClient
+                .from("ujian")
+                .select(`
+                    id,
+                    judul,
+                    durasi_menit
+                `)
+                .in(
+                    "id",
+                    ujianIds
+                );
+
+
+            if(!ujianHasil.error){
+
+                ujianData =
+                    ujianHasil.data || [];
+
+            }
+
+        }
+
+
+        semuaPeserta =
+            peserta.map(p=>{
+
+                const siswa =
+                    siswaData.find(
+                        s =>
+                        s.id ===
+                        p.siswa_id
+                    ) || {};
+
+
+                const ujian =
+                    ujianData.find(
+                        u =>
+                        u.id ===
+                        p.ujian_id
+                    ) || {};
+
+
+                return {
+
+                    ...p,
+
+                    nama:
+                        siswa.nama || "-",
+
+                    nisn:
+                        siswa.nisn || "-",
+
+                    kelas:
+                        siswa.kelas || "-",
+
+                    judul:
+                        ujian.judul || "-",
+
+                    durasi_menit:
+                        Number(
+                            ujian.durasi_menit
+                        ) || 0
+
+                };
+
+            });
+
+
+        isiFilterUjian();
+
+        tampilkanPeserta();
+
+    }catch(error){
+
+        console.error(error);
+
+        semuaPeserta = [];
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="8" class="empty">
+                    ❌ Data monitor belum tersedia.
+                    <br><br>
+                    ${escapeHtml(
+                        error.message
+                    )}
+                </td>
+            </tr>
+        `;
+
+        showMessage(
+            "Tabel peserta_ujian belum tersedia atau belum sesuai struktur database.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   FILTER UJIAN
+===================================================== */
+
+function isiFilterUjian(){
+
+    const select =
+        document.getElementById(
+            "filterUjian"
+        );
+
+
+    const daftar =
+        [
+            ...new Map(
+                semuaPeserta.map(
+                    p =>
+                    [
+                        p.ujian_id,
+                        p.judul
+                    ]
+                )
+            )
+        ];
+
+
+    select.innerHTML =
+        `<option value="">
+            Semua Ujian
+        </option>`;
+
+
+    daftar.forEach(
+        ([id,judul])=>{
+
+            select.innerHTML += `
+                <option value="${escapeHtml(id)}">
+                    ${escapeHtml(judul)}
+                </option>
+            `;
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   FILTER DATA
+===================================================== */
+
+function filterData(){
+
+    const ujian =
+        document.getElementById(
+            "filterUjian"
+        ).value;
+
+
+    const status =
+        document.getElementById(
+            "filterStatus"
+        ).value;
+
+
+    const search =
+        document.getElementById(
+            "searchInput"
+        ).value
+        .toLowerCase()
+        .trim();
+
+
+    const hasil =
+        semuaPeserta.filter(
+            p=>{
+
+                const cocokUjian =
+                    !ujian ||
+                    p.ujian_id === ujian;
+
+
+                const statusNormal =
+                    statusPeserta(p);
+
+
+                const cocokStatus =
+                    !status ||
+                    statusNormal === status;
+
+
+                const teks =
+                    (
+                        p.nama +
+                        " " +
+                        p.nisn +
+                        " " +
+                        p.kelas
+                    ).toLowerCase();
+
+
+                const cocokSearch =
+                    !search ||
+                    teks.includes(search);
+
+
+                return (
+                    cocokUjian &&
+                    cocokStatus &&
+                    cocokSearch
+                );
+
+            }
+        );
+
+
+    tampilkanRows(hasil);
+
+}
+
+
+/* =====================================================
+   TAMPILKAN PESERTA
+===================================================== */
+
+function tampilkanPeserta(){
+
+    updateStatistik(
+        semuaPeserta
+    );
+
+    filterData();
+
+}
+
+
+/* =====================================================
+   TAMPILKAN ROW
+===================================================== */
+
+function tampilkanRows(data){
+
+    const body =
+        document.getElementById(
+            "pesertaBody"
+        );
+
+
+    if(!data.length){
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="8" class="empty">
+                    👨‍🎓 Belum ada data peserta.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    body.innerHTML =
+        data.map(
+            (p,index)=>{
+
+                const status =
+                    statusPeserta(p);
+
+
+                const waktu =
+                    waktuPeserta(p);
+
+
+                const dijawab =
+                    Number(
+                        p.jumlah_dijawab
+                    ) || 0;
+
+
+                const jumlahSoal =
+                    Number(
+                        p.jumlah_soal
+                    ) || 0;
+
+
+                let persen = 0;
+
+
+                if(jumlahSoal > 0){
+
+                    persen =
+                        Math.min(
+                            100,
+                            Math.round(
+                                (
+                                    dijawab /
+                                    jumlahSoal
+                                ) * 100
+                            )
+                        );
+
+                }
+
+
+                return `
+
+                <tr>
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${escapeHtml(
+                                p.nama
+                            )}
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            p.nisn
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            p.kelas
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            p.judul
+                        )}
+                    </td>
+
+                    <td>
+
+                        <span
+                            class="badge ${status}">
+
+                            ${statusText(
+                                status
+                            )}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <span
+                            class="timer"
+                            data-start="${
+                                p.waktu_mulai || ""
+                            }"
+                            data-base="${
+                                Number(
+                                    p.waktu_terpakai_detik
+                                ) || 0
+                            }">
+
+                            ${formatWaktu(
+                                waktu
+                            )}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <div class="progress-box">
+
+                            <div
+                                class="progress-bar"
+                                style="width:${persen}%">
+
+                            </div>
+
+                        </div>
+
+                        <small>
+                            ${dijawab} /
+                            ${jumlahSoal}
+                        </small>
+
+                    </td>
+
+                </tr>
+
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+/* =====================================================
+   STATUS PESERTA
+===================================================== */
+
+function statusPeserta(p){
+
+    const status =
+        String(
+            p.status || ""
+        ).toLowerCase();
+
+
+    if(
+        status === "aktif" ||
+        status === "sedang_ujian" ||
+        status === "dibuka"
+    ){
+
+        return "aktif";
+
+    }
+
+
+    if(
+        status === "selesai" ||
+        status === "completed"
+    ){
+
+        return "selesai";
+
+    }
+
+
+    return "belum";
+
+}
+
+
+/* =====================================================
+   STATUS TEXT
+===================================================== */
+
+function statusText(status){
+
+    const daftar = {
+
+        aktif:
+            "AKTIF",
+
+        selesai:
+            "SELESAI",
+
+        belum:
+            "BELUM MULAI"
+
+    };
+
+
+    return daftar[status] ||
+        status.toUpperCase();
+
+}
+
+
+/* =====================================================
+   WAKTU PESERTA
+===================================================== */
+
+function waktuPeserta(p){
+
+    let waktu =
+        Number(
+            p.waktu_terpakai_detik
+        ) || 0;
+
+
+    if(
+        statusPeserta(p) === "aktif" &&
+        p.waktu_mulai
+    ){
+
+        const mulai =
+            new Date(
+                p.waktu_mulai
+            ).getTime();
+
+
+        const sekarang =
+            Date.now();
+
+
+        const tambahan =
+            Math.max(
+                0,
+                Math.floor(
+                    (
+                        sekarang -
+                        mulai
+                    ) / 1000
+                )
+            );
+
+
+        waktu += tambahan;
+
+    }
+
+
+    const maksimal =
+        (
+            Number(
+                p.durasi_menit
+            ) || 0
+        ) * 60;
+
+
+    if(maksimal > 0){
+
+        waktu =
+            Math.min(
+                waktu,
+                maksimal
+            );
+
+    }
+
+
+    return waktu;
+
+}
+
+
+/* =====================================================
+   UPDATE TIMER
+===================================================== */
+
+function updateTimer(){
+
+    document
+    .querySelectorAll(
+        ".timer"
+    )
+    .forEach(
+        el=>{
+
+            const start =
+                el.dataset.start;
+
+
+            const base =
+                Number(
+                    el.dataset.base
+                ) || 0;
+
+
+            if(!start){
+
+                return;
+
+            }
+
+
+            const tambahan =
+                Math.max(
+                    0,
+                    Math.floor(
+                        (
+                            Date.now() -
+                            new Date(start).getTime()
+                        ) / 1000
+                    )
+                );
+
+
+            el.textContent =
+                formatWaktu(
+                    base +
+                    tambahan
+                );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   STATISTIK
+===================================================== */
+
+function updateStatistik(data){
+
+    const total =
+        data.length;
+
+
+    const aktif =
+        data.filter(
+            p =>
+            statusPeserta(p) ===
+            "aktif"
+        ).length;
+
+
+    const selesai =
+        data.filter(
+            p =>
+            statusPeserta(p) ===
+            "selesai"
+        ).length;
+
+
+    const belum =
+        data.filter(
+            p =>
+            statusPeserta(p) ===
+            "belum"
+        ).length;
+
+
+    document
+    .getElementById(
+        "totalPeserta"
+    )
+    .textContent =
+        total;
+
+
+    document
+    .getElementById(
+        "pesertaAktif"
+    )
+    .textContent =
+        aktif;
+
+
+    document
+    .getElementById(
+        "pesertaSelesai"
+    )
+    .textContent =
+        selesai;
+
+
+    document
+    .getElementById(
+        "pesertaBelum"
+    )
+    .textContent =
+        belum;
+
+}
+
+
+/* =====================================================
+   FORMAT WAKTU
+===================================================== */
+
+function formatWaktu(totalDetik){
+
+    totalDetik =
+        Math.max(
+            0,
+            Math.floor(
+                Number(
+                    totalDetik
+                ) || 0
+            )
+        );
+
+
+    const jam =
+        Math.floor(
+            totalDetik / 3600
+        );
+
+
+    const menit =
+        Math.floor(
+            (
+                totalDetik %
+                3600
+            ) / 60
+        );
+
+
+    const detik =
+        totalDetik %
+        60;
+
+
+    return (
+        String(jam).padStart(2,"0") +
+        ":" +
+        String(menit).padStart(2,"0") +
+        ":" +
+        String(detik).padStart(2,"0")
+    );
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function kembaliDashboard(){
+
+    window.location.href =
+        "admin.html";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadPeserta();
+
+
+/*
+ * Refresh tampilan waktu setiap detik.
+ */
+
+setInterval(
+    updateTimer,
+    1000
+);
+
+
+/*
+ * Refresh data peserta setiap 10 detik.
+ */
+
+setInterval(
+    loadPeserta,
+    10000
+);
+
+</script>
+
+</body>
+</html>
+```
