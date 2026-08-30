@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bank Soal - EXAM SMPN 3 Sibolga</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800">
+
+  <!-- Header -->
+  <header class="bg-emerald-800 text-white shadow-md">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div>
+        <h1 class="text-xl font-bold">Kelola Bank Soal</h1>
+        <p class="text-xs text-emerald-200">Aplikasi EXAM SMP Negeri 3 Sibolga</p>
+      </div>
+      <a href="guru.html" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+        Kembali
+      </a>
+    </div>
+  </header>
+
+  <!-- Konten Utama -->
+  <main class="container mx-auto px-4 py-6">
+    <!-- Form Tambah Soal -->
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-6">
+      <h2 class="text-lg font-bold text-slate-800 mb-4">Input Soal Baru</h2>
+      <form id="soalForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Pertanyaan / Pertanyaan Soal</label>
+          <textarea id="pertanyaan" rows="3" required placeholder="Tuliskan butir soal di sini..." class="w-full px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Pilihan A</label>
+            <input type="text" id="optA" placeholder="Jawaban A" class="w-full px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Pilihan B</label>
+            <input type="text" id="optB" placeholder="Jawaban B" class="w-full px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Pilihan C</label>
+            <input type="text" id="optC" placeholder="Jawaban C" class="w-full px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Pilihan D</label>
+            <input type="text" id="optD" placeholder="Jawaban D" class="w-full px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Kunci Jawaban</label>
+            <select id="kunci" class="w-full px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">Mata Pelajaran / Topik</label>
+            <input type="text" id="mapel" placeholder="Contoh: IPA Kelas 7" class="w-full px-4 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+          </div>
+        </div>
+
+        <button type="submit" class="bg-emerald-700 hover:bg-emerald-800 text-white px-6 py-2.5 rounded-lg text-sm font-semibold transition">
+          Simpan Soal
+        </button>
+      </form>
+    </div>
+
+    <!-- Daftar Soal -->
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+      <h2 class="text-lg font-bold text-slate-800 mb-4">Daftar Soal Tersimpan</h2>
+      <div id="listSoal" class="space-y-4">
+        <p class="text-slate-500 text-sm text-center py-4">Belum ada soal yang ditambahkan.</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const SUPABASE_URL = 'https://YOUR_SUPABASE_PROJECT_URL.supabase.co';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  </script>
+</body>
+</html>
