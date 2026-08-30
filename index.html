@@ -27,7 +27,7 @@ body{
 .container{
     width:100%;
     max-width:430px;
-    background:#fff;
+    background:white;
     border-radius:24px;
     padding:32px;
     box-shadow:0 20px 50px rgba(0,0,0,.25);
@@ -38,7 +38,7 @@ body{
     margin-bottom:25px;
 }
 
-.logo .icon{
+.logo-icon{
     width:75px;
     height:75px;
     margin:auto;
@@ -46,9 +46,9 @@ body{
     background:#2563eb;
     color:white;
     display:flex;
-    justify-content:center;
     align-items:center;
-    font-size:38px;
+    justify-content:center;
+    font-size:32px;
     font-weight:bold;
 }
 
@@ -59,28 +59,29 @@ body{
 }
 
 .logo p{
-    color:#64748b;
     margin-top:6px;
+    color:#64748b;
     font-size:14px;
 }
 
 .tabs{
     display:flex;
+    gap:4px;
     background:#f1f5f9;
-    border-radius:12px;
     padding:4px;
+    border-radius:12px;
     margin-bottom:22px;
 }
 
 .tabs button{
     flex:1;
     border:0;
-    padding:12px;
+    padding:12px 5px;
     border-radius:9px;
     background:transparent;
-    cursor:pointer;
-    font-weight:bold;
     color:#64748b;
+    font-weight:bold;
+    cursor:pointer;
 }
 
 .tabs button.active{
@@ -119,30 +120,28 @@ body{
 }
 
 .password-box input{
-    padding-right:45px;
+    padding-right:48px;
 }
 
-.show-password{
+.eye{
     position:absolute;
-    right:13px;
+    right:14px;
     top:50%;
     transform:translateY(-50%);
     cursor:pointer;
-    color:#64748b;
     font-size:18px;
 }
 
 .login-btn{
     width:100%;
-    border:0;
     padding:14px;
+    border:0;
     border-radius:11px;
     background:#2563eb;
     color:white;
     font-size:16px;
     font-weight:bold;
     cursor:pointer;
-    margin-top:5px;
 }
 
 .login-btn:hover{
@@ -154,22 +153,13 @@ body{
     cursor:not-allowed;
 }
 
-.info{
-    margin-top:18px;
-    padding:12px;
-    background:#eff6ff;
-    color:#1e40af;
-    border-radius:10px;
-    font-size:13px;
-    line-height:1.5;
-}
-
 .message{
     display:none;
     margin-bottom:15px;
     padding:12px;
-    border-radius:9px;
+    border-radius:10px;
     font-size:14px;
+    line-height:1.5;
 }
 
 .message.error{
@@ -184,6 +174,16 @@ body{
     color:#15803d;
 }
 
+.info{
+    margin-top:18px;
+    padding:13px;
+    background:#eff6ff;
+    color:#1e40af;
+    border-radius:10px;
+    font-size:13px;
+    line-height:1.5;
+}
+
 .footer{
     text-align:center;
     margin-top:25px;
@@ -193,10 +193,6 @@ body{
     font-size:12px;
     line-height:1.6;
 }
-
-.hidden{
-    display:none;
-}
 </style>
 </head>
 
@@ -205,24 +201,32 @@ body{
 <div class="container">
 
     <div class="logo">
-        <div class="icon">EX</div>
+        <div class="logo-icon">EX</div>
         <h1>EXAM</h1>
         <p>Sistem Ujian Online</p>
     </div>
 
-    <!-- PILIH LOGIN -->
     <div class="tabs">
-        <button id="guruTab" class="active" onclick="setRole('guru')">
+
+        <button
+            id="guruTab"
+            class="active"
+            onclick="setRole('guru')">
             👨‍🏫 Guru
         </button>
 
-        <button id="siswaTab" onclick="setRole('siswa')">
+        <button
+            id="siswaTab"
+            onclick="setRole('siswa')">
             👨‍🎓 Siswa
         </button>
 
-        <button id="adminTab" onclick="setRole('admin')">
+        <button
+            id="adminTab"
+            onclick="setRole('admin')">
             🔐 Admin
         </button>
+
     </div>
 
     <div id="message" class="message"></div>
@@ -230,42 +234,50 @@ body{
     <form id="loginForm">
 
         <div class="form-group">
-            <label id="usernameLabel">NIP / NIK</label>
+
+            <label id="usernameLabel">
+                NIP / NIK
+            </label>
 
             <input
                 type="text"
                 id="username"
-                autocomplete="username"
                 placeholder="Masukkan NIP / NIK"
+                autocomplete="username"
                 required
             >
+
         </div>
 
         <div class="form-group">
+
             <label>Password</label>
 
             <div class="password-box">
+
                 <input
                     type="password"
                     id="password"
-                    autocomplete="current-password"
                     placeholder="Masukkan password"
+                    autocomplete="current-password"
                     required
                 >
 
                 <span
-                    class="show-password"
-                    onclick="togglePassword()"
+                    class="eye"
                     id="eye"
-                >👁️</span>
+                    onclick="togglePassword()">
+                    👁️
+                </span>
+
             </div>
+
         </div>
 
         <button
             type="submit"
             class="login-btn"
-            id="loginBtn"
-        >
+            id="loginBtn">
             Masuk
         </button>
 
@@ -273,7 +285,7 @@ body{
 
     <div class="info" id="loginInfo">
         👨‍🏫 <b>Login Guru</b><br>
-        Gunakan NIP/NIK sebagai username dan password yang telah diberikan.
+        Gunakan NIP/NIK sebagai username dan password Anda.
     </div>
 
     <div class="footer">
@@ -285,87 +297,109 @@ body{
 </div>
 
 <script>
-/*
-====================================================
-KONFIGURASI
-====================================================
-Isi URL dan ANON KEY Supabase milik project Anda.
-Jangan gunakan service_role key di file HTML.
-====================================================
-*/
 
-const SUPABASE_URL = "ISI_URL_SUPABASE_ANDA";
-const SUPABASE_ANON_KEY = "ISI_ANON_KEY_SUPABASE_ANDA";
+/* =================================================
+   KONFIGURASI SUPABASE
+   ================================================= */
 
+const SUPABASE_URL =
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+const SUPABASE_ANON_KEY =
+    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+
+/* =================================================
+   VARIABEL
+   ================================================= */
 
 let currentRole = "guru";
 
+
+/* =================================================
+   PILIH ROLE
+   ================================================= */
 
 function setRole(role){
 
     currentRole = role;
 
-    const guruTab = document.getElementById("guruTab");
-    const siswaTab = document.getElementById("siswaTab");
-    const adminTab = document.getElementById("adminTab");
+    document.getElementById("guruTab")
+        .classList.remove("active");
 
-    guruTab.classList.remove("active");
-    siswaTab.classList.remove("active");
-    adminTab.classList.remove("active");
+    document.getElementById("siswaTab")
+        .classList.remove("active");
+
+    document.getElementById("adminTab")
+        .classList.remove("active");
+
 
     if(role === "guru"){
 
-        guruTab.classList.add("active");
+        document.getElementById("guruTab")
+            .classList.add("active");
 
-        document.getElementById("usernameLabel").textContent =
-            "NIP / NIK";
+        document.getElementById("usernameLabel")
+            .textContent = "NIP / NIK";
 
-        document.getElementById("username").placeholder =
-            "Masukkan NIP / NIK";
+        document.getElementById("username")
+            .placeholder = "Masukkan NIP / NIK";
 
-        document.getElementById("loginInfo").innerHTML =
+        document.getElementById("loginInfo")
+            .innerHTML =
             "👨‍🏫 <b>Login Guru</b><br>" +
-            "Gunakan NIP/NIK sebagai username dan password yang telah diberikan.";
+            "Gunakan NIP/NIK sebagai username dan password Anda.";
 
     }
+
 
     else if(role === "siswa"){
 
-        siswaTab.classList.add("active");
+        document.getElementById("siswaTab")
+            .classList.add("active");
 
-        document.getElementById("usernameLabel").textContent =
-            "NISN";
+        document.getElementById("usernameLabel")
+            .textContent = "NISN";
 
-        document.getElementById("username").placeholder =
-            "Masukkan NISN";
+        document.getElementById("username")
+            .placeholder = "Masukkan NISN";
 
-        document.getElementById("loginInfo").innerHTML =
+        document.getElementById("loginInfo")
+            .innerHTML =
             "👨‍🎓 <b>Login Siswa</b><br>" +
-            "Gunakan NISN sebagai username dan password yang telah diberikan.";
+            "Gunakan NISN sebagai username dan password Anda.";
 
     }
 
+
     else{
 
-        adminTab.classList.add("active");
+        document.getElementById("adminTab")
+            .classList.add("active");
 
-        document.getElementById("usernameLabel").textContent =
-            "Username Admin";
+        document.getElementById("usernameLabel")
+            .textContent = "Username Admin";
 
-        document.getElementById("username").placeholder =
-            "Masukkan username admin";
+        document.getElementById("username")
+            .placeholder = "Masukkan username admin";
 
-        document.getElementById("loginInfo").innerHTML =
+        document.getElementById("loginInfo")
+            .innerHTML =
             "🔐 <b>Login Admin</b><br>" +
             "Masukkan username dan password admin.";
 
     }
+
 
     clearMessage();
 
     document.getElementById("username").focus();
 }
 
+
+/* =================================================
+   TAMPILKAN PASSWORD
+   ================================================= */
 
 function togglePassword(){
 
@@ -375,12 +409,14 @@ function togglePassword(){
     const eye =
         document.getElementById("eye");
 
+
     if(password.type === "password"){
 
         password.type = "text";
         eye.textContent = "🙈";
 
-    }else{
+    }
+    else{
 
         password.type = "password";
         eye.textContent = "👁️";
@@ -388,6 +424,10 @@ function togglePassword(){
     }
 }
 
+
+/* =================================================
+   PESAN
+   ================================================= */
 
 function showMessage(text,type){
 
@@ -398,7 +438,6 @@ function showMessage(text,type){
 
     message.className =
         "message " + type;
-
 }
 
 
@@ -410,17 +449,22 @@ function clearMessage(){
     message.textContent = "";
 
     message.className = "message";
-
 }
 
+
+/* =================================================
+   LOGIN
+   ================================================= */
 
 async function login(){
 
     const username =
-        document.getElementById("username").value.trim();
+        document.getElementById("username")
+        .value.trim();
 
     const password =
-        document.getElementById("password").value;
+        document.getElementById("password")
+        .value;
 
     const button =
         document.getElementById("loginBtn");
@@ -437,116 +481,94 @@ async function login(){
     }
 
 
-    /*
-    -----------------------------------------------
-    CEK KONFIGURASI SUPABASE
-    -----------------------------------------------
-    */
-
-    if(
-        SUPABASE_URL === "ISI_URL_SUPABASE_ANDA" ||
-        SUPABASE_ANON_KEY === "ISI_ANON_KEY_SUPABASE_ANDA"
-    ){
-
-        showMessage(
-            "Supabase belum dikonfigurasi. Isi SUPABASE_URL dan SUPABASE_ANON_KEY terlebih dahulu.",
-            "error"
-        );
-
-        return;
-    }
-
-
     button.disabled = true;
     button.textContent = "Memproses...";
 
 
     try{
 
-        /*
-        ==================================================
-        LOGIN BERDASARKAN ROLE
-        ==================================================
-        */
-
         let table = "";
-
-        let identifierColumn = "";
-
+        let column = "";
         let dashboard = "";
 
 
         if(currentRole === "guru"){
 
             table = "guru";
-            identifierColumn = "nip";
+            column = "nip";
             dashboard = "dashboard-guru.html";
 
         }
 
+
         else if(currentRole === "siswa"){
 
             table = "siswa";
-            identifierColumn = "nisn";
+            column = "nisn";
             dashboard = "dashboard-siswa.html";
 
         }
 
+
         else{
 
             table = "admin";
-            identifierColumn = "username";
+            column = "username";
             dashboard = "admin.html";
 
         }
 
 
         /*
-        --------------------------------------------------
-        CATATAN:
-        Login password sebaiknya menggunakan Supabase Auth.
-        Kode ini mencari akun berdasarkan identitas terlebih
-        dahulu agar struktur sistem bisa disesuaikan.
-        --------------------------------------------------
+        =============================================
+        CARI AKUN
+        =============================================
         */
 
-
-        const response = await fetch(
-
+        const url =
             SUPABASE_URL +
             "/rest/v1/" +
             table +
             "?" +
-            identifierColumn +
+            column +
             "=eq." +
             encodeURIComponent(username) +
-            "&select=*",
+            "&select=*";
 
-            {
 
-                method:"GET",
+        const response =
+            await fetch(
+                url,
+                {
+                    method:"GET",
 
-                headers:{
-                    "apikey":SUPABASE_ANON_KEY,
-                    "Authorization":
-                        "Bearer " + SUPABASE_ANON_KEY
+                    headers:{
+                        "apikey":
+                            SUPABASE_ANON_KEY,
+
+                        "Authorization":
+                            "Bearer " +
+                            SUPABASE_ANON_KEY
+                    }
                 }
-
-            }
-
-        );
+            );
 
 
         if(!response.ok){
 
-            throw new Error(
-                "Gagal menghubungi database."
-            );
+            const errorText =
+                await response.text();
 
+            console.error(errorText);
+
+            throw new Error(
+                "Database tidak dapat diakses."
+            );
         }
 
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
 
         if(!data || data.length === 0){
@@ -557,35 +579,22 @@ async function login(){
             );
 
             return;
-
         }
 
+
+        /*
+        =============================================
+        AKUN DITEMUKAN
+        =============================================
+        */
 
         const account = data[0];
 
 
         /*
-        ==================================================
-        UNTUK SEMENTARA
-        ==================================================
-
-        Password TIDAK disimpan di browser.
-
-        Setelah tabel Supabase final sudah sesuai,
-        login akan diarahkan menggunakan Supabase Auth.
-
-        ==================================================
-        */
-
-
-        showMessage(
-            "Akun ditemukan. Menghubungkan ke sistem...",
-            "success"
-        );
-
-
-        /*
-        Simpan informasi login sementara.
+        =============================================
+        SIMPAN DATA LOGIN
+        =============================================
         */
 
         localStorage.setItem(
@@ -599,25 +608,34 @@ async function login(){
         );
 
 
+        showMessage(
+            "Akun ditemukan. Membuka dashboard...",
+            "success"
+        );
+
+
         setTimeout(function(){
 
-            window.location.href = dashboard;
+            window.location.href =
+                dashboard;
 
         },700);
 
-
     }
+
 
     catch(error){
 
         console.error(error);
 
         showMessage(
-            "Terjadi kesalahan saat login. Periksa koneksi dan konfigurasi Supabase.",
+            error.message ||
+            "Terjadi kesalahan saat login.",
             "error"
         );
 
     }
+
 
     finally{
 
@@ -629,25 +647,27 @@ async function login(){
 }
 
 
+/* =================================================
+   FORM LOGIN
+   ================================================= */
+
 document
-.getElementById("loginForm")
-.addEventListener(
-    "submit",
-    function(event){
+    .getElementById("loginForm")
+    .addEventListener(
+        "submit",
+        function(event){
 
-        event.preventDefault();
+            event.preventDefault();
 
-        login();
+            login();
 
-    }
-);
+        }
+    );
 
 
-/*
-====================================================
-DEFAULT
-====================================================
-*/
+/* =================================================
+   DEFAULT
+   ================================================= */
 
 setRole("guru");
 
