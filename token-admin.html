@@ -1,0 +1,1065 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Token Ujian - Admin | RUANG EXAM</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f5f9;
+    color:#0f172a;
+    min-height:100vh;
+}
+
+.header{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    color:white;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+    box-shadow:0 5px 20px rgba(0,0,0,.18);
+}
+
+.header h1{
+    font-size:23px;
+}
+
+.header p{
+    font-size:13px;
+    opacity:.85;
+    margin-top:5px;
+}
+
+.header-buttons{
+    display:flex;
+    gap:8px;
+}
+
+.btn{
+    border:none;
+    border-radius:9px;
+    padding:10px 14px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-back{
+    background:white;
+    color:#1d4ed8;
+}
+
+.btn-refresh{
+    background:#22c55e;
+    color:white;
+}
+
+.container{
+    max-width:1250px;
+    margin:25px auto;
+    padding:0 20px;
+}
+
+.message{
+    display:none;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:18px;
+    text-align:center;
+    font-size:13px;
+}
+
+.message.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.message.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.exam-box{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    margin-bottom:18px;
+}
+
+.exam-box label{
+    display:block;
+    font-size:13px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.exam-row{
+    display:flex;
+    gap:12px;
+}
+
+.exam-row select{
+    flex:1;
+    padding:13px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    background:white;
+    outline:none;
+}
+
+.btn-generate{
+    background:#2563eb;
+    color:white;
+    padding:13px 20px;
+}
+
+.token-card{
+    background:white;
+    border-radius:16px;
+    padding:22px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    margin-bottom:18px;
+}
+
+.token-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.token-value{
+    font-size:30px;
+    font-weight:bold;
+    letter-spacing:5px;
+    color:#1d4ed8;
+    background:#eff6ff;
+    border:2px dashed #93c5fd;
+    border-radius:12px;
+    padding:15px 20px;
+}
+
+.token-actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.btn-copy{
+    background:#0ea5e9;
+    color:white;
+}
+
+.btn-toggle{
+    background:#f59e0b;
+    color:white;
+}
+
+.btn-delete{
+    background:#ef4444;
+    color:white;
+}
+
+.token-info{
+    margin-top:18px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+}
+
+.info-item{
+    background:#f8fafc;
+    padding:13px;
+    border-radius:10px;
+}
+
+.info-item strong{
+    display:block;
+    font-size:12px;
+    color:#64748b;
+    margin-bottom:5px;
+}
+
+.info-item span{
+    font-size:14px;
+}
+
+.badge{
+    display:inline-block;
+    padding:6px 11px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.active{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.inactive{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.empty{
+    background:white;
+    border-radius:15px;
+    padding:45px;
+    text-align:center;
+    color:#64748b;
+    box-shadow:0 4px 15px rgba(0,0,0,.05);
+}
+
+.footer{
+    text-align:center;
+    color:#94a3b8;
+    font-size:12px;
+    line-height:1.6;
+    padding:30px;
+}
+
+@media(max-width:700px){
+
+    .container{
+        padding:0 12px;
+    }
+
+    .exam-row{
+        flex-direction:column;
+    }
+
+    .token-value{
+        font-size:22px;
+        letter-spacing:3px;
+    }
+
+    .token-info{
+        grid-template-columns:1fr;
+    }
+
+    .token-actions button{
+        flex:1;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div>
+        <h1>🔑 TOKEN UJIAN</h1>
+        <p>RUANG EXAM — SMP Negeri 3 Sibolga</p>
+    </div>
+
+    <div class="header-buttons">
+
+        <button
+            class="btn btn-back"
+            onclick="kembaliDashboard()">
+            ← Dashboard
+        </button>
+
+        <button
+            class="btn btn-refresh"
+            onclick="loadData()">
+            🔄 Refresh
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div id="message" class="message"></div>
+
+    <section class="exam-box">
+
+        <label>Pilih Ujian</label>
+
+        <div class="exam-row">
+
+            <select id="ujianSelect">
+                <option value="">
+                    ⏳ Memuat daftar ujian...
+                </option>
+            </select>
+
+            <button
+                class="btn btn-generate"
+                onclick="buatToken()">
+                🔑 Generate Token
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <div id="tokenContainer">
+
+        <div class="empty">
+            ⏳ Memuat token...
+        </div>
+
+    </div>
+
+</main>
+
+
+<footer class="footer">
+
+    RUANG EXAM Online<br>
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+</footer>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =====================================================
+   SESSION
+===================================================== */
+
+const sessionRaw =
+    localStorage.getItem("exam_user");
+
+if(!sessionRaw){
+
+    window.location.href = "login.html";
+
+}
+
+let currentUser = null;
+
+try{
+
+    currentUser = JSON.parse(sessionRaw);
+
+    if(currentUser.role !== "admin"){
+
+        localStorage.removeItem("exam_user");
+
+        window.location.href = "login.html";
+
+    }
+
+}catch(error){
+
+    localStorage.removeItem("exam_user");
+
+    window.location.href = "login.html";
+
+}
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let semuaUjian = [];
+
+let semuaToken = [];
+
+
+/* =====================================================
+   PESAN
+===================================================== */
+
+function showMessage(text,type){
+
+    const el =
+        document.getElementById("message");
+
+    el.textContent = text;
+
+    el.className =
+        "message " + type;
+
+}
+
+function hideMessage(){
+
+    const el =
+        document.getElementById("message");
+
+    el.textContent = "";
+
+    el.className = "message";
+
+}
+
+
+/* =====================================================
+   LOAD DATA
+===================================================== */
+
+async function loadData(){
+
+    hideMessage();
+
+    try{
+
+        const hasilUjian =
+            await supabaseClient
+            .from("ujian")
+            .select(`
+                id,
+                judul,
+                status
+            `)
+            .order(
+                "created_at",
+                {ascending:false}
+            );
+
+        if(hasilUjian.error){
+
+            throw hasilUjian.error;
+
+        }
+
+        semuaUjian =
+            hasilUjian.data || [];
+
+        isiDropdown();
+
+        await loadToken();
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal memuat data: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   DROPDOWN
+===================================================== */
+
+function isiDropdown(){
+
+    const select =
+        document.getElementById(
+            "ujianSelect"
+        );
+
+    select.innerHTML = `
+        <option value="">
+            -- Pilih Ujian --
+        </option>
+    `;
+
+    semuaUjian.forEach(ujian=>{
+
+        select.innerHTML += `
+            <option value="${ujian.id}">
+                ${escapeHtml(ujian.judul)}
+            </option>
+        `;
+
+    });
+
+}
+
+
+/* =====================================================
+   LOAD TOKEN
+===================================================== */
+
+async function loadToken(){
+
+    const hasil =
+        await supabaseClient
+        .from("token_ujian")
+        .select(`
+            id,
+            ujian_id,
+            token,
+            aktif,
+            berlaku_mulai,
+            berlaku_sampai,
+            created_at
+        `)
+        .order(
+            "created_at",
+            {ascending:false}
+        );
+
+    if(hasil.error){
+
+        throw hasil.error;
+
+    }
+
+    semuaToken =
+        hasil.data || [];
+
+    tampilkanToken();
+
+}
+
+
+/* =====================================================
+   TAMPILKAN TOKEN
+===================================================== */
+
+function tampilkanToken(){
+
+    const container =
+        document.getElementById(
+            "tokenContainer"
+        );
+
+    if(!semuaToken.length){
+
+        container.innerHTML = `
+            <div class="empty">
+                🔑 Belum ada token ujian.
+                <br><br>
+                Pilih ujian kemudian klik
+                <strong>Generate Token</strong>.
+            </div>
+        `;
+
+        return;
+
+    }
+
+    container.innerHTML =
+        semuaToken.map(token=>{
+
+            const ujian =
+                semuaUjian.find(
+                    u => u.id === token.ujian_id
+                );
+
+            const judul =
+                ujian
+                ? ujian.judul
+                : "Ujian";
+
+            const statusClass =
+                token.aktif
+                ? "active"
+                : "inactive";
+
+            const statusText =
+                token.aktif
+                ? "AKTIF"
+                : "NONAKTIF";
+
+            return `
+
+                <div class="token-card">
+
+                    <div class="token-top">
+
+                        <div>
+
+                            <h2>
+                                ${escapeHtml(judul)}
+                            </h2>
+
+                            <div style="margin-top:12px">
+
+                                <span class="badge ${statusClass}">
+                                    ${statusText}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="token-value">
+
+                            ${escapeHtml(token.token)}
+
+                        </div>
+
+
+                        <div class="token-actions">
+
+                            <button
+                                class="btn btn-copy"
+                                onclick="salinToken('${escapeJs(token.token)}')">
+
+                                📋 Salin
+
+                            </button>
+
+                            <button
+                                class="btn btn-toggle"
+                                onclick="toggleToken('${token.id}',${token.aktif})">
+
+                                ${token.aktif
+                                    ? "🔴 Nonaktifkan"
+                                    : "🟢 Aktifkan"}
+
+                            </button>
+
+                            <button
+                                class="btn btn-delete"
+                                onclick="hapusToken('${token.id}')">
+
+                                🗑️ Hapus
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="token-info">
+
+                        <div class="info-item">
+
+                            <strong>
+                                Berlaku Mulai
+                            </strong>
+
+                            <span>
+                                ${formatTanggal(token.berlaku_mulai)}
+                            </span>
+
+                        </div>
+
+
+                        <div class="info-item">
+
+                            <strong>
+                                Berlaku Sampai
+                            </strong>
+
+                            <span>
+                                ${formatTanggal(token.berlaku_sampai)}
+                            </span>
+
+                        </div>
+
+
+                        <div class="info-item">
+
+                            <strong>
+                                Dibuat
+                            </strong>
+
+                            <span>
+                                ${formatTanggal(token.created_at)}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join("");
+
+}
+
+
+/* =====================================================
+   BUAT TOKEN
+===================================================== */
+
+async function buatToken(){
+
+    const ujianId =
+        document.getElementById(
+            "ujianSelect"
+        ).value;
+
+    if(!ujianId){
+
+        alert(
+            "Silakan pilih ujian terlebih dahulu."
+        );
+
+        return;
+
+    }
+
+
+    const ujian =
+        semuaUjian.find(
+            u => u.id === ujianId
+        );
+
+
+    const token =
+        generateToken();
+
+
+    try{
+
+        /*
+           Token baru berlaku mulai sekarang
+           dan berlaku selama 24 jam.
+        */
+
+        const mulai =
+            new Date();
+
+        const selesai =
+            new Date(
+                mulai.getTime()
+                + 24 * 60 * 60 * 1000
+            );
+
+
+        const hasil =
+            await supabaseClient
+            .from("token_ujian")
+            .insert({
+
+                ujian_id:
+                    ujianId,
+
+                token:
+                    token,
+
+                aktif:
+                    true,
+
+                berlaku_mulai:
+                    mulai.toISOString(),
+
+                berlaku_sampai:
+                    selesai.toISOString()
+
+            });
+
+
+        if(hasil.error){
+
+            throw hasil.error;
+
+        }
+
+
+        showMessage(
+            "Token untuk " +
+            (ujian
+                ? ujian.judul
+                : "ujian") +
+            " berhasil dibuat.",
+            "success"
+        );
+
+
+        await loadToken();
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal membuat token: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   GENERATE TOKEN
+===================================================== */
+
+function generateToken(){
+
+    const chars =
+        "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+    let hasil = "";
+
+    for(let i=0;i<6;i++){
+
+        hasil +=
+            chars.charAt(
+                Math.floor(
+                    Math.random() *
+                    chars.length
+                )
+            );
+
+    }
+
+    return hasil;
+
+}
+
+
+/* =====================================================
+   SALIN TOKEN
+===================================================== */
+
+async function salinToken(token){
+
+    try{
+
+        await navigator.clipboard.writeText(
+            token
+        );
+
+        showMessage(
+            "Token " +
+            token +
+            " berhasil disalin.",
+            "success"
+        );
+
+    }catch(error){
+
+        alert(
+            "Token: " +
+            token
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   TOGGLE
+===================================================== */
+
+async function toggleToken(id,status){
+
+    try{
+
+        const hasil =
+            await supabaseClient
+            .from("token_ujian")
+            .update({
+
+                aktif:
+                    !status
+
+            })
+            .eq(
+                "id",
+                id
+            );
+
+        if(hasil.error){
+
+            throw hasil.error;
+
+        }
+
+        showMessage(
+            !status
+            ? "Token berhasil diaktifkan."
+            : "Token berhasil dinonaktifkan.",
+            "success"
+        );
+
+        await loadToken();
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal mengubah status token: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   HAPUS
+===================================================== */
+
+async function hapusToken(id){
+
+    const yakin =
+        confirm(
+            "Yakin ingin menghapus token ini?"
+        );
+
+    if(!yakin){
+
+        return;
+
+    }
+
+    try{
+
+        const hasil =
+            await supabaseClient
+            .from("token_ujian")
+            .delete()
+            .eq(
+                "id",
+                id
+            );
+
+        if(hasil.error){
+
+            throw hasil.error;
+
+        }
+
+        showMessage(
+            "Token berhasil dihapus.",
+            "success"
+        );
+
+        await loadToken();
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal menghapus token: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   FORMAT TANGGAL
+===================================================== */
+
+function formatTanggal(value){
+
+    if(!value){
+
+        return "-";
+
+    }
+
+    try{
+
+        return new Date(value)
+        .toLocaleString(
+            "id-ID",
+            {
+                dateStyle:"medium",
+                timeStyle:"short"
+            }
+        );
+
+    }catch(error){
+
+        return value;
+
+    }
+
+}
+
+
+/* =====================================================
+   ESCAPE
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+function escapeJs(value){
+
+    return String(value)
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'");
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function kembaliDashboard(){
+
+    window.location.href =
+        "admin.html";
+
+}
+
+
+/* =====================================================
+   LOAD AWAL
+===================================================== */
+
+loadData();
+
+</script>
+
+</body>
+</html>
+```
