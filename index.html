@@ -1,67 +1,54 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - EXAM SMPN 3 Sibolga</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+<!-- Pustaka Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-md border border-slate-200">
-    <div class="text-center mb-6">
-      <h1 class="text-2xl font-bold text-blue-900">EXAM SMPN 3 Sibolga</h1>
-      <p class="text-xs text-slate-500 mt-1">Sistem Ujian & Pengelolaan Nilai Online</p>
-    </div>
+<script>
+  // Konfigurasi Supabase
+  const SUPABASE_URL = 'https://sztfucrmjexoalyiwwnq.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn';
 
-    <form id="loginForm" class="space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-slate-700 mb-1">Email / Akun</label>
-        <input type="email" id="emailInput" required placeholder="admin@smpn3sibolga.sch.id" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-slate-700 mb-1">Kata Sandi</label>
-        <input type="password" id="passwordInput" required placeholder="••••••••" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm">
-      </div>
-      
-      <button type="submit" id="btnLogin" class="w-full bg-blue-900 hover:bg-blue-800 text-white py-2.5 rounded-lg text-sm font-semibold transition">
-        Masuk Sistem
-      </button>
-    </form>
+  const { createClient } = window.supabase;
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    <div id="alertMsg" class="mt-4 text-xs text-center hidden p-2 rounded-lg"></div>
-  </div>
+  // Fungsi Login Otomatis Berdasarkan Role
+  async function prosesLogin(event) {
+    event.preventDefault(); // Mencegah reload halaman
 
-  <script>
-    const SUPABASE_URL = 'https://sztfucrmjexoalyiwwnq.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn';
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
 
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('emailInput').value;
-      const password = document.getElementById('passwordInput').value;
-      const alertMsg = document.getElementById('alertMsg');
-
-      alertMsg.className = 'mt-4 text-xs text-center p-2 rounded-lg bg-blue-100 text-blue-700 block';
-      alertMsg.textContent = 'Memverifikasi akun...';
-
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-      if (error) {
-        alertMsg.className = 'mt-4 text-xs text-center p-2 rounded-lg bg-red-100 text-red-700 block';
-        alertMsg.textContent = 'Gagal masuk: ' + error.message;
-        return;
-      }
-
-      alertMsg.className = 'mt-4 text-xs text-center p-2 rounded-lg bg-emerald-100 text-emerald-700 block';
-      alertMsg.textContent = 'Login berhasil! Mengalihkan ke halaman Admin...';
-
-      setTimeout(() => {
-        window.location.href = 'admin.html';
-      }, 1200);
+    // 1. Verifikasi Email & Password ke Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password
     });
-  </script>
-</body>
-</html>
+
+    if (authError) {
+      alert('Login Gagal: ' + authError.message);
+      return;
+    }
+
+    // 2. Ambil Role Pengguna dari Tabel Profiles
+    const userId = authData.user.id;
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('nama, role')
+      .eq('user_id', userId)
+      .single();
+
+    if (profileError || !profile) {
+      alert('Login Berhasil, tetapi data profil/role belum terdaftar di tabel profiles!');
+      return;
+    }
+
+    // 3. Pengarahan Halaman Otomatis Sesuai Role
+    if (profile.role === 'admin') {
+      window.location.href = 'admin.html';
+    } else if (profile.role === 'guru') {
+      window.location.href = 'guru.html';
+    } else if (profile.role === 'siswa') {
+      window.location.href = 'siswa.html';
+    } else {
+      alert('Role tidak dikenali: ' + profile.role);
+    }
+  }
+</script>
