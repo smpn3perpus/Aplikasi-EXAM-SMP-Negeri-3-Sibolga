@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Admin - EXAM SMPN 3 Sibolga</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800">
+
+  <!-- Header / Navigation -->
+  <header class="bg-blue-900 text-white shadow-md">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div>
+        <h1 class="text-xl font-bold">Panel Utama Admin</h1>
+        <p class="text-xs text-blue-200">Aplikasi EXAM SMP Negeri 3 Sibolga</p>
+      </div>
+      <button id="btnLogout" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+        Keluar
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container mx-auto px-4 py-6">
+    <!-- Status Connection Card -->
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-6 flex items-center justify-between">
+      <span class="text-sm font-semibold text-slate-600">Status Koneksi Database:</span>
+      <span id="statusKoneksi" class="text-sm font-medium px-3 py-1 rounded-full bg-yellow-100 text-yellow-800">
+        Menghubungkan ke Supabase...
+      </span>
+    </div>
+
+    <!-- Dashboard Stat Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <p class="text-sm font-medium text-slate-500">Total Guru</p>
+        <p id="countGuru" class="text-3xl font-bold text-blue-600 mt-2">0</p>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <p class="text-sm font-medium text-slate-500">Total Siswa</p>
+        <p id="countSiswa" class="text-3xl font-extrabold text-emerald-600 mt-2">0</p>
+      </div>
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <p class="text-sm font-medium text-slate-500">Ujian Aktif</p>
+        <p id="countUjian" class="text-3xl font-extrabold text-indigo-600 mt-2">0</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Supabase Configuration -->
+  <script>
+    // Ganti nilai di bawah dengan Project URL & Anon Key dari Supabase
+    const SUPABASE_URL = 'https://YOUR_SUPABASE_PROJECT_URL.supabase.co';
+    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function testKoneksi() {
+      const statusEl = document.getElementById('statusKoneksi');
+      try {
+        const { data, error } = await supabase.from('profiles').select('count', { count: 'exact', head: true });
+        if (error && error.code !== 'PGRST116') throw error;
+        
+        statusEl.textContent = 'Terhubung ke Supabase ✅';
+        statusEl.className = 'text-sm font-medium px-3 py-1 rounded-full bg-emerald-100 text-emerald-800';
+      } catch (err) {
+        statusEl.textContent = 'Konfigurasi URL / Key Belum Sesuai ❌';
+        statusEl.className = 'text-sm font-medium px-3 py-1 rounded-full bg-red-100 text-red-800';
+      }
+    }
+
+    testKoneksi();
+  </script>
+</body>
+</html>
