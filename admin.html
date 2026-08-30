@@ -1,75 +1,787 @@
 <!DOCTYPE html>
+
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Panel Admin - EXAM SMPN 3 Sibolga</title>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
+
 <body class="bg-slate-100 min-h-screen text-slate-800">
 
+  <!-- HEADER -->
+
   <header class="bg-blue-900 text-white shadow-md">
-    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-      <div>
-        <h1 class="text-xl font-bold">Panel Utama Admin</h1>
-        <p class="text-xs text-blue-200">Aplikasi EXAM SMP Negeri 3 Sibolga</p>
-      </div>
-      <button id="btnLogout" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
-        Keluar
-      </button>
+
+```
+<div class="container mx-auto px-4 py-4 flex justify-between items-center">
+
+  <div>
+
+    <h1 class="text-xl font-bold">
+      Panel Utama Admin
+    </h1>
+
+    <p class="text-xs text-blue-200">
+      Aplikasi EXAM SMP Negeri 3 Sibolga
+    </p>
+
+  </div>
+
+  <div class="flex items-center gap-4">
+
+    <div class="hidden md:block text-right">
+
+      <p id="namaAdmin" class="text-sm font-semibold">
+        Memuat...
+      </p>
+
+      <p class="text-xs text-blue-200">
+        Administrator
+      </p>
+
     </div>
+
+    <button
+      id="btnLogout"
+      class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+
+      Keluar
+
+    </button>
+
+  </div>
+
+</div>
+```
+
   </header>
 
-  <main class="container mx-auto px-4 py-6">
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-6 flex items-center justify-between">
-      <span class="text-sm font-semibold text-slate-600">Status Koneksi Database:</span>
-      <span id="statusKoneksi" class="text-sm font-medium px-3 py-1 rounded-full bg-yellow-100 text-yellow-800">
-        Menghubungkan ke Supabase...
-      </span>
-    </div>
+  <!-- MAIN -->
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <p class="text-sm font-medium text-slate-500">Total Guru</p>
-        <p id="countGuru" class="text-3xl font-bold text-blue-600 mt-2">0</p>
-      </div>
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <p class="text-sm font-medium text-slate-500">Total Siswa</p>
-        <p id="countSiswa" class="text-3xl font-extrabold text-emerald-600 mt-2">0</p>
-      </div>
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <p class="text-sm font-medium text-slate-500">Ujian Aktif</p>
-        <p id="countUjian" class="text-3xl font-extrabold text-indigo-600 mt-2">0</p>
-      </div>
-    </div>
+  <main class="container mx-auto px-4 py-6">
+
+```
+<!-- STATUS DATABASE -->
+
+<div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-6 flex items-center justify-between">
+
+  <span class="text-sm font-semibold text-slate-600">
+    Status Koneksi Database:
+  </span>
+
+  <span
+    id="statusKoneksi"
+    class="text-sm font-medium px-3 py-1 rounded-full bg-yellow-100 text-yellow-800">
+
+    Menghubungkan ke Supabase...
+
+  </span>
+
+</div>
+
+
+<!-- WELCOME -->
+
+<div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-6">
+
+  <h2 class="text-xl font-bold text-blue-900">
+    Selamat Datang di Dashboard Admin 👋
+  </h2>
+
+  <p class="text-sm text-slate-500 mt-1">
+    Kelola data guru, siswa, ujian, soal, peserta, dan hasil ujian.
+  </p>
+
+</div>
+
+
+<!-- STATISTIK -->
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+  <!-- GURU -->
+
+  <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+
+    <p class="text-sm font-medium text-slate-500">
+      Total Guru
+    </p>
+
+    <p
+      id="countGuru"
+      class="text-3xl font-bold text-blue-600 mt-2">
+
+      0
+
+    </p>
+
+  </div>
+
+
+  <!-- SISWA -->
+
+  <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+
+    <p class="text-sm font-medium text-slate-500">
+      Total Siswa
+    </p>
+
+    <p
+      id="countSiswa"
+      class="text-3xl font-extrabold text-emerald-600 mt-2">
+
+      0
+
+    </p>
+
+  </div>
+
+
+  <!-- UJIAN -->
+
+  <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+
+    <p class="text-sm font-medium text-slate-500">
+      Ujian Aktif
+    </p>
+
+    <p
+      id="countUjian"
+      class="text-3xl font-extrabold text-indigo-600 mt-2">
+
+      0
+
+    </p>
+
+  </div>
+
+</div>
+
+
+<!-- MENU ADMIN -->
+
+<div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+
+  <h2 class="text-lg font-bold text-slate-800 mb-4">
+    Menu Administrasi
+  </h2>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+    <button
+      class="p-4 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-900 font-semibold">
+
+      👨‍🏫
+      <br>
+      Data Guru
+
+    </button>
+
+
+    <button
+      class="p-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-semibold">
+
+      👨‍🎓
+      <br>
+      Data Siswa
+
+    </button>
+
+
+    <button
+      class="p-4 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-900 font-semibold">
+
+      📝
+      <br>
+      Bank Soal
+
+    </button>
+
+
+    <button
+      class="p-4 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-900 font-semibold">
+
+      📋
+      <br>
+      Ujian
+
+    </button>
+
+
+    <button
+      class="p-4 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-900 font-semibold">
+
+      👥
+      <br>
+      Peserta
+
+    </button>
+
+
+    <button
+      class="p-4 rounded-xl bg-cyan-50 hover:bg-cyan-100 text-cyan-900 font-semibold">
+
+      📊
+      <br>
+      Hasil Ujian
+
+    </button>
+
+
+    <button
+      class="p-4 rounded-xl bg-yellow-50 hover:bg-yellow-100 text-yellow-900 font-semibold">
+
+      🔑
+      <br>
+      Reset Password
+
+    </button>
+
+
+    <button
+      class="p-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 font-semibold">
+
+      ⚙️
+      <br>
+      Pengaturan
+
+    </button>
+
+  </div>
+
+</div>
+```
+
   </main>
 
-  <script>
-    const SUPABASE_URL = 'https://sztfucrmjexoalyiwwnq.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn';
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+<script>
 
-    async function testKoneksi() {
-      const statusEl = document.getElementById('statusKoneksi');
-      try {
-        const { data, error } = await supabase.from('profiles').select('count', { count: 'exact', head: true });
-        if (error && error.code !== 'PGRST116') throw error;
-        
-        statusEl.textContent = 'Terhubung ke Supabase ✅';
-        statusEl.className = 'text-sm font-medium px-3 py-1 rounded-full bg-emerald-100 text-emerald-800';
-      } catch (err) {
-        statusEl.textContent = 'Gagal Terhubung ❌';
-        statusEl.className = 'text-sm font-medium px-3 py-1 rounded-full bg-red-100 text-red-800';
-      }
+  // =====================================================
+  // SUPABASE
+  // =====================================================
+
+  const SUPABASE_URL =
+    'https://sztfucrmjexoalyiwwnq.supabase.co';
+
+  const SUPABASE_ANON_KEY =
+    'sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn';
+
+
+  // Ambil library Supabase dari window
+  const { createClient } = window.supabase;
+
+
+  // Buat client dengan nama berbeda
+  // agar tidak bentrok dengan window.supabase
+  const supabaseClient =
+    createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+
+
+  // =====================================================
+  // ELEMENT
+  // =====================================================
+
+  const statusEl =
+    document.getElementById('statusKoneksi');
+
+  const namaAdminEl =
+    document.getElementById('namaAdmin');
+
+  const countGuruEl =
+    document.getElementById('countGuru');
+
+  const countSiswaEl =
+    document.getElementById('countSiswa');
+
+  const countUjianEl =
+    document.getElementById('countUjian');
+
+
+
+  // =====================================================
+  // STATUS
+  // =====================================================
+
+  function statusBerhasil() {
+
+    statusEl.textContent =
+      'Terhubung ke Supabase ✅';
+
+    statusEl.className =
+      'text-sm font-medium px-3 py-1 rounded-full bg-emerald-100 text-emerald-800';
+
+  }
+
+
+  function statusGagal() {
+
+    statusEl.textContent =
+      'Gagal Terhubung ❌';
+
+    statusEl.className =
+      'text-sm font-medium px-3 py-1 rounded-full bg-red-100 text-red-800';
+
+  }
+
+
+
+  // =====================================================
+  // CEK SESSION ADMIN
+  // =====================================================
+
+  async function cekAdmin() {
+
+    const {
+      data: { session },
+      error
+    } =
+      await supabaseClient.auth.getSession();
+
+
+    if (error) {
+
+      console.error(
+        'Session error:',
+        error
+      );
+
+      window.location.href =
+        'index.html';
+
+      return null;
+
     }
 
-    document.getElementById('btnLogout').addEventListener('click', async () => {
-      await supabase.auth.signOut();
-      window.location.href = 'index.html';
-    });
 
-    testKoneksi();
-  </script>
+    if (!session) {
+
+      alert(
+        'Sesi login tidak ditemukan. Silakan login kembali.'
+      );
+
+      window.location.href =
+        'index.html';
+
+      return null;
+
+    }
+
+
+    return session;
+
+  }
+
+
+
+  // =====================================================
+  // AMBIL PROFILE ADMIN
+  // =====================================================
+
+  async function ambilProfileAdmin(userId) {
+
+    const {
+      data,
+      error
+    } =
+      await supabaseClient
+        .from('profiles')
+        .select('nama, role')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+
+    if (error) {
+
+      console.error(
+        'Profile error:',
+        error
+      );
+
+      return null;
+
+    }
+
+
+    if (!data) {
+
+      console.error(
+        'Profile tidak ditemukan.'
+      );
+
+      return null;
+
+    }
+
+
+    if (data.role !== 'admin') {
+
+      console.error(
+        'Role bukan admin.'
+      );
+
+      return null;
+
+    }
+
+
+    namaAdminEl.textContent =
+      data.nama || 'Administrator';
+
+
+    return data;
+
+  }
+
+
+
+  // =====================================================
+  // TES KONEKSI DATABASE
+  // =====================================================
+
+  async function testKoneksi() {
+
+    try {
+
+      /*
+        Query ringan ke profiles.
+        Kita tidak mengambil isi data.
+      */
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from('profiles')
+          .select('user_id')
+          .limit(1);
+
+
+      if (error) {
+
+        console.error(
+          'Database error:',
+          error
+        );
+
+        statusGagal();
+
+        return false;
+
+      }
+
+
+      statusBerhasil();
+
+      return true;
+
+    }
+
+    catch (err) {
+
+      console.error(
+        'Connection error:',
+        err
+      );
+
+      statusGagal();
+
+      return false;
+
+    }
+
+  }
+
+
+
+  // =====================================================
+  // HITUNG GURU
+  // =====================================================
+
+  async function hitungGuru() {
+
+    try {
+
+      const {
+        count,
+        error
+      } =
+        await supabaseClient
+          .from('guru_master')
+          .select('*', {
+            count: 'exact',
+            head: true
+          });
+
+
+      if (error) {
+
+        console.warn(
+          'Tabel guru_master:',
+          error.message
+        );
+
+        countGuruEl.textContent =
+          '—';
+
+        return;
+
+      }
+
+
+      countGuruEl.textContent =
+        count ?? 0;
+
+    }
+
+    catch (err) {
+
+      console.warn(err);
+
+      countGuruEl.textContent =
+        '—';
+
+    }
+
+  }
+
+
+
+  // =====================================================
+  // HITUNG SISWA
+  // =====================================================
+
+  async function hitungSiswa() {
+
+    try {
+
+      const {
+        count,
+        error
+      } =
+        await supabaseClient
+          .from('siswa_master')
+          .select('*', {
+            count: 'exact',
+            head: true
+          });
+
+
+      if (error) {
+
+        console.warn(
+          'Tabel siswa_master:',
+          error.message
+        );
+
+        countSiswaEl.textContent =
+          '—';
+
+        return;
+
+      }
+
+
+      countSiswaEl.textContent =
+        count ?? 0;
+
+    }
+
+    catch (err) {
+
+      console.warn(err);
+
+      countSiswaEl.textContent =
+        '—';
+
+    }
+
+  }
+
+
+
+  // =====================================================
+  // HITUNG UJIAN
+  // =====================================================
+
+  async function hitungUjian() {
+
+    /*
+      Nama tabel ujian mungkin belum dibuat.
+      Karena itu kita tidak membuat dashboard gagal
+      hanya karena tabel ini belum ada.
+    */
+
+    try {
+
+      const {
+        count,
+        error
+      } =
+        await supabaseClient
+          .from('ujian')
+          .select('*', {
+            count: 'exact',
+            head: true
+          });
+
+
+      if (error) {
+
+        console.warn(
+          'Tabel ujian belum tersedia:',
+          error.message
+        );
+
+        countUjianEl.textContent =
+          '0';
+
+        return;
+
+      }
+
+
+      countUjianEl.textContent =
+        count ?? 0;
+
+    }
+
+    catch (err) {
+
+      console.warn(err);
+
+      countUjianEl.textContent =
+        '0';
+
+    }
+
+  }
+
+
+
+  // =====================================================
+  // LOGOUT
+  // =====================================================
+
+  document
+    .getElementById('btnLogout')
+    .addEventListener(
+      'click',
+      async function() {
+
+        this.disabled = true;
+        this.textContent =
+          'Keluar...';
+
+
+        const {
+          error
+        } =
+          await supabaseClient
+            .auth
+            .signOut();
+
+
+        if (error) {
+
+          console.error(
+            'Logout error:',
+            error
+          );
+
+        }
+
+
+        window.location.href =
+          'index.html';
+
+      }
+    );
+
+
+
+  // =====================================================
+  // MULAI DASHBOARD
+  // =====================================================
+
+  async function mulaiDashboard() {
+
+    const session =
+      await cekAdmin();
+
+
+    if (!session) {
+
+      return;
+
+    }
+
+
+    /*
+      Profile wajib benar-benar role admin.
+    */
+
+    const profile =
+      await ambilProfileAdmin(
+        session.user.id
+      );
+
+
+    if (!profile) {
+
+      alert(
+        'Profil Admin tidak ditemukan atau role bukan admin.'
+      );
+
+      await supabaseClient.auth.signOut();
+
+      window.location.href =
+        'index.html';
+
+      return;
+
+    }
+
+
+    /*
+      Tes koneksi setelah session valid.
+    */
+
+    await testKoneksi();
+
+
+    /*
+      Statistik.
+    */
+
+    await Promise.all([
+
+      hitungGuru(),
+
+      hitungSiswa(),
+
+      hitungUjian()
+
+    ]);
+
+  }
+
+
+
+  // Jalankan
+  mulaiDashboard();
+
+</script>
+
 </body>
 </html>
