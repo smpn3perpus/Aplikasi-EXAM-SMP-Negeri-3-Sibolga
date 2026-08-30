@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -29,322 +28,330 @@
 
 <body class="bg-gradient-to-br from-blue-900 via-blue-700 to-slate-100 min-h-screen flex items-center justify-center p-4">
 
-  <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+<div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
 
-    <!-- HEADER -->
-    <div class="bg-blue-900 text-white text-center p-7">
-      <div class="text-5xl mb-2">📝</div>
+  <!-- HEADER -->
+  <div class="bg-blue-900 text-white text-center p-7">
 
-      <h1 class="text-2xl font-bold">
-        EXAM SMPN 3 SIBOLGA
-      </h1>
+    <div class="text-5xl mb-2">📝</div>
 
-      <p class="text-blue-200 text-sm mt-1">
-        Sistem Ujian & Pengelolaan Nilai
-      </p>
+    <h1 class="text-2xl font-bold">
+      EXAM SMPN 3 SIBOLGA
+    </h1>
+
+    <p class="text-blue-200 text-sm mt-1">
+      Sistem Ujian & Pengelolaan Nilai
+    </p>
+
+  </div>
+
+  <div class="p-6">
+
+    <!-- TAB -->
+    <div class="flex border-b mb-6">
+
+      <button
+        id="tab-signin"
+        onclick="switchTab('signin')"
+        class="w-1/2 py-3 font-bold tab-active">
+        SIGN IN
+      </button>
+
+      <button
+        id="tab-signup"
+        onclick="switchTab('signup')"
+        class="w-1/2 py-3 font-bold tab-inactive">
+        SIGN UP
+      </button>
+
     </div>
 
-    <div class="p-6">
 
-      <!-- TAB SIGN IN / SIGN UP -->
-      <div class="flex border-b mb-6">
+    <!-- ================================================= -->
+    <!-- SIGN IN -->
+    <!-- ================================================= -->
 
-        <button
-          id="tab-signin"
-          onclick="switchTab('signin')"
-          class="w-1/2 py-3 font-bold tab-active">
-          SIGN IN
-        </button>
+    <section id="signin-section">
 
-        <button
-          id="tab-signup"
-          onclick="switchTab('signup')"
-          class="w-1/2 py-3 font-bold tab-inactive">
-          SIGN UP
-        </button>
-
-      </div>
-
-      <!-- ============================= -->
-      <!-- SIGN IN -->
-      <!-- ============================= -->
-
-      <section id="signin-section">
-
-        <div class="mb-4">
-
-          <label class="block text-sm font-semibold text-gray-700 mb-1">
-            Login Sebagai
-          </label>
-
-          <select
-            id="login-role"
-            onchange="ubahLoginPlaceholder()"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-
-            <option value="admin">Admin</option>
-            <option value="guru">Guru</option>
-            <option value="siswa">Siswa</option>
-
-          </select>
-
-        </div>
-
-        <div class="mb-4">
-
-          <label
-            id="login-id-label"
-            class="block text-sm font-semibold text-gray-700 mb-1">
-
-            Email Admin
-
-          </label>
-
-          <input
-            type="text"
-            id="login-id"
-            autocomplete="username"
-            required
-            placeholder="Masukkan email Admin"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-
-        </div>
-
-        <div class="mb-3">
-
-          <label class="block text-sm font-semibold text-gray-700 mb-1">
-            Password
-          </label>
-
-          <input
-            type="password"
-            id="login-pass"
-            autocomplete="current-password"
-            required
-            placeholder="Masukkan password"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
-
-        </div>
-
-        <div class="text-right mb-5">
-
-          <button
-            type="button"
-            onclick="showForgotPassword()"
-            class="text-sm text-blue-700 hover:underline">
-
-            Lupa Password?
-
-          </button>
-
-        </div>
-
-        <button
-          onclick="prosesLogin()"
-          id="btn-login"
-          class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-lg">
-
-          SIGN IN
-
-        </button>
-
-      </section>
-
-
-      <!-- ============================= -->
-      <!-- SIGN UP -->
-      <!-- ============================= -->
-
-      <section id="signup-section" class="hidden">
-
-        <div class="mb-4">
-
-          <label class="block text-sm font-semibold text-gray-700 mb-1">
-            Daftar Sebagai
-          </label>
-
-          <select
-            id="signup-role"
-            onchange="ubahFormSignup()"
-            class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
-
-            <option value="siswa">Siswa</option>
-            <option value="guru">Guru</option>
-
-          </select>
-
-        </div>
-
-
-        <!-- GURU -->
-
-        <div id="form-guru" class="hidden">
-
-          <label class="block text-sm font-semibold text-gray-700 mb-1">
-            NIP / NIK
-          </label>
-
-          <input
-            type="text"
-            id="signup-nip"
-            inputmode="numeric"
-            placeholder="Masukkan NIP / NIK yang terdaftar"
-            class="w-full px-4 py-3 border rounded-lg mb-4 focus:ring-2 focus:ring-green-500 outline-none">
-
-        </div>
-
-
-        <!-- SISWA -->
-
-        <div id="form-siswa">
-
-          <label class="block text-sm font-semibold text-gray-700 mb-1">
-            NISN
-          </label>
-
-          <input
-            type="text"
-            id="signup-nisn"
-            inputmode="numeric"
-            placeholder="Masukkan NISN yang terdaftar"
-            class="w-full px-4 py-3 border rounded-lg mb-4 focus:ring-2 focus:ring-green-500 outline-none">
-
-        </div>
-
+      <div class="mb-4">
 
         <label class="block text-sm font-semibold text-gray-700 mb-1">
-          Buat Password
-        </label>
-
-        <input
-          type="password"
-          id="signup-password"
-          minlength="6"
-          autocomplete="new-password"
-          placeholder="Minimal 6 karakter"
-          class="w-full px-4 py-3 border rounded-lg mb-4 focus:ring-2 focus:ring-green-500 outline-none">
-
-
-        <label class="block text-sm font-semibold text-gray-700 mb-1">
-          Ulangi Password
-        </label>
-
-        <input
-          type="password"
-          id="signup-password-confirm"
-          minlength="6"
-          autocomplete="new-password"
-          placeholder="Ulangi password"
-          class="w-full px-4 py-3 border rounded-lg mb-5 focus:ring-2 focus:ring-green-500 outline-none">
-
-
-        <button
-          onclick="prosesSignup()"
-          id="btn-signup"
-          class="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-3 rounded-lg">
-
-          SIGN UP
-
-        </button>
-
-
-        <p class="text-xs text-gray-500 text-center mt-4">
-          NIP/NIK atau NISN harus sudah terdaftar oleh Admin.
-        </p>
-
-      </section>
-
-
-      <!-- ============================= -->
-      <!-- LUPA PASSWORD -->
-      <!-- ============================= -->
-
-      <section id="forgot-section" class="hidden">
-
-        <div class="text-center mb-5">
-
-          <div class="text-4xl mb-2">
-            🔐
-          </div>
-
-          <h2 class="text-xl font-bold text-gray-800">
-            Lupa Password
-          </h2>
-
-          <p class="text-sm text-gray-500 mt-1">
-            Khusus Guru dan Siswa.
-          </p>
-
-        </div>
-
-
-        <label class="block text-sm font-semibold text-gray-700 mb-1">
-          Jenis Akun
+          Login Sebagai
         </label>
 
         <select
-          id="forgot-role"
-          class="w-full px-4 py-3 border rounded-lg mb-4">
+          id="login-role"
+          onchange="ubahLoginPlaceholder()"
+          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
 
+          <option value="admin">Admin</option>
           <option value="guru">Guru</option>
           <option value="siswa">Siswa</option>
 
         </select>
 
+      </div>
+
+
+      <div class="mb-4">
 
         <label
-          id="forgot-id-label"
+          id="login-id-label"
           class="block text-sm font-semibold text-gray-700 mb-1">
 
-          NIP / NIK
+          Email Admin
 
         </label>
 
         <input
           type="text"
-          id="forgot-id"
-          placeholder="Masukkan NIP / NIK"
-          class="w-full px-4 py-3 border rounded-lg mb-5 focus:ring-2 focus:ring-orange-500 outline-none">
+          id="login-id"
+          autocomplete="username"
+          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+          placeholder="Masukkan email Admin">
 
+      </div>
+
+
+      <div class="mb-3">
+
+        <label class="block text-sm font-semibold text-gray-700 mb-1">
+          Password
+        </label>
+
+        <input
+          type="password"
+          id="login-pass"
+          autocomplete="current-password"
+          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+          placeholder="Masukkan password">
+
+      </div>
+
+
+      <div class="text-right mb-5">
 
         <button
-          onclick="prosesLupaPassword()"
-          id="btn-forgot"
-          class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-lg">
+          type="button"
+          onclick="showForgotPassword()"
+          class="text-sm text-blue-700 hover:underline">
 
-          KIRIM LINK RESET PASSWORD
+          Lupa Password?
 
         </button>
 
+      </div>
 
-        <button
-          onclick="showSignin()"
-          class="w-full mt-3 text-blue-700 font-semibold py-2">
 
-          ← Kembali ke SIGN IN
+      <button
+        onclick="prosesLogin()"
+        id="btn-login"
+        class="w-full bg-blue-900 hover:bg-blue-800 text-white font-bold py-3 rounded-lg">
 
-        </button>
+        SIGN IN
 
-      </section>
+      </button>
 
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- SIGN UP -->
+    <!-- ================================================= -->
+
+    <section id="signup-section" class="hidden">
+
+      <div class="mb-4">
+
+        <label class="block text-sm font-semibold text-gray-700 mb-1">
+          Daftar Sebagai
+        </label>
+
+        <select
+          id="signup-role"
+          onchange="ubahFormSignup()"
+          class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
+
+          <option value="siswa">Siswa</option>
+          <option value="guru">Guru</option>
+
+        </select>
+
+      </div>
+
+
+      <!-- GURU -->
+
+      <div id="form-guru" class="hidden">
+
+        <label class="block text-sm font-semibold text-gray-700 mb-1">
+          NIP / NIK
+        </label>
+
+        <input
+          type="text"
+          id="signup-nip"
+          inputmode="numeric"
+          class="w-full px-4 py-3 border rounded-lg mb-4 focus:ring-2 focus:ring-green-500 outline-none"
+          placeholder="Masukkan NIP / NIK yang terdaftar">
+
+      </div>
+
+
+      <!-- SISWA -->
+
+      <div id="form-siswa">
+
+        <label class="block text-sm font-semibold text-gray-700 mb-1">
+          NISN
+        </label>
+
+        <input
+          type="text"
+          id="signup-nisn"
+          inputmode="numeric"
+          class="w-full px-4 py-3 border rounded-lg mb-4 focus:ring-2 focus:ring-green-500 outline-none"
+          placeholder="Masukkan NISN yang terdaftar">
+
+      </div>
+
+
+      <label class="block text-sm font-semibold text-gray-700 mb-1">
+        Buat Password
+      </label>
+
+      <input
+        type="password"
+        id="signup-password"
+        minlength="6"
+        autocomplete="new-password"
+        class="w-full px-4 py-3 border rounded-lg mb-4 focus:ring-2 focus:ring-green-500 outline-none"
+        placeholder="Minimal 6 karakter">
+
+
+      <label class="block text-sm font-semibold text-gray-700 mb-1">
+        Ulangi Password
+      </label>
+
+      <input
+        type="password"
+        id="signup-password-confirm"
+        minlength="6"
+        autocomplete="new-password"
+        class="w-full px-4 py-3 border rounded-lg mb-5 focus:ring-2 focus:ring-green-500 outline-none"
+        placeholder="Ulangi password">
+
+
+      <button
+        onclick="prosesSignup()"
+        id="btn-signup"
+        class="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-3 rounded-lg">
+
+        SIGN UP
+
+      </button>
+
+
+      <p class="text-xs text-gray-500 text-center mt-4">
+
+        NIP/NIK atau NISN harus sudah terdaftar oleh Admin.
+
+      </p>
+
+    </section>
+
+
+    <!-- ================================================= -->
+    <!-- LUPA PASSWORD -->
+    <!-- ================================================= -->
+
+    <section id="forgot-section" class="hidden">
+
+      <div class="text-center mb-5">
+
+        <div class="text-4xl mb-2">
+          🔐
+        </div>
+
+        <h2 class="text-xl font-bold text-gray-800">
+          Lupa Password
+        </h2>
+
+        <p class="text-sm text-gray-500 mt-1">
+          Khusus Guru dan Siswa.
+        </p>
+
+      </div>
+
+
+      <label class="block text-sm font-semibold text-gray-700 mb-1">
+        Jenis Akun
+      </label>
+
+      <select
+        id="forgot-role"
+        class="w-full px-4 py-3 border rounded-lg mb-4">
+
+        <option value="guru">Guru</option>
+        <option value="siswa">Siswa</option>
+
+      </select>
+
+
+      <label
+        id="forgot-id-label"
+        class="block text-sm font-semibold text-gray-700 mb-1">
+
+        NIP / NIK
+
+      </label>
+
+
+      <input
+        type="text"
+        id="forgot-id"
+        class="w-full px-4 py-3 border rounded-lg mb-5 focus:ring-2 focus:ring-orange-500 outline-none"
+        placeholder="Masukkan NIP / NIK">
+
+
+      <button
+        onclick="prosesLupaPassword()"
+        id="btn-forgot"
+        class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-lg">
+
+        KIRIM LINK RESET PASSWORD
+
+      </button>
+
+
+      <button
+        onclick="showSignin()"
+        class="w-full mt-3 text-blue-700 font-semibold py-2">
+
+        ← Kembali ke SIGN IN
+
+      </button>
+
+    </section>
+
+  </div>
+
+
+  <!-- FOOTER -->
+
+  <div class="bg-slate-50 text-center py-4 text-xs text-gray-500">
+
+    <div>
+      © 2026 SMP Negeri 3 Sibolga
     </div>
 
-
-    <!-- FOOTER -->
-
-    <div class="bg-slate-50 text-center py-4 text-xs text-gray-500">
-
-      <div>
-        © 2026 SMP Negeri 3 Sibolga
-      </div>
-
-      <div class="font-semibold text-blue-800 mt-1">
-        Dibuat oleh Mr. Rahmat Batubara, S.T.P
-      </div>
-
+    <div class="font-semibold text-blue-800 mt-1">
+      Dibuat oleh Mr. Rahmat Batubara, S.T.P
     </div>
 
   </div>
+
+</div>
 
 
 <script>
@@ -437,7 +444,8 @@
 
     if (role === 'admin') {
 
-      label.innerText = 'Email Admin';
+      label.innerText =
+        'Email Admin';
 
       input.placeholder =
         'Contoh: admin1@smp3.id';
@@ -446,7 +454,8 @@
 
     else if (role === 'guru') {
 
-      label.innerText = 'NIP / NIK';
+      label.innerText =
+        'NIP / NIK';
 
       input.placeholder =
         'Masukkan NIP / NIK';
@@ -455,7 +464,8 @@
 
     else {
 
-      label.innerText = 'NISN';
+      label.innerText =
+        'NISN';
 
       input.placeholder =
         'Masukkan NISN';
@@ -492,12 +502,14 @@
     }
 
 
-    let email = identitas;
+    let email =
+      identitas;
 
 
-    // Guru / siswa menggunakan identitas@smp3.id
-
-    if (role !== 'admin' && !email.includes('@')) {
+    if (
+      role !== 'admin' &&
+      !identitas.includes('@')
+    ) {
 
       email =
         identitas + '@smp3.id';
@@ -509,7 +521,8 @@
       document.getElementById('btn-login');
 
     btn.disabled = true;
-    btn.innerText = 'MEMERIKSA...';
+    btn.innerText =
+      'MEMERIKSA...';
 
 
     try {
@@ -518,9 +531,11 @@
         await supabaseClient.auth
           .signInWithPassword({
 
-            email: email,
+            email:
+              email,
 
-            password: password
+            password:
+              password
 
           });
 
@@ -528,8 +543,13 @@
       if (error) {
 
         alert(
-          'Login gagal:\n\n' +
+          'LOGIN GAGAL\n\n' +
           error.message
+        );
+
+        console.error(
+          'LOGIN ERROR:',
+          error
         );
 
         return;
@@ -549,22 +569,33 @@
 
 
       // ===============================================
-      // PROFILE
+      // AMBIL PROFILE
       // ===============================================
 
-      const { data: profile, error: profileError } =
+      const {
+        data: profile,
+        error: profileError
+      } =
         await supabaseClient
           .from('profiles')
           .select('*')
-          .eq('user_id', data.user.id)
+          .eq(
+            'user_id',
+            data.user.id
+          )
           .maybeSingle();
 
 
       if (profileError) {
 
         alert(
-          'Gagal membaca profil:\n\n' +
+          'GAGAL MEMBACA PROFILE\n\n' +
           profileError.message
+        );
+
+        console.error(
+          'PROFILE ERROR:',
+          profileError
         );
 
         await supabaseClient.auth.signOut();
@@ -589,17 +620,24 @@
 
 
       // ===============================================
-      // VALIDASI ROLE
+      // CEK ROLE
       // ===============================================
 
-      if (profile.role !== role) {
+      if (
+        profile.role !== role
+      ) {
 
         alert(
-          'Akun ini terdaftar sebagai ' +
-          String(profile.role).toUpperCase() +
-          ', bukan ' +
-          role.toUpperCase() +
-          '.'
+          'ROLE AKUN TIDAK SESUAI.\n\n' +
+
+          'Akun terdaftar sebagai: ' +
+          String(
+            profile.role
+          ).toUpperCase() +
+
+          '\n\nAnda memilih: ' +
+
+          role.toUpperCase()
         );
 
         await supabaseClient.auth.signOut();
@@ -636,10 +674,26 @@
 
     }
 
+    catch (err) {
+
+      console.error(
+        'LOGIN EXCEPTION:',
+        err
+      );
+
+      alert(
+        'Terjadi kesalahan sistem:\n\n' +
+        err.message
+      );
+
+    }
+
     finally {
 
       btn.disabled = false;
-      btn.innerText = 'SIGN IN';
+
+      btn.innerText =
+        'SIGN IN';
 
     }
 
@@ -653,26 +707,42 @@
   function ubahFormSignup() {
 
     const role =
-      document.getElementById('signup-role').value;
+      document.getElementById(
+        'signup-role'
+      ).value;
 
     const guru =
-      document.getElementById('form-guru');
+      document.getElementById(
+        'form-guru'
+      );
 
     const siswa =
-      document.getElementById('form-siswa');
+      document.getElementById(
+        'form-siswa'
+      );
 
 
     if (role === 'guru') {
 
-      guru.classList.remove('hidden');
-      siswa.classList.add('hidden');
+      guru.classList.remove(
+        'hidden'
+      );
+
+      siswa.classList.add(
+        'hidden'
+      );
 
     }
 
     else {
 
-      guru.classList.add('hidden');
-      siswa.classList.remove('hidden');
+      guru.classList.add(
+        'hidden'
+      );
+
+      siswa.classList.remove(
+        'hidden'
+      );
 
     }
 
@@ -686,16 +756,28 @@
   async function prosesSignup() {
 
     const role =
-      document.getElementById('signup-role').value;
+      document.getElementById(
+        'signup-role'
+      ).value;
 
     const password =
-      document.getElementById('signup-password').value;
+      document.getElementById(
+        'signup-password'
+      ).value;
 
     const confirm =
-      document.getElementById('signup-password-confirm').value;
+      document.getElementById(
+        'signup-password-confirm'
+      ).value;
 
 
-    if (password.length < 6) {
+    // =============================================
+    // VALIDASI PASSWORD
+    // =============================================
+
+    if (
+      password.length < 6
+    ) {
 
       alert(
         'Password minimal 6 karakter.'
@@ -706,7 +788,9 @@
     }
 
 
-    if (password !== confirm) {
+    if (
+      password !== confirm
+    ) {
 
       alert(
         'Konfirmasi password tidak sama.'
@@ -717,20 +801,29 @@
     }
 
 
-    let identitas = '';
-    let table = '';
-    let field = '';
+    let identitas =
+      '';
+
+    let table =
+      '';
+
+    let field =
+      '';
 
 
-    // ===============================================
+    // =============================================
     // GURU
-    // ===============================================
+    // =============================================
 
-    if (role === 'guru') {
+    if (
+      role === 'guru'
+    ) {
 
       identitas =
-        document.getElementById('signup-nip')
-          .value.trim();
+        document.getElementById(
+          'signup-nip'
+        ).value.trim();
+
 
       if (!identitas) {
 
@@ -742,23 +835,27 @@
 
       }
 
-      table = 'guru_master';
 
-      // KOLOM DATABASE YANG BENAR
-      field = 'nip_nik';
+      table =
+        'guru_master';
+
+      field =
+        'nip_nik';
 
     }
 
 
-    // ===============================================
+    // =============================================
     // SISWA
-    // ===============================================
+    // =============================================
 
     else {
 
       identitas =
-        document.getElementById('signup-nisn')
-          .value.trim();
+        document.getElementById(
+          'signup-nisn'
+        ).value.trim();
+
 
       if (!identitas) {
 
@@ -770,38 +867,65 @@
 
       }
 
-      table = 'siswa_master';
 
-      field = 'nisn';
+      table =
+        'siswa_master';
+
+      field =
+        'nisn';
 
     }
 
 
     const btn =
-      document.getElementById('btn-signup');
+      document.getElementById(
+        'btn-signup'
+      );
 
-    btn.disabled = true;
-    btn.innerText = 'MEMERIKSA...';
+    btn.disabled =
+      true;
+
+    btn.innerText =
+      'MEMERIKSA...';
 
 
     try {
 
       // =============================================
-      // CARI DATA MASTER
+      // CEK MASTER
       // =============================================
 
-      const { data: master, error: masterError } =
+      console.log(
+        'CEK MASTER:',
+        table,
+        field,
+        identitas
+      );
+
+
+      const {
+        data: master,
+        error: masterError
+      } =
         await supabaseClient
           .from(table)
           .select('*')
-          .eq(field, identitas)
+          .eq(
+            field,
+            identitas
+          )
           .maybeSingle();
 
 
       if (masterError) {
 
+        console.error(
+          'MASTER ERROR:',
+          masterError
+        );
+
         alert(
-          'Gagal memeriksa database:\n\n' +
+          'GAGAL MEMERIKSA DATABASE\n\n' +
           masterError.message
         );
 
@@ -813,10 +937,14 @@
       if (!master) {
 
         alert(
-          (role === 'guru'
-            ? 'NIP/NIK'
-            : 'NISN') +
+          (
+            role === 'guru'
+              ? 'NIP/NIK'
+              : 'NISN'
+          ) +
+
           ' tidak ditemukan dalam database sekolah.\n\n' +
+
           'Silakan hubungi Admin.'
         );
 
@@ -825,15 +953,23 @@
       }
 
 
+      console.log(
+        'MASTER DITEMUKAN:',
+        master
+      );
+
+
       // =============================================
       // SUDAH AKTIF
       // =============================================
 
-      if (master.is_active === true) {
+      if (
+        master.is_active === true
+      ) {
 
         alert(
           'Akun ini sudah pernah didaftarkan.\n\n' +
-          'Silakan gunakan SIGN IN atau Lupa Password.'
+          'Silakan gunakan SIGN IN.'
         );
 
         return;
@@ -846,32 +982,63 @@
 
 
       const email =
-        identitas + '@smp3.id';
+        identitas +
+        '@smp3.id';
 
 
       // =============================================
-      // BUAT SUPABASE AUTH
+      // BUAT AUTH
       // =============================================
 
       btn.innerText =
         'MEMBUAT AKUN...';
 
 
-      const { data: authData, error: authError } =
+      console.log(
+        'MEMBUAT AUTH:',
+        email
+      );
+
+
+      const {
+        data: authData,
+        error: authError
+      } =
         await supabaseClient.auth
           .signUp({
 
-            email: email,
+            email:
+              email,
 
-            password: password
+            password:
+              password,
+
+            options: {
+
+              emailRedirectTo:
+                window.location.origin +
+                '/index.html'
+
+            }
 
           });
+
+
+      console.log(
+        'SIGNUP RESULT:',
+        authData
+      );
+
+      console.log(
+        'SIGNUP ERROR:',
+        authError
+      );
 
 
       if (authError) {
 
         alert(
-          'Gagal membuat akun:\n\n' +
+          'GAGAL MEMBUAT AKUN AUTH\n\n' +
           authError.message
         );
 
@@ -883,7 +1050,7 @@
       if (!authData.user) {
 
         alert(
-          'Akun belum berhasil dibuat.'
+          'Supabase tidak mengembalikan data user.'
         );
 
         return;
@@ -892,29 +1059,59 @@
 
 
       // =============================================
+      // CEK EMAIL CONFIRMATION
+      // =============================================
+
+      if (
+        !authData.session
+      ) {
+
+        console.log(
+          'User dibuat tetapi session belum tersedia.'
+        );
+
+      }
+
+
+      // =============================================
       // BUAT PROFILE
       // =============================================
 
-      const { error: profileError } =
+      btn.innerText =
+        'MENYIMPAN PROFILE...';
+
+
+      const {
+        error: profileError
+      } =
         await supabaseClient
           .from('profiles')
           .insert({
 
-            user_id: authData.user.id,
+            user_id:
+              authData.user.id,
 
-            nama: nama,
+            nama:
+              nama,
 
-            role: role,
+            role:
+              role,
 
-            nisn_nip: identitas
+            nisn_nip:
+              identitas
 
           });
 
 
       if (profileError) {
 
+        console.error(
+          'PROFILE ERROR:',
+          profileError
+        );
+
         alert(
-          'Akun Auth berhasil dibuat tetapi profile gagal disimpan:\n\n' +
+          'AUTH BERHASIL, TETAPI PROFILE GAGAL.\n\n' +
           profileError.message
         );
 
@@ -927,23 +1124,41 @@
       // UPDATE MASTER
       // =============================================
 
-      const { error: updateError } =
+      btn.innerText =
+        'MEMPERBARUI DATA GURU...';
+
+
+      const {
+        error: updateError
+      } =
         await supabaseClient
           .from(table)
           .update({
 
-            is_active: true,
+            is_active:
+              true,
 
-            user_id: authData.user.id
+            user_id:
+              authData.user.id
 
           })
-          .eq(field, identitas);
+          .eq(
+            field,
+            identitas
+          );
 
 
       if (updateError) {
 
+        console.error(
+          'UPDATE MASTER ERROR:',
+          updateError
+        );
+
         alert(
-          'Akun berhasil dibuat tetapi data master gagal diperbarui:\n\n' +
+          'AUTH DAN PROFILE BERHASIL,\n' +
+          'TETAPI DATA MASTER GAGAL DIPERBARUI.\n\n' +
+
           updateError.message
         );
 
@@ -952,7 +1167,22 @@
       }
 
 
+      // =============================================
+      // SELESAI
+      // =============================================
+
       await supabaseClient.auth.signOut();
+
+
+      document.getElementById(
+        'signup-password'
+      ).value =
+        '';
+
+      document.getElementById(
+        'signup-password-confirm'
+      ).value =
+        '';
 
 
       alert(
@@ -962,32 +1192,60 @@
         role.toUpperCase() +
         ' berhasil dibuat.\n\n' +
 
-        'Silakan SIGN IN menggunakan ' +
+        'Login menggunakan:\n' +
 
-        (role === 'guru'
-          ? 'NIP/NIK'
-          : 'NISN') +
+        (
+          role === 'guru'
+            ? 'NIP/NIK'
+            : 'NISN'
+        ) +
 
         ' dan password yang baru dibuat.'
       );
 
 
-      document.getElementById(
-        'signup-password'
-      ).value = '';
+      switchTab(
+        'signin'
+      );
+
 
       document.getElementById(
-        'signup-password-confirm'
-      ).value = '';
+        'login-role'
+      ).value =
+        role;
 
-      switchTab('signin');
+
+      document.getElementById(
+        'login-id'
+      ).value =
+        identitas;
+
+
+      ubahLoginPlaceholder();
+
+    }
+
+    catch (err) {
+
+      console.error(
+        'SIGNUP EXCEPTION:',
+        err
+      );
+
+      alert(
+        'TERJADI KESALAHAN:\n\n' +
+        err.message
+      );
 
     }
 
     finally {
 
-      btn.disabled = false;
-      btn.innerText = 'SIGN UP';
+      btn.disabled =
+        false;
+
+      btn.innerText =
+        'SIGN UP';
 
     }
 
@@ -1002,15 +1260,21 @@
 
     document.getElementById(
       'signin-section'
-    ).classList.add('hidden');
+    ).classList.add(
+      'hidden'
+    );
 
     document.getElementById(
       'signup-section'
-    ).classList.add('hidden');
+    ).classList.add(
+      'hidden'
+    );
 
     document.getElementById(
       'forgot-section'
-    ).classList.remove('hidden');
+    ).classList.remove(
+      'hidden'
+    );
 
   }
 
@@ -1019,11 +1283,15 @@
 
     document.getElementById(
       'forgot-section'
-    ).classList.add('hidden');
+    ).classList.add(
+      'hidden'
+    );
 
     document.getElementById(
       'signin-section'
-    ).classList.remove('hidden');
+    ).classList.remove(
+      'hidden'
+    );
 
   }
 
@@ -1032,48 +1300,51 @@
   // FORGOT ROLE
   // =====================================================
 
-  document.getElementById('forgot-role')
-    .addEventListener(
-      'change',
-      function() {
+  document.getElementById(
+    'forgot-role'
+  ).addEventListener(
+    'change',
+    function () {
 
-        const label =
-          document.getElementById(
-            'forgot-id-label'
-          );
+      const label =
+        document.getElementById(
+          'forgot-id-label'
+        );
 
-        const input =
-          document.getElementById(
-            'forgot-id'
-          );
+      const input =
+        document.getElementById(
+          'forgot-id'
+        );
 
 
-        if (this.value === 'guru') {
+      if (
+        this.value === 'guru'
+      ) {
 
-          label.innerText =
-            'NIP / NIK';
+        label.innerText =
+          'NIP / NIK';
 
-          input.placeholder =
-            'Masukkan NIP / NIK';
-
-        }
-
-        else {
-
-          label.innerText =
-            'NISN';
-
-          input.placeholder =
-            'Masukkan NISN';
-
-        }
+        input.placeholder =
+          'Masukkan NIP / NIK';
 
       }
-    );
+
+      else {
+
+        label.innerText =
+          'NISN';
+
+        input.placeholder =
+          'Masukkan NISN';
+
+      }
+
+    }
+  );
 
 
   // =====================================================
-  // PROSES LUPA PASSWORD
+  // LUPA PASSWORD
   // =====================================================
 
   async function prosesLupaPassword() {
@@ -1093,9 +1364,11 @@
 
       alert(
         'Masukkan ' +
-        (role === 'guru'
-          ? 'NIP/NIK.'
-          : 'NISN.')
+        (
+          role === 'guru'
+            ? 'NIP/NIK.'
+            : 'NISN.'
+        )
       );
 
       return;
@@ -1120,29 +1393,38 @@
         'btn-forgot'
       );
 
-    btn.disabled = true;
+
+    btn.disabled =
+      true;
+
     btn.innerText =
       'MEMERIKSA...';
 
 
     try {
 
-      // =============================================
-      // CEK MASTER
-      // =============================================
-
-      const { data: master, error } =
+      const {
+        data: master,
+        error
+      } =
         await supabaseClient
           .from(table)
-          .select('user_id,' + field + ',is_active')
-          .eq(field, identitas)
+          .select(
+            'user_id,' +
+            field +
+            ',is_active'
+          )
+          .eq(
+            field,
+            identitas
+          )
           .maybeSingle();
 
 
       if (error) {
 
         alert(
-          'Gagal memeriksa data:\n\n' +
+          'GAGAL MEMERIKSA DATA\n\n' +
           error.message
         );
 
@@ -1154,9 +1436,12 @@
       if (!master) {
 
         alert(
-          (role === 'guru'
-            ? 'NIP/NIK'
-            : 'NISN') +
+          (
+            role === 'guru'
+              ? 'NIP/NIK'
+              : 'NISN'
+          ) +
+
           ' tidak ditemukan.'
         );
 
@@ -1178,25 +1463,26 @@
 
 
       const email =
-        identitas + '@smp3.id';
+        identitas +
+        '@smp3.id';
 
 
       btn.innerText =
         'MENGIRIM LINK...';
 
 
-      // =============================================
-      // RESET PASSWORD
-      // =============================================
-
-      const { error: resetError } =
+      const {
+        error: resetError
+      } =
         await supabaseClient.auth
           .resetPasswordForEmail(
             email,
             {
+
               redirectTo:
                 window.location.origin +
                 '/reset-password.html'
+
             }
           );
 
@@ -1204,7 +1490,7 @@
       if (resetError) {
 
         alert(
-          'Gagal mengirim link reset:\n\n' +
+          'GAGAL MENGIRIM LINK\n\n' +
           resetError.message
         );
 
@@ -1220,9 +1506,24 @@
 
     }
 
+    catch (err) {
+
+      console.error(
+        'RESET ERROR:',
+        err
+      );
+
+      alert(
+        'TERJADI KESALAHAN:\n\n' +
+        err.message
+      );
+
+    }
+
     finally {
 
-      btn.disabled = false;
+      btn.disabled =
+        false;
 
       btn.innerText =
         'KIRIM LINK RESET PASSWORD';
@@ -1244,4 +1545,3 @@
 
 </body>
 </html>
-```
