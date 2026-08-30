@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Login Supabase</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      max-width: 500px;
+      margin: 60px auto;
+      padding: 20px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      box-sizing: border-box;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    #hasil {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f1f5f9;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>Test Login Supabase</h2>
+
+  <input
+    id="email"
+    type="email"
+    value="admin1@smp3.id"
+  >
+
+  <input
+    id="password"
+    type="password"
+    value="AdminSMP3#2026"
+  >
+
+  <button id="login">
+    TEST LOGIN
+  </button>
+
+  <div id="hasil">
+    Belum dites.
+  </div>
+
+<script>
+
+const SUPABASE_URL =
+  "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+const SUPABASE_ANON_KEY =
+  "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+
+document.getElementById("login")
+  .addEventListener("click", async () => {
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const password =
+      document.getElementById("password").value;
+
+    const hasil =
+      document.getElementById("hasil");
+
+    hasil.textContent =
+      "Sedang menguji login...";
+
+
+    const { data, error } =
+      await supabaseClient.auth
+        .signInWithPassword({
+          email: email,
+          password: password
+        });
+
+
+    if (error) {
+
+      hasil.innerHTML =
+        "<b>LOGIN GAGAL</b><br>" +
+        error.message;
+
+      console.error(error);
+
+      return;
+    }
+
+
+    hasil.innerHTML =
+      "<b>LOGIN BERHASIL ✅</b><br>" +
+      "Email: " +
+      data.user.email +
+      "<br>User ID: " +
+      data.user.id;
+
+  });
+
+</script>
+
+</body>
+</html>
