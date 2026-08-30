@@ -1,0 +1,1154 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Mata Pelajaran - Admin | RUANG EXAM</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f5f9;
+    color:#0f172a;
+    min-height:100vh;
+}
+
+/* HEADER */
+.header{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    color:white;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.18);
+}
+
+.header h1{
+    font-size:23px;
+}
+
+.header p{
+    font-size:13px;
+    opacity:.85;
+    margin-top:5px;
+}
+
+.header-buttons{
+    display:flex;
+    gap:8px;
+}
+
+.btn{
+    border:none;
+    border-radius:9px;
+    padding:10px 14px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-back{
+    background:white;
+    color:#1d4ed8;
+}
+
+.btn-refresh{
+    background:#22c55e;
+    color:white;
+}
+
+/* CONTAINER */
+.container{
+    max-width:1100px;
+    margin:25px auto;
+    padding:0 20px;
+}
+
+/* MESSAGE */
+.message{
+    display:none;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:18px;
+    text-align:center;
+    font-size:13px;
+}
+
+.message.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.message.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* TOOLBAR */
+.toolbar{
+    background:white;
+    padding:18px;
+    border-radius:15px;
+    display:flex;
+    gap:12px;
+    align-items:center;
+    flex-wrap:wrap;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    margin-bottom:18px;
+}
+
+.search{
+    flex:1;
+    min-width:220px;
+}
+
+.search input{
+    width:100%;
+    padding:12px 14px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    outline:none;
+}
+
+.search input:focus{
+    border-color:#2563eb;
+}
+
+.btn-add{
+    background:#2563eb;
+    color:white;
+    padding:12px 18px;
+}
+
+/* SUMMARY */
+.summary{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    margin-bottom:18px;
+}
+
+.summary-card{
+    background:white;
+    border-radius:13px;
+    padding:15px 20px;
+    box-shadow:0 4px 15px rgba(0,0,0,.05);
+}
+
+.summary-card strong{
+    display:block;
+    font-size:22px;
+    color:#2563eb;
+}
+
+.summary-card span{
+    color:#64748b;
+    font-size:12px;
+}
+
+/* TABLE */
+.table-box{
+    background:white;
+    border-radius:15px;
+    overflow:auto;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:650px;
+}
+
+th{
+    background:#eff6ff;
+    color:#1e3a8a;
+    padding:14px;
+    text-align:left;
+    font-size:13px;
+}
+
+td{
+    padding:13px;
+    border-top:1px solid #e2e8f0;
+    font-size:13px;
+}
+
+tr:hover td{
+    background:#f8fafc;
+}
+
+.empty{
+    text-align:center;
+    padding:40px !important;
+    color:#64748b;
+}
+
+/* ACTION */
+.action{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.action button{
+    border:none;
+    border-radius:7px;
+    padding:7px 10px;
+    cursor:pointer;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.edit{
+    background:#f59e0b;
+    color:white;
+}
+
+.delete{
+    background:#ef4444;
+    color:white;
+}
+
+/* MODAL */
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.6);
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    z-index:100;
+}
+
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:500px;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+
+.modal-box h2{
+    margin-bottom:18px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:7px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.form-group input{
+    width:100%;
+    padding:12px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    outline:none;
+}
+
+.form-group input:focus{
+    border-color:#2563eb;
+}
+
+.modal-buttons{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:22px;
+}
+
+.cancel{
+    background:#e2e8f0;
+    color:#334155;
+}
+
+.save{
+    background:#2563eb;
+    color:white;
+}
+
+/* FOOTER */
+.footer{
+    text-align:center;
+    color:#94a3b8;
+    font-size:12px;
+    line-height:1.6;
+    padding:30px;
+}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+
+    .header{
+        padding:18px;
+    }
+
+    .container{
+        padding:0 12px;
+    }
+
+    .toolbar{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .search{
+        width:100%;
+    }
+
+    .btn-add{
+        width:100%;
+    }
+
+    .summary{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div>
+        <h1>📚 MATA PELAJARAN</h1>
+
+        <p>
+            RUANG EXAM — SMP Negeri 3 Sibolga
+        </p>
+    </div>
+
+    <div class="header-buttons">
+
+        <button
+            class="btn btn-back"
+            onclick="kembaliDashboard()">
+            ← Dashboard
+        </button>
+
+        <button
+            class="btn btn-refresh"
+            onclick="loadMapel()">
+            🔄 Refresh
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div id="message" class="message"></div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="summary">
+
+        <div class="summary-card">
+
+            <strong id="totalMapel">
+                0
+            </strong>
+
+            <span>
+                Total Mata Pelajaran
+            </span>
+
+        </div>
+
+        <div class="summary-card">
+
+            <strong>
+                📚
+            </strong>
+
+            <span>
+                Data dari Supabase
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOOLBAR -->
+
+    <div class="toolbar">
+
+        <div class="search">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="🔍 Cari mata pelajaran..."
+                oninput="filterMapel()">
+
+        </div>
+
+        <button
+            class="btn btn-add"
+            onclick="bukaTambah()">
+
+            ➕ Tambah Mata Pelajaran
+
+        </button>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="table-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th style="width:80px">
+                        No
+                    </th>
+
+                    <th>
+                        Nama Mata Pelajaran
+                    </th>
+
+                    <th style="width:220px">
+                        Aksi
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="mapelBody">
+
+                <tr>
+
+                    <td
+                        colspan="3"
+                        class="empty">
+
+                        ⏳ Memuat data...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</main>
+
+
+<footer class="footer">
+
+    RUANG EXAM Online<br>
+
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+</footer>
+
+
+<!-- MODAL -->
+
+<div
+    class="modal"
+    id="modal">
+
+    <div class="modal-box">
+
+        <h2 id="modalTitle">
+            Tambah Mata Pelajaran
+        </h2>
+
+        <div class="form-group">
+
+            <label>
+                Nama Mata Pelajaran
+            </label>
+
+            <input
+                type="text"
+                id="namaMapel"
+                placeholder="Contoh: Matematika"
+                maxlength="150">
+
+        </div>
+
+        <div class="modal-buttons">
+
+            <button
+                class="btn cancel"
+                onclick="tutupModal()">
+
+                Batal
+
+            </button>
+
+            <button
+                class="btn save"
+                onclick="simpanMapel()">
+
+                💾 Simpan
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =====================================================
+   CEK LOGIN ADMIN
+===================================================== */
+
+const sessionRaw =
+    localStorage.getItem("exam_user");
+
+if(!sessionRaw){
+
+    window.location.href =
+        "login.html";
+
+}
+
+try{
+
+    const user =
+        JSON.parse(sessionRaw);
+
+    if(user.role !== "admin"){
+
+        localStorage.removeItem(
+            "exam_user"
+        );
+
+        window.location.href =
+            "login.html";
+
+    }
+
+}catch(error){
+
+    localStorage.removeItem(
+        "exam_user"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let semuaMapel = [];
+
+let editId = null;
+
+
+/* =====================================================
+   PESAN
+===================================================== */
+
+function showMessage(text,type){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+    message.textContent =
+        text;
+
+    message.className =
+        "message " + type;
+
+}
+
+function hideMessage(){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+    message.textContent =
+        "";
+
+    message.className =
+        "message";
+
+}
+
+
+/* =====================================================
+   LOAD MAPEL
+===================================================== */
+
+async function loadMapel(){
+
+    hideMessage();
+
+    document.getElementById(
+        "mapelBody"
+    ).innerHTML = `
+        <tr>
+            <td colspan="3" class="empty">
+                ⏳ Memuat data mata pelajaran...
+            </td>
+        </tr>
+    `;
+
+    try{
+
+        const {data,error} =
+            await supabaseClient
+            .from("mata_pelajaran")
+            .select("id,nama,created_at")
+            .order(
+                "nama",
+                {ascending:true}
+            );
+
+        if(error){
+
+            throw error;
+
+        }
+
+        semuaMapel =
+            data || [];
+
+        document.getElementById(
+            "totalMapel"
+        ).textContent =
+            semuaMapel.length;
+
+        tampilkanMapel(
+            semuaMapel
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        document.getElementById(
+            "mapelBody"
+        ).innerHTML = `
+            <tr>
+                <td colspan="3" class="empty">
+                    ❌ Gagal memuat data.
+                </td>
+            </tr>
+        `;
+
+        showMessage(
+            "Gagal mengambil data: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   TAMPILKAN MAPEL
+===================================================== */
+
+function tampilkanMapel(data){
+
+    const body =
+        document.getElementById(
+            "mapelBody"
+        );
+
+    if(!data.length){
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="3" class="empty">
+                    📚 Belum ada data mata pelajaran.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+    body.innerHTML =
+        data.map((item,index)=>{
+
+            return `
+                <tr>
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${escapeHtml(item.nama)}
+                        </strong>
+                    </td>
+
+                    <td>
+
+                        <div class="action">
+
+                            <button
+                                class="edit"
+                                onclick="editMapel('${item.id}')">
+
+                                ✏️ Edit
+
+                            </button>
+
+                            <button
+                                class="delete"
+                                onclick="hapusMapel('${item.id}')">
+
+                                🗑️ Hapus
+
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+            `;
+
+        }).join("");
+
+}
+
+
+/* =====================================================
+   FILTER
+===================================================== */
+
+function filterMapel(){
+
+    const keyword =
+        document.getElementById(
+            "searchInput"
+        ).value
+        .toLowerCase()
+        .trim();
+
+    const hasil =
+        semuaMapel.filter(item =>
+
+            (item.nama || "")
+            .toLowerCase()
+            .includes(keyword)
+
+        );
+
+    tampilkanMapel(
+        hasil
+    );
+
+}
+
+
+/* =====================================================
+   TAMBAH
+===================================================== */
+
+function bukaTambah(){
+
+    editId = null;
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Tambah Mata Pelajaran";
+
+    document.getElementById(
+        "namaMapel"
+    ).value =
+        "";
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "flex";
+
+    setTimeout(()=>{
+
+        document.getElementById(
+            "namaMapel"
+        ).focus();
+
+    },100);
+
+}
+
+
+/* =====================================================
+   EDIT
+===================================================== */
+
+function editMapel(id){
+
+    const item =
+        semuaMapel.find(
+            x => x.id === id
+        );
+
+    if(!item){
+
+        alert(
+            "Data mata pelajaran tidak ditemukan."
+        );
+
+        return;
+
+    }
+
+    editId = id;
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Edit Mata Pelajaran";
+
+    document.getElementById(
+        "namaMapel"
+    ).value =
+        item.nama || "";
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* =====================================================
+   SIMPAN
+===================================================== */
+
+async function simpanMapel(){
+
+    const nama =
+        document.getElementById(
+            "namaMapel"
+        ).value.trim();
+
+    if(!nama){
+
+        alert(
+            "Nama mata pelajaran wajib diisi."
+        );
+
+        return;
+
+    }
+
+    try{
+
+        /* TAMBAH */
+
+        if(!editId){
+
+            const {error} =
+                await supabaseClient
+                .from("mata_pelajaran")
+                .insert({
+                    nama:nama
+                });
+
+            if(error){
+
+                if(error.code === "23505"){
+
+                    alert(
+                        "Mata pelajaran tersebut sudah ada."
+                    );
+
+                }else{
+
+                    alert(
+                        "Gagal menambahkan:\n" +
+                        error.message
+                    );
+
+                }
+
+                return;
+
+            }
+
+            showMessage(
+                "Mata pelajaran berhasil ditambahkan.",
+                "success"
+            );
+
+        }
+
+        /* EDIT */
+
+        else{
+
+            const {error} =
+                await supabaseClient
+                .from("mata_pelajaran")
+                .update({
+                    nama:nama
+                })
+                .eq(
+                    "id",
+                    editId
+                );
+
+            if(error){
+
+                if(error.code === "23505"){
+
+                    alert(
+                        "Nama mata pelajaran tersebut sudah ada."
+                    );
+
+                }else{
+
+                    alert(
+                        "Gagal memperbarui:\n" +
+                        error.message
+                    );
+
+                }
+
+                return;
+
+            }
+
+            showMessage(
+                "Mata pelajaran berhasil diperbarui.",
+                "success"
+            );
+
+        }
+
+        tutupModal();
+
+        await loadMapel();
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Terjadi kesalahan:\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   HAPUS
+===================================================== */
+
+async function hapusMapel(id){
+
+    const item =
+        semuaMapel.find(
+            x => x.id === id
+        );
+
+    if(!item){
+
+        return;
+
+    }
+
+    const yakin =
+        confirm(
+            "Hapus mata pelajaran berikut?\n\n" +
+            item.nama +
+            "\n\n" +
+            "Jika mata pelajaran sudah digunakan pada ujian, penghapusan dapat ditolak oleh database."
+        );
+
+    if(!yakin){
+
+        return;
+
+    }
+
+    try{
+
+        const {error} =
+            await supabaseClient
+            .from("mata_pelajaran")
+            .delete()
+            .eq(
+                "id",
+                id
+            );
+
+        if(error){
+
+            alert(
+                "Gagal menghapus:\n" +
+                error.message
+            );
+
+            return;
+
+        }
+
+        showMessage(
+            "Mata pelajaran berhasil dihapus.",
+            "success"
+        );
+
+        await loadMapel();
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Terjadi kesalahan:\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function tutupModal(){
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "none";
+
+    editId = null;
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function kembaliDashboard(){
+
+    window.location.href =
+        "admin.html";
+
+}
+
+
+/* =====================================================
+   KLIK LUAR MODAL
+===================================================== */
+
+document
+.getElementById("modal")
+.addEventListener(
+    "click",
+    function(e){
+
+        if(e.target === this){
+
+            tutupModal();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   LOAD AWAL
+===================================================== */
+
+loadMapel();
+
+</script>
+
+</body>
+</html>
+```
