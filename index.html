@@ -1,761 +1,658 @@
-```typescript
-// supabase/functions/daftar-akun/index.ts
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+<title>EXAM - Sistem Ujian Online</title>
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods":
-    "POST, OPTIONS",
-};
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,Helvetica,sans-serif;
+}
 
-const SUPABASE_URL =
-  Deno.env.get("SUPABASE_URL")!;
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    padding:20px;
+}
 
-const SUPABASE_SERVICE_ROLE_KEY =
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+.container{
+    width:100%;
+    max-width:430px;
+    background:#fff;
+    border-radius:24px;
+    padding:32px;
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+}
 
-const adminClient =
-  createClient(
-    SUPABASE_URL,
-    SUPABASE_SERVICE_ROLE_KEY,
-    {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
+.logo{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.logo .icon{
+    width:75px;
+    height:75px;
+    margin:auto;
+    border-radius:20px;
+    background:#2563eb;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:38px;
+    font-weight:bold;
+}
+
+.logo h1{
+    margin-top:15px;
+    color:#172554;
+    font-size:28px;
+}
+
+.logo p{
+    color:#64748b;
+    margin-top:6px;
+    font-size:14px;
+}
+
+.tabs{
+    display:flex;
+    background:#f1f5f9;
+    border-radius:12px;
+    padding:4px;
+    margin-bottom:22px;
+}
+
+.tabs button{
+    flex:1;
+    border:0;
+    padding:12px;
+    border-radius:9px;
+    background:transparent;
+    cursor:pointer;
+    font-weight:bold;
+    color:#64748b;
+}
+
+.tabs button.active{
+    background:#2563eb;
+    color:white;
+}
+
+.form-group{
+    margin-bottom:17px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:7px;
+    color:#334155;
+    font-size:14px;
+    font-weight:bold;
+}
+
+.form-group input{
+    width:100%;
+    padding:13px 14px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    outline:none;
+    font-size:15px;
+}
+
+.form-group input:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.12);
+}
+
+.password-box{
+    position:relative;
+}
+
+.password-box input{
+    padding-right:45px;
+}
+
+.show-password{
+    position:absolute;
+    right:13px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    color:#64748b;
+    font-size:18px;
+}
+
+.login-btn{
+    width:100%;
+    border:0;
+    padding:14px;
+    border-radius:11px;
+    background:#2563eb;
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:5px;
+}
+
+.login-btn:hover{
+    background:#1d4ed8;
+}
+
+.login-btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.info{
+    margin-top:18px;
+    padding:12px;
+    background:#eff6ff;
+    color:#1e40af;
+    border-radius:10px;
+    font-size:13px;
+    line-height:1.5;
+}
+
+.message{
+    display:none;
+    margin-bottom:15px;
+    padding:12px;
+    border-radius:9px;
+    font-size:14px;
+}
+
+.message.error{
+    display:block;
+    background:#fef2f2;
+    color:#b91c1c;
+}
+
+.message.success{
+    display:block;
+    background:#f0fdf4;
+    color:#15803d;
+}
+
+.footer{
+    text-align:center;
+    margin-top:25px;
+    padding-top:18px;
+    border-top:1px solid #e2e8f0;
+    color:#64748b;
+    font-size:12px;
+    line-height:1.6;
+}
+
+.hidden{
+    display:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="logo">
+        <div class="icon">EX</div>
+        <h1>EXAM</h1>
+        <p>Sistem Ujian Online</p>
+    </div>
+
+    <!-- PILIH LOGIN -->
+    <div class="tabs">
+        <button id="guruTab" class="active" onclick="setRole('guru')">
+            👨‍🏫 Guru
+        </button>
+
+        <button id="siswaTab" onclick="setRole('siswa')">
+            👨‍🎓 Siswa
+        </button>
+
+        <button id="adminTab" onclick="setRole('admin')">
+            🔐 Admin
+        </button>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <form id="loginForm">
+
+        <div class="form-group">
+            <label id="usernameLabel">NIP / NIK</label>
+
+            <input
+                type="text"
+                id="username"
+                autocomplete="username"
+                placeholder="Masukkan NIP / NIK"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+
+            <div class="password-box">
+                <input
+                    type="password"
+                    id="password"
+                    autocomplete="current-password"
+                    placeholder="Masukkan password"
+                    required
+                >
+
+                <span
+                    class="show-password"
+                    onclick="togglePassword()"
+                    id="eye"
+                >👁️</span>
+            </div>
+        </div>
+
+        <button
+            type="submit"
+            class="login-btn"
+            id="loginBtn"
+        >
+            Masuk
+        </button>
+
+    </form>
+
+    <div class="info" id="loginInfo">
+        👨‍🏫 <b>Login Guru</b><br>
+        Gunakan NIP/NIK sebagai username dan password yang telah diberikan.
+    </div>
+
+    <div class="footer">
+        Sistem Ujian Online<br>
+        SMP Negeri 3 Sibolga<br><br>
+        <b>Dibuat oleh Mr. Rahmat Batubara, S.T.P</b>
+    </div>
+
+</div>
+
+<script>
+/*
+====================================================
+KONFIGURASI
+====================================================
+Isi URL dan ANON KEY Supabase milik project Anda.
+Jangan gunakan service_role key di file HTML.
+====================================================
+*/
+
+const SUPABASE_URL = "ISI_URL_SUPABASE_ANDA";
+const SUPABASE_ANON_KEY = "ISI_ANON_KEY_SUPABASE_ANDA";
+
+
+let currentRole = "guru";
+
+
+function setRole(role){
+
+    currentRole = role;
+
+    const guruTab = document.getElementById("guruTab");
+    const siswaTab = document.getElementById("siswaTab");
+    const adminTab = document.getElementById("adminTab");
+
+    guruTab.classList.remove("active");
+    siswaTab.classList.remove("active");
+    adminTab.classList.remove("active");
+
+    if(role === "guru"){
+
+        guruTab.classList.add("active");
+
+        document.getElementById("usernameLabel").textContent =
+            "NIP / NIK";
+
+        document.getElementById("username").placeholder =
+            "Masukkan NIP / NIK";
+
+        document.getElementById("loginInfo").innerHTML =
+            "👨‍🏫 <b>Login Guru</b><br>" +
+            "Gunakan NIP/NIK sebagai username dan password yang telah diberikan.";
+
     }
-  );
 
+    else if(role === "siswa"){
 
-// =====================================================
-// RESPONSE
-// =====================================================
+        siswaTab.classList.add("active");
 
-function jsonResponse(
-  body: any,
-  status = 200
-) {
-  return new Response(
-    JSON.stringify(body),
-    {
-      status,
-      headers: {
-        ...corsHeaders,
-        "Content-Type": "application/json",
-      },
+        document.getElementById("usernameLabel").textContent =
+            "NISN";
+
+        document.getElementById("username").placeholder =
+            "Masukkan NISN";
+
+        document.getElementById("loginInfo").innerHTML =
+            "👨‍🎓 <b>Login Siswa</b><br>" +
+            "Gunakan NISN sebagai username dan password yang telah diberikan.";
+
     }
-  );
+
+    else{
+
+        adminTab.classList.add("active");
+
+        document.getElementById("usernameLabel").textContent =
+            "Username Admin";
+
+        document.getElementById("username").placeholder =
+            "Masukkan username admin";
+
+        document.getElementById("loginInfo").innerHTML =
+            "🔐 <b>Login Admin</b><br>" +
+            "Masukkan username dan password admin.";
+
+    }
+
+    clearMessage();
+
+    document.getElementById("username").focus();
 }
 
 
-// =====================================================
-// FUNCTION
-// =====================================================
-
-Deno.serve(async (req) => {
-
-  // ---------------------------------------------------
-  // CORS
-  // ---------------------------------------------------
-
-  if (req.method === "OPTIONS") {
-    return new Response(
-      "ok",
-      {
-        status: 200,
-        headers: corsHeaders,
-      }
-    );
-  }
-
-
-  // ---------------------------------------------------
-  // HANYA POST
-  // ---------------------------------------------------
-
-  if (req.method !== "POST") {
-
-    return jsonResponse(
-      {
-        success: false,
-        message: "Method tidak diizinkan.",
-      },
-      405
-    );
-
-  }
-
-
-  try {
-
-    // =================================================
-    // BACA DATA
-    // =================================================
-
-    const body =
-      await req.json();
-
-    const jenis =
-      String(body.jenis || "")
-        .trim()
-        .toLowerCase();
-
-    const identitas =
-      String(
-        body.identitas ||
-        body.nip_nik ||
-        body.nisn ||
-        ""
-      ).trim();
+function togglePassword(){
 
     const password =
-      String(body.password || "");
+        document.getElementById("password");
+
+    const eye =
+        document.getElementById("eye");
+
+    if(password.type === "password"){
+
+        password.type = "text";
+        eye.textContent = "🙈";
+
+    }else{
+
+        password.type = "password";
+        eye.textContent = "👁️";
+
+    }
+}
 
 
-    // =================================================
-    // VALIDASI
-    // =================================================
+function showMessage(text,type){
 
-    if (
-      jenis !== "guru" &&
-      jenis !== "siswa"
-    ) {
+    const message =
+        document.getElementById("message");
 
-      return jsonResponse(
-        {
-          success: false,
-          message:
-            "Jenis akun harus Guru atau Siswa.",
-        },
-        400
-      );
+    message.textContent = text;
 
+    message.className =
+        "message " + type;
+
+}
+
+
+function clearMessage(){
+
+    const message =
+        document.getElementById("message");
+
+    message.textContent = "";
+
+    message.className = "message";
+
+}
+
+
+async function login(){
+
+    const username =
+        document.getElementById("username").value.trim();
+
+    const password =
+        document.getElementById("password").value;
+
+    const button =
+        document.getElementById("loginBtn");
+
+
+    if(!username || !password){
+
+        showMessage(
+            "Username dan password wajib diisi.",
+            "error"
+        );
+
+        return;
     }
 
 
-    if (!identitas) {
+    /*
+    -----------------------------------------------
+    CEK KONFIGURASI SUPABASE
+    -----------------------------------------------
+    */
 
-      return jsonResponse(
-        {
-          success: false,
-          message:
-            "NIP/NIK atau NISN wajib diisi.",
-        },
-        400
-      );
+    if(
+        SUPABASE_URL === "ISI_URL_SUPABASE_ANDA" ||
+        SUPABASE_ANON_KEY === "ISI_ANON_KEY_SUPABASE_ANDA"
+    ){
 
+        showMessage(
+            "Supabase belum dikonfigurasi. Isi SUPABASE_URL dan SUPABASE_ANON_KEY terlebih dahulu.",
+            "error"
+        );
+
+        return;
     }
 
 
-    if (!password) {
+    button.disabled = true;
+    button.textContent = "Memproses...";
 
-      return jsonResponse(
-        {
-          success: false,
-          message:
-            "Password wajib diisi.",
-        },
-        400
-      );
 
-    }
+    try{
 
+        /*
+        ==================================================
+        LOGIN BERDASARKAN ROLE
+        ==================================================
+        */
 
-    if (password.length < 6) {
+        let table = "";
 
-      return jsonResponse(
-        {
-          success: false,
-          message:
-            "Password minimal 6 karakter.",
-        },
-        400
-      );
+        let identifierColumn = "";
 
-    }
+        let dashboard = "";
 
 
-    // =================================================
-    // GURU
-    // =================================================
+        if(currentRole === "guru"){
 
-    if (jenis === "guru") {
+            table = "guru";
+            identifierColumn = "nip";
+            dashboard = "dashboard-guru.html";
 
-      const {
-        data: guru,
-        error: guruError,
-      } =
-        await adminClient
-          .from("guru_master")
-          .select(
-            "id,nama,nip_nik,user_id,is_active"
-          )
-          .eq(
-            "nip_nik",
-            identitas
-          )
-          .maybeSingle();
-
-
-      if (guruError) {
-
-        console.error(
-          "guru_master error:",
-          guruError
-        );
-
-        return jsonResponse(
-          {
-            success: false,
-            message:
-              "Gagal membaca data guru: " +
-              guruError.message,
-          },
-          500
-        );
-
-      }
-
-
-      if (!guru) {
-
-        return jsonResponse(
-          {
-            success: false,
-            message:
-              "NIP/NIK tidak ditemukan di data Guru.",
-          },
-          404
-        );
-
-      }
-
-
-      // ------------------------------------------------
-      // JIKA SUDAH TERHUBUNG
-      // ------------------------------------------------
-
-      if (guru.user_id) {
-
-        return jsonResponse(
-          {
-            success: false,
-            message:
-              "Akun Guru dengan NIP/NIK ini sudah dibuat. Silakan login.",
-          },
-          409
-        );
-
-      }
-
-
-      // ------------------------------------------------
-      // EMAIL INTERNAL
-      //
-      // Email ini hanya digunakan untuk Supabase Auth.
-      // Guru tetap login menggunakan NIP/NIK.
-      // ------------------------------------------------
-
-      const email =
-        `${identitas}@exam.smpn3sibolga.sch.id`;
-
-
-      // ------------------------------------------------
-      // BUAT USER AUTH
-      // ------------------------------------------------
-
-      const {
-        data: authData,
-        error: authError,
-      } =
-        await adminClient.auth.admin.createUser({
-          email: email,
-          password: password,
-          email_confirm: true,
-          user_metadata: {
-            nama: guru.nama,
-            nip_nik: guru.nip_nik,
-            jenis: "guru",
-          },
-        });
-
-
-      if (authError) {
-
-        console.error(
-          "Auth Guru error:",
-          authError
-        );
-
-        return jsonResponse(
-          {
-            success: false,
-            message:
-              "Gagal membuat akun Guru: " +
-              authError.message,
-          },
-          400
-        );
-
-      }
-
-
-      const userId =
-        authData.user.id;
-
-
-      // ------------------------------------------------
-      // PROFILE
-      // ------------------------------------------------
-
-      const {
-        error: profileError,
-      } =
-        await adminClient
-          .from("profiles")
-          .upsert(
-            {
-              user_id: userId,
-              nama: guru.nama,
-              role: "guru",
-            },
-            {
-              onConflict: "user_id",
-            }
-          );
-
-
-      if (profileError) {
-
-        console.error(
-          "Profile Guru error:",
-          profileError
-        );
-
-        // Hapus Auth jika profile gagal
-        await adminClient.auth.admin.deleteUser(
-          userId
-        );
-
-        return jsonResponse(
-          {
-            success: false,
-            message:
-              "Gagal membuat profile Guru: " +
-              profileError.message,
-          },
-          500
-        );
-
-      }
-
-
-      // ------------------------------------------------
-      // TABEL GURU
-      //
-      // Kolom sesuai tabel yang Anda tunjukkan:
-      // id, user_id, nama, nip, username, email
-      // ------------------------------------------------
-
-      const {
-        error: guruError2,
-      } =
-        await adminClient
-          .from("guru")
-          .insert({
-            id: guru.id,
-            user_id: userId,
-            nama: guru.nama,
-            nip: guru.nip_nik,
-            username: guru.nip_nik,
-            email: email,
-          });
-
-
-      if (guruError2) {
-
-        console.error(
-          "Tabel guru error:",
-          guruError2
-        );
-
-        // Hapus profile
-        await adminClient
-          .from("profiles")
-          .delete()
-          .eq(
-            "user_id",
-            userId
-          );
-
-        // Hapus Auth
-        await adminClient.auth.admin.deleteUser(
-          userId
-        );
-
-        return jsonResponse(
-          {
-            success: false,
-            message:
-              "Gagal menyimpan data guru: " +
-              guruError2.message,
-          },
-          500
-        );
-
-      }
-
-
-      // ------------------------------------------------
-      // HUBUNGKAN guru_master
-      // DAN AKTIFKAN AKUN
-      // ------------------------------------------------
-
-      const {
-        error: updateGuruError,
-      } =
-        await adminClient
-          .from("guru_master")
-          .update({
-            user_id: userId,
-            is_active: true,
-          })
-          .eq(
-            "id",
-            guru.id
-          );
-
-
-      if (updateGuruError) {
-
-        console.error(
-          "guru_master update error:",
-          updateGuruError
-        );
-
-        // Bersihkan data yang sudah dibuat
-        await adminClient
-          .from("guru")
-          .delete()
-          .eq(
-            "user_id",
-            userId
-          );
-
-        await adminClient
-          .from("profiles")
-          .delete()
-          .eq(
-            "user_id",
-            userId
-          );
-
-        await adminClient.auth.admin.deleteUser(
-          userId
-        );
-
-        return jsonResponse(
-          {
-            success: false,
-            message:
-              "Gagal menghubungkan akun dengan guru_master: " +
-              updateGuruError.message,
-          },
-          500
-        );
-
-      }
-
-
-      // ------------------------------------------------
-      // BERHASIL
-      // ------------------------------------------------
-
-      return jsonResponse(
-        {
-          success: true,
-          message:
-            "Akun Guru berhasil dibuat dan diaktifkan.",
-          nama: guru.nama,
-          identitas: guru.nip_nik,
         }
-      );
 
-    }
+        else if(currentRole === "siswa"){
 
+            table = "siswa";
+            identifierColumn = "nisn";
+            dashboard = "dashboard-siswa.html";
 
-    // =================================================
-    // SISWA
-    // =================================================
-
-    if (jenis === "siswa") {
-
-      const {
-        data: siswa,
-        error: siswaError,
-      } =
-        await adminClient
-          .from("siswa_master")
-          .select(
-            "id,nama,nisn,kelas,user_id,is_active"
-          )
-          .eq(
-            "nisn",
-            identitas
-          )
-          .maybeSingle();
-
-
-      if (siswaError) {
-
-        console.error(
-          "siswa_master error:",
-          siswaError
-        );
-
-        return jsonResponse(
-          {
-            success: false,
-            message:
-              "Gagal membaca data siswa: " +
-              siswaError.message,
-          },
-          500
-        );
-
-      }
-
-
-      if (!siswa) {
-
-        return jsonResponse(
-          {
-            success: false,
-            message:
-              "NISN tidak ditemukan di data Siswa.",
-          },
-          404
-        );
-
-      }
-
-
-      // ------------------------------------------------
-      // SUDAH PUNYA AKUN
-      // ------------------------------------------------
-
-      if (siswa.user_id) {
-
-        return jsonResponse(
-          {
-            success: false,
-            message:
-              "Akun Siswa dengan NISN ini sudah dibuat. Silakan login.",
-          },
-          409
-        );
-
-      }
-
-
-      // ------------------------------------------------
-      // EMAIL INTERNAL
-      // ------------------------------------------------
-
-      const email =
-        `${identitas}@exam.smpn3sibolga.sch.id`;
-
-
-      // ------------------------------------------------
-      // AUTH
-      // ------------------------------------------------
-
-      const {
-        data: authData,
-        error: authError,
-      } =
-        await adminClient.auth.admin.createUser({
-          email: email,
-          password: password,
-          email_confirm: true,
-          user_metadata: {
-            nama: siswa.nama,
-            nisn: siswa.nisn,
-            kelas: siswa.kelas,
-            jenis: "siswa",
-          },
-        });
-
-
-      if (authError) {
-
-        console.error(
-          "Auth Siswa error:",
-          authError
-        );
-
-        return jsonResponse(
-          {
-            success: false,
-            message:
-              "Gagal membuat akun Siswa: " +
-              authError.message,
-          },
-          400
-        );
-
-      }
-
-
-      const userId =
-        authData.user.id;
-
-
-      // ------------------------------------------------
-      // PROFILE
-      // ------------------------------------------------
-
-      const {
-        error: profileError,
-      } =
-        await adminClient
-          .from("profiles")
-          .upsert(
-            {
-              user_id: userId,
-              nama: siswa.nama,
-              role: "siswa",
-            },
-            {
-              onConflict: "user_id",
-            }
-          );
-
-
-      if (profileError) {
-
-        console.error(
-          "Profile Siswa error:",
-          profileError
-        );
-
-        await adminClient.auth.admin.deleteUser(
-          userId
-        );
-
-        return jsonResponse(
-          {
-            success: false,
-            message:
-              "Gagal membuat profile Siswa: " +
-              profileError.message,
-          },
-          500
-        );
-
-      }
-
-
-      // ------------------------------------------------
-      // HUBUNGKAN SISWA_MASTER
-      // ------------------------------------------------
-
-      const {
-        error: updateSiswaError,
-      } =
-        await adminClient
-          .from("siswa_master")
-          .update({
-            user_id: userId,
-            is_active: true,
-          })
-          .eq(
-            "id",
-            siswa.id
-          );
-
-
-      if (updateSiswaError) {
-
-        console.error(
-          "siswa_master update error:",
-          updateSiswaError
-        );
-
-        await adminClient
-          .from("profiles")
-          .delete()
-          .eq(
-            "user_id",
-            userId
-          );
-
-        await adminClient.auth.admin.deleteUser(
-          userId
-        );
-
-        return jsonResponse(
-          {
-            success: false,
-            message:
-              "Gagal menghubungkan akun dengan siswa_master: " +
-              updateSiswaError.message,
-          },
-          500
-        );
-
-      }
-
-
-      // ------------------------------------------------
-      // BERHASIL
-      // ------------------------------------------------
-
-      return jsonResponse(
-        {
-          success: true,
-          message:
-            "Akun Siswa berhasil dibuat dan diaktifkan.",
-          nama: siswa.nama,
-          identitas: siswa.nisn,
-          kelas: siswa.kelas,
         }
-      );
+
+        else{
+
+            table = "admin";
+            identifierColumn = "username";
+            dashboard = "admin.html";
+
+        }
+
+
+        /*
+        --------------------------------------------------
+        CATATAN:
+        Login password sebaiknya menggunakan Supabase Auth.
+        Kode ini mencari akun berdasarkan identitas terlebih
+        dahulu agar struktur sistem bisa disesuaikan.
+        --------------------------------------------------
+        */
+
+
+        const response = await fetch(
+
+            SUPABASE_URL +
+            "/rest/v1/" +
+            table +
+            "?" +
+            identifierColumn +
+            "=eq." +
+            encodeURIComponent(username) +
+            "&select=*",
+
+            {
+
+                method:"GET",
+
+                headers:{
+                    "apikey":SUPABASE_ANON_KEY,
+                    "Authorization":
+                        "Bearer " + SUPABASE_ANON_KEY
+                }
+
+            }
+
+        );
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "Gagal menghubungi database."
+            );
+
+        }
+
+
+        const data = await response.json();
+
+
+        if(!data || data.length === 0){
+
+            showMessage(
+                "Akun tidak ditemukan. Periksa NIP/NIK/NISN Anda.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const account = data[0];
+
+
+        /*
+        ==================================================
+        UNTUK SEMENTARA
+        ==================================================
+
+        Password TIDAK disimpan di browser.
+
+        Setelah tabel Supabase final sudah sesuai,
+        login akan diarahkan menggunakan Supabase Auth.
+
+        ==================================================
+        */
+
+
+        showMessage(
+            "Akun ditemukan. Menghubungkan ke sistem...",
+            "success"
+        );
+
+
+        /*
+        Simpan informasi login sementara.
+        */
+
+        localStorage.setItem(
+            "exam_role",
+            currentRole
+        );
+
+        localStorage.setItem(
+            "exam_user",
+            JSON.stringify(account)
+        );
+
+
+        setTimeout(function(){
+
+            window.location.href = dashboard;
+
+        },700);
+
 
     }
 
+    catch(error){
 
-    return jsonResponse(
-      {
-        success: false,
-        message: "Permintaan tidak valid.",
-      },
-      400
-    );
+        console.error(error);
 
-  }
+        showMessage(
+            "Terjadi kesalahan saat login. Periksa koneksi dan konfigurasi Supabase.",
+            "error"
+        );
 
-  catch (error) {
+    }
 
-    console.error(
-      "UNEXPECTED ERROR:",
-      error
-    );
+    finally{
 
-    return jsonResponse(
-      {
-        success: false,
-        message:
-          error?.message ||
-          "Terjadi kesalahan pada server.",
-      },
-      500
-    );
+        button.disabled = false;
+        button.textContent = "Masuk";
 
-  }
+    }
 
-});
+}
+
+
+document
+.getElementById("loginForm")
+.addEventListener(
+    "submit",
+    function(event){
+
+        event.preventDefault();
+
+        login();
+
+    }
+);
+
+
+/*
+====================================================
+DEFAULT
+====================================================
+*/
+
+setRole("guru");
+
+</script>
+
+</body>
+</html>
 ```
