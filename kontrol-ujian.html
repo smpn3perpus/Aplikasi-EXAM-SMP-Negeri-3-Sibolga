@@ -10,7 +10,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
 *{
     box-sizing:border-box;
     margin:0;
@@ -24,8 +23,7 @@ body{
     min-height:100vh;
 }
 
-/* ================= HEADER ================= */
-
+/* HEADER */
 .header{
     background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
     color:white;
@@ -71,23 +69,22 @@ body{
     color:white;
 }
 
-/* ================= CONTAINER ================= */
-
+/* CONTAINER */
 .container{
-    max-width:1300px;
+    max-width:1350px;
     margin:25px auto;
     padding:0 20px;
 }
 
-/* ================= MESSAGE ================= */
-
+/* MESSAGE */
 .message{
     display:none;
-    padding:12px;
+    padding:13px;
     border-radius:10px;
     margin-bottom:18px;
     text-align:center;
     font-size:13px;
+    font-weight:bold;
 }
 
 .message.success{
@@ -102,20 +99,18 @@ body{
     color:#991b1b;
 }
 
-/* ================= INFO ================= */
-
+/* INFO */
 .info{
     background:#eff6ff;
     color:#1e40af;
-    padding:15px;
+    padding:16px;
     border-radius:12px;
     margin-bottom:20px;
     font-size:13px;
-    line-height:1.6;
+    line-height:1.7;
 }
 
-/* ================= TABLE ================= */
-
+/* TABLE */
 .table-box{
     background:white;
     border-radius:16px;
@@ -126,7 +121,7 @@ body{
 table{
     width:100%;
     border-collapse:collapse;
-    min-width:1050px;
+    min-width:1200px;
 }
 
 th{
@@ -149,8 +144,7 @@ tr:hover td{
     background:#f8fafc;
 }
 
-/* ================= STATUS ================= */
-
+/* STATUS */
 .status{
     display:inline-block;
     padding:7px 11px;
@@ -179,10 +173,9 @@ tr:hover td{
     color:#991b1b;
 }
 
-/* ================= TIME ================= */
-
+/* TIMER */
 .timer{
-    font-size:19px;
+    font-size:18px;
     font-weight:bold;
     color:#1d4ed8;
     white-space:nowrap;
@@ -196,11 +189,10 @@ tr:hover td{
     color:#dc2626;
 }
 
-/* ================= ACTION ================= */
-
+/* ACTION */
 .actions{
     display:flex;
-    gap:7px;
+    gap:6px;
     flex-wrap:wrap;
 }
 
@@ -211,6 +203,10 @@ tr:hover td{
     cursor:pointer;
     font-size:11px;
     font-weight:bold;
+}
+
+.action-btn:hover{
+    opacity:.88;
 }
 
 .open{
@@ -233,16 +229,29 @@ tr:hover td{
     color:white;
 }
 
-/* ================= EMPTY ================= */
+.add{
+    background:#7c3aed;
+    color:white;
+}
 
+.repeat{
+    background:#0891b2;
+    color:white;
+}
+
+.edit{
+    background:#475569;
+    color:white;
+}
+
+/* EMPTY */
 .empty{
     text-align:center;
     padding:45px !important;
     color:#64748b;
 }
 
-/* ================= FOOTER ================= */
-
+/* FOOTER */
 .footer{
     text-align:center;
     color:#94a3b8;
@@ -251,8 +260,89 @@ tr:hover td{
     padding:30px;
 }
 
-/* ================= RESPONSIVE ================= */
+/* MODAL */
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.65);
+    z-index:999;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
 
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:430px;
+    border-radius:18px;
+    padding:24px;
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+}
+
+.modal-box h2{
+    margin-bottom:8px;
+    font-size:20px;
+}
+
+.modal-box p{
+    color:#64748b;
+    font-size:13px;
+    line-height:1.6;
+    margin-bottom:18px;
+}
+
+.form-group{
+    margin-bottom:15px;
+}
+
+.form-group label{
+    display:block;
+    font-size:12px;
+    font-weight:bold;
+    margin-bottom:6px;
+}
+
+.form-group input{
+    width:100%;
+    padding:11px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    outline:none;
+    font-size:14px;
+}
+
+.form-group input:focus{
+    border-color:#2563eb;
+}
+
+.modal-actions{
+    display:flex;
+    gap:8px;
+    justify-content:flex-end;
+    margin-top:18px;
+}
+
+.modal-btn{
+    border:none;
+    padding:10px 15px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.cancel{
+    background:#e2e8f0;
+    color:#334155;
+}
+
+.save{
+    background:#2563eb;
+    color:white;
+}
+
+/* RESPONSIVE */
 @media(max-width:600px){
 
     .header{
@@ -263,8 +353,15 @@ tr:hover td{
         padding:0 12px;
     }
 
-}
+    .header-buttons{
+        width:100%;
+    }
 
+    .header-buttons button{
+        flex:1;
+    }
+
+}
 </style>
 </head>
 
@@ -285,17 +382,13 @@ tr:hover td{
         <button
             class="btn btn-back"
             onclick="kembaliDashboard()">
-
             ← Dashboard
-
         </button>
 
         <button
             class="btn btn-refresh"
             onclick="loadUjian()">
-
             🔄 Refresh
-
         </button>
 
     </div>
@@ -310,17 +403,23 @@ tr:hover td{
 
     <div class="info">
 
-        <strong>⏱️ Sistem Waktu Aktif</strong><br>
+        <strong>⏱️ Pengaturan Waktu Ujian</strong><br>
 
-        Waktu ujian hanya dihitung ketika status
-        <strong>DIBUKA</strong>.
+        Waktu ujian dihitung berdasarkan
+        <strong>waktu yang benar-benar digunakan</strong>,
+        bukan berdasarkan jam dinding.
 
-        Jika ujian dijeda karena mati lampu atau
-        kondisi lainnya, waktu akan berhenti.
+        Jika ujian <strong>DIJEDA</strong>,
+        waktu berhenti.
 
-        Ketika ujian dibuka kembali, waktu akan
-        melanjutkan dari sisa waktu sebelumnya.
+        Saat ujian dilanjutkan,
+        waktu berjalan kembali dari sisa waktu sebelumnya.
 
+        Admin juga dapat
+        <strong>menambah waktu</strong>,
+        mengubah durasi,
+        atau <strong>mengulangi ujian</strong>.
+        
     </div>
 
 
@@ -380,6 +479,111 @@ tr:hover td{
     Dibuat oleh Mr. Rahmat Batubara, S.T.P
 
 </footer>
+
+
+<!-- ================= MODAL TAMBAH WAKTU ================= -->
+
+<div
+    id="modalTambah"
+    class="modal">
+
+    <div class="modal-box">
+
+        <h2>➕ Tambah Waktu</h2>
+
+        <p id="namaUjianTambah">
+            Tambah waktu ujian.
+        </p>
+
+        <div class="form-group">
+
+            <label>
+                Tambahan waktu (menit)
+            </label>
+
+            <input
+                type="number"
+                id="tambahanMenit"
+                min="1"
+                value="10">
+
+        </div>
+
+        <div class="modal-actions">
+
+            <button
+                class="modal-btn cancel"
+                onclick="tutupModalTambah()">
+
+                Batal
+
+            </button>
+
+            <button
+                class="modal-btn save"
+                onclick="simpanTambahWaktu()">
+
+                Simpan
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= MODAL UBAH DURASI ================= -->
+
+<div
+    id="modalDurasi"
+    class="modal">
+
+    <div class="modal-box">
+
+        <h2>⚙️ Atur Durasi</h2>
+
+        <p id="namaUjianDurasi">
+            Atur durasi ujian.
+        </p>
+
+        <div class="form-group">
+
+            <label>
+                Durasi ujian (menit)
+            </label>
+
+            <input
+                type="number"
+                id="durasiBaru"
+                min="1">
+
+        </div>
+
+        <div class="modal-actions">
+
+            <button
+                class="modal-btn cancel"
+                onclick="tutupModalDurasi()">
+
+                Batal
+
+            </button>
+
+            <button
+                class="modal-btn save"
+                onclick="simpanDurasi()">
+
+                Simpan
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 
 <script>
@@ -449,7 +653,9 @@ try{
 
 let semuaUjian = [];
 
-let timerInterval = null;
+let ujianTambahId = null;
+
+let ujianDurasiId = null;
 
 
 /* =====================================================
@@ -459,7 +665,9 @@ let timerInterval = null;
 function showMessage(text,type){
 
     const el =
-        document.getElementById("message");
+        document.getElementById(
+            "message"
+        );
 
     el.textContent =
         text;
@@ -472,7 +680,9 @@ function showMessage(text,type){
 function hideMessage(){
 
     const el =
-        document.getElementById("message");
+        document.getElementById(
+            "message"
+        );
 
     el.textContent = "";
 
@@ -503,7 +713,6 @@ async function loadUjian(){
         </tr>
     `;
 
-
     try{
 
         const hasil =
@@ -515,13 +724,15 @@ async function loadUjian(){
                 durasi_menit,
                 waktu_terpakai_detik,
                 waktu_mulai_aktif,
-                status_kontrol
+                status_kontrol,
+                created_at
             `)
             .order(
                 "created_at",
-                {ascending:false}
+                {
+                    ascending:false
+                }
             );
-
 
         if(hasil.error){
 
@@ -529,10 +740,8 @@ async function loadUjian(){
 
         }
 
-
         semuaUjian =
             hasil.data || [];
-
 
         tampilkanUjian();
 
@@ -543,7 +752,7 @@ async function loadUjian(){
         body.innerHTML = `
             <tr>
                 <td colspan="7" class="empty">
-                    ❌ ${escapeHtml(error.message)}
+                    ❌ Gagal memuat data ujian.
                 </td>
             </tr>
         `;
@@ -560,7 +769,7 @@ async function loadUjian(){
 
 
 /* =====================================================
-   TAMPILKAN UJIAN
+   TAMPILKAN
 ===================================================== */
 
 function tampilkanUjian(){
@@ -569,7 +778,6 @@ function tampilkanUjian(){
         document.getElementById(
             "ujianBody"
         );
-
 
     if(!semuaUjian.length){
 
@@ -593,24 +801,123 @@ function tampilkanUjian(){
                 const waktu =
                     hitungWaktu(ujian);
 
-
                 const durasi =
                     Number(
                         ujian.durasi_menit
                     ) || 0;
 
+                const maksimal =
+                    durasi * 60;
 
                 const sisa =
                     Math.max(
                         0,
-                        durasi * 60 -
-                        waktu
+                        maksimal - waktu
                     );
-
 
                 const status =
                     ujian.status_kontrol ||
                     "draft";
+
+
+                let tombol = "";
+
+
+                /* DRAFT */
+
+                if(status === "draft"){
+
+                    tombol += `
+                        <button
+                            class="action-btn open"
+                            onclick="bukaUjian('${ujian.id}')">
+                            ▶️ Buka
+                        </button>
+                    `;
+
+                }
+
+
+                /* DIBUKA */
+
+                if(status === "dibuka"){
+
+                    tombol += `
+                        <button
+                            class="action-btn pause"
+                            onclick="jedaUjian('${ujian.id}')">
+                            ⏸️ Jeda
+                        </button>
+                    `;
+
+                }
+
+
+                /* DIJEDA */
+
+                if(status === "dijeda"){
+
+                    tombol += `
+                        <button
+                            class="action-btn resume"
+                            onclick="lanjutkanUjian('${ujian.id}')">
+                            ▶️ Lanjut
+                        </button>
+                    `;
+
+                }
+
+
+                /* SELESAI */
+
+                if(status === "selesai"){
+
+                    tombol += `
+                        <button
+                            class="action-btn repeat"
+                            onclick="ulangiUjian('${ujian.id}')">
+                            🔁 Ulangi
+                        </button>
+                    `;
+
+                }
+
+
+                /* SELESAI BELUM */
+
+                if(status !== "selesai"){
+
+                    tombol += `
+                        <button
+                            class="action-btn finish"
+                            onclick="selesaikanUjian('${ujian.id}')">
+                            ⛔ Tutup
+                        </button>
+                    `;
+
+                }
+
+
+                /* TAMBAH WAKTU */
+
+                tombol += `
+                    <button
+                        class="action-btn add"
+                        onclick="bukaModalTambah('${ujian.id}')">
+                        ➕ Tambah
+                    </button>
+                `;
+
+
+                /* ATUR DURASI */
+
+                tombol += `
+                    <button
+                        class="action-btn edit"
+                        onclick="bukaModalDurasi('${ujian.id}')">
+                        ⚙️ Durasi
+                    </button>
+                `;
 
 
                 return `
@@ -630,15 +937,21 @@ function tampilkanUjian(){
                         </td>
 
                         <td>
-                            ${durasi}
+                            <strong>
+                                ${durasi}
+                            </strong>
                             menit
                         </td>
 
                         <td>
+
                             <span
                                 id="terpakai-${ujian.id}">
+
                                 ${formatWaktu(waktu)}
+
                             </span>
+
                         </td>
 
                         <td>
@@ -668,53 +981,7 @@ function tampilkanUjian(){
 
                             <div class="actions">
 
-                                ${
-                                    status === "draft"
-                                    ?
-                                    `<button
-                                        class="action-btn open"
-                                        onclick="bukaUjian('${ujian.id}')">
-                                        ▶️ Buka
-                                    </button>`
-                                    :
-                                    ""
-                                }
-
-                                ${
-                                    status === "dibuka"
-                                    ?
-                                    `<button
-                                        class="action-btn pause"
-                                        onclick="jedaUjian('${ujian.id}')">
-                                        ⏸️ Jeda
-                                    </button>`
-                                    :
-                                    ""
-                                }
-
-                                ${
-                                    status === "dijeda"
-                                    ?
-                                    `<button
-                                        class="action-btn resume"
-                                        onclick="lanjutkanUjian('${ujian.id}')">
-                                        ▶️ Lanjutkan
-                                    </button>`
-                                    :
-                                    ""
-                                }
-
-                                ${
-                                    status !== "selesai"
-                                    ?
-                                    `<button
-                                        class="action-btn finish"
-                                        onclick="selesaikanUjian('${ujian.id}')">
-                                        ⛔ Selesai
-                                    </button>`
-                                    :
-                                    ""
-                                }
+                                ${tombol}
 
                             </div>
 
@@ -753,10 +1020,8 @@ function hitungWaktu(ujian){
                 ujian.waktu_mulai_aktif
             ).getTime();
 
-
         const sekarang =
             Date.now();
-
 
         const tambahan =
             Math.max(
@@ -768,7 +1033,6 @@ function hitungWaktu(ujian){
                     ) / 1000
                 )
             );
-
 
         terpakai += tambahan;
 
@@ -792,155 +1056,134 @@ function hitungWaktu(ujian){
 
 
 /* =====================================================
-   BUKA UJIAN
+   BUKA
 ===================================================== */
 
 async function bukaUjian(id){
 
     const ujian =
-        semuaUjian.find(
-            u => u.id === id
-        );
-
+        cariUjian(id);
 
     if(!ujian){
-
         return;
-
     }
-
 
     const durasi =
         Number(
             ujian.durasi_menit
         ) || 0;
 
-
-    const terpakai =
+    const waktu =
         Number(
             ujian.waktu_terpakai_detik
         ) || 0;
 
-
-    if(
-        terpakai >=
-        durasi * 60
-    ){
+    if(durasi <= 0){
 
         alert(
-            "Waktu ujian sudah habis."
+            "Durasi ujian belum diatur."
         );
 
         return;
 
     }
 
+    if(waktu >= durasi * 60){
+
+        alert(
+            "Waktu ujian sudah habis. " +
+            "Gunakan tombol Ulangi jika ingin mengulang."
+        );
+
+        return;
+
+    }
 
     const yakin =
         confirm(
-            "Buka ujian:\n\n" +
+            "Buka ujian?\n\n" +
             ujian.judul +
-            "\n\nWaktu mulai dihitung sekarang."
+            "\n\nWaktu akan mulai dihitung."
         );
 
-
     if(!yakin){
-
         return;
-
     }
-
 
     await ubahStatus(
         id,
         "dibuka",
-        terpakai
+        waktu
     );
 
 }
 
 
 /* =====================================================
-   JEDA UJIAN
+   JEDA
 ===================================================== */
 
 async function jedaUjian(id){
 
     const ujian =
-        semuaUjian.find(
-            u => u.id === id
-        );
-
+        cariUjian(id);
 
     if(!ujian){
-
         return;
-
     }
 
-
-    const waktuAktif =
+    const waktu =
         hitungWaktu(ujian);
-
 
     const yakin =
         confirm(
-            "Jeda ujian:\n\n" +
+            "Jeda ujian?\n\n" +
             ujian.judul +
-            "\n\nWaktu yang sudah digunakan: " +
-            formatWaktu(waktuAktif)
+            "\n\n" +
+            "Waktu terpakai: " +
+            formatWaktu(waktu) +
+            "\n\n" +
+            "Waktu akan berhenti."
         );
 
-
     if(!yakin){
-
         return;
-
     }
-
 
     await ubahStatus(
         id,
         "dijeda",
-        waktuAktif
+        waktu
     );
 
 }
 
 
 /* =====================================================
-   LANJUTKAN UJIAN
+   LANJUT
 ===================================================== */
 
 async function lanjutkanUjian(id){
 
     const ujian =
-        semuaUjian.find(
-            u => u.id === id
-        );
-
+        cariUjian(id);
 
     if(!ujian){
-
         return;
-
     }
 
-
-    const waktuAktif =
+    const waktu =
         hitungWaktu(ujian);
-
 
     const durasi =
         Number(
             ujian.durasi_menit
         ) || 0;
 
+    const sisa =
+        durasi * 60 - waktu;
 
-    if(
-        waktuAktif >=
-        durasi * 60
-    ){
+    if(sisa <= 0){
 
         await ubahStatus(
             id,
@@ -952,78 +1195,138 @@ async function lanjutkanUjian(id){
 
     }
 
-
     const yakin =
         confirm(
-            "Lanjutkan ujian:\n\n" +
+            "Lanjutkan ujian?\n\n" +
             ujian.judul +
-            "\n\nSisa waktu: " +
-            formatWaktu(
-                durasi * 60 -
-                waktuAktif
-            )
+            "\n\n" +
+            "Sisa waktu: " +
+            formatWaktu(sisa)
         );
 
-
     if(!yakin){
-
         return;
-
     }
-
 
     await ubahStatus(
         id,
         "dibuka",
-        waktuAktif
+        waktu
     );
 
 }
 
 
 /* =====================================================
-   SELESAIKAN UJIAN
+   SELESAIKAN
 ===================================================== */
 
 async function selesaikanUjian(id){
 
     const ujian =
-        semuaUjian.find(
-            u => u.id === id
-        );
-
+        cariUjian(id);
 
     if(!ujian){
-
         return;
-
     }
 
-
-    const waktuAktif =
+    const waktu =
         hitungWaktu(ujian);
-
 
     const yakin =
         confirm(
             "Tutup ujian sekarang?\n\n" +
             ujian.judul +
-            "\n\nUjian akan berstatus SELESAI."
+            "\n\n" +
+            "Waktu terpakai: " +
+            formatWaktu(waktu) +
+            "\n\n" +
+            "Status menjadi SELESAI."
         );
 
-
     if(!yakin){
-
         return;
-
     }
-
 
     await ubahStatus(
         id,
         "selesai",
-        waktuAktif
+        waktu
     );
+
+}
+
+
+/* =====================================================
+   ULANGI UJIAN
+===================================================== */
+
+async function ulangiUjian(id){
+
+    const ujian =
+        cariUjian(id);
+
+    if(!ujian){
+        return;
+    }
+
+    const yakin =
+        confirm(
+            "ULANGI UJIAN?\n\n" +
+            ujian.judul +
+            "\n\n" +
+            "Waktu terpakai akan direset menjadi 00:00:00.\n" +
+            "Ujian kembali menjadi DRAFT."
+        );
+
+    if(!yakin){
+        return;
+    }
+
+    try{
+
+        const hasil =
+            await supabaseClient
+            .from("ujian")
+            .update({
+
+                status_kontrol:
+                    "draft",
+
+                waktu_terpakai_detik:
+                    0,
+
+                waktu_mulai_aktif:
+                    null
+
+            })
+            .eq(
+                "id",
+                id
+            );
+
+        if(hasil.error){
+            throw hasil.error;
+        }
+
+        showMessage(
+            "Ujian berhasil diulangi dan dikembalikan ke DRAFT.",
+            "success"
+        );
+
+        await loadUjian();
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal mengulangi ujian: " +
+            error.message,
+            "error"
+        );
+
+    }
 
 }
 
@@ -1040,14 +1343,14 @@ async function ubahStatus(
 
     try{
 
-        let payload = {
+        const payload = {
 
             status_kontrol:
                 status,
 
             waktu_terpakai_detik:
                 Math.floor(
-                    waktu
+                    Number(waktu) || 0
                 )
 
         };
@@ -1077,14 +1380,12 @@ async function ubahStatus(
 
 
         if(hasil.error){
-
             throw hasil.error;
-
         }
 
 
         showMessage(
-            "Status ujian berhasil diperbarui.",
+            "Kontrol ujian berhasil diperbarui.",
             "success"
         );
 
@@ -1096,12 +1397,537 @@ async function ubahStatus(
         console.error(error);
 
         showMessage(
-            "Gagal mengubah status: " +
+            "Gagal mengubah kontrol: " +
             error.message,
             "error"
         );
 
     }
+
+}
+
+
+/* =====================================================
+   TAMBAH WAKTU
+===================================================== */
+
+function bukaModalTambah(id){
+
+    const ujian =
+        cariUjian(id);
+
+    if(!ujian){
+        return;
+    }
+
+    ujianTambahId =
+        id;
+
+    document
+        .getElementById(
+            "namaUjianTambah"
+        )
+        .textContent =
+        "Ujian: " +
+        (ujian.judul || "-");
+
+    document
+        .getElementById(
+            "tambahanMenit"
+        )
+        .value = 10;
+
+    document
+        .getElementById(
+            "modalTambah"
+        )
+        .style.display =
+        "flex";
+
+}
+
+
+function tutupModalTambah(){
+
+    ujianTambahId =
+        null;
+
+    document
+        .getElementById(
+            "modalTambah"
+        )
+        .style.display =
+        "none";
+
+}
+
+
+async function simpanTambahWaktu(){
+
+    if(!ujianTambahId){
+        return;
+    }
+
+    const input =
+        document.getElementById(
+            "tambahanMenit"
+        );
+
+    const tambahan =
+        Number(
+            input.value
+        );
+
+    if(
+        !Number.isFinite(tambahan) ||
+        tambahan <= 0
+    ){
+
+        alert(
+            "Masukkan tambahan waktu yang benar."
+        );
+
+        return;
+
+    }
+
+    const ujian =
+        cariUjian(
+            ujianTambahId
+        );
+
+    if(!ujian){
+        return;
+    }
+
+    const durasiLama =
+        Number(
+            ujian.durasi_menit
+        ) || 0;
+
+    const durasiBaru =
+        durasiLama +
+        tambahan;
+
+
+    const yakin =
+        confirm(
+            "Tambahkan waktu " +
+            tambahan +
+            " menit?\n\n" +
+            "Durasi lama: " +
+            durasiLama +
+            " menit\n" +
+            "Durasi baru: " +
+            durasiBaru +
+            " menit"
+        );
+
+    if(!yakin){
+        return;
+    }
+
+
+    try{
+
+        const hasil =
+            await supabaseClient
+            .from("ujian")
+            .update({
+
+                durasi_menit:
+                    durasiBaru
+
+            })
+            .eq(
+                "id",
+                ujianTambahId
+            );
+
+
+        if(hasil.error){
+            throw hasil.error;
+        }
+
+
+        tutupModalTambah();
+
+        showMessage(
+            "Waktu berhasil ditambahkan " +
+            tambahan +
+            " menit.",
+            "success"
+        );
+
+        await loadUjian();
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal menambah waktu: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   ATUR DURASI
+===================================================== */
+
+function bukaModalDurasi(id){
+
+    const ujian =
+        cariUjian(id);
+
+    if(!ujian){
+        return;
+    }
+
+    ujianDurasiId =
+        id;
+
+    document
+        .getElementById(
+            "namaUjianDurasi"
+        )
+        .textContent =
+        "Ujian: " +
+        (ujian.judul || "-");
+
+    document
+        .getElementById(
+            "durasiBaru"
+        )
+        .value =
+        Number(
+            ujian.durasi_menit
+        ) || 0;
+
+    document
+        .getElementById(
+            "modalDurasi"
+        )
+        .style.display =
+        "flex";
+
+}
+
+
+function tutupModalDurasi(){
+
+    ujianDurasiId =
+        null;
+
+    document
+        .getElementById(
+            "modalDurasi"
+        )
+        .style.display =
+        "none";
+
+}
+
+
+async function simpanDurasi(){
+
+    if(!ujianDurasiId){
+        return;
+    }
+
+    const input =
+        document.getElementById(
+            "durasiBaru"
+        );
+
+    const durasi =
+        Number(
+            input.value
+        );
+
+    if(
+        !Number.isFinite(durasi) ||
+        durasi <= 0
+    ){
+
+        alert(
+            "Durasi harus lebih dari 0 menit."
+        );
+
+        return;
+
+    }
+
+
+    const ujian =
+        cariUjian(
+            ujianDurasiId
+        );
+
+    if(!ujian){
+        return;
+    }
+
+
+    const waktu =
+        hitungWaktu(ujian);
+
+
+    if(
+        durasi * 60 <
+        waktu
+    ){
+
+        alert(
+            "Durasi baru tidak boleh lebih kecil " +
+            "daripada waktu yang sudah terpakai."
+        );
+
+        return;
+
+    }
+
+
+    const yakin =
+        confirm(
+            "Ubah durasi ujian menjadi " +
+            durasi +
+            " menit?"
+        );
+
+    if(!yakin){
+        return;
+    }
+
+
+    try{
+
+        const hasil =
+            await supabaseClient
+            .from("ujian")
+            .update({
+
+                durasi_menit:
+                    durasi,
+
+                waktu_terpakai_detik:
+                    Math.floor(waktu)
+
+            })
+            .eq(
+                "id",
+                ujianDurasiId
+            );
+
+
+        if(hasil.error){
+            throw hasil.error;
+        }
+
+
+        tutupModalDurasi();
+
+        showMessage(
+            "Durasi ujian berhasil diubah.",
+            "success"
+        );
+
+        await loadUjian();
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal mengubah durasi: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   TIMER
+===================================================== */
+
+function updateTimer(){
+
+    semuaUjian.forEach(
+        ujian=>{
+
+            const waktu =
+                hitungWaktu(ujian);
+
+            const durasi =
+                (
+                    Number(
+                        ujian.durasi_menit
+                    ) || 0
+                ) * 60;
+
+            const sisa =
+                Math.max(
+                    0,
+                    durasi - waktu
+                );
+
+
+            const terpakaiEl =
+                document.getElementById(
+                    "terpakai-" +
+                    ujian.id
+                );
+
+            const sisaEl =
+                document.getElementById(
+                    "sisa-" +
+                    ujian.id
+                );
+
+
+            if(terpakaiEl){
+
+                terpakaiEl.textContent =
+                    formatWaktu(waktu);
+
+            }
+
+
+            if(sisaEl){
+
+                sisaEl.textContent =
+                    formatWaktu(sisa);
+
+                sisaEl.classList.remove(
+                    "warning",
+                    "danger"
+                );
+
+
+                if(sisa <= 300){
+
+                    sisaEl.classList.add(
+                        "danger"
+                    );
+
+                }else if(sisa <= 600){
+
+                    sisaEl.classList.add(
+                        "warning"
+                    );
+
+                }
+
+            }
+
+
+            if(
+                ujian.status_kontrol ===
+                "dibuka" &&
+                sisa <= 0
+            ){
+
+                otomatisSelesai(
+                    ujian
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   OTOMATIS SELESAI
+===================================================== */
+
+async function otomatisSelesai(ujian){
+
+    if(
+        ujian.status_kontrol !==
+        "dibuka"
+    ){
+        return;
+    }
+
+
+    ujian.status_kontrol =
+        "selesai";
+
+
+    const maksimal =
+        (
+            Number(
+                ujian.durasi_menit
+            ) || 0
+        ) * 60;
+
+
+    ujian.waktu_terpakai_detik =
+        maksimal;
+
+    ujian.waktu_mulai_aktif =
+        null;
+
+
+    try{
+
+        await supabaseClient
+        .from("ujian")
+        .update({
+
+            status_kontrol:
+                "selesai",
+
+            waktu_terpakai_detik:
+                maksimal,
+
+            waktu_mulai_aktif:
+                null
+
+        })
+        .eq(
+            "id",
+            ujian.id
+        );
+
+
+        tampilkanUjian();
+
+
+        showMessage(
+            "Waktu ujian habis. Ujian otomatis selesai.",
+            "success"
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+
+/* =====================================================
+   CARI UJIAN
+===================================================== */
+
+function cariUjian(id){
+
+    return semuaUjian.find(
+        u => u.id === id
+    );
 
 }
 
@@ -1172,180 +1998,8 @@ function statusText(status){
 
 
     return daftar[status] ||
-        status.toUpperCase();
-
-}
-
-
-/* =====================================================
-   TIMER OTOMATIS
-===================================================== */
-
-function updateTimer(){
-
-    semuaUjian.forEach(
-        ujian=>{
-
-            if(
-                ujian.status_kontrol !==
-                "dibuka"
-            ){
-
-                return;
-
-            }
-
-
-            const waktu =
-                hitungWaktu(ujian);
-
-
-            const durasi =
-                (
-                    Number(
-                        ujian.durasi_menit
-                    ) || 0
-                ) * 60;
-
-
-            const sisa =
-                Math.max(
-                    0,
-                    durasi -
-                    waktu
-                );
-
-
-            const terpakaiEl =
-                document.getElementById(
-                    "terpakai-" +
-                    ujian.id
-                );
-
-
-            const sisaEl =
-                document.getElementById(
-                    "sisa-" +
-                    ujian.id
-                );
-
-
-            if(terpakaiEl){
-
-                terpakaiEl.textContent =
-                    formatWaktu(waktu);
-
-            }
-
-
-            if(sisaEl){
-
-                sisaEl.textContent =
-                    formatWaktu(sisa);
-
-
-                sisaEl.classList.remove(
-                    "warning",
-                    "danger"
-                );
-
-
-                if(sisa <= 300){
-
-                    sisaEl.classList.add(
-                        "danger"
-                    );
-
-                }else if(sisa <= 600){
-
-                    sisaEl.classList.add(
-                        "warning"
-                    );
-
-                }
-
-            }
-
-
-            if(
-                sisa <= 0
-            ){
-
-                otomatisSelesai(
-                    ujian
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =====================================================
-   OTOMATIS SELESAI
-===================================================== */
-
-async function otomatisSelesai(ujian){
-
-    if(
-        ujian.status_kontrol !==
-        "dibuka"
-    ){
-
-        return;
-
-    }
-
-
-    const maksimal =
-        (
-            Number(
-                ujian.durasi_menit
-            ) || 0
-        ) * 60;
-
-
-    ujian.status_kontrol =
-        "selesai";
-
-
-    ujian.waktu_terpakai_detik =
-        maksimal;
-
-
-    ujian.waktu_mulai_aktif =
-        null;
-
-
-    await supabaseClient
-    .from("ujian")
-    .update({
-
-        status_kontrol:
-            "selesai",
-
-        waktu_terpakai_detik:
-            maksimal,
-
-        waktu_mulai_aktif:
-            null
-
-    })
-    .eq(
-        "id",
-        ujian.id
-    );
-
-
-    showMessage(
-        "Waktu ujian habis. Ujian otomatis selesai.",
-        "success"
-    );
-
-
-    tampilkanUjian();
+        String(status)
+        .toUpperCase();
 
 }
 
@@ -1379,16 +2033,49 @@ function kembaliDashboard(){
 
 
 /* =====================================================
+   TUTUP MODAL KLIK LUAR
+===================================================== */
+
+window.addEventListener(
+    "click",
+    function(event){
+
+        if(
+            event.target ===
+            document.getElementById(
+                "modalTambah"
+            )
+        ){
+
+            tutupModalTambah();
+
+        }
+
+        if(
+            event.target ===
+            document.getElementById(
+                "modalDurasi"
+            )
+        ){
+
+            tutupModalDurasi();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
    START
 ===================================================== */
 
 loadUjian();
 
-timerInterval =
-    setInterval(
-        updateTimer,
-        1000
-    );
+setInterval(
+    updateTimer,
+    1000
+);
 
 </script>
 
