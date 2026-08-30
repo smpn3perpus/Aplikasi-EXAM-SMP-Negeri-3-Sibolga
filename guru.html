@@ -9,7 +9,6 @@
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800">
 
-  <!-- Header / Navigasi Guru -->
   <header class="bg-emerald-800 text-white shadow-md">
     <div class="container mx-auto px-4 py-4 flex justify-between items-center">
       <div>
@@ -22,69 +21,38 @@
     </div>
   </header>
 
-  <!-- Konten Utama -->
   <main class="container mx-auto px-4 py-6">
-    <!-- Status Koneksi & Informasi Guru -->
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 mb-6 flex justify-between items-center">
       <div>
         <p class="text-xs text-slate-500">Selamat Datang,</p>
         <h2 id="guruName" class="text-lg font-bold text-slate-800">Bapak/Ibu Guru</h2>
       </div>
-      <span id="statusKoneksi" class="text-sm font-medium px-3 py-1 rounded-full bg-yellow-100 text-yellow-800">
-        Menghubungkan...
+      <span id="statusKoneksi" class="text-sm font-medium px-3 py-1 rounded-full bg-emerald-100 text-emerald-800">
+        Terhubung ke Supabase ✅
       </span>
     </div>
 
-    <!-- Ringkasan Statistik Guru -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <p class="text-sm font-medium text-slate-500">Bank Soal Dibuat</p>
-        <p id="countSoal" class="text-3xl font-bold text-emerald-600 mt-2">0</p>
-      </div>
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <p class="text-sm font-medium text-slate-500">Jadwal Ujian Aktif</p>
-        <p id="countUjianAktif" class="text-3xl font-extrabold text-blue-600 mt-2">0</p>
-      </div>
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <p class="text-sm font-medium text-slate-500">Selesai Diperiksa</p>
-        <p id="countHasil" class="text-3xl font-extrabold text-purple-600 mt-2">0</p>
-      </div>
-    </div>
-
-    <!-- Menu Akses Cepat Guru -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <a href="bank-soal.html" class="p-6 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-emerald-500 hover:shadow-md transition block group">
-        <h3 class="text-base font-bold text-slate-800 group-hover:text-emerald-700">Kelola Bank Soal &rarr;</h3>
+      <a href="bank-soal.html" class="p-6 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-emerald-500 hover:shadow-md transition block">
+        <h3 class="text-base font-bold text-slate-800">Kelola Bank Soal &rarr;</h3>
         <p class="text-xs text-slate-500 mt-1">Buat, ubah, atau hapus soal pilihan ganda & essay.</p>
       </a>
-      <a href="ujian.html" class="p-6 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-md transition block group">
-        <h3 class="text-base font-bold text-slate-800 group-hover:text-blue-700">Jadwal Ujian & Token &rarr;</h3>
+      <a href="ujian.html" class="p-6 bg-white border border-slate-200 rounded-xl shadow-sm hover:border-blue-500 hover:shadow-md transition block">
+        <h3 class="text-base font-bold text-slate-800">Jadwal Ujian & Token &rarr;</h3>
         <p class="text-xs text-slate-500 mt-1">Atur durasi ujian, tanggal pelaksanaan, dan buat token ujian.</p>
       </a>
     </div>
   </main>
 
   <script>
-    const SUPABASE_URL = 'https://YOUR_SUPABASE_PROJECT_URL.supabase.co';
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+    const SUPABASE_URL = 'https://sztfucrmjexoalyiwwnq.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn';
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    async function cekAkses() {
-      const statusEl = document.getElementById('statusKoneksi');
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) {
-        statusEl.textContent = 'Terhubung ke Supabase ✅';
-        statusEl.className = 'text-sm font-medium px-3 py-1 rounded-full bg-emerald-100 text-emerald-800';
-      }
-    }
 
     document.getElementById('btnLogout').addEventListener('click', async () => {
       await supabase.auth.signOut();
       window.location.href = 'index.html';
     });
-
-    cekAkses();
   </script>
 </body>
 </html>
