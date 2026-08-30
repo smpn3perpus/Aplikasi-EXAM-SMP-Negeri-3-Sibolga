@@ -1,0 +1,1271 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Daftar Guru - Admin | RUANG EXAM</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f5f9;
+    color:#0f172a;
+}
+
+/* HEADER */
+.header{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    color:white;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.18);
+}
+
+.header h1{
+    font-size:23px;
+}
+
+.header p{
+    font-size:13px;
+    opacity:.85;
+    margin-top:5px;
+}
+
+.header-buttons{
+    display:flex;
+    gap:8px;
+}
+
+.btn{
+    border:none;
+    border-radius:9px;
+    padding:10px 14px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-back{
+    background:white;
+    color:#1d4ed8;
+}
+
+.btn-refresh{
+    background:#22c55e;
+    color:white;
+}
+
+/* CONTAINER */
+.container{
+    max-width:1250px;
+    margin:25px auto;
+    padding:0 20px;
+}
+
+/* TOOLBAR */
+.toolbar{
+    background:white;
+    padding:18px;
+    border-radius:15px;
+    display:flex;
+    gap:12px;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    margin-bottom:18px;
+}
+
+.search{
+    flex:1;
+    min-width:230px;
+}
+
+.search input{
+    width:100%;
+    padding:12px 14px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    outline:none;
+}
+
+.search input:focus{
+    border-color:#2563eb;
+}
+
+.btn-add{
+    background:#2563eb;
+    color:white;
+    padding:12px 18px;
+}
+
+/* TABLE */
+.table-box{
+    background:white;
+    border-radius:15px;
+    overflow:auto;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:750px;
+}
+
+th{
+    background:#eff6ff;
+    color:#1e3a8a;
+    padding:14px;
+    text-align:left;
+    font-size:13px;
+}
+
+td{
+    padding:13px 14px;
+    border-top:1px solid #e2e8f0;
+    font-size:13px;
+}
+
+tr:hover td{
+    background:#f8fafc;
+}
+
+.empty{
+    text-align:center;
+    padding:35px;
+    color:#64748b;
+}
+
+/* ACTION */
+.action{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.action button{
+    border:none;
+    border-radius:7px;
+    padding:7px 9px;
+    cursor:pointer;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.edit{
+    background:#f59e0b;
+    color:white;
+}
+
+.reset{
+    background:#8b5cf6;
+    color:white;
+}
+
+.delete{
+    background:#ef4444;
+    color:white;
+}
+
+/* MODAL */
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.55);
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    z-index:100;
+}
+
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:480px;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+
+.modal-box h2{
+    margin-bottom:18px;
+}
+
+.form-group{
+    margin-bottom:15px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:6px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.form-group input{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    outline:none;
+}
+
+.form-group input:focus{
+    border-color:#2563eb;
+}
+
+.modal-info{
+    background:#eff6ff;
+    color:#1e40af;
+    border-radius:9px;
+    padding:11px;
+    font-size:12px;
+    line-height:1.5;
+    margin-bottom:16px;
+}
+
+.modal-buttons{
+    display:flex;
+    gap:10px;
+    justify-content:flex-end;
+    margin-top:20px;
+}
+
+.cancel{
+    background:#e2e8f0;
+    color:#334155;
+}
+
+.save{
+    background:#2563eb;
+    color:white;
+}
+
+/* MESSAGE */
+.message{
+    display:none;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:18px;
+    text-align:center;
+    font-size:13px;
+}
+
+.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* FOOTER */
+.footer{
+    text-align:center;
+    color:#94a3b8;
+    font-size:12px;
+    padding:30px;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+
+    .container{
+        padding:0 12px;
+    }
+
+    .header{
+        padding:18px;
+    }
+
+    .header-buttons{
+        width:100%;
+    }
+
+    .header-buttons .btn{
+        flex:1;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<header class="header">
+
+    <div>
+
+        <h1>
+            👨‍🏫 DAFTAR GURU
+        </h1>
+
+        <p>
+            RUANG EXAM — SMP Negeri 3 Sibolga
+        </p>
+
+    </div>
+
+    <div class="header-buttons">
+
+        <button
+            class="btn btn-back"
+            onclick="kembaliDashboard()">
+            ← Dashboard
+        </button>
+
+        <button
+            class="btn btn-refresh"
+            onclick="loadGuru()">
+            🔄 Refresh
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div id="message" class="message"></div>
+
+
+    <!-- TOOLBAR -->
+
+    <div class="toolbar">
+
+        <div class="search">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="🔍 Cari nama atau NIP/NIK..."
+                oninput="filterGuru()">
+
+        </div>
+
+        <button
+            class="btn btn-add"
+            onclick="bukaTambah()">
+
+            ➕ Tambah Guru
+
+        </button>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="table-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>No</th>
+                    <th>Nama Guru</th>
+                    <th>NIP / NIK</th>
+                    <th>Password</th>
+                    <th>Aksi</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="guruBody">
+
+                <tr>
+
+                    <td
+                        colspan="5"
+                        class="empty">
+
+                        ⏳ Memuat data guru...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</main>
+
+
+<footer class="footer">
+
+    RUANG EXAM Online<br>
+
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+</footer>
+
+
+<!-- MODAL -->
+
+<div
+    class="modal"
+    id="modal">
+
+    <div class="modal-box">
+
+        <h2 id="modalTitle">
+            Tambah Guru
+        </h2>
+
+
+        <div class="modal-info">
+
+            <strong>Login Guru:</strong><br>
+
+            Username = NIP/NIK<br>
+
+            Password awal = NIP/NIK
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Nama Guru
+            </label>
+
+            <input
+                type="text"
+                id="nama"
+                placeholder="Masukkan nama lengkap">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                NIP / NIK
+            </label>
+
+            <input
+                type="text"
+                id="nip"
+                placeholder="Masukkan NIP / NIK">
+
+        </div>
+
+
+        <div class="modal-buttons">
+
+            <button
+                class="btn cancel"
+                onclick="tutupModal()">
+
+                Batal
+
+            </button>
+
+            <button
+                class="btn save"
+                onclick="simpanGuru()">
+
+                💾 Simpan
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =====================================================
+   CEK ADMIN
+===================================================== */
+
+const sessionRaw =
+    localStorage.getItem("exam_user");
+
+
+if(!sessionRaw){
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+let currentUser = null;
+
+try{
+
+    currentUser =
+        JSON.parse(sessionRaw);
+
+    if(currentUser.role !== "admin"){
+
+        localStorage.removeItem(
+            "exam_user"
+        );
+
+        window.location.href =
+            "login.html";
+
+    }
+
+}catch(error){
+
+    localStorage.removeItem(
+        "exam_user"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let semuaGuru = [];
+
+let editId = null;
+
+
+/* =====================================================
+   PESAN
+===================================================== */
+
+function showMessage(text,type){
+
+    const message =
+        document.getElementById("message");
+
+    message.textContent = text;
+
+    message.className =
+        "message " + type;
+
+}
+
+function hideMessage(){
+
+    const message =
+        document.getElementById("message");
+
+    message.textContent = "";
+
+    message.className =
+        "message";
+
+}
+
+
+/* =====================================================
+   LOAD GURU
+===================================================== */
+
+async function loadGuru(){
+
+    hideMessage();
+
+    const body =
+        document.getElementById("guruBody");
+
+    body.innerHTML = `
+        <tr>
+            <td colspan="5" class="empty">
+                ⏳ Memuat data guru...
+            </td>
+        </tr>
+    `;
+
+
+    try{
+
+        const { data,error } =
+            await supabaseClient
+            .from("guru")
+            .select("id,nama,nip,password,user_id,created_at")
+            .order("nama",{ascending:true});
+
+
+        if(error){
+
+            console.error(error);
+
+            body.innerHTML = `
+                <tr>
+                    <td colspan="5" class="empty">
+                        Gagal memuat data guru.
+                    </td>
+                </tr>
+            `;
+
+            showMessage(
+                "Gagal mengambil data guru: " +
+                error.message,
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        semuaGuru =
+            data || [];
+
+        tampilkanGuru(
+            semuaGuru
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Terjadi kesalahan sistem: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   TAMPILKAN
+===================================================== */
+
+function tampilkanGuru(data){
+
+    const body =
+        document.getElementById("guruBody");
+
+
+    if(!data.length){
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="5" class="empty">
+                    Belum ada data guru.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    body.innerHTML =
+        data.map((guru,index)=>{
+
+            return `
+
+                <tr>
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${escapeHtml(guru.nama || "-")}
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${escapeHtml(guru.nip || "-")}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(guru.password || "-")}
+                    </td>
+
+                    <td>
+
+                        <div class="action">
+
+                            <button
+                                class="edit"
+                                onclick="editGuru('${guru.id}')">
+
+                                ✏️ Edit
+
+                            </button>
+
+                            <button
+                                class="reset"
+                                onclick="resetPassword('${guru.id}')">
+
+                                🔑 Reset
+
+                            </button>
+
+                            <button
+                                class="delete"
+                                onclick="hapusGuru('${guru.id}')">
+
+                                🗑️ Hapus
+
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }).join("");
+
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+function filterGuru(){
+
+    const keyword =
+        document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    if(!keyword){
+
+        tampilkanGuru(
+            semuaGuru
+        );
+
+        return;
+
+    }
+
+
+    const hasil =
+        semuaGuru.filter(guru=>{
+
+            return (
+
+                (guru.nama || "")
+                .toLowerCase()
+                .includes(keyword)
+
+                ||
+
+                (guru.nip || "")
+                .toLowerCase()
+                .includes(keyword)
+
+            );
+
+        });
+
+
+    tampilkanGuru(
+        hasil
+    );
+
+}
+
+
+/* =====================================================
+   TAMBAH GURU
+===================================================== */
+
+function bukaTambah(){
+
+    editId = null;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Tambah Guru";
+
+
+    document.getElementById(
+        "nama"
+    ).value = "";
+
+
+    document.getElementById(
+        "nip"
+    ).value = "";
+
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* =====================================================
+   EDIT GURU
+===================================================== */
+
+function editGuru(id){
+
+    const guru =
+        semuaGuru.find(
+            item => item.id === id
+        );
+
+
+    if(!guru){
+
+        showMessage(
+            "Data guru tidak ditemukan.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    editId = id;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Edit Guru";
+
+
+    document.getElementById(
+        "nama"
+    ).value =
+        guru.nama || "";
+
+
+    document.getElementById(
+        "nip"
+    ).value =
+        guru.nip || "";
+
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* =====================================================
+   SIMPAN GURU
+===================================================== */
+
+async function simpanGuru(){
+
+    const nama =
+        document.getElementById("nama")
+        .value
+        .trim();
+
+    const nip =
+        document.getElementById("nip")
+        .value
+        .trim();
+
+
+    if(!nama || !nip){
+
+        alert(
+            "Nama dan NIP/NIK wajib diisi."
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        /* ===============================
+           TAMBAH
+        =============================== */
+
+        if(!editId){
+
+            const { error } =
+                await supabaseClient
+                .from("guru")
+                .insert({
+
+                    nama:nama,
+
+                    nip:nip,
+
+                    password:nip
+
+                });
+
+
+            if(error){
+
+                console.error(error);
+
+                alert(
+                    "Gagal menambah guru:\n" +
+                    error.message
+                );
+
+                return;
+
+            }
+
+
+            showMessage(
+                "Guru berhasil ditambahkan. Password awal = NIP/NIK.",
+                "success"
+            );
+
+        }
+
+
+        /* ===============================
+           EDIT
+        =============================== */
+
+        else{
+
+            const { error } =
+                await supabaseClient
+                .from("guru")
+                .update({
+
+                    nama:nama,
+
+                    nip:nip
+
+                })
+                .eq("id",editId);
+
+
+            if(error){
+
+                console.error(error);
+
+                alert(
+                    "Gagal mengubah guru:\n" +
+                    error.message
+                );
+
+                return;
+
+            }
+
+
+            showMessage(
+                "Data guru berhasil diperbarui.",
+                "success"
+            );
+
+        }
+
+
+        tutupModal();
+
+        await loadGuru();
+
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Terjadi kesalahan:\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   RESET PASSWORD
+===================================================== */
+
+async function resetPassword(id){
+
+    const guru =
+        semuaGuru.find(
+            item => item.id === id
+        );
+
+
+    if(!guru){
+
+        return;
+
+    }
+
+
+    const yakin =
+        confirm(
+            "Reset password guru:\n\n" +
+            guru.nama +
+            "\n\n" +
+            "Password akan dikembalikan menjadi:\n" +
+            guru.nip
+        );
+
+
+    if(!yakin){
+
+        return;
+
+    }
+
+
+    try{
+
+        const { error } =
+            await supabaseClient
+            .from("guru")
+            .update({
+
+                password:
+                    guru.nip
+
+            })
+            .eq("id",id);
+
+
+        if(error){
+
+            console.error(error);
+
+            alert(
+                "Gagal reset password:\n" +
+                error.message
+            );
+
+            return;
+
+        }
+
+
+        showMessage(
+            "Password guru berhasil direset menjadi NIP/NIK.",
+            "success"
+        );
+
+
+        await loadGuru();
+
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Terjadi kesalahan:\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   HAPUS GURU
+===================================================== */
+
+async function hapusGuru(id){
+
+    const guru =
+        semuaGuru.find(
+            item => item.id === id
+        );
+
+
+    if(!guru){
+
+        return;
+
+    }
+
+
+    const yakin =
+        confirm(
+            "Hapus guru berikut?\n\n" +
+            guru.nama +
+            "\n" +
+            guru.nip +
+            "\n\n" +
+            "Data yang dihapus tidak dapat dikembalikan."
+        );
+
+
+    if(!yakin){
+
+        return;
+
+    }
+
+
+    try{
+
+        const { error } =
+            await supabaseClient
+            .from("guru")
+            .delete()
+            .eq("id",id);
+
+
+        if(error){
+
+            console.error(error);
+
+            alert(
+                "Gagal menghapus guru:\n" +
+                error.message
+            );
+
+            return;
+
+        }
+
+
+        showMessage(
+            "Guru berhasil dihapus.",
+            "success"
+        );
+
+
+        await loadGuru();
+
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Terjadi kesalahan:\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function tutupModal(){
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "none";
+
+    editId = null;
+
+}
+
+
+/* =====================================================
+   KEMBALI
+===================================================== */
+
+function kembaliDashboard(){
+
+    window.location.href =
+        "admin.html";
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   LOAD AWAL
+===================================================== */
+
+loadGuru();
+
+</script>
+
+</body>
+</html>
+```
