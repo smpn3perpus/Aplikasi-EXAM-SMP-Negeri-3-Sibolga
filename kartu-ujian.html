@@ -1,0 +1,1352 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Kartu Ujian - Admin | RUANG EXAM</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f5f9;
+    color:#0f172a;
+    min-height:100vh;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    color:white;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+    box-shadow:0 5px 20px rgba(0,0,0,.18);
+}
+
+.header h1{
+    font-size:23px;
+}
+
+.header p{
+    font-size:13px;
+    opacity:.85;
+    margin-top:5px;
+}
+
+.header-buttons{
+    display:flex;
+    gap:8px;
+}
+
+.btn{
+    border:none;
+    border-radius:9px;
+    padding:10px 15px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-back{
+    background:white;
+    color:#1d4ed8;
+}
+
+.btn-print{
+    background:#22c55e;
+    color:white;
+}
+
+/* ================= CONTAINER ================= */
+
+.container{
+    max-width:1250px;
+    margin:25px auto;
+    padding:0 20px;
+}
+
+/* ================= MESSAGE ================= */
+
+.message{
+    display:none;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:18px;
+    text-align:center;
+    font-size:13px;
+}
+
+.message.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.message.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+/* ================= FILTER ================= */
+
+.filter-box{
+    background:white;
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:22px;
+    box-shadow:0 4px 18px rgba(15,23,42,.07);
+}
+
+.filter-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1.5fr;
+    gap:15px;
+}
+
+.field label{
+    display:block;
+    font-size:12px;
+    font-weight:bold;
+    color:#475569;
+    margin-bottom:7px;
+}
+
+select,
+input{
+    width:100%;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    padding:11px 12px;
+    background:white;
+    font-size:13px;
+    outline:none;
+}
+
+select:focus,
+input:focus{
+    border-color:#2563eb;
+}
+
+/* ================= ACTION ================= */
+
+.action-area{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-top:15px;
+    flex-wrap:wrap;
+}
+
+.action-left{
+    color:#64748b;
+    font-size:13px;
+}
+
+.action-buttons{
+    display:flex;
+    gap:8px;
+}
+
+.action-btn{
+    border:none;
+    border-radius:8px;
+    padding:10px 14px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-preview{
+    background:#2563eb;
+    color:white;
+}
+
+.btn-all{
+    background:#7c3aed;
+    color:white;
+}
+
+/* ================= CARD AREA ================= */
+
+.card-area{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
+    gap:20px;
+}
+
+/* ================= KARTU ================= */
+
+.kartu{
+    background:white;
+    border:1px solid #cbd5e1;
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 5px 18px rgba(15,23,42,.08);
+    position:relative;
+}
+
+.kartu-header{
+    background:linear-gradient(135deg,#1e3a8a,#2563eb);
+    color:white;
+    padding:17px;
+    text-align:center;
+}
+
+.kartu-header .school{
+    font-size:11px;
+    font-weight:bold;
+    letter-spacing:.5px;
+}
+
+.kartu-header h2{
+    font-size:18px;
+    margin-top:5px;
+}
+
+.kartu-header .exam{
+    font-size:13px;
+    margin-top:5px;
+    opacity:.9;
+}
+
+.kartu-body{
+    padding:20px;
+}
+
+.identitas{
+    display:grid;
+    grid-template-columns:100px 10px 1fr;
+    row-gap:10px;
+    font-size:13px;
+}
+
+.identitas .label{
+    color:#64748b;
+}
+
+.identitas .colon{
+    color:#94a3b8;
+}
+
+.identitas .value{
+    font-weight:bold;
+}
+
+.token-box{
+    margin-top:18px;
+    background:#eff6ff;
+    border:2px dashed #60a5fa;
+    border-radius:12px;
+    padding:14px;
+    text-align:center;
+}
+
+.token-title{
+    color:#475569;
+    font-size:11px;
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+.token{
+    color:#1d4ed8;
+    font-size:25px;
+    font-weight:bold;
+    letter-spacing:5px;
+}
+
+.kartu-footer{
+    border-top:1px solid #e2e8f0;
+    padding:12px 17px;
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    font-size:10px;
+    color:#64748b;
+}
+
+.no-token{
+    color:#dc2626;
+    font-size:12px;
+    font-weight:bold;
+}
+
+/* ================= EMPTY ================= */
+
+.empty{
+    background:white;
+    border-radius:16px;
+    padding:50px;
+    text-align:center;
+    color:#64748b;
+    box-shadow:0 4px 18px rgba(15,23,42,.06);
+}
+
+/* ================= FOOTER ================= */
+
+.footer{
+    text-align:center;
+    color:#94a3b8;
+    font-size:12px;
+    line-height:1.6;
+    padding:30px;
+}
+
+/* ================= PRINT ================= */
+
+@media print{
+
+    body{
+        background:white;
+    }
+
+    .header,
+    .filter-box,
+    .footer,
+    .message{
+        display:none !important;
+    }
+
+    .container{
+        max-width:none;
+        margin:0;
+        padding:0;
+    }
+
+    .card-area{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:10mm;
+    }
+
+    .kartu{
+        box-shadow:none;
+        break-inside:avoid;
+        page-break-inside:avoid;
+        border:1px solid #000;
+    }
+
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:800px){
+
+    .filter-grid{
+        grid-template-columns:1fr;
+    }
+
+    .card-area{
+        grid-template-columns:1fr;
+    }
+
+    .header{
+        padding:18px;
+    }
+
+    .container{
+        padding:0 12px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+
+<header class="header">
+
+    <div>
+
+        <h1>🪪 KARTU UJIAN</h1>
+
+        <p>
+            RUANG EXAM — SMP Negeri 3 Sibolga
+        </p>
+
+    </div>
+
+    <div class="header-buttons">
+
+        <button
+            class="btn btn-back"
+            onclick="kembaliDashboard()">
+
+            ← Dashboard
+
+        </button>
+
+        <button
+            class="btn btn-print"
+            onclick="cetakKartu()">
+
+            🖨️ Cetak
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div
+        id="message"
+        class="message">
+    </div>
+
+
+    <!-- ================= FILTER ================= -->
+
+    <section class="filter-box">
+
+        <div class="filter-grid">
+
+            <div class="field">
+
+                <label>
+                    PILIH UJIAN
+                </label>
+
+                <select
+                    id="filterUjian"
+                    onchange="filterSiswa()">
+
+                    <option value="">
+                        Semua Ujian
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    PILIH KELAS
+                </label>
+
+                <select
+                    id="filterKelas"
+                    onchange="filterSiswa()">
+
+                    <option value="">
+                        Semua Kelas
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>
+                    CARI SISWA
+                </label>
+
+                <input
+                    id="searchSiswa"
+                    type="text"
+                    placeholder="🔎 Nama atau NISN..."
+                    oninput="filterSiswa()">
+
+            </div>
+
+        </div>
+
+
+        <div class="action-area">
+
+            <div
+                class="action-left"
+                id="jumlahKartu">
+
+                0 kartu
+
+            </div>
+
+
+            <div class="action-buttons">
+
+                <button
+                    class="action-btn btn-preview"
+                    onclick="tampilkanSemua()">
+
+                    🔄 Tampilkan Semua
+
+                </button>
+
+
+                <button
+                    class="action-btn btn-all"
+                    onclick="cetakKartu()">
+
+                    🖨️ Cetak Kartu
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= KARTU ================= -->
+
+    <section
+        id="cardArea"
+        class="card-area">
+
+        <div class="empty">
+
+            ⏳ Memuat data siswa dan ujian...
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer class="footer">
+
+    RUANG EXAM Online<br>
+
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+</footer>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =====================================================
+   SESSION ADMIN
+===================================================== */
+
+const sessionRaw =
+    localStorage.getItem("exam_user");
+
+
+if(!sessionRaw){
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+try{
+
+    const user =
+        JSON.parse(sessionRaw);
+
+
+    if(user.role !== "admin"){
+
+        localStorage.removeItem(
+            "exam_user"
+        );
+
+        window.location.href =
+            "login.html";
+
+    }
+
+}catch(error){
+
+    localStorage.removeItem(
+        "exam_user"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let semuaSiswa = [];
+let semuaUjian = [];
+let dataTampil = [];
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(text,type){
+
+    const el =
+        document.getElementById(
+            "message"
+        );
+
+    el.textContent =
+        text;
+
+    el.className =
+        "message " + type;
+
+}
+
+function hideMessage(){
+
+    const el =
+        document.getElementById(
+            "message"
+        );
+
+    el.textContent = "";
+
+    el.className =
+        "message";
+
+}
+
+
+/* =====================================================
+   LOAD DATA
+===================================================== */
+
+async function loadData(){
+
+    hideMessage();
+
+
+    const area =
+        document.getElementById(
+            "cardArea"
+        );
+
+
+    area.innerHTML = `
+        <div class="empty">
+            ⏳ Memuat data siswa dan ujian...
+        </div>
+    `;
+
+
+    try{
+
+        /* ================= SISWA ================= */
+
+        const siswaHasil =
+            await supabaseClient
+            .from("siswa")
+            .select(`
+                id,
+                nama,
+                nisn,
+                kelas
+            `)
+            .order(
+                "nama",
+                {ascending:true}
+            );
+
+
+        if(siswaHasil.error){
+
+            throw siswaHasil.error;
+
+        }
+
+
+        semuaSiswa =
+            siswaHasil.data || [];
+
+
+        /* ================= UJIAN ================= */
+
+        const ujianHasil =
+            await supabaseClient
+            .from("ujian")
+            .select("*")
+            .order(
+                "created_at",
+                {ascending:false}
+            );
+
+
+        if(ujianHasil.error){
+
+            throw ujianHasil.error;
+
+        }
+
+
+        semuaUjian =
+            ujianHasil.data || [];
+
+
+        isiFilter();
+
+
+        filterSiswa();
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        area.innerHTML = `
+            <div class="empty">
+
+                ❌ Gagal memuat data.
+
+                <br><br>
+
+                ${escapeHtml(
+                    error.message
+                )}
+
+            </div>
+        `;
+
+
+        showMessage(
+            "Gagal memuat data: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   FILTER
+===================================================== */
+
+function isiFilter(){
+
+    const ujianSelect =
+        document.getElementById(
+            "filterUjian"
+        );
+
+
+    ujianSelect.innerHTML = `
+        <option value="">
+            Semua Ujian
+        </option>
+    `;
+
+
+    semuaUjian.forEach(
+        ujian=>{
+
+            ujianSelect.innerHTML += `
+                <option value="${escapeHtml(
+                    ujian.id
+                )}">
+
+                    ${escapeHtml(
+                        ujian.judul || "-"
+                    )}
+
+                </option>
+            `;
+
+        }
+    );
+
+
+    const kelasSelect =
+        document.getElementById(
+            "filterKelas"
+        );
+
+
+    const kelas =
+        [
+            ...new Set(
+                semuaSiswa
+                .map(
+                    s =>
+                    String(
+                        s.kelas || ""
+                    ).trim()
+                )
+                .filter(Boolean)
+            )
+        ]
+        .sort();
+
+
+    kelasSelect.innerHTML = `
+        <option value="">
+            Semua Kelas
+        </option>
+    `;
+
+
+    kelas.forEach(
+        k=>{
+
+            kelasSelect.innerHTML += `
+                <option value="${escapeHtml(k)}">
+                    ${escapeHtml(k)}
+                </option>
+            `;
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   FILTER SISWA
+===================================================== */
+
+function filterSiswa(){
+
+    const ujianId =
+        document.getElementById(
+            "filterUjian"
+        ).value;
+
+
+    const kelas =
+        document.getElementById(
+            "filterKelas"
+        ).value;
+
+
+    const search =
+        document.getElementById(
+            "searchSiswa"
+        ).value
+        .toLowerCase()
+        .trim();
+
+
+    let hasil =
+        [...semuaSiswa];
+
+
+    if(kelas){
+
+        hasil =
+            hasil.filter(
+                s =>
+                String(
+                    s.kelas || ""
+                ) === kelas
+            );
+
+    }
+
+
+    if(search){
+
+        hasil =
+            hasil.filter(
+                s => {
+
+                    const teks =
+                        (
+                            s.nama +
+                            " " +
+                            s.nisn
+                        )
+                        .toLowerCase();
+
+                    return teks.includes(
+                        search
+                    );
+
+                }
+            );
+
+    }
+
+
+    dataTampil =
+        hasil;
+
+
+    tampilkanKartu(
+        hasil,
+        ujianId
+    );
+
+}
+
+
+/* =====================================================
+   TAMPILKAN SEMUA
+===================================================== */
+
+function tampilkanSemua(){
+
+    document
+    .getElementById(
+        "filterUjian"
+    )
+    .value = "";
+
+
+    document
+    .getElementById(
+        "filterKelas"
+    )
+    .value = "";
+
+
+    document
+    .getElementById(
+        "searchSiswa"
+    )
+    .value = "";
+
+
+    filterSiswa();
+
+}
+
+
+/* =====================================================
+   TAMPILKAN KARTU
+===================================================== */
+
+function tampilkanKartu(
+    siswaList,
+    ujianId
+){
+
+    const area =
+        document.getElementById(
+            "cardArea"
+        );
+
+
+    document
+    .getElementById(
+        "jumlahKartu"
+    )
+    .textContent =
+        siswaList.length +
+        " kartu";
+
+
+    if(!siswaList.length){
+
+        area.innerHTML = `
+            <div class="empty">
+
+                👨‍🎓 Tidak ada siswa
+                yang sesuai.
+
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    let ujianTerpilih =
+        semuaUjian.find(
+            u =>
+            u.id === ujianId
+        );
+
+
+    /*
+     * Jika tidak memilih ujian,
+     * gunakan ujian terbaru.
+     */
+
+    if(!ujianTerpilih){
+
+        ujianTerpilih =
+            semuaUjian[0] || null;
+
+    }
+
+
+    area.innerHTML =
+        siswaList.map(
+            siswa =>
+            buatKartu(
+                siswa,
+                ujianTerpilih
+            )
+        ).join("");
+
+}
+
+
+/* =====================================================
+   BUAT KARTU
+===================================================== */
+
+function buatKartu(
+    siswa,
+    ujian
+){
+
+    const tanggal =
+        ujian &&
+        (
+            ujian.tanggal_ujian ||
+            ujian.tanggal ||
+            ujian.created_at
+        );
+
+
+    const tanggalText =
+        formatTanggal(
+            tanggal
+        );
+
+
+    /*
+     * Token hanya ditampilkan jika
+     * kolom token memang tersedia
+     * pada tabel ujian.
+     */
+
+    const token =
+        ujian &&
+        (
+            ujian.token ||
+            ujian.kode_token ||
+            ujian.token_ujian
+        );
+
+
+    const tokenHTML =
+        token
+        ?
+        `
+            <div class="token">
+                ${escapeHtml(token)}
+            </div>
+        `
+        :
+        `
+            <div class="no-token">
+                Token belum tersedia
+            </div>
+        `;
+
+
+    return `
+
+    <article class="kartu">
+
+        <div class="kartu-header">
+
+            <div class="school">
+                SMP NEGERI 3 SIBOLGA
+            </div>
+
+            <h2>
+                KARTU PESERTA UJIAN
+            </h2>
+
+            <div class="exam">
+                ${
+                    ujian
+                    ?
+                    escapeHtml(
+                        ujian.judul || "-"
+                    )
+                    :
+                    "Belum ada ujian"
+                }
+            </div>
+
+        </div>
+
+
+        <div class="kartu-body">
+
+            <div class="identitas">
+
+                <div class="label">
+                    Nama
+                </div>
+
+                <div class="colon">
+                    :
+                </div>
+
+                <div class="value">
+                    ${escapeHtml(
+                        siswa.nama || "-"
+                    )}
+                </div>
+
+
+                <div class="label">
+                    NISN
+                </div>
+
+                <div class="colon">
+                    :
+                </div>
+
+                <div class="value">
+                    ${escapeHtml(
+                        siswa.nisn || "-"
+                    )}
+                </div>
+
+
+                <div class="label">
+                    Kelas
+                </div>
+
+                <div class="colon">
+                    :
+                </div>
+
+                <div class="value">
+                    ${escapeHtml(
+                        siswa.kelas || "-"
+                    )}
+                </div>
+
+
+                <div class="label">
+                    Tanggal
+                </div>
+
+                <div class="colon">
+                    :
+                </div>
+
+                <div class="value">
+                    ${tanggalText}
+                </div>
+
+
+                <div class="label">
+                    Durasi
+                </div>
+
+                <div class="colon">
+                    :
+                </div>
+
+                <div class="value">
+                    ${
+                        ujian
+                        ?
+                        (
+                            Number(
+                                ujian.durasi_menit
+                            ) || 0
+                        ) +
+                        " menit"
+                        :
+                        "-"
+                    }
+                </div>
+
+            </div>
+
+
+            <div class="token-box">
+
+                <div class="token-title">
+                    TOKEN UJIAN
+                </div>
+
+                ${tokenHTML}
+
+            </div>
+
+        </div>
+
+
+        <div class="kartu-footer">
+
+            <span>
+                RUANG EXAM
+            </span>
+
+            <span>
+                Dibuat oleh
+                Mr. Rahmat Batubara, S.T.P
+            </span>
+
+        </div>
+
+    </article>
+
+    `;
+
+}
+
+
+/* =====================================================
+   CETAK
+===================================================== */
+
+function cetakKartu(){
+
+    if(!dataTampil.length){
+
+        alert(
+            "Tidak ada kartu yang dapat dicetak."
+        );
+
+        return;
+
+    }
+
+
+    window.print();
+
+}
+
+
+/* =====================================================
+   FORMAT TANGGAL
+===================================================== */
+
+function formatTanggal(
+    value
+){
+
+    if(!value){
+
+        return "-";
+
+    }
+
+
+    const date =
+        new Date(value);
+
+
+    if(
+        isNaN(
+            date.getTime()
+        )
+    ){
+
+        return String(value);
+
+    }
+
+
+    return date.toLocaleDateString(
+        "id-ID",
+        {
+            day:"2-digit",
+            month:"long",
+            year:"numeric"
+        }
+    );
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(
+    value
+){
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function kembaliDashboard(){
+
+    window.location.href =
+        "admin.html";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadData();
+
+</script>
+
+</body>
+</html>
+```
