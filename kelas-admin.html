@@ -1,0 +1,1493 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Daftar Kelas - Admin | RUANG EXAM</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f5f9;
+    color:#0f172a;
+    min-height:100vh;
+}
+
+/* HEADER */
+.header{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    color:white;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.18);
+}
+
+.header h1{
+    font-size:23px;
+}
+
+.header p{
+    font-size:13px;
+    opacity:.85;
+    margin-top:5px;
+}
+
+.header-buttons{
+    display:flex;
+    gap:8px;
+}
+
+.btn{
+    border:none;
+    border-radius:9px;
+    padding:10px 14px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-back{
+    background:white;
+    color:#1d4ed8;
+}
+
+.btn-refresh{
+    background:#22c55e;
+    color:white;
+}
+
+/* CONTAINER */
+.container{
+    max-width:1100px;
+    margin:25px auto;
+    padding:0 20px;
+}
+
+/* MESSAGE */
+.message{
+    display:none;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:18px;
+    text-align:center;
+    font-size:13px;
+}
+
+.message.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.message.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* TOOLBAR */
+.toolbar{
+    background:white;
+    padding:18px;
+    border-radius:15px;
+    display:flex;
+    gap:12px;
+    align-items:center;
+    flex-wrap:wrap;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    margin-bottom:18px;
+}
+
+.search{
+    flex:1;
+    min-width:220px;
+}
+
+.search input,
+.filter select{
+    width:100%;
+    padding:12px 14px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    outline:none;
+    background:white;
+}
+
+.search input:focus,
+.filter select:focus{
+    border-color:#2563eb;
+}
+
+.filter{
+    width:170px;
+}
+
+.btn-add{
+    background:#2563eb;
+    color:white;
+    padding:12px 18px;
+}
+
+/* SUMMARY */
+.summary{
+    display:flex;
+    gap:12px;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+}
+
+.summary-card{
+    background:white;
+    border-radius:13px;
+    padding:15px 20px;
+    box-shadow:0 4px 15px rgba(0,0,0,.05);
+    min-width:150px;
+}
+
+.summary-card strong{
+    display:block;
+    font-size:22px;
+    color:#2563eb;
+}
+
+.summary-card span{
+    color:#64748b;
+    font-size:12px;
+}
+
+/* TABLE */
+.table-box{
+    background:white;
+    border-radius:15px;
+    overflow:auto;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:650px;
+}
+
+th{
+    background:#eff6ff;
+    color:#1e3a8a;
+    padding:14px;
+    text-align:left;
+    font-size:13px;
+}
+
+td{
+    padding:14px;
+    border-top:1px solid #e2e8f0;
+    font-size:13px;
+}
+
+tr:hover td{
+    background:#f8fafc;
+}
+
+.empty{
+    text-align:center;
+    padding:40px !important;
+    color:#64748b;
+}
+
+/* BADGE */
+.badge{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:20px;
+    font-weight:bold;
+    font-size:12px;
+}
+
+.badge7{
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+.badge8{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.badge9{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+/* ACTION */
+.action{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.action button{
+    border:none;
+    border-radius:7px;
+    padding:7px 10px;
+    cursor:pointer;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.edit{
+    background:#f59e0b;
+    color:white;
+}
+
+.delete{
+    background:#ef4444;
+    color:white;
+}
+
+/* MODAL */
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.55);
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    z-index:100;
+}
+
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:450px;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+
+.modal-box h2{
+    margin-bottom:18px;
+}
+
+.form-group{
+    margin-bottom:16px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:7px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.form-group input,
+.form-group select{
+    width:100%;
+    padding:12px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    outline:none;
+    background:white;
+}
+
+.form-group input:focus,
+.form-group select:focus{
+    border-color:#2563eb;
+}
+
+.modal-info{
+    background:#eff6ff;
+    color:#1e40af;
+    padding:11px;
+    border-radius:9px;
+    font-size:12px;
+    line-height:1.5;
+    margin-bottom:17px;
+}
+
+.modal-buttons{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:20px;
+}
+
+.cancel{
+    background:#e2e8f0;
+    color:#334155;
+}
+
+.save{
+    background:#2563eb;
+    color:white;
+}
+
+/* FOOTER */
+.footer{
+    text-align:center;
+    color:#94a3b8;
+    font-size:12px;
+    line-height:1.6;
+    padding:30px;
+}
+
+/* MOBILE */
+@media(max-width:650px){
+
+    .header{
+        padding:18px;
+    }
+
+    .container{
+        padding:0 12px;
+    }
+
+    .toolbar{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .search,
+    .filter{
+        width:100%;
+    }
+
+    .btn-add{
+        width:100%;
+    }
+
+    .summary-card{
+        flex:1;
+        min-width:120px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div>
+        <h1>🏫 DAFTAR KELAS</h1>
+
+        <p>
+            RUANG EXAM — SMP Negeri 3 Sibolga
+        </p>
+    </div>
+
+    <div class="header-buttons">
+
+        <button
+            class="btn btn-back"
+            onclick="kembaliDashboard()">
+            ← Dashboard
+        </button>
+
+        <button
+            class="btn btn-refresh"
+            onclick="loadKelas()">
+            🔄 Refresh
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div
+        id="message"
+        class="message">
+    </div>
+
+
+    <!-- RINGKASAN -->
+
+    <div class="summary">
+
+        <div class="summary-card">
+            <strong id="totalKelas">0</strong>
+            <span>Total Kelas</span>
+        </div>
+
+        <div class="summary-card">
+            <strong id="total7">0</strong>
+            <span>Kelas VII</span>
+        </div>
+
+        <div class="summary-card">
+            <strong id="total8">0</strong>
+            <span>Kelas VIII</span>
+        </div>
+
+        <div class="summary-card">
+            <strong id="total9">0</strong>
+            <span>Kelas IX</span>
+        </div>
+
+    </div>
+
+
+    <!-- TOOLBAR -->
+
+    <div class="toolbar">
+
+        <div class="search">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="🔍 Cari nama kelas..."
+                oninput="filterKelas()">
+
+        </div>
+
+        <div class="filter">
+
+            <select
+                id="tingkatFilter"
+                onchange="filterKelas()">
+
+                <option value="">
+                    Semua Tingkat
+                </option>
+
+                <option value="7">
+                    Kelas VII
+                </option>
+
+                <option value="8">
+                    Kelas VIII
+                </option>
+
+                <option value="9">
+                    Kelas IX
+                </option>
+
+            </select>
+
+        </div>
+
+        <button
+            class="btn btn-add"
+            onclick="bukaTambah()">
+
+            ➕ Tambah Kelas
+
+        </button>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="table-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>No</th>
+                    <th>Nama Kelas</th>
+                    <th>Tingkat</th>
+                    <th>Dibuat</th>
+                    <th>Aksi</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="kelasBody">
+
+                <tr>
+                    <td
+                        colspan="5"
+                        class="empty">
+                        ⏳ Memuat data kelas...
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</main>
+
+
+<footer class="footer">
+
+    RUANG EXAM Online<br>
+
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+</footer>
+
+
+<!-- MODAL -->
+
+<div
+    class="modal"
+    id="modal">
+
+    <div class="modal-box">
+
+        <h2 id="modalTitle">
+            Tambah Kelas
+        </h2>
+
+        <div class="modal-info">
+
+            Nama kelas harus unik.
+            Contoh: <strong>7A</strong>,
+            <strong>8B</strong>, atau
+            <strong>9H</strong>.
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Nama Kelas
+            </label>
+
+            <input
+                type="text"
+                id="namaKelas"
+                placeholder="Contoh: 7A"
+                maxlength="20">
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Tingkat
+            </label>
+
+            <select id="tingkat">
+
+                <option value="">
+                    -- Pilih Tingkat --
+                </option>
+
+                <option value="7">
+                    VII
+                </option>
+
+                <option value="8">
+                    VIII
+                </option>
+
+                <option value="9">
+                    IX
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="modal-buttons">
+
+            <button
+                class="btn cancel"
+                onclick="tutupModal()">
+
+                Batal
+
+            </button>
+
+            <button
+                class="btn save"
+                onclick="simpanKelas()">
+
+                💾 Simpan
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   KONFIGURASI SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =====================================================
+   CEK SESSION ADMIN
+===================================================== */
+
+const sessionRaw =
+    localStorage.getItem("exam_user");
+
+
+if(!sessionRaw){
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+let currentUser = null;
+
+try{
+
+    currentUser =
+        JSON.parse(sessionRaw);
+
+    if(currentUser.role !== "admin"){
+
+        localStorage.removeItem(
+            "exam_user"
+        );
+
+        window.location.href =
+            "login.html";
+
+    }
+
+}catch(error){
+
+    localStorage.removeItem(
+        "exam_user"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let semuaKelas = [];
+
+let editId = null;
+
+
+/* =====================================================
+   PESAN
+===================================================== */
+
+function showMessage(text,type){
+
+    const message =
+        document.getElementById("message");
+
+    message.textContent = text;
+
+    message.className =
+        "message " + type;
+
+}
+
+function hideMessage(){
+
+    const message =
+        document.getElementById("message");
+
+    message.textContent = "";
+
+    message.className =
+        "message";
+
+}
+
+
+/* =====================================================
+   LOAD DATA KELAS
+===================================================== */
+
+async function loadKelas(){
+
+    hideMessage();
+
+    const body =
+        document.getElementById("kelasBody");
+
+    body.innerHTML = `
+        <tr>
+            <td colspan="5" class="empty">
+                ⏳ Memuat data kelas...
+            </td>
+        </tr>
+    `;
+
+
+    try{
+
+        const {data,error} =
+            await supabaseClient
+            .from("kelas")
+            .select(
+                "id,nama_kelas,tingkat,created_at"
+            )
+            .order(
+                "tingkat",
+                {ascending:true}
+            )
+            .order(
+                "nama_kelas",
+                {ascending:true}
+            );
+
+
+        if(error){
+
+            console.error(error);
+
+            body.innerHTML = `
+                <tr>
+                    <td colspan="5" class="empty">
+                        Gagal memuat data kelas.
+                    </td>
+                </tr>
+            `;
+
+            showMessage(
+                "Gagal mengambil data kelas: " +
+                error.message,
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        semuaKelas =
+            data || [];
+
+
+        updateSummary();
+
+        tampilkanKelas(
+            semuaKelas
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Terjadi kesalahan sistem: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   SUMMARY
+===================================================== */
+
+function updateSummary(){
+
+    const total =
+        semuaKelas.length;
+
+    const total7 =
+        semuaKelas.filter(
+            k => Number(k.tingkat) === 7
+        ).length;
+
+    const total8 =
+        semuaKelas.filter(
+            k => Number(k.tingkat) === 8
+        ).length;
+
+    const total9 =
+        semuaKelas.filter(
+            k => Number(k.tingkat) === 9
+        ).length;
+
+
+    document.getElementById(
+        "totalKelas"
+    ).textContent = total;
+
+
+    document.getElementById(
+        "total7"
+    ).textContent = total7;
+
+
+    document.getElementById(
+        "total8"
+    ).textContent = total8;
+
+
+    document.getElementById(
+        "total9"
+    ).textContent = total9;
+
+}
+
+
+/* =====================================================
+   TAMPILKAN DATA
+===================================================== */
+
+function tampilkanKelas(data){
+
+    const body =
+        document.getElementById("kelasBody");
+
+
+    if(!data.length){
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="5" class="empty">
+                    🏫 Belum ada data kelas.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    body.innerHTML =
+        data.map((kelas,index)=>{
+
+            let badgeClass =
+                "badge7";
+
+            if(Number(kelas.tingkat) === 8){
+
+                badgeClass =
+                    "badge8";
+
+            }
+
+            if(Number(kelas.tingkat) === 9){
+
+                badgeClass =
+                    "badge9";
+
+            }
+
+
+            const tanggal =
+                kelas.created_at
+                ? new Date(
+                    kelas.created_at
+                  ).toLocaleDateString(
+                    "id-ID",
+                    {
+                        day:"2-digit",
+                        month:"2-digit",
+                        year:"numeric"
+                    }
+                  )
+                : "-";
+
+
+            return `
+
+                <tr>
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${escapeHtml(
+                                kelas.nama_kelas || "-"
+                            )}
+                        </strong>
+                    </td>
+
+                    <td>
+
+                        <span
+                            class="badge ${badgeClass}">
+
+                            Kelas
+                            ${kelas.tingkat}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+                        ${tanggal}
+                    </td>
+
+                    <td>
+
+                        <div class="action">
+
+                            <button
+                                class="edit"
+                                onclick="editKelas('${kelas.id}')">
+
+                                ✏️ Edit
+
+                            </button>
+
+                            <button
+                                class="delete"
+                                onclick="hapusKelas('${kelas.id}')">
+
+                                🗑️ Hapus
+
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }).join("");
+
+}
+
+
+/* =====================================================
+   FILTER
+===================================================== */
+
+function filterKelas(){
+
+    const keyword =
+        document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    const tingkat =
+        document
+        .getElementById("tingkatFilter")
+        .value;
+
+
+    const hasil =
+        semuaKelas.filter(kelas=>{
+
+            const cocokNama =
+                !keyword ||
+                (kelas.nama_kelas || "")
+                .toLowerCase()
+                .includes(keyword);
+
+
+            const cocokTingkat =
+                !tingkat ||
+                String(kelas.tingkat) ===
+                String(tingkat);
+
+
+            return
+                cocokNama &&
+                cocokTingkat;
+
+        });
+
+
+    tampilkanKelas(
+        hasil
+    );
+
+}
+
+
+/* =====================================================
+   TAMBAH
+===================================================== */
+
+function bukaTambah(){
+
+    editId = null;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Tambah Kelas";
+
+
+    document.getElementById(
+        "namaKelas"
+    ).value = "";
+
+
+    document.getElementById(
+        "tingkat"
+    ).value = "";
+
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* =====================================================
+   EDIT
+===================================================== */
+
+function editKelas(id){
+
+    const kelas =
+        semuaKelas.find(
+            item => item.id === id
+        );
+
+
+    if(!kelas){
+
+        showMessage(
+            "Data kelas tidak ditemukan.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    editId = id;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Edit Kelas";
+
+
+    document.getElementById(
+        "namaKelas"
+    ).value =
+        kelas.nama_kelas || "";
+
+
+    document.getElementById(
+        "tingkat"
+    ).value =
+        kelas.tingkat || "";
+
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* =====================================================
+   SIMPAN
+===================================================== */
+
+async function simpanKelas(){
+
+    let namaKelas =
+        document
+        .getElementById("namaKelas")
+        .value
+        .trim()
+        .toUpperCase();
+
+
+    const tingkat =
+        document
+        .getElementById("tingkat")
+        .value;
+
+
+    if(!namaKelas){
+
+        alert(
+            "Nama kelas wajib diisi."
+        );
+
+        return;
+
+    }
+
+
+    if(!tingkat){
+
+        alert(
+            "Tingkat kelas wajib dipilih."
+        );
+
+        return;
+
+    }
+
+
+    /* Pastikan tingkat sesuai nama */
+
+    const angkaAwal =
+        parseInt(
+            namaKelas.charAt(0)
+        );
+
+
+    if(
+        !isNaN(angkaAwal) &&
+        angkaAwal !== Number(tingkat)
+    ){
+
+        alert(
+            "Tingkat tidak sesuai dengan nama kelas.\n\n" +
+            "Contoh:\n" +
+            "7A → Tingkat VII\n" +
+            "8A → Tingkat VIII\n" +
+            "9A → Tingkat IX"
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        /* =========================================
+           TAMBAH
+        ========================================= */
+
+        if(!editId){
+
+            const {error} =
+                await supabaseClient
+                .from("kelas")
+                .insert({
+
+                    nama_kelas:
+                        namaKelas,
+
+                    tingkat:
+                        Number(tingkat)
+
+                });
+
+
+            if(error){
+
+                console.error(error);
+
+                if(error.code === "23505"){
+
+                    alert(
+                        "Kelas " +
+                        namaKelas +
+                        " sudah ada."
+                    );
+
+                }else{
+
+                    alert(
+                        "Gagal menambah kelas:\n" +
+                        error.message
+                    );
+
+                }
+
+                return;
+
+            }
+
+
+            showMessage(
+                "Kelas " +
+                namaKelas +
+                " berhasil ditambahkan.",
+                "success"
+            );
+
+        }
+
+
+        /* =========================================
+           EDIT
+        ========================================= */
+
+        else{
+
+            const {error} =
+                await supabaseClient
+                .from("kelas")
+                .update({
+
+                    nama_kelas:
+                        namaKelas,
+
+                    tingkat:
+                        Number(tingkat)
+
+                })
+                .eq(
+                    "id",
+                    editId
+                );
+
+
+            if(error){
+
+                console.error(error);
+
+                if(error.code === "23505"){
+
+                    alert(
+                        "Nama kelas tersebut sudah ada."
+                    );
+
+                }else{
+
+                    alert(
+                        "Gagal mengubah kelas:\n" +
+                        error.message
+                    );
+
+                }
+
+                return;
+
+            }
+
+
+            showMessage(
+                "Data kelas berhasil diperbarui.",
+                "success"
+            );
+
+        }
+
+
+        tutupModal();
+
+        await loadKelas();
+
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Terjadi kesalahan:\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   HAPUS
+===================================================== */
+
+async function hapusKelas(id){
+
+    const kelas =
+        semuaKelas.find(
+            item => item.id === id
+        );
+
+
+    if(!kelas){
+
+        return;
+
+    }
+
+
+    const yakin =
+        confirm(
+            "Hapus kelas berikut?\n\n" +
+            kelas.nama_kelas +
+            "\n\n" +
+            "Data yang dihapus tidak dapat dikembalikan."
+        );
+
+
+    if(!yakin){
+
+        return;
+
+    }
+
+
+    try{
+
+        const {error} =
+            await supabaseClient
+            .from("kelas")
+            .delete()
+            .eq(
+                "id",
+                id
+            );
+
+
+        if(error){
+
+            console.error(error);
+
+            alert(
+                "Gagal menghapus kelas:\n" +
+                error.message
+            );
+
+            return;
+
+        }
+
+
+        showMessage(
+            "Kelas " +
+            kelas.nama_kelas +
+            " berhasil dihapus.",
+            "success"
+        );
+
+
+        await loadKelas();
+
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Terjadi kesalahan:\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function tutupModal(){
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "none";
+
+    editId = null;
+
+}
+
+
+/* =====================================================
+   KEMBALI
+===================================================== */
+
+function kembaliDashboard(){
+
+    window.location.href =
+        "admin.html";
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   TUTUP MODAL KLIK LUAR
+===================================================== */
+
+document
+.getElementById("modal")
+.addEventListener(
+    "click",
+    function(e){
+
+        if(e.target === this){
+
+            tutupModal();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   LOAD AWAL
+===================================================== */
+
+loadKelas();
+
+</script>
+
+</body>
+</html>
+```
