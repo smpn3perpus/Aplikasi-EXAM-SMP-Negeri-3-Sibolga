@@ -2,7 +2,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -11,154 +10,89 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
 *{
     box-sizing:border-box;
     margin:0;
     padding:0;
 }
 
-html,
-body{
-    width:100%;
+html,body{
     min-height:100%;
     font-family:Arial,Helvetica,sans-serif;
     background:#f1f5f9;
     color:#0f172a;
 }
 
-/* =====================================================
-   HEADER
-===================================================== */
+/* HEADER */
 
-.exam-header{
-    position:sticky;
-    top:0;
-    z-index:1000;
-    background:linear-gradient(
-        135deg,
-        #0f172a,
-        #1d4ed8,
-        #2563eb
-    );
+.header{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
     color:white;
-    padding:14px 20px;
-    box-shadow:0 4px 18px rgba(0,0,0,.18);
+    padding:20px;
+    box-shadow:0 4px 20px rgba(0,0,0,.15);
 }
 
-.header-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    flex-wrap:wrap;
+.header-inner{
+    max-width:1200px;
+    margin:auto;
 }
 
-.exam-title{
-    font-size:21px;
+.brand{
+    font-size:24px;
     font-weight:bold;
 }
 
-.exam-subtitle{
-    font-size:12px;
+.school{
+    font-size:13px;
     opacity:.85;
     margin-top:4px;
 }
 
-/* =====================================================
-   TIMER
-===================================================== */
-
-.timer-box{
-    background:rgba(255,255,255,.15);
-    border:1px solid rgba(255,255,255,.25);
-    border-radius:12px;
-    padding:9px 15px;
-    text-align:center;
-    min-width:135px;
-}
-
-.timer-label{
-    font-size:10px;
-    opacity:.85;
-}
-
-.timer{
-    font-size:22px;
-    font-weight:bold;
-    margin-top:2px;
-}
-
-.timer.warning{
-    color:#fde68a;
-}
-
-.timer.danger{
-    color:#fecaca;
-    animation:blink 1s infinite;
-}
-
-@keyframes blink{
-    50%{
-        opacity:.45;
-    }
-}
-
-/* =====================================================
-   IDENTITAS
-===================================================== */
+/* IDENTITAS SISWA */
 
 .identity{
     max-width:1200px;
-    margin:15px auto 0;
+    margin:18px auto 0;
     display:grid;
-    grid-template-columns:repeat(6,1fr);
-    gap:8px;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
 }
 
-.identity-item{
-    background:rgba(255,255,255,.12);
-    border-radius:8px;
-    padding:8px 10px;
-    min-width:0;
+.identity-card{
+    background:rgba(255,255,255,.13);
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:12px;
+    padding:12px;
 }
 
 .identity-label{
-    font-size:9px;
+    font-size:10px;
     opacity:.75;
     text-transform:uppercase;
 }
 
 .identity-value{
-    font-size:12px;
+    margin-top:5px;
+    font-size:14px;
     font-weight:bold;
-    margin-top:3px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
 }
 
-/* =====================================================
-   CONTAINER
-===================================================== */
+/* CONTAINER */
 
 .container{
-    max-width:1000px;
-    margin:20px auto;
-    padding:0 15px 90px;
+    max-width:1200px;
+    margin:25px auto;
+    padding:0 18px 60px;
 }
 
-/* =====================================================
-   MESSAGE
-===================================================== */
+/* MESSAGE */
 
 .message{
     display:none;
-    padding:13px;
+    padding:13px 15px;
     border-radius:10px;
     margin-bottom:18px;
-    text-align:center;
-    font-size:13px;
+    font-size:14px;
     line-height:1.5;
 }
 
@@ -181,69 +115,111 @@ body{
     color:#1e40af;
 }
 
-/* =====================================================
-   START BOX
-===================================================== */
+/* TITLE */
 
-.start-box{
+.page-title{
+    margin-bottom:18px;
+}
+
+.page-title h2{
+    font-size:22px;
+}
+
+.page-title p{
+    color:#64748b;
+    font-size:13px;
+    margin-top:5px;
+}
+
+/* LOADING */
+
+.loading{
     background:white;
-    border-radius:18px;
-    padding:30px;
+    border-radius:15px;
+    padding:35px;
     text-align:center;
-    box-shadow:0 5px 20px rgba(15,23,42,.08);
+    box-shadow:0 4px 15px rgba(15,23,42,.07);
 }
 
-.start-icon{
-    font-size:55px;
-    margin-bottom:12px;
+/* EXAM LIST */
+
+.exam-list{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
 }
 
-.start-box h2{
+.exam-card{
+    background:white;
+    border-radius:17px;
+    padding:20px;
+    box-shadow:0 5px 18px rgba(15,23,42,.07);
+    border:1px solid #e2e8f0;
+}
+
+.exam-card h3{
+    font-size:18px;
     margin-bottom:8px;
 }
 
-.start-box p{
-    color:#64748b;
-    line-height:1.6;
-    font-size:13px;
-    margin-bottom:20px;
-}
-
-/* =====================================================
-   TOKEN
-===================================================== */
-
-.token-box{
-    background:#f8fafc;
-    border:1px solid #e2e8f0;
-    border-radius:14px;
-    padding:20px;
-    margin-top:15px;
-}
-
-.token-title{
-    font-size:15px;
+.exam-mapel{
+    color:#2563eb;
     font-weight:bold;
-    margin-bottom:10px;
+    font-size:14px;
+    margin-bottom:15px;
+}
+
+.exam-info{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:8px;
+    margin-bottom:17px;
+}
+
+.info-box{
+    background:#f8fafc;
+    border-radius:9px;
+    padding:10px;
+}
+
+.info-label{
+    color:#64748b;
+    font-size:10px;
+}
+
+.info-value{
+    font-size:13px;
+    font-weight:bold;
+    margin-top:3px;
+}
+
+.token-area{
+    border-top:1px solid #e2e8f0;
+    padding-top:15px;
+}
+
+.token-label{
+    display:block;
+    font-weight:bold;
+    font-size:13px;
+    margin-bottom:7px;
 }
 
 .token-input{
     display:flex;
     gap:8px;
-    max-width:450px;
-    margin:auto;
 }
 
 .token-input input{
     flex:1;
+    padding:12px;
     border:1px solid #cbd5e1;
     border-radius:9px;
-    padding:12px;
-    text-align:center;
-    font-weight:bold;
-    font-size:16px;
-    text-transform:uppercase;
     outline:none;
+    font-size:15px;
+    text-transform:uppercase;
+    font-weight:bold;
+    text-align:center;
 }
 
 .token-input input:focus{
@@ -251,53 +227,98 @@ body{
     box-shadow:0 0 0 3px rgba(37,99,235,.12);
 }
 
-/* =====================================================
-   BUTTON
-===================================================== */
-
-.btn{
+.start-btn{
     border:none;
-    border-radius:9px;
-    padding:11px 16px;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-.btn-primary{
     background:#2563eb;
     color:white;
+    border-radius:9px;
+    padding:12px 15px;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-.btn-primary:hover{
+.start-btn:hover{
     background:#1d4ed8;
 }
 
-.btn-primary:disabled{
+.start-btn:disabled{
     opacity:.6;
     cursor:not-allowed;
 }
 
-/* =====================================================
-   EXAM CONTENT
-===================================================== */
+/* EXAM */
 
-.exam-content{
+.exam-area{
     display:none;
 }
 
-.exam-content.active{
+.exam-area.active{
     display:block;
 }
 
-/* =====================================================
-   QUESTION
-===================================================== */
+.exam-top{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8);
+    color:white;
+    border-radius:16px;
+    padding:18px;
+    margin-bottom:18px;
+}
+
+.exam-top-row{
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    align-items:center;
+}
+
+.exam-running-title{
+    font-size:20px;
+    font-weight:bold;
+}
+
+.exam-running-mapel{
+    font-size:13px;
+    opacity:.85;
+    margin-top:4px;
+}
+
+.timer-box{
+    background:rgba(255,255,255,.14);
+    padding:9px 15px;
+    border-radius:10px;
+    text-align:center;
+    min-width:120px;
+}
+
+.timer-label{
+    font-size:9px;
+    opacity:.8;
+}
+
+.timer{
+    font-size:22px;
+    font-weight:bold;
+}
+
+.timer.warning{
+    color:#fde68a;
+}
+
+.timer.danger{
+    color:#fecaca;
+    animation:blink 1s infinite;
+}
+
+@keyframes blink{
+    50%{opacity:.45}
+}
+
+/* QUESTION */
 
 .question-card{
     background:white;
     border-radius:16px;
     padding:22px;
-    margin-bottom:16px;
     box-shadow:0 4px 15px rgba(15,23,42,.07);
 }
 
@@ -313,40 +334,34 @@ body{
 }
 
 .question{
-    font-size:16px;
+    font-size:17px;
     font-weight:bold;
     line-height:1.6;
     margin-bottom:15px;
 }
 
 .question-image{
+    display:block;
     max-width:100%;
     max-height:350px;
     object-fit:contain;
-    display:block;
     margin:10px auto 18px;
     border-radius:10px;
 }
-
-/* =====================================================
-   OPTIONS
-===================================================== */
 
 .option{
     display:flex;
     align-items:flex-start;
     gap:10px;
-    padding:13px;
+    padding:14px;
     margin-bottom:9px;
     border:1px solid #cbd5e1;
     border-radius:10px;
     cursor:pointer;
-    transition:.15s;
 }
 
 .option:hover{
     background:#f8fafc;
-    border-color:#60a5fa;
 }
 
 .option.selected{
@@ -354,19 +369,11 @@ body{
     border-color:#2563eb;
 }
 
-.option input{
-    margin-top:3px;
-}
-
 .option-text{
     flex:1;
-    line-height:1.5;
     font-size:14px;
+    line-height:1.5;
 }
-
-/* =====================================================
-   BENAR SALAH
-===================================================== */
 
 .bs-buttons{
     display:grid;
@@ -375,10 +382,10 @@ body{
 }
 
 .bs-button{
-    padding:14px;
     border:1px solid #cbd5e1;
-    border-radius:10px;
     background:white;
+    border-radius:10px;
+    padding:14px;
     cursor:pointer;
     font-weight:bold;
 }
@@ -389,67 +396,45 @@ body{
     color:#1e40af;
 }
 
-/* =====================================================
-   ESAI
-===================================================== */
-
 textarea{
     width:100%;
-    min-height:170px;
-    resize:vertical;
+    min-height:160px;
     border:1px solid #cbd5e1;
     border-radius:10px;
     padding:13px;
-    font-family:Arial,sans-serif;
+    font-family:Arial;
     font-size:14px;
-    outline:none;
+    resize:vertical;
 }
 
-textarea:focus{
-    border-color:#2563eb;
-    box-shadow:0 0 0 3px rgba(37,99,235,.12);
-}
-
-/* =====================================================
-   NAVIGATION
-===================================================== */
+/* NAVIGATION */
 
 .navigation{
+    display:none;
     position:sticky;
     bottom:0;
-    z-index:900;
+    z-index:1000;
     background:white;
     border-top:1px solid #e2e8f0;
     padding:12px;
     box-shadow:0 -4px 15px rgba(0,0,0,.08);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:8px;
+    gap:7px;
     flex-wrap:wrap;
+    justify-content:center;
 }
 
-#nomorSoal{
+.navigation.show{
     display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:5px;
-    width:100%;
-    margin-bottom:5px;
 }
 
 .nav-btn{
     border:none;
+    background:#e2e8f0;
+    color:#334155;
     border-radius:8px;
     padding:9px 13px;
     cursor:pointer;
     font-weight:bold;
-    background:#e2e8f0;
-    color:#334155;
-}
-
-.nav-btn:hover{
-    background:#cbd5e1;
 }
 
 .nav-btn.active{
@@ -462,21 +447,14 @@ textarea:focus{
     color:#166534;
 }
 
-.btn-submit{
+.submit-btn{
     background:#16a34a;
     color:white;
-    padding:11px 20px;
 }
 
-.btn-submit:hover{
-    background:#15803d;
-}
+/* RESULT */
 
-/* =====================================================
-   RESULT
-===================================================== */
-
-.result-box{
+.result{
     display:none;
     background:white;
     border-radius:18px;
@@ -485,493 +463,214 @@ textarea:focus{
     box-shadow:0 5px 20px rgba(15,23,42,.08);
 }
 
-.result-box.show{
+.result.show{
     display:block;
 }
 
-.result-score{
-    font-size:48px;
+.score{
+    font-size:50px;
     font-weight:bold;
     color:#2563eb;
     margin:15px 0;
 }
 
-.result-info{
-    color:#64748b;
-    line-height:1.8;
-    font-size:14px;
-}
-
-/* =====================================================
-   FOOTER
-===================================================== */
+/* FOOTER */
 
 .footer{
     text-align:center;
     color:#94a3b8;
     font-size:11px;
-    padding:25px;
+    padding:30px 10px;
 }
 
-/* =====================================================
-   LOADING
-===================================================== */
+/* RESPONSIVE */
 
-.loading{
-    text-align:center;
-    padding:20px;
-    color:#64748b;
-}
-
-.spinner{
-    display:inline-block;
-    width:18px;
-    height:18px;
-    border:3px solid #cbd5e1;
-    border-top-color:#2563eb;
-    border-radius:50%;
-    animation:spin .8s linear infinite;
-    vertical-align:middle;
-    margin-right:7px;
-}
-
-@keyframes spin{
-    to{
-        transform:rotate(360deg);
-    }
-}
-
-/* =====================================================
-   RESPONSIVE
-===================================================== */
-
-@media(max-width:850px){
+@media(max-width:750px){
 
     .identity{
-        grid-template-columns:repeat(3,1fr);
+        grid-template-columns:1fr;
     }
 
-}
-
-@media(max-width:550px){
-
-    .exam-header{
-        padding:12px;
+    .exam-list{
+        grid-template-columns:1fr;
     }
 
-    .identity{
-        grid-template-columns:repeat(2,1fr);
+    .exam-top-row{
+        flex-direction:column;
+        align-items:stretch;
     }
 
-    .container{
-        padding:0 10px 100px;
-    }
-
-    .question-card{
-        padding:16px;
-    }
-
-    .question{
-        font-size:14px;
+    .timer-box{
+        width:100%;
     }
 
     .token-input{
         flex-direction:column;
     }
 
-    .token-input button{
+    .start-btn{
         width:100%;
     }
-
-    .bs-buttons{
-        grid-template-columns:1fr;
-    }
-
-    .exam-title{
-        font-size:17px;
-    }
-
 }
-
 </style>
-
 </head>
 
 <body>
 
-<!-- =====================================================
-     HEADER
-===================================================== -->
+<header class="header">
 
-<header class="exam-header">
+<div class="header-inner">
 
-    <div class="header-top">
+<div class="brand">
+📝 RUANG EXAM
+</div>
 
-        <div>
+<div class="school">
+SMP Negeri 3 Sibolga
+</div>
 
-            <div class="exam-title">
-                📝 RUANG EXAM — SISWA
-            </div>
+<div class="identity">
 
-            <div class="exam-subtitle">
-                SMP Negeri 3 Sibolga
-            </div>
+<div class="identity-card">
+<div class="identity-label">Nama Siswa</div>
+<div class="identity-value" id="namaSiswa">-</div>
+</div>
 
-        </div>
+<div class="identity-card">
+<div class="identity-label">NISN</div>
+<div class="identity-value" id="nisnSiswa">-</div>
+</div>
 
-        <div class="timer-box">
+<div class="identity-card">
+<div class="identity-label">Kelas</div>
+<div class="identity-value" id="kelasSiswa">-</div>
+</div>
 
-            <div class="timer-label">
-                SISA WAKTU
-            </div>
+</div>
 
-            <div
-                id="timer"
-                class="timer">
-                --:--
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="identity">
-
-        <div class="identity-item">
-
-            <div class="identity-label">
-                Nama Siswa
-            </div>
-
-            <div
-                id="namaSiswa"
-                class="identity-value">
-                Memuat...
-            </div>
-
-        </div>
-
-
-        <div class="identity-item">
-
-            <div class="identity-label">
-                NISN
-            </div>
-
-            <div
-                id="nisnSiswa"
-                class="identity-value">
-                Memuat...
-            </div>
-
-        </div>
-
-
-        <div class="identity-item">
-
-            <div class="identity-label">
-                Kelas
-            </div>
-
-            <div
-                id="kelasSiswa"
-                class="identity-value">
-                Memuat...
-            </div>
-
-        </div>
-
-
-        <div class="identity-item">
-
-            <div class="identity-label">
-                Mata Pelajaran
-            </div>
-
-            <div
-                id="mapelUjian"
-                class="identity-value">
-                Belum dipilih
-            </div>
-
-        </div>
-
-
-        <div class="identity-item">
-
-            <div class="identity-label">
-                Ujian
-            </div>
-
-            <div
-                id="judulUjian"
-                class="identity-value">
-                Belum dipilih
-            </div>
-
-        </div>
-
-
-        <div class="identity-item">
-
-            <div class="identity-label">
-                Token
-            </div>
-
-            <div
-                id="tokenTampil"
-                class="identity-value">
-                -
-            </div>
-
-        </div>
-
-    </div>
+</div>
 
 </header>
 
 
-<!-- =====================================================
-     MAIN
-===================================================== -->
-
 <main class="container">
 
-    <div
-        id="message"
-        class="message">
-    </div>
+<div id="message" class="message"></div>
 
 
-    <!-- =================================================
-         START
-    ================================================== -->
+<!-- DAFTAR UJIAN -->
 
-    <div
-        id="startBox"
-        class="start-box">
+<div id="daftarArea">
 
-        <div class="start-icon">
-            🎓
-        </div>
+<div class="page-title">
 
-        <h2>
-            Selamat Datang di RUANG EXAM
-        </h2>
+<h2>📚 Ujian Tersedia</h2>
 
-        <p>
-            Halo <strong id="namaSelamat">Siswa</strong>.
-            Silakan masukkan token ujian yang diberikan oleh guru.
-            Setelah token benar, informasi ujian akan tampil dan
-            tombol mulai ujian akan aktif.
-        </p>
+<p>
+Pilih ujian yang akan dikerjakan dan masukkan token dari guru.
+</p>
 
+</div>
 
-        <div class="token-box">
+<div id="loading" class="loading">
+⏳ Memuat ujian...
+</div>
 
-            <div class="token-title">
-                🔑 MASUKKAN TOKEN UJIAN
-            </div>
+<div id="examList" class="exam-list"></div>
 
-            <div class="token-input">
-
-                <input
-                    id="tokenInput"
-                    type="text"
-                    placeholder="Masukkan token ujian"
-                    autocomplete="off"
-                    maxlength="100">
-
-                <button
-                    id="btnToken"
-                    class="btn btn-primary"
-                    type="button"
-                    onclick="cekToken()">
-
-                    🔍 CEK TOKEN
-
-                </button>
-
-            </div>
-
-        </div>
+</div>
 
 
-        <!-- INFO UJIAN -->
+<!-- AREA UJIAN -->
 
-        <div
-            id="infoUjian"
-            style="
-                display:none;
-                margin-top:20px;
-                padding:18px;
-                border-radius:12px;
-                background:#eff6ff;
-                border:1px solid #bfdbfe;
-                text-align:left;
-            ">
+<div id="examArea" class="exam-area">
 
-            <h3
-                style="
-                    color:#1e40af;
-                    margin-bottom:12px;
-                ">
+<div class="exam-top">
 
-                📋 Informasi Ujian
+<div class="exam-top-row">
 
-            </h3>
+<div>
 
+<div class="exam-running-title" id="runningTitle">
+-
+</div>
 
-            <p>
-                <strong>Nama:</strong>
-                <span id="infoNama">-</span>
-            </p>
+<div class="exam-running-mapel" id="runningMapel">
+-
+</div>
 
-            <p>
-                <strong>NISN:</strong>
-                <span id="infoNisn">-</span>
-            </p>
+</div>
 
-            <p>
-                <strong>Kelas:</strong>
-                <span id="infoKelas">-</span>
-            </p>
+<div class="timer-box">
 
-            <p>
-                <strong>Mata Pelajaran:</strong>
-                <span id="infoMapel">-</span>
-            </p>
+<div class="timer-label">
+SISA WAKTU
+</div>
 
-            <p>
-                <strong>Ujian:</strong>
-                <span id="infoJudul">-</span>
-            </p>
+<div class="timer" id="timer">
+--:--
+</div>
 
-            <p>
-                <strong>Durasi:</strong>
-                <span id="infoDurasi">-</span>
-                menit
-            </p>
+</div>
+
+</div>
+
+</div>
 
 
-            <button
-                id="btnMulai"
-                class="btn btn-primary"
-                type="button"
-                onclick="mulaiUjian()"
-                disabled
-                style="
-                    width:100%;
-                    margin-top:15px;
-                    padding:14px;
-                    font-size:16px;
-                ">
+<div id="questionContainer"></div>
 
-                🚀 MULAI UJIAN
-
-            </button>
-
-        </div>
-
-    </div>
+</div>
 
 
-    <!-- =================================================
-         EXAM
-    ================================================== -->
+<!-- HASIL -->
 
-    <div
-        id="examContent"
-        class="exam-content">
+<div id="resultBox" class="result">
 
-        <div
-            id="soalContainer">
-        </div>
+<div style="font-size:55px;">
+🎉
+</div>
 
-    </div>
+<h2>
+Ujian Selesai
+</h2>
 
+<div class="score" id="resultScore">
+0
+</div>
 
-    <!-- =================================================
-         RESULT
-    ================================================== -->
+<div id="resultInfo"></div>
 
-    <div
-        id="resultBox"
-        class="result-box">
-
-        <div class="start-icon">
-            🎉
-        </div>
-
-        <h2>
-            Ujian Selesai
-        </h2>
-
-        <div
-            id="resultScore"
-            class="result-score">
-            0
-        </div>
-
-        <div
-            id="resultInfo"
-            class="result-info">
-        </div>
-
-    </div>
+</div>
 
 </main>
 
 
-<!-- =====================================================
-     NAVIGATION
-===================================================== -->
+<!-- NAVIGASI -->
 
-<div
-    id="navigation"
-    class="navigation"
-    style="display:none;">
+<div id="navigation" class="navigation">
 
-    <div id="nomorSoal"></div>
+<div id="nomorSoal"></div>
 
-    <button
-        class="nav-btn"
-        type="button"
-        onclick="soalSebelumnya()">
+<button class="nav-btn" onclick="soalSebelumnya()">
+← Sebelumnya
+</button>
 
-        ← Sebelumnya
+<button class="nav-btn" onclick="soalBerikutnya()">
+Berikutnya →
+</button>
 
-    </button>
-
-
-    <button
-        class="nav-btn"
-        type="button"
-        onclick="soalBerikutnya()">
-
-        Berikutnya →
-
-    </button>
-
-
-    <button
-        class="nav-btn btn-submit"
-        type="button"
-        onclick="kirimUjian(false)">
-
-        ✅ KIRIM UJIAN
-
-    </button>
+<button class="nav-btn submit-btn" onclick="kirimUjian()">
+✅ KIRIM UJIAN
+</button>
 
 </div>
 
 
 <footer class="footer">
 
-    RUANG EXAM Online<br>
-
-    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+RUANG EXAM Online<br>
+Dibuat oleh Mr. Rahmat Batubara, S.T.P
 
 </footer>
 
@@ -979,7 +678,7 @@ textarea:focus{
 <script>
 
 /* =====================================================
-   SUPABASE
+SUPABASE
 ===================================================== */
 
 const SUPABASE_URL =
@@ -996,55 +695,48 @@ window.supabase.createClient(
 
 
 /* =====================================================
-   SESSION SISWA
+SESSION SISWA
 ===================================================== */
+
+let siswa = null;
 
 const sessionRaw =
 localStorage.getItem("exam_user");
 
-let siswa = null;
-
 if(!sessionRaw){
 
-    window.location.href =
-        "login.html";
+    window.location.href = "login.html";
 
 }else{
 
     try{
 
-        siswa =
-            JSON.parse(sessionRaw);
+        siswa = JSON.parse(sessionRaw);
 
         if(
             !siswa ||
             siswa.role !== "siswa"
         ){
 
-            localStorage.removeItem(
-                "exam_user"
-            );
+            localStorage.removeItem("exam_user");
 
-            window.location.href =
-                "login.html";
+            window.location.href = "login.html";
         }
 
     }catch(error){
 
-        localStorage.removeItem(
-            "exam_user"
-        );
+        localStorage.removeItem("exam_user");
 
-        window.location.href =
-            "login.html";
+        window.location.href = "login.html";
     }
-
 }
 
 
 /* =====================================================
-   VARIABEL EXAM
+DATA
 ===================================================== */
+
+let semuaUjian = [];
 
 let ujianAktif = null;
 
@@ -1056,15 +748,32 @@ let nomorAktif = 0;
 
 let waktuSisa = 0;
 
-let waktuAwal = null;
-
 let timerInterval = null;
 
 let sudahDikirim = false;
 
+let waktuMulaiExam = null;
+
 
 /* =====================================================
-   MESSAGE
+IDENTITAS
+===================================================== */
+
+if(siswa){
+
+    document.getElementById("namaSiswa").textContent =
+        siswa.nama || "-";
+
+    document.getElementById("nisnSiswa").textContent =
+        siswa.nisn || "-";
+
+    document.getElementById("kelasSiswa").textContent =
+        siswa.kelas || "-";
+}
+
+
+/* =====================================================
+MESSAGE
 ===================================================== */
 
 function showMessage(text,type){
@@ -1072,12 +781,10 @@ function showMessage(text,type){
     const el =
         document.getElementById("message");
 
-    el.textContent =
-        text;
+    el.textContent = text;
 
     el.className =
         "message show " + type;
-
 }
 
 function hideMessage(){
@@ -1085,232 +792,448 @@ function hideMessage(){
     const el =
         document.getElementById("message");
 
-    el.textContent =
-        "";
+    el.textContent = "";
 
-    el.className =
-        "message";
+    el.className = "message";
+}
+
+
+/* =====================================================
+NORMALISASI KELAS
+===================================================== */
+
+function normalisasiKelas(value){
+
+    return String(value || "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g,"");
+}
+
+
+/* =====================================================
+AMBIL NAMA KELAS
+===================================================== */
+
+function namaKelasDariData(data){
+
+    if(!data) return "";
+
+    return (
+        data.nama ||
+        data.nama_kelas ||
+        data.kelas ||
+        data.nama_kelas_id ||
+        data.label ||
+        ""
+    );
+}
+
+
+/* =====================================================
+LOAD UJIAN
+===================================================== */
+
+async function loadUjian(){
+
+    const loading =
+        document.getElementById("loading");
+
+    const list =
+        document.getElementById("examList");
+
+    try{
+
+        const result =
+            await supabaseClient
+            .from("ujian")
+            .select(`
+                id,
+                judul,
+                mata_pelajaran_id,
+                kelas_id,
+                guru_id,
+                durasi_menit,
+                tanggal_mulai,
+                tanggal_selesai,
+                status,
+                token,
+                status_kontrol,
+                waktu_mulai_aktif
+            `)
+            .eq("status","aktif")
+            .order("created_at",{ascending:false});
+
+
+        if(result.error){
+
+            throw result.error;
+        }
+
+
+        let dataUjian =
+            result.data || [];
+
+
+        /*
+         * Cek status kontrol.
+         *
+         * Ujian boleh ditampilkan apabila:
+         * status = aktif
+         *
+         * dan:
+         * status_kontrol = dibuka
+         *
+         * atau status_kontrol masih draft tetapi
+         * waktu_mulai_aktif sudah lewat.
+         */
+
+        const sekarang =
+            new Date();
+
+
+        dataUjian =
+            dataUjian.filter(u => {
+
+                if(
+                    u.status_kontrol === "dibuka"
+                ){
+
+                    return true;
+                }
+
+                if(
+                    u.waktu_mulai_aktif
+                ){
+
+                    return new Date(
+                        u.waktu_mulai_aktif
+                    ) <= sekarang;
+                }
+
+                return false;
+
+            });
+
+
+        /*
+         * Cek tanggal mulai dan selesai.
+         */
+
+        dataUjian =
+            dataUjian.filter(u => {
+
+                if(
+                    u.tanggal_mulai &&
+                    new Date(u.tanggal_mulai) > sekarang
+                ){
+
+                    return false;
+                }
+
+                if(
+                    u.tanggal_selesai &&
+                    new Date(u.tanggal_selesai) < sekarang
+                ){
+
+                    return false;
+                }
+
+                return true;
+
+            });
+
+
+        /*
+         * Ambil mata pelajaran.
+         */
+
+        for(
+            const ujian of dataUjian
+        ){
+
+            try{
+
+                const mapel =
+                    await supabaseClient
+                    .from("mata_pelajaran")
+                    .select("*")
+                    .eq(
+                        "id",
+                        ujian.mata_pelajaran_id
+                    )
+                    .maybeSingle();
+
+
+                ujian.nama_mapel =
+                    mapel.data?.nama ||
+                    mapel.data?.nama_mata_pelajaran ||
+                    mapel.data?.mata_pelajaran ||
+                    "-";
+
+            }catch(e){
+
+                ujian.nama_mapel = "-";
+            }
+
+        }
+
+
+        /*
+         * Filter kelas siswa.
+         *
+         * Jika kelas_id tersedia, kita cek tabel kelas.
+         */
+
+        const hasilFilter = [];
+
+
+        for(
+            const ujian of dataUjian
+        ){
+
+            if(!ujian.kelas_id){
+
+                /*
+                 * Jika ujian tidak menentukan kelas,
+                 * tetap ditampilkan.
+                 */
+
+                hasilFilter.push(ujian);
+
+                continue;
+            }
+
+
+            const kelasResult =
+                await supabaseClient
+                .from("kelas")
+                .select("*")
+                .eq(
+                    "id",
+                    ujian.kelas_id
+                )
+                .maybeSingle();
+
+
+            if(kelasResult.error){
+
+                /*
+                 * Jika struktur tabel kelas tidak dapat
+                 * dibaca, jangan sembunyikan ujian.
+                 */
+
+                hasilFilter.push(ujian);
+
+                continue;
+            }
+
+
+            const namaKelas =
+                namaKelasDariData(
+                    kelasResult.data
+                );
+
+
+            /*
+             * Jika nama kelas berhasil ditemukan,
+             * cocokkan dengan kelas siswa.
+             */
+
+            if(namaKelas){
+
+                if(
+                    normalisasiKelas(namaKelas) ===
+                    normalisasiKelas(siswa.kelas)
+                ){
+
+                    hasilFilter.push(ujian);
+                }
+
+            }else{
+
+                /*
+                 * Jika nama kelas tidak ditemukan,
+                 * tetap tampilkan agar tidak membuat
+                 * ujian hilang.
+                 */
+
+                hasilFilter.push(ujian);
+            }
+
+        }
+
+
+        semuaUjian =
+            hasilFilter;
+
+
+        loading.style.display =
+            "none";
+
+
+        tampilkanDaftarUjian();
+
+
+    }catch(error){
+
+        console.error(
+            "LOAD UJIAN:",
+            error
+        );
+
+
+        loading.style.display =
+            "none";
+
+
+        showMessage(
+            "Gagal memuat ujian: " +
+            error.message,
+            "error"
+        );
+
+    }
 
 }
 
 
 /* =====================================================
-   IDENTITAS SISWA
+TAMPILKAN DAFTAR UJIAN
 ===================================================== */
 
-async function tampilkanIdentitasSiswa(){
+function tampilkanDaftarUjian(){
 
-    if(!siswa){
+    const list =
+        document.getElementById("examList");
+
+
+    if(!semuaUjian.length){
+
+        list.innerHTML = `
+
+            <div class="loading" style="grid-column:1/-1">
+
+                📭 Belum ada ujian yang tersedia
+                untuk kelas Anda.
+
+            </div>
+
+        `;
+
         return;
     }
 
 
-    /*
-     * Tampilkan data dari session terlebih dahulu.
-     */
-
-    document.getElementById(
-        "namaSiswa"
-    ).textContent =
-        siswa.nama || "-";
+    let html = "";
 
 
-    document.getElementById(
-        "nisnSiswa"
-    ).textContent =
-        siswa.nisn || "-";
+    semuaUjian.forEach(
+        (ujian,index) => {
 
+            html += `
 
-    document.getElementById(
-        "kelasSiswa"
-    ).textContent =
-        siswa.kelas || "-";
+                <div class="exam-card">
 
+                    <h3>
+                        📝 ${escapeHtml(ujian.judul)}
+                    </h3>
 
-    document.getElementById(
-        "namaSelamat"
-    ).textContent =
-        siswa.nama || "Siswa";
+                    <div class="exam-mapel">
 
+                        📚
+                        ${escapeHtml(
+                            ujian.nama_mapel || "-"
+                        )}
 
-    document.getElementById(
-        "infoNama"
-    ).textContent =
-        siswa.nama || "-";
+                    </div>
 
+                    <div class="exam-info">
 
-    document.getElementById(
-        "infoNisn"
-    ).textContent =
-        siswa.nisn || "-";
+                        <div class="info-box">
 
+                            <div class="info-label">
+                                KELAS
+                            </div>
 
-    document.getElementById(
-        "infoKelas"
-    ).textContent =
-        siswa.kelas || "-";
+                            <div class="info-value">
+                                ${escapeHtml(
+                                    siswa.kelas || "-"
+                                )}
+                            </div>
 
+                        </div>
 
-    /*
-     * Ambil ulang data siswa dari database.
-     */
+                        <div class="info-box">
 
-    try{
+                            <div class="info-label">
+                                DURASI
+                            </div>
 
-        let query =
-            supabaseClient
-            .from("siswa")
-            .select(`
-                id,
-                nama,
-                nisn,
-                kelas
-            `);
+                            <div class="info-value">
+                                ${Number(
+                                    ujian.durasi_menit || 0
+                                )} menit
+                            </div>
 
+                        </div>
 
-        if(siswa.id){
+                    </div>
 
-            query =
-                query.eq(
-                    "id",
-                    siswa.id
-                );
+                    <div class="token-area">
+
+                        <label class="token-label">
+                            🔑 Token Ujian
+                        </label>
+
+                        <div class="token-input">
+
+                            <input
+                                type="text"
+                                id="token_${ujian.id}"
+                                placeholder="Masukkan token"
+                                autocomplete="off"
+                            >
+
+                            <button
+                                class="start-btn"
+                                onclick="verifikasiToken('${ujian.id}')">
+
+                                🚀 MULAI
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `;
 
         }
-        else if(siswa.nisn){
-
-            query =
-                query.eq(
-                    "nisn",
-                    siswa.nisn
-                );
-
-        }
-        else{
-
-            return;
-        }
+    );
 
 
-        const {
-            data,
-            error
-        } =
-            await query
-            .maybeSingle();
-
-
-        if(error){
-
-            console.warn(
-                "Data siswa:",
-                error
-            );
-
-            return;
-        }
-
-
-        if(!data){
-            return;
-        }
-
-
-        siswa.id =
-            data.id;
-
-        siswa.nama =
-            data.nama;
-
-        siswa.nisn =
-            data.nisn;
-
-        siswa.kelas =
-            data.kelas;
-
-
-        /*
-         * Update tampilan.
-         */
-
-        document.getElementById(
-            "namaSiswa"
-        ).textContent =
-            data.nama || "-";
-
-
-        document.getElementById(
-            "nisnSiswa"
-        ).textContent =
-            data.nisn || "-";
-
-
-        document.getElementById(
-            "kelasSiswa"
-        ).textContent =
-            data.kelas || "-";
-
-
-        document.getElementById(
-            "namaSelamat"
-        ).textContent =
-            data.nama || "Siswa";
-
-
-        document.getElementById(
-            "infoNama"
-        ).textContent =
-            data.nama || "-";
-
-
-        document.getElementById(
-            "infoNisn"
-        ).textContent =
-            data.nisn || "-";
-
-
-        document.getElementById(
-            "infoKelas"
-        ).textContent =
-            data.kelas || "-";
-
-
-        /*
-         * Simpan session terbaru.
-         */
-
-        localStorage.setItem(
-            "exam_user",
-            JSON.stringify(siswa)
-        );
-
-    }catch(error){
-
-        console.warn(
-            "Identitas siswa:",
-            error
-        );
-
-    }
-
+    list.innerHTML =
+        html;
 }
 
 
 /* =====================================================
-   CEK TOKEN
+VERIFIKASI TOKEN
 ===================================================== */
 
-async function cekToken(){
+async function verifikasiToken(ujianId){
+
+    hideMessage();
+
 
     const input =
         document.getElementById(
-            "tokenInput"
+            "token_" + ujianId
         );
 
-    const btn =
-        document.getElementById(
-            "btnToken"
-        );
 
     const token =
         input.value
@@ -1321,7 +1244,7 @@ async function cekToken(){
     if(!token){
 
         showMessage(
-            "Token ujian wajib diisi.",
+            "Silakan masukkan token ujian.",
             "error"
         );
 
@@ -1329,44 +1252,24 @@ async function cekToken(){
     }
 
 
-    btn.disabled =
-        true;
-
-    btn.textContent =
-        "⏳ MEMERIKSA...";
-
-    hideMessage();
-
-
-    /*
-     * Reset info sebelumnya.
-     */
-
-    document.getElementById(
-        "infoUjian"
-    ).style.display =
-        "none";
-
-
-    document.getElementById(
-        "btnMulai"
-    ).disabled =
-        true;
+    showMessage(
+        "Memeriksa token ujian...",
+        "info"
+    );
 
 
     try{
 
         /*
-         * Cari ujian berdasarkan TOKEN.
+         * Cari berdasarkan ID + token.
          */
 
-        const hasil =
+        const result =
             await supabaseClient
             .from("ujian")
             .select(`
                 id,
                 judul,
-                token,
                 mata_pelajaran_id,
                 kelas_id,
                 guru_id,
@@ -1374,236 +1277,140 @@ async function cekToken(){
                 tanggal_mulai,
                 tanggal_selesai,
                 status,
-                status_kontrol
+                token,
+                status_kontrol,
+                waktu_mulai_aktif
             `)
+            .eq("id",ujianId)
+            .eq("token",token)
+            .maybeSingle();
+
+
+        if(result.error){
+
+            throw result.error;
+        }
+
+
+        if(!result.data){
+
+            showMessage(
+                "Token tidak ditemukan atau token yang dimasukkan salah.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        const ujian =
+            result.data;
+
+
+        /*
+         * Cek status.
+         */
+
+        if(
+            ujian.status !== "aktif"
+        ){
+
+            showMessage(
+                "Ujian belum aktif.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        /*
+         * Cek kontrol.
+         */
+
+        if(
+            ujian.status_kontrol !== "dibuka"
+        ){
+
+            if(
+                !ujian.waktu_mulai_aktif ||
+                new Date(
+                    ujian.waktu_mulai_aktif
+                ) > new Date()
+            ){
+
+                showMessage(
+                    "Ujian belum dibuka oleh guru.",
+                    "error"
+                );
+
+                return;
+            }
+
+        }
+
+
+        /*
+         * Cek tanggal.
+         */
+
+        const sekarang =
+            new Date();
+
+
+        if(
+            ujian.tanggal_mulai &&
+            new Date(ujian.tanggal_mulai) > sekarang
+        ){
+
+            showMessage(
+                "Ujian belum memasuki waktu mulai.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if(
+            ujian.tanggal_selesai &&
+            new Date(ujian.tanggal_selesai) < sekarang
+        ){
+
+            showMessage(
+                "Waktu ujian sudah berakhir.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        /*
+         * Ambil mata pelajaran.
+         */
+
+        const mapel =
+            await supabaseClient
+            .from("mata_pelajaran")
+            .select("*")
             .eq(
-                "token",
-                token
-            )
-            .eq(
-                "status",
-                "aktif"
+                "id",
+                ujian.mata_pelajaran_id
             )
             .maybeSingle();
 
 
-        if(hasil.error){
-
-            throw hasil.error;
-        }
-
-
-        if(!hasil.data){
-
-            showMessage(
-                "Token tidak ditemukan atau ujian belum aktif.",
-                "error"
-            );
-
-            return;
-        }
-
-
-        ujianAktif =
-            hasil.data;
-
-
-        /*
-         * CEK STATUS KONTROL
-         */
-
-        if(
-            ujianAktif.status_kontrol &&
-            ujianAktif.status_kontrol !== "dibuka"
-        ){
-
-            showMessage(
-                "Ujian ditemukan, tetapi saat ini belum dibuka oleh guru.",
-                "error"
-            );
-
-            ujianAktif =
-                null;
-
-            return;
-        }
-
-
-        /*
-         * CEK TANGGAL MULAI
-         */
-
-        if(
-            ujianAktif.tanggal_mulai
-        ){
-
-            const mulai =
-                new Date(
-                    ujianAktif.tanggal_mulai
-                );
-
-            if(
-                new Date() < mulai
-            ){
-
-                showMessage(
-                    "Ujian belum dimulai. Silakan tunggu sampai waktu ujian dibuka.",
-                    "error"
-                );
-
-                ujianAktif =
-                    null;
-
-                return;
-            }
-
-        }
-
-
-        /*
-         * CEK TANGGAL SELESAI
-         */
-
-        if(
-            ujianAktif.tanggal_selesai
-        ){
-
-            const selesai =
-                new Date(
-                    ujianAktif.tanggal_selesai
-                );
-
-            if(
-                new Date() > selesai
-            ){
-
-                showMessage(
-                    "Waktu pelaksanaan ujian sudah berakhir.",
-                    "error"
-                );
-
-                ujianAktif =
-                    null;
-
-                return;
-            }
-
-        }
-
-
-        /*
-         * AMBIL MATA PELAJARAN
-         */
-
-        let namaMapel =
+        ujian.nama_mapel =
+            mapel.data?.nama ||
+            mapel.data?.nama_mata_pelajaran ||
+            mapel.data?.mata_pelajaran ||
             "-";
 
 
-        if(
-            ujianAktif.mata_pelajaran_id
-        ){
-
-            const mapel =
-                await supabaseClient
-                .from("mata_pelajaran")
-                .select(`
-                    id,
-                    nama
-                `)
-                .eq(
-                    "id",
-                    ujianAktif.mata_pelajaran_id
-                )
-                .maybeSingle();
-
-
-            if(mapel.error){
-
-                console.warn(
-                    "Mata pelajaran:",
-                    mapel.error
-                );
-
-            }
-
-
-            if(mapel.data){
-
-                namaMapel =
-                    mapel.data.nama || "-";
-
-            }
-
-        }
-
-
         /*
-         * SIMPAN NAMA MAPEL
+         * Ambil soal.
          */
-
-        ujianAktif.namaMapel =
-            namaMapel;
-
-
-        /*
-         * TAMPILKAN IDENTITAS UJIAN
-         */
-
-        document.getElementById(
-            "mapelUjian"
-        ).textContent =
-            namaMapel;
-
-
-        document.getElementById(
-            "judulUjian"
-        ).textContent =
-            ujianAktif.judul || "-";
-
-
-        document.getElementById(
-            "tokenTampil"
-        ).textContent =
-            ujianAktif.token || token;
-
-
-        document.getElementById(
-            "infoMapel"
-        ).textContent =
-            namaMapel;
-
-
-        document.getElementById(
-            "infoJudul"
-        ).textContent =
-            ujianAktif.judul || "-";
-
-
-        document.getElementById(
-            "infoDurasi"
-        ).textContent =
-            ujianAktif.durasi_menit || 60;
-
-
-        /*
-         * TAMPILKAN BOX INFORMASI
-         */
-
-        document.getElementById(
-            "infoUjian"
-        ).style.display =
-            "block";
-
-
-        /*
-         * AMBIL SOAL
-         */
-
-        showMessage(
-            "Token benar. Memeriksa soal ujian...",
-            "info"
-        );
-
 
         const soal =
             await supabaseClient
@@ -1624,13 +1431,11 @@ async function cekToken(){
             `)
             .eq(
                 "ujian_id",
-                ujianAktif.id
+                ujian.id
             )
             .order(
                 "nomor",
-                {
-                    ascending:true
-                }
+                {ascending:true}
             );
 
 
@@ -1647,7 +1452,7 @@ async function cekToken(){
         if(!semuaSoal.length){
 
             showMessage(
-                "Ujian ditemukan, tetapi belum memiliki soal.",
+                "Ujian sudah aktif tetapi belum memiliki soal.",
                 "error"
             );
 
@@ -1655,98 +1460,56 @@ async function cekToken(){
         }
 
 
-        /*
-         * Cek apakah siswa sudah pernah
-         * mengerjakan ujian ini.
-         */
-
-        const cekHasil =
-            await supabaseClient
-            .from("hasil_ujian")
-            .select(`
-                id,
-                nilai,
-                status,
-                created_at
-            `)
-            .eq(
-                "ujian_id",
-                ujianAktif.id
-            )
-            .eq(
-                "siswa_id",
-                siswa.id
-            )
-            .limit(1)
-            .maybeSingle();
-
-
-        if(cekHasil.error){
-
-            console.warn(
-                "Cek hasil:",
-                cekHasil.error
-            );
-
-        }
-
-
-        if(cekHasil.data){
-
-            showMessage(
-                "Anda sudah pernah mengerjakan ujian ini.",
-                "error"
-            );
-
-            document.getElementById(
-                "btnMulai"
-            ).disabled =
-                true;
-
-            return;
-        }
+        ujianAktif =
+            ujian;
 
 
         /*
-         * TOKEN VALID
+         * Load jawaban sementara.
          */
 
-        hideMessage();
+        const jawabanTersimpan =
+            localStorage.getItem(
+                "exam_jawaban_" +
+                ujian.id
+            );
 
 
-        document.getElementById(
-            "btnMulai"
-        ).disabled =
-            false;
+        if(jawabanTersimpan){
+
+            try{
+
+                jawaban =
+                    JSON.parse(
+                        jawabanTersimpan
+                    ) || {};
+
+            }catch(e){
+
+                jawaban = {};
+            }
+
+        }else{
+
+            jawaban = {};
+        }
 
 
-        document.getElementById(
-            "btnMulai"
-        ).textContent =
-            "🚀 MULAI UJIAN";
-
+        mulaiExam();
 
     }catch(error){
 
         console.error(
-            "CEK TOKEN:",
+            "VERIFIKASI TOKEN:",
             error
         );
 
 
         showMessage(
-            "Gagal memuat ujian: " +
+            "Gagal memverifikasi ujian: " +
             error.message,
             "error"
         );
-
-    }finally{
-
-        btn.disabled =
-            false;
-
-        btn.textContent =
-            "🔍 CEK TOKEN";
 
     }
 
@@ -1754,70 +1517,46 @@ async function cekToken(){
 
 
 /* =====================================================
-   MULAI UJIAN
+MULAI EXAM
 ===================================================== */
 
-async function mulaiUjian(){
+function mulaiExam(){
 
-    if(!ujianAktif){
-
-        showMessage(
-            "Silakan cek token terlebih dahulu.",
-            "error"
-        );
-
-        return;
-    }
+    hideMessage();
 
 
-    if(!semuaSoal.length){
-
-        showMessage(
-            "Soal ujian belum tersedia.",
-            "error"
-        );
-
-        return;
-    }
+    document.getElementById(
+        "daftarArea"
+    ).style.display =
+        "none";
 
 
-    const yakin =
-        confirm(
-            "Apakah Anda siap memulai ujian?\n\n" +
-            "Nama: " +
-            siswa.nama +
-            "\n" +
-            "Mata Pelajaran: " +
-            ujianAktif.namaMapel +
-            "\n" +
-            "Ujian: " +
-            ujianAktif.judul +
-            "\n" +
-            "Jumlah soal: " +
-            semuaSoal.length +
-            "\n" +
-            "Durasi: " +
-            ujianAktif.durasi_menit +
-            " menit"
+    document.getElementById(
+        "examArea"
+    ).classList.add("active");
+
+
+    document.getElementById(
+        "navigation"
+    ).classList.add("show");
+
+
+    document.getElementById(
+        "runningTitle"
+    ).textContent =
+        ujianAktif.judul || "-";
+
+
+    document.getElementById(
+        "runningMapel"
+    ).textContent =
+        "📚 " +
+        (
+            ujianAktif.nama_mapel || "-"
         );
 
 
-    if(!yakin){
-
-        return;
-    }
-
-
-    nomorAktif =
-        0;
-
-
-    jawaban =
-        {};
-
-
-    waktuAwal =
-        new Date();
+    nomorAktif = 0;
 
 
     waktuSisa =
@@ -1832,72 +1571,25 @@ async function mulaiUjian(){
     ){
 
         waktuSisa =
-            3600;
+            60 * 60;
     }
 
 
-    sudahDikirim =
-        false;
+    waktuMulaiExam =
+        new Date();
 
-
-    /*
-     * Hapus jawaban lama.
-     */
-
-    localStorage.removeItem(
-        "exam_jawaban_" +
-        ujianAktif.id
-    );
-
-
-    /*
-     * Tampilkan exam.
-     */
-
-    document.getElementById(
-        "startBox"
-    ).style.display =
-        "none";
-
-
-    document.getElementById(
-        "examContent"
-    ).classList.add(
-        "active"
-    );
-
-
-    document.getElementById(
-        "navigation"
-    ).style.display =
-        "flex";
-
-
-    /*
-     * Tampilkan soal.
-     */
 
     tampilkanSoal();
 
-
-    /*
-     * Mulai timer.
-     */
-
     mulaiTimer();
 
-
-    /*
-     * Masuk fullscreen.
-     */
-
-    await masukFullScreen();
+    masukFullScreen();
 
 }
 
 
 /* =====================================================
-   FULLSCREEN
+FULL SCREEN
 ===================================================== */
 
 async function masukFullScreen(){
@@ -1910,14 +1602,14 @@ async function masukFullScreen(){
         ){
 
             await document
-            .documentElement
-            .requestFullscreen();
+                .documentElement
+                .requestFullscreen();
 
         }
 
     }catch(error){
 
-        console.warn(
+        console.log(
             "Fullscreen:",
             error
         );
@@ -1928,53 +1620,39 @@ async function masukFullScreen(){
 
 
 /* =====================================================
-   TAMPILKAN SOAL
+TAMPILKAN SOAL
 ===================================================== */
 
 function tampilkanSoal(){
-
-    if(!semuaSoal.length){
-        return;
-    }
-
 
     if(
         nomorAktif < 0
     ){
 
-        nomorAktif =
-            0;
-
+        nomorAktif = 0;
     }
 
 
     if(
-        nomorAktif >=
-        semuaSoal.length
+        nomorAktif >= semuaSoal.length
     ){
 
         nomorAktif =
             semuaSoal.length - 1;
-
     }
 
 
     const soal =
-        semuaSoal[
-            nomorAktif
-        ];
+        semuaSoal[nomorAktif];
 
 
     const container =
         document.getElementById(
-            "soalContainer"
+            "questionContainer"
         );
 
 
-    let html = "";
-
-
-    html += `
+    let html = `
 
         <div class="question-card">
 
@@ -1997,10 +1675,6 @@ function tampilkanSoal(){
     `;
 
 
-    /*
-     * GAMBAR
-     */
-
     if(soal.gambar_url){
 
         html += `
@@ -2011,9 +1685,6 @@ function tampilkanSoal(){
                     soal.gambar_url
                 )}"
                 alt="Gambar soal"
-                onerror="
-                    this.style.display='none';
-                "
             >
 
         `;
@@ -2026,32 +1697,21 @@ function tampilkanSoal(){
      */
 
     if(
-        soal.tipe ===
-        "pilihan_ganda"
+        soal.tipe === "pilihan_ganda"
     ){
 
         const pilihan = [
 
             ["A",soal.pilihan_a],
-
             ["B",soal.pilihan_b],
-
             ["C",soal.pilihan_c],
-
             ["D",soal.pilihan_d]
 
         ];
 
 
         pilihan.forEach(
-            function(item){
-
-                const huruf =
-                    item[0];
-
-                const text =
-                    item[1];
-
+            ([huruf,text]) => {
 
                 if(
                     text === null ||
@@ -2060,7 +1720,6 @@ function tampilkanSoal(){
                 ){
 
                     return;
-
                 }
 
 
@@ -2071,12 +1730,11 @@ function tampilkanSoal(){
 
                 html += `
 
-                    <label
-                        class="option ${
-                            selected
-                            ? "selected"
-                            : ""
-                        }">
+                    <label class="option ${
+                        selected
+                        ? "selected"
+                        : ""
+                    }">
 
                         <input
                             type="radio"
@@ -2120,8 +1778,7 @@ function tampilkanSoal(){
      */
 
     else if(
-        soal.tipe ===
-        "benar_salah"
+        soal.tipe === "benar_salah"
     ){
 
         const nilai =
@@ -2144,12 +1801,12 @@ function tampilkanSoal(){
                             '${soal.id}',
                             'BENAR'
                         )
-                    ">
+                    "
+                >
 
                     ✅ BENAR
 
                 </button>
-
 
                 <button
                     type="button"
@@ -2163,7 +1820,8 @@ function tampilkanSoal(){
                             '${soal.id}',
                             'SALAH'
                         )
-                    ">
+                    "
+                >
 
                     ❌ SALAH
 
@@ -2181,8 +1839,7 @@ function tampilkanSoal(){
      */
 
     else if(
-        soal.tipe ===
-        "esai"
+        soal.tipe === "esai"
     ){
 
         html += `
@@ -2222,46 +1879,29 @@ function tampilkanSoal(){
 
 
 /* =====================================================
-   SIMPAN JAWABAN
+SIMPAN JAWABAN
 ===================================================== */
 
-function simpanJawaban(
-    id,
-    nilai
-){
+function simpanJawaban(id,nilai){
 
     jawaban[id] =
         nilai;
 
-
-    /*
-     * Simpan sementara di browser.
-     */
 
     if(ujianAktif){
 
         localStorage.setItem(
             "exam_jawaban_" +
             ujianAktif.id,
-            JSON.stringify(
-                jawaban
-            )
+            JSON.stringify(jawaban)
         );
 
     }
 
 
-    /*
-     * Refresh pilihan objektif.
-     */
-
     const soal =
         semuaSoal.find(
-            function(x){
-
-                return x.id === id;
-
-            }
+            x => x.id === id
         );
 
 
@@ -2272,16 +1912,17 @@ function simpanJawaban(
 
         tampilkanSoal();
 
+    }else{
+
+        updateNavigasi();
+
     }
-
-
-    updateNavigasi();
 
 }
 
 
 /* =====================================================
-   SOAL SEBELUMNYA
+NAVIGASI
 ===================================================== */
 
 function soalSebelumnya(){
@@ -2294,19 +1935,10 @@ function soalSebelumnya(){
 
         tampilkanSoal();
 
-        window.scrollTo({
-            top:0,
-            behavior:"smooth"
-        });
-
     }
 
 }
 
-
-/* =====================================================
-   SOAL BERIKUTNYA
-===================================================== */
 
 function soalBerikutnya(){
 
@@ -2319,18 +1951,13 @@ function soalBerikutnya(){
 
         tampilkanSoal();
 
-        window.scrollTo({
-            top:0,
-            behavior:"smooth"
-        });
-
     }
 
 }
 
 
 /* =====================================================
-   NAVIGASI NOMOR
+NOMOR SOAL
 ===================================================== */
 
 function updateNavigasi(){
@@ -2345,19 +1972,16 @@ function updateNavigasi(){
 
 
     semuaSoal.forEach(
-        function(soal,index){
+        (soal,index) => {
 
             const answered =
-                jawaban[soal.id] !==
-                    undefined &&
-                jawaban[soal.id] !==
-                    "";
+                jawaban[soal.id] !== undefined &&
+                jawaban[soal.id] !== "";
 
 
             html += `
 
                 <button
-                    type="button"
                     class="nav-btn ${
                         index === nomorAktif
                         ? "active"
@@ -2370,7 +1994,8 @@ function updateNavigasi(){
                     onclick="
                         nomorAktif=${index};
                         tampilkanSoal();
-                    ">
+                    "
+                >
 
                     ${soal.nomor}
 
@@ -2389,7 +2014,7 @@ function updateNavigasi(){
 
 
 /* =====================================================
-   TIMER
+TIMER
 ===================================================== */
 
 function mulaiTimer(){
@@ -2406,7 +2031,9 @@ function mulaiTimer(){
         setInterval(
             function(){
 
-                if(sudahDikirim){
+                if(
+                    sudahDikirim
+                ){
 
                     clearInterval(
                         timerInterval
@@ -2417,7 +2044,6 @@ function mulaiTimer(){
 
 
                 waktuSisa--;
-
 
                 updateTimer();
 
@@ -2432,14 +2058,11 @@ function mulaiTimer(){
 
 
                     alert(
-                        "⏰ Waktu ujian telah habis.\n\n" +
-                        "Jawaban akan dikirim otomatis."
+                        "⏰ Waktu ujian telah habis. Jawaban akan dikirim otomatis."
                     );
 
 
-                    kirimUjian(
-                        true
-                    );
+                    kirimUjian(true);
 
                 }
 
@@ -2449,10 +2072,6 @@ function mulaiTimer(){
 
 }
 
-
-/* =====================================================
-   UPDATE TIMER
-===================================================== */
 
 function updateTimer(){
 
@@ -2466,8 +2085,7 @@ function updateTimer(){
         waktuSisa < 0
     ){
 
-        waktuSisa =
-            0;
+        waktuSisa = 0;
 
     }
 
@@ -2480,9 +2098,7 @@ function updateTimer(){
 
     const menit =
         Math.floor(
-            (
-                waktuSisa % 3600
-            ) / 60
+            (waktuSisa % 3600) / 60
         );
 
 
@@ -2490,29 +2106,24 @@ function updateTimer(){
         waktuSisa % 60;
 
 
-    let text = "";
+    let text;
 
 
     if(jam > 0){
 
         text =
-            String(jam)
-            .padStart(2,"0") +
+            String(jam).padStart(2,"0") +
             ":" +
-            String(menit)
-            .padStart(2,"0") +
+            String(menit).padStart(2,"0") +
             ":" +
-            String(detik)
-            .padStart(2,"0");
+            String(detik).padStart(2,"0");
 
     }else{
 
         text =
-            String(menit)
-            .padStart(2,"0") +
+            String(menit).padStart(2,"0") +
             ":" +
-            String(detik)
-            .padStart(2,"0");
+            String(detik).padStart(2,"0");
 
     }
 
@@ -2535,8 +2146,7 @@ function updateTimer(){
             "danger"
         );
 
-    }
-    else if(
+    }else if(
         waktuSisa <= 600
     ){
 
@@ -2550,12 +2160,10 @@ function updateTimer(){
 
 
 /* =====================================================
-   KIRIM UJIAN
+KIRIM UJIAN
 ===================================================== */
 
-async function kirimUjian(
-    auto = false
-){
+async function kirimUjian(auto=false){
 
     if(sudahDikirim){
 
@@ -2563,16 +2171,11 @@ async function kirimUjian(
     }
 
 
-    /*
-     * Konfirmasi manual.
-     */
-
     if(!auto){
 
         const yakin =
             confirm(
-                "Apakah Anda yakin ingin mengirim ujian?\n\n" +
-                "Pastikan semua jawaban sudah diperiksa."
+                "Apakah Anda yakin ingin mengirim ujian?\n\nPastikan semua jawaban sudah diperiksa."
             );
 
 
@@ -2584,8 +2187,7 @@ async function kirimUjian(
     }
 
 
-    sudahDikirim =
-        true;
+    sudahDikirim = true;
 
 
     clearInterval(
@@ -2595,22 +2197,19 @@ async function kirimUjian(
 
     try{
 
-        let benar =
-            0;
+        let benar = 0;
 
-        let nilaiBobot =
-            0;
+        let nilaiBobot = 0;
 
-        let totalBobot =
-            0;
+        let totalBobot = 0;
 
 
         /*
-         * Hitung objektif.
+         * Hitung soal objektif.
          */
 
         semuaSoal.forEach(
-            function(soal){
+            soal => {
 
                 const bobot =
                     Number(
@@ -2618,29 +2217,21 @@ async function kirimUjian(
                     ) || 1;
 
 
-                totalBobot +=
-                    bobot;
-
-
-                /*
-                 * Esai tidak dinilai
-                 * otomatis.
-                 */
-
                 if(
-                    soal.tipe ===
-                    "esai"
+                    soal.tipe === "esai"
                 ){
 
                     return;
                 }
 
 
+                totalBobot +=
+                    bobot;
+
+
                 const jawabanSiswa =
                     String(
-                        jawaban[
-                            soal.id
-                        ] || ""
+                        jawaban[soal.id] || ""
                     )
                     .trim()
                     .toUpperCase();
@@ -2648,8 +2239,7 @@ async function kirimUjian(
 
                 const kunci =
                     String(
-                        soal.kunci_jawaban ||
-                        ""
+                        soal.kunci_jawaban || ""
                     )
                     .trim()
                     .toUpperCase();
@@ -2658,8 +2248,7 @@ async function kirimUjian(
                 if(
                     jawabanSiswa &&
                     kunci &&
-                    jawabanSiswa ===
-                    kunci
+                    jawabanSiswa === kunci
                 ){
 
                     benar++;
@@ -2675,29 +2264,19 @@ async function kirimUjian(
 
         const jumlahObjektif =
             semuaSoal.filter(
-                function(x){
-
-                    return x.tipe !==
-                        "esai";
-
-                }
+                x =>
+                    x.tipe !== "esai"
             ).length;
 
 
-        const jumlahSalah =
+        const salah =
             Math.max(
                 0,
-                jumlahObjektif -
-                benar
+                jumlahObjektif - benar
             );
 
 
-        /*
-         * Hitung nilai.
-         */
-
-        let nilai =
-            0;
+        let nilai = 0;
 
 
         if(
@@ -2708,8 +2287,7 @@ async function kirimUjian(
                 (
                     nilaiBobot /
                     totalBobot
-                ) *
-                100;
+                ) * 100;
 
         }
 
@@ -2721,17 +2299,11 @@ async function kirimUjian(
 
 
         /*
-         * Waktu mulai.
-         */
-
-        const waktuMulai =
-            waktuAwal
-            ? waktuAwal.toISOString()
-            : new Date().toISOString();
-
-
-        /*
-         * DATA HASIL
+         * Simpan hasil.
+         *
+         * Tabel hasil_ujian menggunakan
+         * jenis_ujian dan mata_pelajaran
+         * langsung sebagai text.
          */
 
         const dataHasil = {
@@ -2755,8 +2327,7 @@ async function kirimUjian(
                 "Ujian",
 
             mata_pelajaran:
-                ujianAktif.namaMapel ||
-                "-",
+                ujianAktif.nama_mapel || "-",
 
             jumlah_soal:
                 semuaSoal.length,
@@ -2765,7 +2336,7 @@ async function kirimUjian(
                 benar,
 
             jumlah_salah:
-                jumlahSalah,
+                salah,
 
             nilai:
                 nilai,
@@ -2774,7 +2345,9 @@ async function kirimUjian(
                 "Selesai",
 
             waktu_mulai:
-                waktuMulai,
+                waktuMulaiExam
+                ? waktuMulaiExam.toISOString()
+                : new Date().toISOString(),
 
             waktu_selesai:
                 new Date().toISOString()
@@ -2782,11 +2355,7 @@ async function kirimUjian(
         };
 
 
-        /*
-         * SIMPAN KE DATABASE
-         */
-
-        const hasil =
+        const result =
             await supabaseClient
             .from("hasil_ujian")
             .insert(
@@ -2794,15 +2363,11 @@ async function kirimUjian(
             );
 
 
-        if(hasil.error){
+        if(result.error){
 
-            throw hasil.error;
+            throw result.error;
         }
 
-
-        /*
-         * Hapus jawaban sementara.
-         */
 
         localStorage.removeItem(
             "exam_jawaban_" +
@@ -2810,27 +2375,22 @@ async function kirimUjian(
         );
 
 
-        /*
-         * Tampilkan hasil.
-         */
-
-        tampilkanHasilAkhir(
+        tampilkanHasil(
             nilai,
             benar,
-            jumlahSalah
+            salah
         );
 
 
     }catch(error){
 
         console.error(
-            "GAGAL KIRIM:",
+            "GAGAL SIMPAN HASIL:",
             error
         );
 
 
-        sudahDikirim =
-            false;
+        sudahDikirim = false;
 
 
         showMessage(
@@ -2845,17 +2405,17 @@ async function kirimUjian(
 
 
 /* =====================================================
-   HASIL AKHIR
+HASIL
 ===================================================== */
 
-function tampilkanHasilAkhir(
+function tampilkanHasil(
     nilai,
     benar,
     salah
 ){
 
     document.getElementById(
-        "examContent"
+        "examArea"
     ).classList.remove(
         "active"
     );
@@ -2863,8 +2423,9 @@ function tampilkanHasilAkhir(
 
     document.getElementById(
         "navigation"
-    ).style.display =
-        "none";
+    ).classList.remove(
+        "show"
+    );
 
 
     document.getElementById(
@@ -2884,53 +2445,82 @@ function tampilkanHasilAkhir(
 
     document.getElementById(
         "resultInfo"
-    ).innerHTML =
+    ).innerHTML = `
 
-        "Nama: <strong>" +
-        escapeHtml(
-            siswa.nama
-        ) +
-        "</strong><br>" +
+        <p>
+            Nama:
+            <strong>
+                ${escapeHtml(
+                    siswa.nama
+                )}
+            </strong>
+        </p>
 
-        "NISN: <strong>" +
-        escapeHtml(
-            siswa.nisn
-        ) +
-        "</strong><br>" +
+        <p>
+            NISN:
+            <strong>
+                ${escapeHtml(
+                    siswa.nisn
+                )}
+            </strong>
+        </p>
 
-        "Kelas: <strong>" +
-        escapeHtml(
-            siswa.kelas
-        ) +
-        "</strong><br>" +
+        <p>
+            Kelas:
+            <strong>
+                ${escapeHtml(
+                    siswa.kelas
+                )}
+            </strong>
+        </p>
 
-        "Mata Pelajaran: <strong>" +
-        escapeHtml(
-            ujianAktif.namaMapel
-        ) +
-        "</strong><br>" +
+        <p>
+            Mata Pelajaran:
+            <strong>
+                ${escapeHtml(
+                    ujianAktif.nama_mapel
+                )}
+            </strong>
+        </p>
 
-        "Ujian: <strong>" +
-        escapeHtml(
-            ujianAktif.judul
-        ) +
-        "</strong><br>" +
+        <p>
+            Benar:
+            <strong>
+                ${benar}
+            </strong>
+        </p>
 
-        "Benar: <strong>" +
-        benar +
-        "</strong><br>" +
+        <p>
+            Salah:
+            <strong>
+                ${salah}
+            </strong>
+        </p>
 
-        "Salah: <strong>" +
-        salah +
-        "</strong><br><br>" +
+        <br>
 
-        "Hasil ujian telah tersimpan.";
+        <p>
+            ✅ Hasil ujian telah berhasil disimpan.
+        </p>
+
+    `;
+
+
+    try{
+
+        if(document.fullscreenElement){
+
+            document.exitFullscreen();
+
+        }
+
+    }catch(e){}
 
 }
 
 
 /* =====================================================
-   ESCAPE HTML
+ESCAPE
 ===================================================== */
 
 function escapeHtml(value){
@@ -2962,10 +2552,6 @@ function escapeHtml(value){
 }
 
 
-/* =====================================================
-   ESCAPE ATTRIBUTE
-===================================================== */
-
 function escapeAttribute(value){
 
     return String(
@@ -2992,7 +2578,7 @@ function escapeAttribute(value){
 
 
 /* =====================================================
-   FULLSCREEN CHANGE
+FULL SCREEN
 ===================================================== */
 
 document.addEventListener(
@@ -3002,16 +2588,11 @@ document.addEventListener(
         if(
             ujianAktif &&
             !sudahDikirim &&
-            document.getElementById(
-                "examContent"
-            ).classList.contains(
-                "active"
-            ) &&
             !document.fullscreenElement
         ){
 
             showMessage(
-                "⚠️ Anda keluar dari Full Screen. Silakan kembali ke mode Full Screen.",
+                "⚠️ Anda keluar dari Full Screen. Silakan kembali ke mode Full Screen untuk melanjutkan ujian.",
                 "error"
             );
 
@@ -3022,21 +2603,14 @@ document.addEventListener(
 
 
 /* =====================================================
-   BLOKIR KLIK KANAN SAAT UJIAN
+BLOKIR KLIK KANAN SAAT UJIAN
 ===================================================== */
 
 document.addEventListener(
     "contextmenu",
     function(e){
 
-        if(
-            ujianAktif &&
-            document.getElementById(
-                "examContent"
-            ).classList.contains(
-                "active"
-            )
-        ){
+        if(ujianAktif){
 
             e.preventDefault();
 
@@ -3047,39 +2621,14 @@ document.addEventListener(
 
 
 /* =====================================================
-   ENTER PADA TOKEN
+MULAI LOAD
 ===================================================== */
 
-document.getElementById(
-    "tokenInput"
-).addEventListener(
-    "keydown",
-    function(e){
+if(siswa){
 
-        if(
-            e.key === "Enter"
-        ){
+    loadUjian();
 
-            e.preventDefault();
-
-            cekToken();
-
-        }
-
-    }
-);
-
-
-/* =====================================================
-   MULAI HALAMAN
-===================================================== */
-
-tampilkanIdentitasSiswa();
-
-
-console.log(
-    "RUANG EXAM siswa.html siap."
-);
+}
 
 </script>
 
