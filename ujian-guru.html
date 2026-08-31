@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -68,6 +69,8 @@ body{
     background:#22c55e;
     color:white;
 }
+
+/* ================= CONTENT ================= */
 
 .container{
     max-width:1250px;
@@ -186,7 +189,7 @@ body{
 table{
     width:100%;
     border-collapse:collapse;
-    min-width:1100px;
+    min-width:950px;
 }
 
 th{
@@ -344,6 +347,18 @@ tr:hover td{
 .form-group input:focus,
 .form-group select:focus{
     border-color:#2563eb;
+}
+
+/* ================= GURU LOGIN INFO ================= */
+
+.guru-login{
+    background:#eff6ff;
+    color:#1e40af;
+    padding:11px 13px;
+    border-radius:9px;
+    font-size:12px;
+    margin-bottom:18px;
+    line-height:1.5;
 }
 
 /* ================= KELAS ================= */
@@ -514,17 +529,13 @@ tr:hover td{
 
 <body>
 
-<!-- =====================================================
-     HEADER
-===================================================== -->
+<!-- ================= HEADER ================= -->
 
 <header class="header">
 
     <div>
 
-        <h1>
-            📝 DAFTAR UJIAN
-        </h1>
+        <h1>📝 DAFTAR UJIAN SAYA</h1>
 
         <p>
             RUANG EXAM — SMP Negeri 3 Sibolga
@@ -555,16 +566,11 @@ tr:hover td{
 </header>
 
 
-<!-- =====================================================
-     CONTENT
-===================================================== -->
+<!-- ================= CONTENT ================= -->
 
 <main class="container">
 
-    <div
-        id="message"
-        class="message">
-    </div>
+    <div id="message" class="message"></div>
 
 
     <!-- SUMMARY -->
@@ -573,52 +579,33 @@ tr:hover td{
 
         <div class="summary-card">
 
-            <strong id="totalUjian">
-                0
-            </strong>
+            <strong id="totalUjian">0</strong>
 
-            <span>
-                Total Ujian
-            </span>
+            <span>Total Ujian Saya</span>
 
         </div>
 
-
         <div class="summary-card">
 
-            <strong id="totalDraft">
-                0
-            </strong>
+            <strong id="totalDraft">0</strong>
 
-            <span>
-                Draft
-            </span>
+            <span>Draft</span>
 
         </div>
 
-
         <div class="summary-card">
 
-            <strong id="totalAktif">
-                0
-            </strong>
+            <strong id="totalAktif">0</strong>
 
-            <span>
-                Aktif
-            </span>
+            <span>Aktif</span>
 
         </div>
 
-
         <div class="summary-card">
 
-            <strong id="totalSelesai">
-                0
-            </strong>
+            <strong id="totalSelesai">0</strong>
 
-            <span>
-                Selesai
-            </span>
+            <span>Selesai</span>
 
         </div>
 
@@ -638,7 +625,6 @@ tr:hover td{
                 oninput="filterUjian()">
 
         </div>
-
 
         <div class="filter">
 
@@ -666,7 +652,6 @@ tr:hover td{
 
         </div>
 
-
         <button
             class="btn btn-add"
             onclick="bukaTambah()">
@@ -690,53 +675,32 @@ tr:hover td{
 
                     <th>No</th>
 
-                    <th>
-                        Judul Ujian
-                    </th>
+                    <th>Judul Ujian</th>
 
-                    <th>
-                        Mata Pelajaran
-                    </th>
+                    <th>Mata Pelajaran</th>
 
-                    <th>
-                        Kelas
-                    </th>
+                    <th>Kelas</th>
 
-                    <th>
-                        Guru
-                    </th>
+                    <th>Durasi</th>
 
-                    <th>
-                        Durasi
-                    </th>
+                    <th>Mulai</th>
 
-                    <th>
-                        Mulai
-                    </th>
+                    <th>Selesai</th>
 
-                    <th>
-                        Selesai
-                    </th>
+                    <th>Status</th>
 
-                    <th>
-                        Status
-                    </th>
-
-                    <th>
-                        Aksi
-                    </th>
+                    <th>Aksi</th>
 
                 </tr>
 
             </thead>
-
 
             <tbody id="ujianBody">
 
                 <tr>
 
                     <td
-                        colspan="10"
+                        colspan="9"
                         class="empty">
 
                         ⏳ Memuat data ujian...
@@ -754,9 +718,7 @@ tr:hover td{
 </main>
 
 
-<!-- =====================================================
-     FOOTER
-===================================================== -->
+<!-- ================= FOOTER ================= -->
 
 <footer class="footer">
 
@@ -767,9 +729,7 @@ tr:hover td{
 </footer>
 
 
-<!-- =====================================================
-     MODAL UJIAN
-===================================================== -->
+<!-- ================= MODAL ================= -->
 
 <div
     class="modal"
@@ -787,6 +747,16 @@ tr:hover td{
             Satu ujian dapat digunakan untuk
             <strong>beberapa kelas sekaligus</strong>.
             Silakan centang semua kelas yang mengikuti ujian.
+
+        </div>
+
+
+        <div
+            id="guruLoginInfo"
+            class="guru-login">
+
+            👨‍🏫 Guru pemilik ujian:
+            <strong id="namaGuruLogin">-</strong>
 
         </div>
 
@@ -813,7 +783,7 @@ tr:hover td{
 
             <!-- MAPEL -->
 
-            <div class="form-group">
+            <div class="form-group full">
 
                 <label>
                     Mata Pelajaran
@@ -882,25 +852,6 @@ tr:hover td{
             </div>
 
 
-            <!-- GURU -->
-
-            <div class="form-group">
-
-                <label>
-                    Guru
-                </label>
-
-                <select id="guru">
-
-                    <option value="">
-                        -- Pilih Guru --
-                    </option>
-
-                </select>
-
-            </div>
-
-
             <!-- DURASI -->
 
             <div class="form-group">
@@ -915,6 +866,33 @@ tr:hover td{
                     min="1"
                     max="600"
                     value="60">
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="form-group">
+
+                <label>
+                    Status
+                </label>
+
+                <select id="status">
+
+                    <option value="draft">
+                        Draft
+                    </option>
+
+                    <option value="aktif">
+                        Aktif
+                    </option>
+
+                    <option value="selesai">
+                        Selesai
+                    </option>
+
+                </select>
 
             </div>
 
@@ -948,33 +926,6 @@ tr:hover td{
 
             </div>
 
-
-            <!-- STATUS -->
-
-            <div class="form-group">
-
-                <label>
-                    Status
-                </label>
-
-                <select id="status">
-
-                    <option value="draft">
-                        Draft
-                    </option>
-
-                    <option value="aktif">
-                        Aktif
-                    </option>
-
-                    <option value="selesai">
-                        Selesai
-                    </option>
-
-                </select>
-
-            </div>
-
         </div>
 
 
@@ -989,7 +940,6 @@ tr:hover td{
                 Batal
 
             </button>
-
 
             <button
                 class="btn save"
@@ -1009,7 +959,7 @@ tr:hover td{
 <script>
 
 /* =====================================================
-   KONFIGURASI SUPABASE
+   SUPABASE
 ===================================================== */
 
 const SUPABASE_URL =
@@ -1026,7 +976,7 @@ const supabaseClient =
 
 
 /* =====================================================
-   CEK LOGIN GURU
+   CEK LOGIN
 ===================================================== */
 
 const sessionRaw =
@@ -1035,14 +985,12 @@ const sessionRaw =
 
 if(!sessionRaw){
 
-    window.location.href =
-        "login.html";
+    window.location.href = "login.html";
 
 }
 
 
 let currentUser = null;
-
 
 try{
 
@@ -1055,9 +1003,7 @@ try{
         currentUser.role !== "admin"
     ){
 
-        localStorage.removeItem(
-            "exam_user"
-        );
+        localStorage.removeItem("exam_user");
 
         window.location.href =
             "login.html";
@@ -1066,9 +1012,7 @@ try{
 
 }catch(error){
 
-    localStorage.removeItem(
-        "exam_user"
-    );
+    localStorage.removeItem("exam_user");
 
     window.location.href =
         "login.html";
@@ -1086,56 +1030,40 @@ let semuaMapel = [];
 
 let semuaKelas = [];
 
-let semuaGuru = [];
-
 let semuaUjianKelas = [];
 
 let editId = null;
 
+let guruLogin = null;
+
 
 /* =====================================================
-   PESAN
+   CARI ID GURU YANG LOGIN
 ===================================================== */
 
-function showMessage(text,type){
+function getGuruIdLogin(){
 
-    const message =
-        document.getElementById(
-            "message"
-        );
-
-    message.textContent =
-        text;
-
-    message.className =
-        "message " + type;
+    if(!currentUser)
+        return null;
 
 
-    setTimeout(()=>{
+    return (
 
-        message.textContent =
-            "";
+        currentUser.guru_id ||
 
-        message.className =
-            "message";
+        currentUser.guruId ||
 
-    },3500);
+        currentUser.id_guru ||
 
-}
+        currentUser.idGuru ||
 
+        (
+            currentUser.role === "guru"
+            ? currentUser.id
+            : null
+        )
 
-function hideMessage(){
-
-    const message =
-        document.getElementById(
-            "message"
-        );
-
-    message.textContent =
-        "";
-
-    message.className =
-        "message";
+    ) || null;
 
 }
 
@@ -1156,10 +1084,10 @@ async function loadSemuaData(){
         <tr>
 
             <td
-                colspan="10"
+                colspan="9"
                 class="empty">
 
-                ⏳ Memuat data...
+                ⏳ Memuat data ujian...
 
             </td>
 
@@ -1170,22 +1098,20 @@ async function loadSemuaData(){
 
     try{
 
-        const [
-
-            hasilUjian,
-
-            hasilMapel,
-
-            hasilKelas,
-
-            hasilGuru,
-
-            hasilUjianKelas
-
-        ] = await Promise.all([
+        const guruIdLogin =
+            getGuruIdLogin();
 
 
-            /* UJIAN */
+        /*
+         * Untuk akun GURU:
+         * hanya ambil ujian dengan guru_id
+         * sesuai guru yang sedang login.
+         *
+         * Untuk ADMIN:
+         * boleh melihat semua ujian.
+         */
+
+        let queryUjian =
 
             supabaseClient
 
@@ -1214,14 +1140,51 @@ async function loadSemuaData(){
                     nip
                 )
 
-            `)
+            `);
 
-            .order(
+
+        if(currentUser.role === "guru"){
+
+            if(!guruIdLogin){
+
+                throw new Error(
+                    "ID guru yang sedang login tidak ditemukan."
+                );
+
+            }
+
+
+            queryUjian =
+                queryUjian.eq(
+                    "guru_id",
+                    guruIdLogin
+                );
+
+        }
+
+
+        queryUjian =
+            queryUjian.order(
                 "created_at",
                 {
                     ascending:false
                 }
-            ),
+            );
+
+
+        const [
+
+            hasilUjian,
+
+            hasilMapel,
+
+            hasilKelas,
+
+            hasilUjianKelas
+
+        ] = await Promise.all([
+
+            queryUjian,
 
 
             /* MAPEL */
@@ -1267,24 +1230,6 @@ async function loadSemuaData(){
             ),
 
 
-            /* GURU */
-
-            supabaseClient
-
-            .from("guru")
-
-            .select(
-                "id,nama,nip"
-            )
-
-            .order(
-                "nama",
-                {
-                    ascending:true
-                }
-            ),
-
-
             /* UJIAN KELAS */
 
             supabaseClient
@@ -1317,9 +1262,6 @@ async function loadSemuaData(){
         if(hasilKelas.error)
             throw hasilKelas.error;
 
-        if(hasilGuru.error)
-            throw hasilGuru.error;
-
         if(hasilUjianKelas.error)
             throw hasilUjianKelas.error;
 
@@ -1336,12 +1278,59 @@ async function loadSemuaData(){
             hasilKelas.data || [];
 
 
-        semuaGuru =
-            hasilGuru.data || [];
-
-
         semuaUjianKelas =
             hasilUjianKelas.data || [];
+
+
+        /*
+         * Cari data guru yang sedang login
+         */
+
+        if(currentUser.role === "guru"){
+
+            guruLogin =
+                semuaUjian.length &&
+                semuaUjian[0].guru
+                ? semuaUjian[0].guru
+                : null;
+
+
+            /*
+             * Jika belum ada ujian,
+             * ambil data guru berdasarkan ID.
+             */
+
+            if(!guruLogin && guruIdLogin){
+
+                const {
+                    data,
+                    error
+                } = await supabaseClient
+
+                    .from("guru")
+
+                    .select(
+                        "id,nama,nip"
+                    )
+
+                    .eq(
+                        "id",
+                        guruIdLogin
+                    )
+
+                    .maybeSingle();
+
+
+                if(!error){
+
+                    guruLogin =
+                        data;
+
+                }
+
+            }
+
+        }
 
 
         isiPilihan();
@@ -1351,6 +1340,9 @@ async function loadSemuaData(){
         tampilkanUjian(
             semuaUjian
         );
+
+
+        updateNamaGuru();
 
 
     }catch(error){
@@ -1365,7 +1357,7 @@ async function loadSemuaData(){
             <tr>
 
                 <td
-                    colspan="10"
+                    colspan="9"
                     class="empty">
 
                     ❌ Gagal memuat data ujian.
@@ -1389,7 +1381,53 @@ async function loadSemuaData(){
 
 
 /* =====================================================
-   ISI PILIHAN
+   NAMA GURU LOGIN
+===================================================== */
+
+function updateNamaGuru(){
+
+    const el =
+        document.getElementById(
+            "namaGuruLogin"
+        );
+
+
+    if(!el)
+        return;
+
+
+    if(currentUser.role === "admin"){
+
+        el.textContent =
+            "Administrator";
+
+        return;
+
+    }
+
+
+    if(guruLogin){
+
+        el.textContent =
+            guruLogin.nama +
+            (
+                guruLogin.nip
+                ? " — " + guruLogin.nip
+                : ""
+            );
+
+    }else{
+
+        el.textContent =
+            "Guru yang sedang login";
+
+    }
+
+}
+
+
+/* =====================================================
+   ISI PILIHAN MAPEL
 ===================================================== */
 
 function isiPilihan(){
@@ -1397,12 +1435,6 @@ function isiPilihan(){
     const mapel =
         document.getElementById(
             "mataPelajaran"
-        );
-
-
-    const guru =
-        document.getElementById(
-            "guru"
         );
 
 
@@ -1424,41 +1456,6 @@ function isiPilihan(){
                 ${escapeHtml(
                     item.nama
                 )}
-
-            </option>
-
-        `;
-
-    });
-
-
-    guru.innerHTML = `
-
-        <option value="">
-            -- Pilih Guru --
-        </option>
-
-    `;
-
-
-    semuaGuru.forEach(item=>{
-
-        guru.innerHTML += `
-
-            <option value="${item.id}">
-
-                ${escapeHtml(
-                    item.nama
-                )}
-
-                ${
-                    item.nip
-                    ? " — " +
-                      escapeHtml(
-                          item.nip
-                      )
-                    : ""
-                }
 
             </option>
 
@@ -1511,6 +1508,7 @@ function isiKelas(selectedIds=[]){
 
 
     container.innerHTML =
+
         semuaKelas.map(item=>{
 
             const checked =
@@ -1526,18 +1524,11 @@ function isiKelas(selectedIds=[]){
                 <label class="kelas-item">
 
                     <input
-
                         type="checkbox"
-
                         name="kelasMulti"
-
                         value="${item.id}"
-
                         ${checked}
-
-                        onchange="
-                            updateSelectedInfo()
-                        ">
+                        onchange="updateSelectedInfo()">
 
                     <span>
 
@@ -1569,6 +1560,10 @@ function pilihSemuaKelas(){
         document.querySelectorAll(
             'input[name="kelasMulti"]'
         );
+
+
+    if(!checkboxes.length)
+        return;
 
 
     const semuaSudahDipilih =
@@ -1659,7 +1654,7 @@ function updateSelectedInfo(){
 
 
 /* =====================================================
-   AMBIL KELAS
+   GET KELAS
 ===================================================== */
 
 function getSelectedKelas(){
@@ -1721,7 +1716,7 @@ function updateSummary(){
 
 
 /* =====================================================
-   KELAS UNTUK UJIAN
+   KELAS UJIAN
 ===================================================== */
 
 function getKelasUntukUjian(
@@ -1764,10 +1759,18 @@ function tampilkanUjian(data){
             <tr>
 
                 <td
-                    colspan="10"
+                    colspan="9"
                     class="empty">
 
-                    📝 Belum ada data ujian.
+                    📝 Belum ada ujian yang Anda buat.
+
+                    <br><br>
+
+                    Klik
+                    <strong>
+                        ➕ Buat Ujian
+                    </strong>
+                    untuk membuat ujian baru.
 
                 </td>
 
@@ -1781,6 +1784,7 @@ function tampilkanUjian(data){
 
 
     body.innerHTML =
+
         data.map(
             (ujian,index)=>{
 
@@ -1818,8 +1822,7 @@ function tampilkanUjian(data){
 
                     ? `
 
-                        <div
-                            class="kelas-list">
+                        <div class="kelas-list">
 
                             ${
                                 kelas.map(
@@ -1904,23 +1907,7 @@ function tampilkanUjian(data){
                         <td>
 
                             ${
-                                ujian.guru
-
-                                ? escapeHtml(
-                                    ujian.guru.nama
-                                )
-
-                                : "-"
-                            }
-
-                        </td>
-
-
-                        <td>
-
-                            ${
-                                ujian
-                                .durasi_menit ||
+                                ujian.durasi_menit ||
                                 0
                             }
 
@@ -1964,8 +1951,7 @@ function tampilkanUjian(data){
 
                         <td>
 
-                            <div
-                                class="action">
+                            <div class="action">
 
                                 <button
                                     class="edit"
@@ -2033,6 +2019,7 @@ function filterUjian(){
             ujian=>{
 
                 const cocokJudul =
+
                     !keyword ||
 
                     (
@@ -2046,6 +2033,7 @@ function filterUjian(){
 
 
                 const cocokStatus =
+
                     !status ||
 
                     ujian.status ===
@@ -2068,7 +2056,7 @@ function filterUjian(){
 
 
 /* =====================================================
-   TAMBAH
+   TAMBAH UJIAN
 ===================================================== */
 
 function bukaTambah(){
@@ -2090,12 +2078,6 @@ function bukaTambah(){
 
     document.getElementById(
         "mataPelajaran"
-    ).value =
-        "";
-
-
-    document.getElementById(
-        "guru"
     ).value =
         "";
 
@@ -2127,6 +2109,9 @@ function bukaTambah(){
     isiKelas([]);
 
 
+    updateNamaGuru();
+
+
     document.getElementById(
         "modal"
     ).style.display =
@@ -2136,7 +2121,7 @@ function bukaTambah(){
 
 
 /* =====================================================
-   EDIT
+   EDIT UJIAN
 ===================================================== */
 
 function editUjian(id){
@@ -2159,11 +2144,32 @@ function editUjian(id){
     }
 
 
+    /*
+     * Pengamanan tambahan:
+     * guru hanya boleh edit ujian miliknya.
+     */
+
+    if(
+        currentUser.role === "guru" &&
+        ujian.guru_id !==
+        getGuruIdLogin()
+    ){
+
+        alert(
+            "Anda tidak memiliki izin mengedit ujian ini."
+        );
+
+        return;
+
+    }
+
+
     editId =
         id;
 
 
     const kelasTerpilih =
+
         semuaUjianKelas
 
         .filter(
@@ -2193,13 +2199,6 @@ function editUjian(id){
         "mataPelajaran"
     ).value =
         ujian.mata_pelajaran_id ||
-        "";
-
-
-    document.getElementById(
-        "guru"
-    ).value =
-        ujian.guru_id ||
         "";
 
 
@@ -2238,6 +2237,9 @@ function editUjian(id){
     );
 
 
+    updateNamaGuru();
+
+
     document.getElementById(
         "modal"
     ).style.display =
@@ -2263,12 +2265,6 @@ async function simpanUjian(){
     const mataPelajaranId =
         document.getElementById(
             "mataPelajaran"
-        ).value;
-
-
-    const guruId =
-        document.getElementById(
-            "guru"
         ).value;
 
 
@@ -2300,6 +2296,21 @@ async function simpanUjian(){
 
     const kelasIds =
         getSelectedKelas();
+
+
+    const guruId =
+        getGuruIdLogin();
+
+
+    if(currentUser.role === "guru" && !guruId){
+
+        alert(
+            "ID guru yang sedang login tidak ditemukan."
+        );
+
+        return;
+
+    }
 
 
     if(!judul){
@@ -2367,6 +2378,12 @@ async function simpanUjian(){
 
     }
 
+
+    /*
+     * PENTING:
+     * guru_id SELALU diambil dari akun login.
+     * Guru tidak bisa memilih guru lain.
+     */
 
     const payload = {
 
@@ -2448,7 +2465,9 @@ async function simpanUjian(){
                 data.id;
 
 
-            /* SIMPAN KELAS */
+            /*
+             * SIMPAN KELAS
+             */
 
             const rows =
                 kelasIds.map(
@@ -2482,14 +2501,14 @@ async function simpanUjian(){
 
                 await supabaseClient
 
-                .from("ujian")
+                    .from("ujian")
 
-                .delete()
+                    .delete()
 
-                .eq(
-                    "id",
-                    ujianId
-                );
+                    .eq(
+                        "id",
+                        ujianId
+                    );
 
 
                 throw kelasError;
@@ -2511,34 +2530,54 @@ async function simpanUjian(){
 
 
         /* =========================================
-           EDIT UJIAN
+           EDIT
         ========================================= */
 
         else{
 
-            const {
-                error
-            } =
+            /*
+             * Pastikan guru hanya mengedit
+             * ujian miliknya.
+             */
 
-                await supabaseClient
+            let updateQuery =
+
+                supabaseClient
 
                 .from("ujian")
 
                 .update(
                     payload
                 )
-
                 .eq(
                     "id",
                     editId
                 );
 
 
+            if(currentUser.role === "guru"){
+
+                updateQuery =
+                    updateQuery.eq(
+                        "guru_id",
+                        guruId
+                    );
+
+            }
+
+
+            const {
+                error
+            } = await updateQuery;
+
+
             if(error)
                 throw error;
 
 
-            /* HAPUS RELASI */
+            /*
+             * Hapus relasi kelas lama
+             */
 
             const {
                 error:
@@ -2561,7 +2600,9 @@ async function simpanUjian(){
                 throw deleteError;
 
 
-            /* SIMPAN RELASI BARU */
+            /*
+             * Simpan relasi kelas baru
+             */
 
             const rows =
                 kelasIds.map(
@@ -2627,7 +2668,7 @@ async function simpanUjian(){
 
 
 /* =====================================================
-   HAPUS
+   HAPUS UJIAN
 ===================================================== */
 
 async function hapusUjian(id){
@@ -2641,6 +2682,26 @@ async function hapusUjian(id){
 
     if(!ujian)
         return;
+
+
+    /*
+     * Pengamanan:
+     * guru hanya bisa menghapus ujian sendiri.
+     */
+
+    if(
+        currentUser.role === "guru" &&
+        ujian.guru_id !==
+        getGuruIdLogin()
+    ){
+
+        alert(
+            "Anda tidak memiliki izin menghapus ujian ini."
+        );
+
+        return;
+
+    }
 
 
     const yakin =
@@ -2663,7 +2724,9 @@ async function hapusUjian(id){
 
     try{
 
-        /* HAPUS RELASI KELAS */
+        /*
+         * Hapus relasi kelas
+         */
 
         const {
             error:
@@ -2686,13 +2749,13 @@ async function hapusUjian(id){
             throw kelasError;
 
 
-        /* HAPUS UJIAN */
+        /*
+         * Hapus ujian.
+         */
 
-        const {
-            error
-        } =
+        let deleteQuery =
 
-            await supabaseClient
+            supabaseClient
 
             .from("ujian")
 
@@ -2702,6 +2765,22 @@ async function hapusUjian(id){
                 "id",
                 id
             );
+
+
+        if(currentUser.role === "guru"){
+
+            deleteQuery =
+                deleteQuery.eq(
+                    "guru_id",
+                    getGuruIdLogin()
+                );
+
+        }
+
+
+        const {
+            error
+        } = await deleteQuery;
 
 
         if(error)
@@ -2869,7 +2948,57 @@ function escapeHtml(value){
 
 
 /* =====================================================
-   KEMBALI KE DASHBOARD GURU
+   PESAN
+===================================================== */
+
+function showMessage(
+    text,
+    type
+){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.textContent =
+        text;
+
+
+    message.className =
+        "message " + type;
+
+
+    setTimeout(()=>{
+
+        hideMessage();
+
+    },3500);
+
+}
+
+
+function hideMessage(){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.textContent =
+        "";
+
+
+    message.className =
+        "message";
+
+}
+
+
+/* =====================================================
+   KEMBALI DASHBOARD
 ===================================================== */
 
 function kembaliDashboard(){
@@ -2914,3 +3043,4 @@ loadSemuaData();
 
 </body>
 </html>
+```
