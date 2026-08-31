@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Roster Ujian - RUANG EXAM</title>
+<title>Roster Ujian - Admin | RUANG EXAM</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -23,6 +23,7 @@ body{
     min-height:100vh;
 }
 
+/* HEADER */
 .header{
     background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
     color:white;
@@ -40,14 +41,15 @@ body{
 }
 
 .header p{
-    margin-top:5px;
     font-size:13px;
+    margin-top:5px;
     opacity:.85;
 }
 
 .header-buttons{
     display:flex;
     gap:8px;
+    flex-wrap:wrap;
 }
 
 .btn{
@@ -63,7 +65,7 @@ body{
     color:#1d4ed8;
 }
 
-.btn-refresh{
+.btn-add{
     background:#22c55e;
     color:white;
 }
@@ -73,12 +75,19 @@ body{
     color:white;
 }
 
+.btn-refresh{
+    background:#0ea5e9;
+    color:white;
+}
+
+/* CONTAINER */
 .container{
     max-width:1350px;
     margin:25px auto;
     padding:0 20px;
 }
 
+/* MESSAGE */
 .message{
     display:none;
     padding:12px;
@@ -100,6 +109,7 @@ body{
     color:#991b1b;
 }
 
+/* FILTER */
 .card{
     background:white;
     border-radius:16px;
@@ -127,6 +137,7 @@ body{
     margin-bottom:7px;
 }
 
+input,
 select{
     width:100%;
     padding:11px;
@@ -136,11 +147,13 @@ select{
     font-size:13px;
 }
 
+input:focus,
 select:focus{
     outline:none;
     border-color:#2563eb;
 }
 
+/* TABLE */
 .table-box{
     overflow:auto;
 }
@@ -167,8 +180,7 @@ td{
     text-align:center;
 }
 
-td.mapel,
-td.ujian{
+td.mapel{
     text-align:left;
 }
 
@@ -201,6 +213,31 @@ tr:hover td{
     font-size:11px;
 }
 
+.action{
+    display:flex;
+    justify-content:center;
+    gap:6px;
+}
+
+.action button{
+    border:none;
+    border-radius:7px;
+    padding:7px 9px;
+    cursor:pointer;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.edit{
+    background:#2563eb;
+    color:white;
+}
+
+.delete{
+    background:#ef4444;
+    color:white;
+}
+
 .empty{
     text-align:center;
     padding:40px !important;
@@ -213,71 +250,132 @@ tr:hover td{
     color:#64748b;
 }
 
-.footer{
-    text-align:center;
-    color:#94a3b8;
-    font-size:12px;
-    line-height:1.6;
-    padding:30px;
-}
-
-/* ================= PREVIEW ================= */
-
-.preview-overlay{
+/* MODAL */
+.modal{
     display:none;
     position:fixed;
     inset:0;
-    background:rgba(15,23,42,.72);
-    z-index:9999;
+    background:rgba(15,23,42,.65);
+    z-index:5000;
     overflow:auto;
-    padding:25px;
+    padding:20px;
 }
 
-.preview-overlay.show{
+.modal.show{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.modal-box{
+    width:100%;
+    max-width:650px;
+    background:white;
+    border-radius:17px;
+    padding:22px;
+    box-shadow:0 15px 50px rgba(0,0,0,.25);
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.modal-header h2{
+    font-size:19px;
+}
+
+.close{
+    border:none;
+    background:#ef4444;
+    color:white;
+    width:35px;
+    height:35px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.form-full{
+    grid-column:1/-1;
+}
+
+.modal-footer{
+    margin-top:20px;
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+}
+
+.btn-cancel{
+    background:#e2e8f0;
+    color:#334155;
+}
+
+.btn-save{
+    background:#2563eb;
+    color:white;
+}
+
+/* PREVIEW */
+.preview{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.75);
+    z-index:6000;
+    overflow:auto;
+    padding:20px;
+}
+
+.preview.show{
     display:block;
 }
 
 .preview-window{
-    max-width:1100px;
+    max-width:1200px;
     margin:auto;
 }
 
 .preview-toolbar{
     background:white;
-    border-radius:12px 12px 0 0;
     padding:12px;
+    border-radius:12px 12px 0 0;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    gap:10px;
 }
 
-.preview-toolbar strong{
-    font-size:14px;
+.preview-toolbar button{
+    border:none;
+    padding:9px 13px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
 }
 
-.preview-actions{
-    display:flex;
-    gap:7px;
-}
-
-.preview-paper{
-    background:white;
-    padding:12mm;
-    min-height:250mm;
-}
-
-.close-preview{
-    background:#ef4444;
-    color:white;
-}
-
-.print-preview{
+.print-btn{
     background:#2563eb;
     color:white;
 }
 
-/* ================= CETAK ================= */
+.close-btn{
+    background:#ef4444;
+    color:white;
+}
+
+.paper{
+    background:white;
+    padding:12mm;
+}
 
 .print-title{
     text-align:center;
@@ -285,7 +383,7 @@ tr:hover td{
 }
 
 .print-title h1{
-    font-size:20px;
+    font-size:21px;
 }
 
 .print-title h2{
@@ -311,15 +409,14 @@ tr:hover td{
 }
 
 .print-table th{
+    background:#eee;
     text-align:center;
-    background:#f1f1f1;
 }
 
 .print-table td{
     text-align:center;
 }
 
-.print-table td:nth-child(2),
 .print-table td:nth-child(7){
     text-align:left;
 }
@@ -330,13 +427,32 @@ tr:hover td{
     font-size:10px;
 }
 
-@media(max-width:950px){
+.footer{
+    text-align:center;
+    color:#94a3b8;
+    font-size:12px;
+    line-height:1.6;
+    padding:30px;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+
     .filter-grid{
         grid-template-columns:repeat(2,1fr);
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .form-full{
+        grid-column:auto;
     }
 }
 
 @media(max-width:600px){
+
     .filter-grid{
         grid-template-columns:1fr;
     }
@@ -349,45 +465,36 @@ tr:hover td{
         padding:0 12px;
     }
 
-    .preview-overlay{
-        padding:8px;
-    }
-
-    .preview-paper{
-        padding:7mm;
+    .modal{
+        padding:10px;
     }
 }
 
+/* PRINT */
 @media print{
 
     body *{
         visibility:hidden !important;
     }
 
-    .preview-overlay,
-    .preview-overlay *{
+    .preview,
+    .preview *{
         visibility:visible !important;
     }
 
-    .preview-overlay{
+    .preview{
         position:static;
         display:block !important;
         background:white;
         padding:0;
-        overflow:visible;
-    }
-
-    .preview-window{
-        max-width:none;
     }
 
     .preview-toolbar{
         display:none !important;
     }
 
-    .preview-paper{
+    .paper{
         padding:0;
-        min-height:auto;
     }
 
     @page{
@@ -416,9 +523,9 @@ tr:hover td{
         </button>
 
         <button
-            class="btn btn-refresh"
-            onclick="loadData()">
-            🔄 Refresh
+            class="btn btn-add"
+            onclick="bukaFormTambah()">
+            ➕ Buat Roster
         </button>
 
         <button
@@ -427,17 +534,26 @@ tr:hover td{
             👁️ Pratinjau
         </button>
 
+        <button
+            class="btn btn-refresh"
+            onclick="loadRoster()">
+            🔄 Refresh
+        </button>
+
     </div>
 
 </header>
+
 
 <main class="container">
 
     <div id="message" class="message"></div>
 
+    <!-- FILTER -->
+
     <section class="card">
 
-        <h2>⚙️ Filter Roster</h2>
+        <h2>🔎 Pilih Roster</h2>
 
         <div class="filter-grid">
 
@@ -445,21 +561,23 @@ tr:hover td{
 
                 <label>Jenis Ujian</label>
 
-                <select id="jenisUjian" onchange="tampilkanRoster()">
+                <select
+                    id="filterJenis"
+                    onchange="tampilkanRoster()">
 
                     <option value="">
-                        Semua Jenis Ujian
+                        Semua Jenis
                     </option>
 
-                    <option value="mid">
+                    <option value="Ujian MID">
                         Ujian MID
                     </option>
 
-                    <option value="semester1">
+                    <option value="Ujian Semester 1">
                         Ujian Semester 1
                     </option>
 
-                    <option value="naik">
+                    <option value="Ujian Naik Kelas">
                         Ujian Naik Kelas
                     </option>
 
@@ -467,25 +585,43 @@ tr:hover td{
 
             </div>
 
+
             <div class="form-group">
 
                 <label>Kelas</label>
 
-                <select id="kelasFilter" onchange="tampilkanRoster()">
+                <select
+                    id="filterKelas"
+                    onchange="tampilkanRoster()">
 
                     <option value="">
-                        Semua Kelas
+                        Pilih Kelas
+                    </option>
+
+                    <option value="VII">
+                        VII
+                    </option>
+
+                    <option value="VIII">
+                        VIII
+                    </option>
+
+                    <option value="IX">
+                        IX
                     </option>
 
                 </select>
 
             </div>
 
+
             <div class="form-group">
 
                 <label>Lab</label>
 
-                <select id="labFilter" onchange="tampilkanRoster">
+                <select
+                    id="filterLab"
+                    onchange="tampilkanRoster()">
 
                     <option value="">
                         Semua Lab
@@ -499,11 +635,14 @@ tr:hover td{
 
             </div>
 
+
             <div class="form-group">
 
                 <label>Sesi</label>
 
-                <select id="sesiFilter" onchange="tampilkanRoster()">
+                <select
+                    id="filterSesi"
+                    onchange="tampilkanRoster()">
 
                     <option value="">
                         Semua Sesi
@@ -521,6 +660,9 @@ tr:hover td{
 
     </section>
 
+
+    <!-- ROSTER -->
+
     <section class="card">
 
         <h2>📅 Jadwal Roster Ujian</h2>
@@ -532,6 +674,7 @@ tr:hover td{
                 <thead>
 
                     <tr>
+
                         <th>No</th>
                         <th>Hari</th>
                         <th>Tanggal</th>
@@ -540,7 +683,8 @@ tr:hover td{
                         <th>Lab</th>
                         <th>Mata Pelajaran</th>
                         <th>Kelas</th>
-                        <th>Ujian</th>
+                        <th>Aksi</th>
+
                     </tr>
 
                 </thead>
@@ -548,9 +692,15 @@ tr:hover td{
                 <tbody id="rosterBody">
 
                     <tr>
-                        <td colspan="9" class="empty">
+
+                        <td
+                            colspan="9"
+                            class="empty">
+
                             ⏳ Memuat roster...
+
                         </td>
+
                     </tr>
 
                 </tbody>
@@ -559,25 +709,241 @@ tr:hover td{
 
         </div>
 
-        <div class="total" id="totalInfo">
-            Total jadwal: 0
+        <div
+            class="total"
+            id="totalInfo">
+
+            Total roster: 0
+
         </div>
 
     </section>
 
 </main>
 
+
 <footer class="footer">
+
     RUANG EXAM Online<br>
+
     Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
 </footer>
+
+
+<!-- ================= MODAL FORM ================= -->
+
+<div
+    class="modal"
+    id="formModal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2 id="formTitle">
+                ➕ Buat Roster
+            </h2>
+
+            <button
+                class="close"
+                onclick="tutupForm()">
+                ✕
+            </button>
+
+        </div>
+
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label>Jenis Ujian</label>
+
+                <select id="jenis">
+
+                    <option value="">
+                        Pilih Jenis Ujian
+                    </option>
+
+                    <option value="Ujian MID">
+                        Ujian MID
+                    </option>
+
+                    <option value="Ujian Semester 1">
+                        Ujian Semester 1
+                    </option>
+
+                    <option value="Ujian Naik Kelas">
+                        Ujian Naik Kelas
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Kelas</label>
+
+                <select id="kelas">
+
+                    <option value="">
+                        Pilih Kelas
+                    </option>
+
+                    <option value="VII">
+                        VII
+                    </option>
+
+                    <option value="VIII">
+                        VIII
+                    </option>
+
+                    <option value="IX">
+                        IX
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Tanggal</label>
+
+                <input
+                    type="date"
+                    id="tanggal"
+                    onchange="isiHari()">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Hari</label>
+
+                <input
+                    type="text"
+                    id="hari"
+                    readonly
+                    placeholder="Otomatis">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Sesi</label>
+
+                <select id="sesi">
+
+                    <option value="">
+                        Pilih Sesi
+                    </option>
+
+                    <option value="1">
+                        Sesi 1
+                    </option>
+
+                    <option value="2">
+                        Sesi 2
+                    </option>
+
+                    <option value="3">
+                        Sesi 3
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Jam</label>
+
+                <input
+                    type="time"
+                    id="jam">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Lab</label>
+
+                <select id="lab">
+
+                    <option value="">
+                        Pilih Lab
+                    </option>
+
+                    <option value="1">
+                        Lab 1
+                    </option>
+
+                    <option value="2">
+                        Lab 2
+                    </option>
+
+                    <option value="3">
+                        Lab 3
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Mata Pelajaran</label>
+
+                <input
+                    type="text"
+                    id="mapel"
+                    placeholder="Contoh: Matematika">
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                class="btn btn-cancel"
+                onclick="tutupForm()">
+
+                Batal
+
+            </button>
+
+            <button
+                class="btn btn-save"
+                onclick="simpanRoster()">
+
+                💾 Simpan
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 
 <!-- ================= PREVIEW ================= -->
 
 <div
-    class="preview-overlay"
-    id="previewOverlay">
+    class="preview"
+    id="preview">
 
     <div class="preview-window">
 
@@ -587,27 +953,32 @@ tr:hover td{
                 👁️ Pratinjau Roster Ujian
             </strong>
 
-            <div class="preview-actions">
+            <div>
 
                 <button
-                    class="btn print-preview"
+                    class="print-btn"
                     onclick="window.print()">
+
                     🖨️ Cetak
+
                 </button>
 
                 <button
-                    class="btn close-preview"
+                    class="close-btn"
                     onclick="tutupPratinjau()">
+
                     ✕ Tutup
+
                 </button>
 
             </div>
 
         </div>
 
+
         <div
-            class="preview-paper"
-            id="previewPaper">
+            class="paper"
+            id="paper">
 
         </div>
 
@@ -636,7 +1007,7 @@ const supabaseClient =
 
 
 /* =====================================================
-   SESSION ADMIN
+   SESSION
 ===================================================== */
 
 const sessionRaw =
@@ -665,7 +1036,7 @@ try{
 
     }
 
-}catch(error){
+}catch(e){
 
     localStorage.removeItem(
         "exam_user"
@@ -681,32 +1052,16 @@ try{
    DATA
 ===================================================== */
 
-let semuaUjian = [];
+let semuaRoster = [];
+
+let editId = null;
 
 
 /* =====================================================
-   MESSAGE
+   LOAD
 ===================================================== */
 
-function showMessage(text,type){
-
-    const el =
-        document.getElementById("message");
-
-    el.textContent =
-        text;
-
-    el.className =
-        "message " + type;
-
-}
-
-
-/* =====================================================
-   LOAD DATA
-===================================================== */
-
-async function loadData(){
+async function loadRoster(){
 
     const body =
         document.getElementById(
@@ -716,7 +1071,7 @@ async function loadData(){
     body.innerHTML = `
         <tr>
             <td colspan="9" class="empty">
-                ⏳ Memuat data roster...
+                ⏳ Memuat roster...
             </td>
         </tr>
     `;
@@ -725,23 +1080,18 @@ async function loadData(){
 
         const hasil =
             await supabaseClient
-            .from("ujian")
+            .from("roster_ujian")
             .select("*")
             .order(
-                "created_at",
+                "tanggal",
                 {ascending:true}
             );
 
-        if(hasil.error){
-
+        if(hasil.error)
             throw hasil.error;
 
-        }
-
-        semuaUjian =
+        semuaRoster =
             hasil.data || [];
-
-        isiKelas();
 
         tampilkanRoster();
 
@@ -752,8 +1102,9 @@ async function loadData(){
         body.innerHTML = `
             <tr>
                 <td colspan="9" class="empty">
-                    ❌ Gagal memuat data.
-                    ${escapeHtml(error.message)}
+                    ❌ ${escapeHtml(
+                        error.message
+                    )}
                 </td>
             </tr>
         `;
@@ -770,423 +1121,7 @@ async function loadData(){
 
 
 /* =====================================================
-   AMBIL NILAI KOLOM
-===================================================== */
-
-function nilai(obj,nama){
-
-    if(
-        obj &&
-        obj[nama] !== undefined &&
-        obj[nama] !== null
-    ){
-
-        return obj[nama];
-
-    }
-
-    return "";
-
-}
-
-
-/* =====================================================
-   NORMALISASI JENIS UJIAN
-===================================================== */
-
-function cocokJenis(ujian,jenis){
-
-    if(!jenis)
-        return true;
-
-    const teks =
-        String(
-            nilai(ujian,"jenis_ujian") ||
-            nilai(ujian,"jenis") ||
-            nilai(ujian,"judul") ||
-            ""
-        ).toLowerCase();
-
-    if(jenis === "mid"){
-
-        return teks.includes("mid");
-
-    }
-
-    if(jenis === "semester1"){
-
-        return (
-            teks.includes("semester") &&
-            (
-                teks.includes("1") ||
-                teks.includes("i")
-            )
-        );
-
-    }
-
-    if(jenis === "naik"){
-
-        return (
-            teks.includes("naik") &&
-            teks.includes("kelas")
-        );
-
-    }
-
-    return true;
-
-}
-
-
-/* =====================================================
-   KELAS
-===================================================== */
-
-function ambilKelas(ujian){
-
-    return String(
-        nilai(ujian,"kelas") ||
-        nilai(ujian,"nama_kelas") ||
-        nilai(ujian,"kelas_nama") ||
-        ""
-    );
-
-}
-
-function isiKelas(){
-
-    const select =
-        document.getElementById(
-            "kelasFilter"
-        );
-
-    const sebelumnya =
-        select.value;
-
-    const daftar =
-        new Set();
-
-    semuaUjian.forEach(ujian=>{
-
-        const kelas =
-            ambilKelas(ujian);
-
-        if(kelas)
-            daftar.add(kelas);
-
-    });
-
-    select.innerHTML = `
-        <option value="">
-            Semua Kelas
-        </option>
-    `;
-
-    [...daftar]
-    .sort()
-    .forEach(kelas=>{
-
-        const option =
-            document.createElement(
-                "option"
-            );
-
-        option.value =
-            kelas;
-
-        option.textContent =
-            kelas;
-
-        select.appendChild(
-            option
-        );
-
-    });
-
-    if(
-        [...daftar].includes(
-            sebelumnya
-        )
-    ){
-
-        select.value =
-            sebelumnya;
-
-    }
-
-}
-
-
-/* =====================================================
-   TANGGAL
-===================================================== */
-
-function ambilTanggal(ujian){
-
-    return (
-        nilai(ujian,"tanggal") ||
-        nilai(ujian,"tanggal_ujian") ||
-        nilai(ujian,"tanggal_mulai") ||
-        nilai(ujian,"tgl_ujian") ||
-        ""
-    );
-
-}
-
-
-/* =====================================================
-   HARI
-===================================================== */
-
-function namaHari(tanggal){
-
-    if(!tanggal)
-        return "-";
-
-    const d =
-        new Date(tanggal);
-
-    if(
-        Number.isNaN(
-            d.getTime()
-        )
-    )
-        return "-";
-
-    const hari = [
-        "Minggu",
-        "Senin",
-        "Selasa",
-        "Rabu",
-        "Kamis",
-        "Jumat",
-        "Sabtu"
-    ];
-
-    return hari[d.getDay()];
-
-}
-
-
-/* =====================================================
-   FORMAT TANGGAL
-===================================================== */
-
-function formatTanggal(tanggal){
-
-    if(!tanggal)
-        return "-";
-
-    const d =
-        new Date(tanggal);
-
-    if(
-        Number.isNaN(
-            d.getTime()
-        )
-    )
-        return tanggal;
-
-    return (
-        String(d.getDate()).padStart(2,"0") +
-        "/" +
-        String(
-            d.getMonth()+1
-        ).padStart(2,"0") +
-        "/" +
-        d.getFullYear()
-    );
-
-}
-
-
-/* =====================================================
-   JAM
-===================================================== */
-
-function ambilJam(ujian){
-
-    return String(
-        nilai(ujian,"jam") ||
-        nilai(ujian,"jam_mulai") ||
-        nilai(ujian,"waktu_mulai") ||
-        nilai(ujian,"jam_ujian") ||
-        ""
-    );
-
-}
-
-
-/* =====================================================
-   MAPEL
-===================================================== */
-
-function ambilMapel(ujian){
-
-    return String(
-        nilai(ujian,"mata_pelajaran") ||
-        nilai(ujian,"mapel") ||
-        nilai(ujian,"nama_mapel") ||
-        nilai(ujian,"pelajaran") ||
-        ""
-    );
-
-}
-
-
-/* =====================================================
-   LAB
-===================================================== */
-
-function ambilLab(ujian){
-
-    return String(
-        nilai(ujian,"lab") ||
-        nilai(ujian,"lab_ujian") ||
-        nilai(ujian,"nomor_lab") ||
-        ""
-    );
-
-}
-
-
-/* =====================================================
-   SESI
-===================================================== */
-
-function ambilSesi(ujian){
-
-    return String(
-        nilai(ujian,"sesi") ||
-        nilai(ujian,"sesi_ujian") ||
-        ""
-    );
-
-}
-
-
-/* =====================================================
-   URUTKAN
-===================================================== */
-
-function waktuUrut(ujian){
-
-    const tanggal =
-        ambilTanggal(ujian);
-
-    const jam =
-        ambilJam(ujian);
-
-    let waktuTanggal =
-        tanggal
-        ? new Date(tanggal).getTime()
-        : Number.MAX_SAFE_INTEGER;
-
-    if(
-        Number.isNaN(waktuTanggal)
-    ){
-
-        waktuTanggal =
-            Number.MAX_SAFE_INTEGER;
-
-    }
-
-    let menit =
-        0;
-
-    const cocok =
-        jam.match(
-            /(\d{1,2})[:.](\d{2})/
-        );
-
-    if(cocok){
-
-        menit =
-            (
-                Number(cocok[1]) * 60
-            ) +
-            Number(cocok[2]);
-
-    }
-
-    return (
-        waktuTanggal * 10000 +
-        menit
-    );
-
-}
-
-
-/* =====================================================
-   FILTER
-===================================================== */
-
-function dataTerfilter(){
-
-    const jenis =
-        document.getElementById(
-            "jenisUjian"
-        ).value;
-
-    const kelas =
-        document.getElementById(
-            "kelasFilter"
-        ).value;
-
-    const lab =
-        document.getElementById(
-            "labFilter"
-        ).value;
-
-    const sesi =
-        document.getElementById(
-            "sesiFilter"
-        ).value;
-
-    return semuaUjian
-    .filter(ujian=>{
-
-        if(
-            !cocokJenis(
-                ujian,
-                jenis
-            )
-        )
-            return false;
-
-        if(
-            kelas &&
-            ambilKelas(ujian) !== kelas
-        )
-            return false;
-
-        if(
-            lab &&
-            ambilLab(ujian) !== lab
-        )
-            return false;
-
-        if(
-            sesi &&
-            ambilSesi(ujian) !== sesi
-        )
-            return false;
-
-        return true;
-
-    })
-    .sort(
-        (a,b)=>
-            waktuUrut(a) -
-            waktuUrut(b)
-    );
-
-}
-
-
-/* =====================================================
-   TAMPILKAN ROSTER
+   TAMPILKAN
 ===================================================== */
 
 function tampilkanRoster(){
@@ -1196,13 +1131,111 @@ function tampilkanRoster(){
             "rosterBody"
         );
 
-    const data =
-        dataTerfilter();
+    const jenis =
+        document.getElementById(
+            "filterJenis"
+        ).value;
+
+    const kelas =
+        document.getElementById(
+            "filterKelas"
+        ).value;
+
+    const lab =
+        document.getElementById(
+            "filterLab"
+        ).value;
+
+    const sesi =
+        document.getElementById(
+            "filterSesi"
+        ).value;
+
+
+    let data =
+        semuaRoster.filter(r=>{
+
+            if(
+                jenis &&
+                r.jenis_ujian !== jenis
+            )
+                return false;
+
+            if(
+                kelas &&
+                r.kelas !== kelas
+            )
+                return false;
+
+            if(
+                lab &&
+                String(r.lab) !== lab
+            )
+                return false;
+
+            if(
+                sesi &&
+                String(r.sesi) !== sesi
+            )
+                return false;
+
+            return true;
+
+        });
+
+
+    data.sort((a,b)=>{
+
+        const tanggalA =
+            new Date(
+                a.tanggal
+            ).getTime();
+
+        const tanggalB =
+            new Date(
+                b.tanggal
+            ).getTime();
+
+        if(
+            tanggalA !==
+            tanggalB
+        ){
+
+            return tanggalA -
+                tanggalB;
+
+        }
+
+        const jamA =
+            String(
+                a.jam || "00:00"
+            );
+
+        const jamB =
+            String(
+                b.jam || "00:00"
+            );
+
+        if(jamA !== jamB){
+
+            return jamA.localeCompare(
+                jamB
+            );
+
+        }
+
+        return (
+            Number(a.sesi || 0) -
+            Number(b.sesi || 0)
+        );
+
+    });
+
 
     document.getElementById(
         "totalInfo"
     ).textContent =
-        "Total jadwal: " +
+        "Total roster: " +
         data.length;
 
 
@@ -1211,8 +1244,16 @@ function tampilkanRoster(){
         body.innerHTML = `
             <tr>
                 <td colspan="9" class="empty">
-                    📋 Belum ada jadwal
-                    sesuai filter.
+
+                    📋 Belum ada roster.
+                    <br><br>
+
+                    Klik
+                    <strong>
+                        ➕ Buat Roster
+                    </strong>
+                    untuk menambahkan jadwal.
+
                 </td>
             </tr>
         `;
@@ -1224,126 +1265,260 @@ function tampilkanRoster(){
 
     body.innerHTML =
         data.map(
-            (ujian,index)=>{
+            (r,index)=>`
 
-                const tanggal =
-                    ambilTanggal(
-                        ujian
-                    );
+            <tr>
 
-                const sesi =
-                    ambilSesi(
-                        ujian
-                    );
+                <td>
+                    ${index + 1}
+                </td>
 
-                const lab =
-                    ambilLab(
-                        ujian
-                    );
+                <td class="day">
+                    ${escapeHtml(
+                        r.hari
+                    )}
+                </td>
 
-                const jam =
-                    ambilJam(
-                        ujian
-                    );
+                <td>
+                    ${formatTanggal(
+                        r.tanggal
+                    )}
+                </td>
 
-                const mapel =
-                    ambilMapel(
-                        ujian
-                    ) || "-";
+                <td>
 
-                const kelas =
-                    ambilKelas(
-                        ujian
-                    ) || "-";
+                    <span class="sesi">
+                        Sesi ${r.sesi}
+                    </span>
 
-                const judul =
-                    nilai(
-                        ujian,
-                        "judul"
-                    ) || "-";
+                </td>
 
+                <td>
+                    ${escapeHtml(
+                        r.jam
+                    )}
+                </td>
 
-                return `
+                <td>
 
-                    <tr>
+                    <span class="lab">
+                        Lab ${r.lab}
+                    </span>
 
-                        <td>
-                            ${index + 1}
-                        </td>
+                </td>
 
-                        <td class="day">
-                            ${namaHari(tanggal)}
-                        </td>
+                <td class="mapel">
 
-                        <td>
-                            ${formatTanggal(tanggal)}
-                        </td>
+                    <strong>
+                        ${escapeHtml(
+                            r.mata_pelajaran
+                        )}
+                    </strong>
 
-                        <td>
-                            ${
-                                sesi
-                                ?
-                                `<span class="sesi">
-                                    Sesi ${escapeHtml(sesi)}
-                                </span>`
-                                :
-                                "-"
-                            }
-                        </td>
+                </td>
 
-                        <td>
-                            ${escapeHtml(jam) || "-"}
-                        </td>
+                <td>
+                    ${escapeHtml(
+                        r.kelas
+                    )}
+                </td>
 
-                        <td>
-                            ${
-                                lab
-                                ?
-                                `<span class="lab">
-                                    Lab ${escapeHtml(lab)}
-                                </span>`
-                                :
-                                "-"
-                            }
-                        </td>
+                <td>
 
-                        <td class="mapel">
-                            <strong>
-                                ${escapeHtml(mapel)}
-                            </strong>
-                        </td>
+                    <div class="action">
 
-                        <td>
-                            ${escapeHtml(kelas)}
-                        </td>
+                        <button
+                            class="edit"
+                            onclick="editRoster('${r.id}')">
 
-                        <td class="ujian">
-                            ${escapeHtml(judul)}
-                        </td>
+                            ✏️ Edit
 
-                    </tr>
+                        </button>
 
-                `;
+                        <button
+                            class="delete"
+                            onclick="hapusRoster('${r.id}')">
 
-            }
+                            🗑️ Hapus
+
+                        </button>
+
+                    </div>
+
+                </td>
+
+            </tr>
+
+        `
         ).join("");
 
 }
 
 
 /* =====================================================
-   PRATINJAU
+   FORM TAMBAH
 ===================================================== */
 
-function bukaPratinjau(){
+function bukaFormTambah(){
 
-    const data =
-        dataTerfilter();
+    editId = null;
 
-    if(!data.length){
+    document.getElementById(
+        "formTitle"
+    ).textContent =
+        "➕ Buat Roster";
+
+    kosongkanForm();
+
+    document.getElementById(
+        "formModal"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+/* =====================================================
+   FORM EDIT
+===================================================== */
+
+function editRoster(id){
+
+    const r =
+        semuaRoster.find(
+            x=>x.id === id
+        );
+
+    if(!r)
+        return;
+
+    editId =
+        id;
+
+    document.getElementById(
+        "formTitle"
+    ).textContent =
+        "✏️ Edit Roster";
+
+
+    document.getElementById(
+        "jenis"
+    ).value =
+        r.jenis_ujian || "";
+
+
+    document.getElementById(
+        "kelas"
+    ).value =
+        r.kelas || "";
+
+
+    document.getElementById(
+        "tanggal"
+    ).value =
+        r.tanggal || "";
+
+
+    document.getElementById(
+        "hari"
+    ).value =
+        r.hari || "";
+
+
+    document.getElementById(
+        "sesi"
+    ).value =
+        r.sesi || "";
+
+
+    document.getElementById(
+        "jam"
+    ).value =
+        r.jam || "";
+
+
+    document.getElementById(
+        "lab"
+    ).value =
+        r.lab || "";
+
+
+    document.getElementById(
+        "mapel"
+    ).value =
+        r.mata_pelajaran || "";
+
+
+    document.getElementById(
+        "formModal"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+/* =====================================================
+   SIMPAN
+===================================================== */
+
+async function simpanRoster(){
+
+    const jenis =
+        document.getElementById(
+            "jenis"
+        ).value;
+
+    const kelas =
+        document.getElementById(
+            "kelas"
+        ).value;
+
+    const tanggal =
+        document.getElementById(
+            "tanggal"
+        ).value;
+
+    const hari =
+        document.getElementById(
+            "hari"
+        ).value;
+
+    const sesi =
+        document.getElementById(
+            "sesi"
+        ).value;
+
+    const jam =
+        document.getElementById(
+            "jam"
+        ).value;
+
+    const lab =
+        document.getElementById(
+            "lab"
+        ).value;
+
+    const mapel =
+        document.getElementById(
+            "mapel"
+        ).value.trim();
+
+
+    if(
+        !jenis ||
+        !kelas ||
+        !tanggal ||
+        !hari ||
+        !sesi ||
+        !jam ||
+        !lab ||
+        !mapel
+    ){
 
         alert(
-            "Tidak ada jadwal yang dapat ditampilkan."
+            "Semua data roster wajib diisi."
         );
 
         return;
@@ -1351,124 +1526,354 @@ function bukaPratinjau(){
     }
 
 
-    const jenis =
+    const data = {
+
+        jenis_ujian:
+            jenis,
+
+        kelas:
+            kelas,
+
+        hari:
+            hari,
+
+        tanggal:
+            tanggal,
+
+        sesi:
+            Number(sesi),
+
+        jam:
+            jam,
+
+        lab:
+            Number(lab),
+
+        mata_pelajaran:
+            mapel,
+
+        updated_at:
+            new Date().toISOString()
+
+    };
+
+
+    try{
+
+        let hasil;
+
+        if(editId){
+
+            hasil =
+                await supabaseClient
+                .from("roster_ujian")
+                .update(data)
+                .eq(
+                    "id",
+                    editId
+                );
+
+        }else{
+
+            hasil =
+                await supabaseClient
+                .from("roster_ujian")
+                .insert(data);
+
+        }
+
+
+        if(hasil.error)
+            throw hasil.error;
+
+
+        tutupForm();
+
+        showMessage(
+            editId
+            ?
+            "Roster berhasil diperbarui."
+            :
+            "Roster berhasil dibuat.",
+            "success"
+        );
+
+        await loadRoster();
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal menyimpan roster: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   HAPUS
+===================================================== */
+
+async function hapusRoster(id){
+
+    const r =
+        semuaRoster.find(
+            x=>x.id === id
+        );
+
+    if(!r)
+        return;
+
+
+    const yakin =
+        confirm(
+            "Hapus roster ini?\n\n" +
+            r.hari +
+            ", " +
+            formatTanggal(
+                r.tanggal
+            ) +
+            "\n" +
+            r.mata_pelajaran +
+            "\n" +
+            "Kelas " +
+            r.kelas +
+            " — Lab " +
+            r.lab +
+            " — Sesi " +
+            r.sesi
+        );
+
+
+    if(!yakin)
+        return;
+
+
+    try{
+
+        const hasil =
+            await supabaseClient
+            .from("roster_ujian")
+            .delete()
+            .eq(
+                "id",
+                id
+            );
+
+        if(hasil.error)
+            throw hasil.error;
+
+
+        showMessage(
+            "Roster berhasil dihapus.",
+            "success"
+        );
+
+        await loadRoster();
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal menghapus roster: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   HARI OTOMATIS
+===================================================== */
+
+function isiHari(){
+
+    const tanggal =
         document.getElementById(
-            "jenisUjian"
-        ).selectedOptions[0].text;
+            "tanggal"
+        ).value;
 
+    if(!tanggal){
 
-    const kelas =
         document.getElementById(
-            "kelasFilter"
-        ).selectedOptions[0].text;
+            "hari"
+        ).value = "";
+
+        return;
+
+    }
 
 
-    const lab =
-        document.getElementById(
-            "labFilter"
-        ).selectedOptions[0].text;
+    const d =
+        new Date(
+            tanggal +
+            "T00:00:00"
+        );
 
 
-    const sesi =
-        document.getElementById(
-            "sesiFilter"
-        ).selectedOptions[0].text;
+    const hari = [
+        "Minggu",
+        "Senin",
+        "Selasa",
+        "Rabu",
+        "Kamis",
+        "Jumat",
+        "Sabtu"
+    ];
+
+
+    document.getElementById(
+        "hari"
+    ).value =
+        hari[d.getDay()];
+
+}
+
+
+/* =====================================================
+   FORM
+===================================================== */
+
+function kosongkanForm(){
+
+    document.getElementById(
+        "jenis"
+    ).value = "";
+
+    document.getElementById(
+        "kelas"
+    ).value = "";
+
+    document.getElementById(
+        "tanggal"
+    ).value = "";
+
+    document.getElementById(
+        "hari"
+    ).value = "";
+
+    document.getElementById(
+        "sesi"
+    ).value = "";
+
+    document.getElementById(
+        "jam"
+    ).value = "";
+
+    document.getElementById(
+        "lab"
+    ).value = "";
+
+    document.getElementById(
+        "mapel"
+    ).value = "";
+
+}
+
+
+function tutupForm(){
+
+    document.getElementById(
+        "formModal"
+    ).classList.remove(
+        "show"
+    );
+
+}
+
+
+/* =====================================================
+   PREVIEW
+===================================================== */
+
+function bukaPratinjau(){
+
+    const data =
+        ambilDataFilter();
+
+
+    if(!data.length){
+
+        alert(
+            "Belum ada roster untuk ditampilkan."
+        );
+
+        return;
+
+    }
 
 
     const rows =
         data.map(
-            (ujian,index)=>{
+            (r,index)=>`
 
-                const tanggal =
-                    ambilTanggal(
-                        ujian
-                    );
+            <tr>
 
-                const sesiData =
-                    ambilSesi(
-                        ujian
-                    );
+                <td>
+                    ${index + 1}
+                </td>
 
-                const labData =
-                    ambilLab(
-                        ujian
-                    );
+                <td>
+                    ${escapeHtml(
+                        r.hari
+                    )}
+                </td>
 
-                return `
+                <td>
+                    ${formatTanggal(
+                        r.tanggal
+                    )}
+                </td>
 
-                    <tr>
+                <td>
+                    Sesi ${r.sesi}
+                </td>
 
-                        <td>
-                            ${index + 1}
-                        </td>
+                <td>
+                    ${escapeHtml(
+                        r.jam
+                    )}
+                </td>
 
-                        <td>
-                            ${namaHari(tanggal)}
-                        </td>
+                <td>
+                    Lab ${r.lab}
+                </td>
 
-                        <td>
-                            ${formatTanggal(tanggal)}
-                        </td>
+                <td>
+                    ${escapeHtml(
+                        r.mata_pelajaran
+                    )}
+                </td>
 
-                        <td>
-                            ${
-                                sesiData
-                                ?
-                                "Sesi " +
-                                escapeHtml(sesiData)
-                                :
-                                "-"
-                            }
-                        </td>
+                <td>
+                    ${escapeHtml(
+                        r.kelas
+                    )}
+                </td>
 
-                        <td>
-                            ${escapeHtml(
-                                ambilJam(ujian)
-                            ) || "-"}
-                        </td>
+                <td>
+                    ${escapeHtml(
+                        r.jenis_ujian
+                    )}
+                </td>
 
-                        <td>
-                            ${
-                                labData
-                                ?
-                                "Lab " +
-                                escapeHtml(labData)
-                                :
-                                "-"
-                            }
-                        </td>
+            </tr>
 
-                        <td>
-                            ${escapeHtml(
-                                ambilMapel(ujian)
-                            ) || "-"}
-                        </td>
-
-                        <td>
-                            ${escapeHtml(
-                                ambilKelas(ujian)
-                            ) || "-"}
-                        </td>
-
-                        <td>
-                            ${escapeHtml(
-                                nilai(
-                                    ujian,
-                                    "judul"
-                                )
-                            ) || "-"}
-                        </td>
-
-                    </tr>
-
-                `;
-
-            }
+        `
         ).join("");
 
 
     document.getElementById(
-        "previewPaper"
+        "paper"
     ).innerHTML = `
 
         <div class="print-title">
@@ -1487,6 +1892,7 @@ function bukaPratinjau(){
 
         </div>
 
+
         <table class="print-table">
 
             <thead>
@@ -1501,17 +1907,20 @@ function bukaPratinjau(){
                     <th>Lab</th>
                     <th>Mata Pelajaran</th>
                     <th>Kelas</th>
-                    <th>Ujian</th>
+                    <th>Jenis Ujian</th>
 
                 </tr>
 
             </thead>
 
             <tbody>
+
                 ${rows}
+
             </tbody>
 
         </table>
+
 
         <div class="print-footer">
 
@@ -1524,7 +1933,7 @@ function bukaPratinjau(){
 
 
     document.getElementById(
-        "previewOverlay"
+        "preview"
     ).classList.add(
         "show"
     );
@@ -1532,14 +1941,10 @@ function bukaPratinjau(){
 }
 
 
-/* =====================================================
-   TUTUP PREVIEW
-===================================================== */
-
 function tutupPratinjau(){
 
     document.getElementById(
-        "previewOverlay"
+        "preview"
     ).classList.remove(
         "show"
     );
@@ -1548,32 +1953,177 @@ function tutupPratinjau(){
 
 
 /* =====================================================
-   ESCAPE HTML
+   FILTER DATA
+===================================================== */
+
+function ambilDataFilter(){
+
+    const jenis =
+        document.getElementById(
+            "filterJenis"
+        ).value;
+
+    const kelas =
+        document.getElementById(
+            "filterKelas"
+        ).value;
+
+    const lab =
+        document.getElementById(
+            "filterLab"
+        ).value;
+
+    const sesi =
+        document.getElementById(
+            "filterSesi"
+        ).value;
+
+
+    return semuaRoster
+    .filter(r=>{
+
+        if(
+            jenis &&
+            r.jenis_ujian !== jenis
+        )
+            return false;
+
+        if(
+            kelas &&
+            r.kelas !== kelas
+        )
+            return false;
+
+        if(
+            lab &&
+            String(r.lab) !== lab
+        )
+            return false;
+
+        if(
+            sesi &&
+            String(r.sesi) !== sesi
+        )
+            return false;
+
+        return true;
+
+    })
+    .sort((a,b)=>{
+
+        const dateA =
+            new Date(
+                a.tanggal
+            ).getTime();
+
+        const dateB =
+            new Date(
+                b.tanggal
+            ).getTime();
+
+        if(dateA !== dateB)
+            return dateA - dateB;
+
+        const jamA =
+            a.jam || "00:00";
+
+        const jamB =
+            b.jam || "00:00";
+
+        if(jamA !== jamB)
+            return jamA.localeCompare(
+                jamB
+            );
+
+        return (
+            Number(a.sesi) -
+            Number(b.sesi)
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   FORMAT TANGGAL
+===================================================== */
+
+function formatTanggal(tanggal){
+
+    if(!tanggal)
+        return "-";
+
+    const bagian =
+        String(tanggal)
+        .split("-");
+
+    if(
+        bagian.length !== 3
+    )
+        return tanggal;
+
+    return (
+        bagian[2] +
+        "/" +
+        bagian[1] +
+        "/" +
+        bagian[0]
+    );
+
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(text,type){
+
+    const el =
+        document.getElementById(
+            "message"
+        );
+
+    el.textContent =
+        text;
+
+    el.className =
+        "message " +
+        type;
+
+}
+
+
+/* =====================================================
+   ESCAPE
 ===================================================== */
 
 function escapeHtml(value){
 
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
 
 }
 
@@ -1594,14 +2144,7 @@ function kembaliDashboard(){
    START
 ===================================================== */
 
-document.getElementById(
-    "labFilter"
-).addEventListener(
-    "change",
-    tampilkanRoster
-);
-
-loadData();
+loadRoster();
 
 </script>
 
