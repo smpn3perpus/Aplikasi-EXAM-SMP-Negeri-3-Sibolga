@@ -1,1 +1,1343 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Hasil Ujian - Admin | RUANG EXAM</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f5f9;
+    color:#0f172a;
+    min-height:100vh;
+}
+
+.header{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    color:white;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+    box-shadow:0 5px 20px rgba(0,0,0,.18);
+}
+
+.header h1{
+    font-size:23px;
+}
+
+.header p{
+    font-size:13px;
+    opacity:.85;
+    margin-top:5px;
+}
+
+.header-buttons{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:none;
+    border-radius:9px;
+    padding:10px 15px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-back{
+    background:white;
+    color:#1d4ed8;
+}
+
+.btn-refresh{
+    background:#22c55e;
+    color:white;
+}
+
+.btn-print{
+    background:#f59e0b;
+    color:white;
+}
+
+.container{
+    max-width:1400px;
+    margin:25px auto;
+    padding:0 20px;
+}
+
+.message{
+    display:none;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:18px;
+    text-align:center;
+    font-size:13px;
+}
+
+.message.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.message.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.info{
+    background:#eff6ff;
+    color:#1e40af;
+    padding:16px;
+    border-radius:12px;
+    margin-bottom:20px;
+    font-size:13px;
+    line-height:1.6;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.stat{
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 4px 15px rgba(15,23,42,.06);
+}
+
+.stat-icon{
+    font-size:28px;
+    margin-bottom:8px;
+}
+
+.stat-number{
+    font-size:25px;
+    font-weight:bold;
+    color:#1d4ed8;
+}
+
+.stat-label{
+    color:#64748b;
+    font-size:12px;
+    margin-top:4px;
+}
+
+.filter-box{
+    background:white;
+    padding:17px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 4px 15px rgba(15,23,42,.06);
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+}
+
+select,
+input{
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    padding:10px 12px;
+    font-size:13px;
+    background:white;
+}
+
+.search{
+    flex:1;
+    min-width:220px;
+}
+
+.table-box{
+    background:white;
+    border-radius:16px;
+    overflow:auto;
+    box-shadow:0 4px 18px rgba(15,23,42,.07);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:1200px;
+}
+
+th{
+    background:#eff6ff;
+    color:#1e3a8a;
+    padding:14px;
+    text-align:left;
+    font-size:13px;
+    white-space:nowrap;
+}
+
+td{
+    padding:13px;
+    border-top:1px solid #e2e8f0;
+    font-size:13px;
+    vertical-align:middle;
+}
+
+tr:hover td{
+    background:#f8fafc;
+}
+
+.nilai{
+    font-size:17px;
+    font-weight:bold;
+    color:#1d4ed8;
+}
+
+.badge{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.lulus{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.tidak-lulus{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.selesai{
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+.empty{
+    text-align:center;
+    padding:45px !important;
+    color:#64748b;
+}
+
+.footer{
+    text-align:center;
+    color:#94a3b8;
+    font-size:12px;
+    line-height:1.6;
+    padding:30px;
+}
+
+@media(max-width:900px){
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:500px){
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .container{
+        padding:0 12px;
+    }
+
+    .header{
+        padding:18px;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div>
+        <h1>📊 HASIL UJIAN</h1>
+
+        <p>
+            RUANG EXAM — SMP Negeri 3 Sibolga
+        </p>
+    </div>
+
+    <div class="header-buttons">
+
+        <button
+            class="btn btn-back"
+            onclick="kembaliDashboard()">
+
+            ← Dashboard
+
+        </button>
+
+        <button
+            class="btn btn-refresh"
+            onclick="loadHasil()">
+
+            🔄 Refresh
+
+        </button>
+
+        <button
+            class="btn btn-print"
+            onclick="window.print()">
+
+            🖨️ Cetak
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div id="message" class="message"></div>
+
+    <div class="info">
+
+        <strong>📊 Hasil Ujian Peserta</strong><br>
+
+        Halaman ini digunakan Admin untuk melihat
+        hasil ujian siswa yang telah selesai.
+
+    </div>
+
+
+    <!-- STATISTIK -->
+
+    <section class="stats">
+
+        <div class="stat">
+
+            <div class="stat-icon">👨‍🎓</div>
+
+            <div
+                class="stat-number"
+                id="totalHasil">
+
+                0
+
+            </div>
+
+            <div class="stat-label">
+                Total Hasil
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-icon">🏆</div>
+
+            <div
+                class="stat-number"
+                id="totalLulus">
+
+                0
+
+            </div>
+
+            <div class="stat-label">
+                Lulus
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-icon">❌</div>
+
+            <div
+                class="stat-number"
+                id="totalTidakLulus">
+
+                0
+
+            </div>
+
+            <div class="stat-label">
+                Tidak Lulus
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div class="stat-icon">📈</div>
+
+            <div
+                class="stat-number"
+                id="rataRata">
+
+                0
+
+            </div>
+
+            <div class="stat-label">
+                Nilai Rata-rata
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FILTER -->
+
+    <section class="filter-box">
+
+        <select
+            id="filterKelas"
+            onchange="filterData()">
+
+            <option value="">
+                Semua Kelas
+            </option>
+
+        </select>
+
+
+        <select
+            id="filterUjian"
+            onchange="filterData()">
+
+            <option value="">
+                Semua Ujian
+            </option>
+
+        </select>
+
+
+        <input
+            id="searchInput"
+            class="search"
+            type="text"
+            placeholder="🔎 Cari nama siswa / NISN..."
+            oninput="filterData()">
+
+    </section>
+
+
+    <!-- TABLE -->
+
+    <div class="table-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>No</th>
+
+                    <th>Nama Siswa</th>
+
+                    <th>NISN</th>
+
+                    <th>Kelas</th>
+
+                    <th>Ujian</th>
+
+                    <th>Mata Pelajaran</th>
+
+                    <th>Benar</th>
+
+                    <th>Salah</th>
+
+                    <th>Jumlah Soal</th>
+
+                    <th>Nilai</th>
+
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="hasilBody">
+
+                <tr>
+
+                    <td
+                        colspan="11"
+                        class="empty">
+
+                        ⏳ Memuat hasil ujian...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</main>
+
+
+<footer class="footer">
+
+    RUANG EXAM Online<br>
+
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+</footer>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =====================================================
+   SESSION ADMIN
+===================================================== */
+
+const sessionRaw =
+    localStorage.getItem("exam_user");
+
+
+if(!sessionRaw){
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+try{
+
+    const user =
+        JSON.parse(sessionRaw);
+
+    if(user.role !== "admin"){
+
+        localStorage.removeItem(
+            "exam_user"
+        );
+
+        window.location.href =
+            "login.html";
+
+    }
+
+}catch(error){
+
+    localStorage.removeItem(
+        "exam_user"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let semuaHasil = [];
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(text,type){
+
+    const el =
+        document.getElementById("message");
+
+    el.textContent =
+        text;
+
+    el.className =
+        "message " + type;
+
+}
+
+
+/* =====================================================
+   LOAD HASIL
+===================================================== */
+
+async function loadHasil(){
+
+    const body =
+        document.getElementById(
+            "hasilBody"
+        );
+
+    body.innerHTML = `
+        <tr>
+            <td colspan="11" class="empty">
+                ⏳ Memuat hasil ujian...
+            </td>
+        </tr>
+    `;
+
+
+    try{
+
+        /*
+         * Tabel yang digunakan:
+         *
+         * hasil_ujian
+         *
+         * Jika tabel belum dibuat,
+         * halaman akan memberikan pesan
+         * yang jelas.
+         */
+
+        const hasil =
+            await supabaseClient
+            .from("hasil_ujian")
+            .select("*")
+            .order(
+                "created_at",
+                {ascending:false}
+            );
+
+
+        if(hasil.error){
+
+            throw hasil.error;
+
+        }
+
+
+        const data =
+            hasil.data || [];
+
+
+        if(!data.length){
+
+            semuaHasil = [];
+
+            updateStatistik([]);
+
+            isiFilter();
+
+            tampilkanRows([]);
+
+            return;
+
+        }
+
+
+        /*
+         * Ambil ID siswa
+         */
+
+        const siswaIds =
+            [
+                ...new Set(
+                    data
+                    .map(p =>
+                        p.siswa_id
+                    )
+                    .filter(Boolean)
+                )
+            ];
+
+
+        /*
+         * Ambil ID ujian
+         */
+
+        const ujianIds =
+            [
+                ...new Set(
+                    data
+                    .map(p =>
+                        p.ujian_id
+                    )
+                    .filter(Boolean)
+                )
+            ];
+
+
+        let siswaData = [];
+
+        let ujianData = [];
+
+
+        if(siswaIds.length){
+
+            const siswaHasil =
+                await supabaseClient
+                .from("siswa")
+                .select(
+                    "id,nama,nisn,kelas"
+                )
+                .in(
+                    "id",
+                    siswaIds
+                );
+
+
+            if(!siswaHasil.error){
+
+                siswaData =
+                    siswaHasil.data || [];
+
+            }
+
+        }
+
+
+        if(ujianIds.length){
+
+            const ujianHasil =
+                await supabaseClient
+                .from("ujian")
+                .select("*")
+                .in(
+                    "id",
+                    ujianIds
+                );
+
+
+            if(!ujianHasil.error){
+
+                ujianData =
+                    ujianHasil.data || [];
+
+            }
+
+        }
+
+
+        semuaHasil =
+            data.map(p=>{
+
+                const siswa =
+                    siswaData.find(
+                        s =>
+                        s.id ===
+                        p.siswa_id
+                    ) || {};
+
+
+                const ujian =
+                    ujianData.find(
+                        u =>
+                        u.id ===
+                        p.ujian_id
+                    ) || {};
+
+
+                const benar =
+                    Number(
+                        p.jumlah_benar ??
+                        p.benar ??
+                        0
+                    );
+
+
+                const salah =
+                    Number(
+                        p.jumlah_salah ??
+                        p.salah ??
+                        0
+                    );
+
+
+                const jumlahSoal =
+                    Number(
+                        p.jumlah_soal ??
+                        ujian.jumlah_soal ??
+                        benar + salah
+                    );
+
+
+                let nilai =
+                    Number(
+                        p.nilai ??
+                        p.score ??
+                        0
+                    );
+
+
+                /*
+                 * Jika nilai belum tersimpan
+                 * tetapi jumlah benar tersedia,
+                 * hitung otomatis.
+                 */
+
+                if(
+                    !nilai &&
+                    jumlahSoal > 0
+                ){
+
+                    nilai =
+                        Math.round(
+                            (
+                                benar /
+                                jumlahSoal
+                            ) * 100
+                        );
+
+                }
+
+
+                return {
+
+                    ...p,
+
+                    nama:
+                        siswa.nama || "-",
+
+                    nisn:
+                        siswa.nisn || "-",
+
+                    kelas:
+                        siswa.kelas || "-",
+
+                    judul:
+                        ujian.judul ||
+                        ujian.nama ||
+                        "-",
+
+                    mata_pelajaran:
+                        p.mata_pelajaran ||
+                        p.mapel ||
+                        ujian.mata_pelajaran ||
+                        ujian.mapel ||
+                        "-",
+
+                    benar,
+
+                    salah,
+
+                    jumlahSoal,
+
+                    nilai
+
+                };
+
+            });
+
+
+        updateStatistik(
+            semuaHasil
+        );
+
+        isiFilter();
+
+        filterData();
+
+
+    }catch(error){
+
+        console.error(error);
+
+        semuaHasil = [];
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="11" class="empty">
+                    ❌ Gagal memuat hasil ujian.
+                    <br><br>
+                    ${escapeHtml(
+                        error.message
+                    )}
+                </td>
+            </tr>
+        `;
+
+
+        showMessage(
+            "Tabel hasil_ujian belum tersedia atau struktur database belum sesuai.",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   FILTER
+===================================================== */
+
+function isiFilter(){
+
+    const kelas =
+        document.getElementById(
+            "filterKelas"
+        );
+
+    const ujian =
+        document.getElementById(
+            "filterUjian"
+        );
+
+
+    const kelasLama =
+        kelas.value;
+
+
+    const ujianLama =
+        ujian.value;
+
+
+    const daftarKelas =
+        [
+            ...new Set(
+                semuaHasil
+                .map(p=>p.kelas)
+                .filter(Boolean)
+            )
+        ]
+        .sort();
+
+
+    const daftarUjian =
+        [
+            ...new Map(
+                semuaHasil.map(
+                    p =>
+                    [
+                        p.ujian_id,
+                        p.judul
+                    ]
+                )
+            )
+        ];
+
+
+    kelas.innerHTML =
+        `
+        <option value="">
+            Semua Kelas
+        </option>
+        `;
+
+
+    daftarKelas.forEach(
+        k=>{
+
+            kelas.innerHTML += `
+                <option value="${escapeHtml(k)}">
+                    ${escapeHtml(k)}
+                </option>
+            `;
+
+        }
+    );
+
+
+    ujian.innerHTML =
+        `
+        <option value="">
+            Semua Ujian
+        </option>
+        `;
+
+
+    daftarUjian.forEach(
+        ([id,nama])=>{
+
+            ujian.innerHTML += `
+                <option value="${escapeHtml(id)}">
+                    ${escapeHtml(nama)}
+                </option>
+            `;
+
+        }
+    );
+
+
+    if(
+        daftarKelas.includes(
+            kelasLama
+        )
+    ){
+
+        kelas.value =
+            kelasLama;
+
+    }
+
+
+    if(
+        daftarUjian.some(
+            ([id]) =>
+            id === ujianLama
+        )
+    ){
+
+        ujian.value =
+            ujianLama;
+
+    }
+
+}
+
+
+/* =====================================================
+   FILTER DATA
+===================================================== */
+
+function filterData(){
+
+    const kelas =
+        document.getElementById(
+            "filterKelas"
+        ).value;
+
+
+    const ujian =
+        document.getElementById(
+            "filterUjian"
+        ).value;
+
+
+    const search =
+        document.getElementById(
+            "searchInput"
+        ).value
+        .toLowerCase()
+        .trim();
+
+
+    const hasil =
+        semuaHasil.filter(
+            p=>{
+
+                const cocokKelas =
+                    !kelas ||
+                    p.kelas === kelas;
+
+
+                const cocokUjian =
+                    !ujian ||
+                    p.ujian_id === ujian;
+
+
+                const teks =
+                    (
+                        p.nama +
+                        " " +
+                        p.nisn +
+                        " " +
+                        p.kelas
+                    )
+                    .toLowerCase();
+
+
+                const cocokSearch =
+                    !search ||
+                    teks.includes(search);
+
+
+                return (
+                    cocokKelas &&
+                    cocokUjian &&
+                    cocokSearch
+                );
+
+            }
+        );
+
+
+    tampilkanRows(
+        hasil
+    );
+
+}
+
+
+/* =====================================================
+   TAMPILKAN ROW
+===================================================== */
+
+function tampilkanRows(data){
+
+    const body =
+        document.getElementById(
+            "hasilBody"
+        );
+
+
+    if(!data.length){
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="11" class="empty">
+                    👨‍🎓 Belum ada hasil ujian.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    body.innerHTML =
+        data.map(
+            (p,index)=>{
+
+                const nilai =
+                    Number(
+                        p.nilai
+                    ) || 0;
+
+
+                const status =
+                    nilai >= 70
+                    ? "LULUS"
+                    : "TIDAK LULUS";
+
+
+                const statusClass =
+                    nilai >= 70
+                    ? "lulus"
+                    : "tidak-lulus";
+
+
+                return `
+
+                <tr>
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${escapeHtml(
+                                p.nama
+                            )}
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            p.nisn
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            p.kelas
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            p.judul
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            p.mata_pelajaran
+                        )}
+                    </td>
+
+                    <td>
+                        ${p.benar}
+                    </td>
+
+                    <td>
+                        ${p.salah}
+                    </td>
+
+                    <td>
+                        ${p.jumlahSoal}
+                    </td>
+
+                    <td>
+
+                        <span class="nilai">
+                            ${nilai}
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <span
+                            class="badge ${statusClass}">
+
+                            ${status}
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+/* =====================================================
+   STATISTIK
+===================================================== */
+
+function updateStatistik(data){
+
+    const total =
+        data.length;
+
+
+    const lulus =
+        data.filter(
+            p =>
+            Number(p.nilai) >= 70
+        ).length;
+
+
+    const tidakLulus =
+        data.filter(
+            p =>
+            Number(p.nilai) < 70
+        ).length;
+
+
+    const totalNilai =
+        data.reduce(
+            (jumlah,p)=>
+            jumlah +
+            (
+                Number(
+                    p.nilai
+                ) || 0
+            ),
+            0
+        );
+
+
+    const rata =
+        total
+        ? Math.round(
+            totalNilai /
+            total
+          )
+        : 0;
+
+
+    document
+    .getElementById(
+        "totalHasil"
+    )
+    .textContent =
+        total;
+
+
+    document
+    .getElementById(
+        "totalLulus"
+    )
+    .textContent =
+        lulus;
+
+
+    document
+    .getElementById(
+        "totalTidakLulus"
+    )
+    .textContent =
+        tidakLulus;
+
+
+    document
+    .getElementById(
+        "rataRata"
+    )
+    .textContent =
+        rata;
+
+}
+
+
+/* =====================================================
+   ESCAPE
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function kembaliDashboard(){
+
+    window.location.href =
+        "admin.html";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadHasil();
+
+</script>
+
+</body>
+</html>
+```
