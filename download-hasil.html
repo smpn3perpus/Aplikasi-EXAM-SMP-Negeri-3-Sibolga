@@ -1,8 +1,8 @@
-```html
 <!DOCTYPE html>
-<html lang="id">
-<head>
 
+<html lang="id">
+
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -10,7 +10,12 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<!-- LIBRARY EXCEL ASLI (.XLSX) -->
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
 <style>
+
 *{
     box-sizing:border-box;
     margin:0;
@@ -24,17 +29,22 @@ body{
     min-height:100vh;
 }
 
-/* ================= HEADER ================= */
+/* =====================================================
+   HEADER
+===================================================== */
 
 .header{
     background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
     color:white;
     padding:20px 30px;
+
     display:flex;
     justify-content:space-between;
     align-items:center;
+
     gap:15px;
     flex-wrap:wrap;
+
     box-shadow:0 5px 20px rgba(0,0,0,.18);
 }
 
@@ -60,6 +70,12 @@ body{
     padding:10px 15px;
     cursor:pointer;
     font-weight:bold;
+    transition:.2s;
+}
+
+.btn:hover{
+    transform:translateY(-1px);
+    opacity:.92;
 }
 
 .btn-back{
@@ -82,19 +98,19 @@ body{
     color:white;
 }
 
-.btn:hover{
-    opacity:.9;
-}
-
-/* ================= CONTAINER ================= */
+/* =====================================================
+   CONTAINER
+===================================================== */
 
 .container{
-    max-width:1400px;
+    max-width:1450px;
     margin:25px auto;
     padding:0 20px;
 }
 
-/* ================= MESSAGE ================= */
+/* =====================================================
+   MESSAGE
+===================================================== */
 
 .message{
     display:none;
@@ -117,7 +133,9 @@ body{
     color:#991b1b;
 }
 
-/* ================= INFO ================= */
+/* =====================================================
+   INFO
+===================================================== */
 
 .info{
     background:#eff6ff;
@@ -126,10 +144,12 @@ body{
     border-radius:12px;
     margin-bottom:20px;
     font-size:13px;
-    line-height:1.6;
+    line-height:1.7;
 }
 
-/* ================= STAT ================= */
+/* =====================================================
+   STATISTIK
+===================================================== */
 
 .stats{
     display:grid;
@@ -162,24 +182,53 @@ body{
     margin-top:4px;
 }
 
-/* ================= FILTER ================= */
+/* =====================================================
+   FILTER
+===================================================== */
 
 .filter-box{
     background:white;
-    padding:17px;
+    padding:20px;
     border-radius:15px;
     margin-bottom:20px;
     box-shadow:0 4px 15px rgba(15,23,42,.06);
-    display:flex;
+}
+
+.filter-title{
+    font-size:15px;
+    font-weight:bold;
+    color:#1e3a8a;
+    margin-bottom:14px;
+}
+
+.filter-grid{
+    display:grid;
+    grid-template-columns:
+        minmax(160px,1fr)
+        minmax(160px,1fr)
+        minmax(220px,1.5fr)
+        minmax(220px,2fr);
     gap:12px;
-    flex-wrap:wrap;
+}
+
+.filter-item{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.filter-item label{
+    font-size:11px;
+    font-weight:bold;
+    color:#64748b;
 }
 
 select,
 input{
+    width:100%;
     border:1px solid #cbd5e1;
     border-radius:9px;
-    padding:10px 12px;
+    padding:11px 12px;
     font-size:13px;
     background:white;
     outline:none;
@@ -188,14 +237,47 @@ input{
 select:focus,
 input:focus{
     border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.1);
 }
 
-.search{
-    flex:1;
-    min-width:220px;
+.download-area{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:15px;
 }
 
-/* ================= TABLE ================= */
+.download-selected{
+    background:#2563eb;
+    color:white;
+}
+
+.download-all{
+    background:#0f172a;
+    color:white;
+}
+
+/* =====================================================
+   HASIL PILIHAN
+===================================================== */
+
+.selection-info{
+    margin-top:15px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    padding:12px;
+    font-size:12px;
+    color:#475569;
+}
+
+.selection-info strong{
+    color:#1e3a8a;
+}
+
+/* =====================================================
+   TABLE
+===================================================== */
 
 .table-box{
     background:white;
@@ -217,6 +299,9 @@ th{
     text-align:left;
     font-size:13px;
     white-space:nowrap;
+    position:sticky;
+    top:0;
+    z-index:1;
 }
 
 td{
@@ -230,11 +315,10 @@ tr:hover td{
     background:#f8fafc;
 }
 
-/* ================= NILAI ================= */
-
 .nilai{
     font-weight:bold;
     font-size:16px;
+    color:#1d4ed8;
 }
 
 .lulus{
@@ -245,7 +329,9 @@ tr:hover td{
     color:#dc2626;
 }
 
-/* ================= BADGE ================= */
+/* =====================================================
+   BADGE
+===================================================== */
 
 .badge{
     display:inline-block;
@@ -270,7 +356,9 @@ tr:hover td{
     color:#475569;
 }
 
-/* ================= EMPTY ================= */
+/* =====================================================
+   EMPTY
+===================================================== */
 
 .empty{
     text-align:center;
@@ -278,7 +366,9 @@ tr:hover td{
     color:#64748b;
 }
 
-/* ================= FOOTER ================= */
+/* =====================================================
+   FOOTER
+===================================================== */
 
 .footer{
     text-align:center;
@@ -288,7 +378,9 @@ tr:hover td{
     padding:30px;
 }
 
-/* ================= PRINT ================= */
+/* =====================================================
+   PRINT
+===================================================== */
 
 @media print{
 
@@ -296,7 +388,7 @@ tr:hover td{
     .filter-box,
     .info,
     .stats,
-    .message{
+    .selection-info{
         display:none !important;
     }
 
@@ -329,18 +421,32 @@ tr:hover td{
     .footer{
         padding:15px;
     }
+
 }
 
-/* ================= RESPONSIVE ================= */
+/* =====================================================
+   RESPONSIVE
+===================================================== */
 
-@media(max-width:900px){
+@media(max-width:1000px){
+
+    .filter-grid{
+        grid-template-columns:
+            repeat(2,1fr);
+    }
 
     .stats{
-        grid-template-columns:repeat(2,1fr);
+        grid-template-columns:
+            repeat(2,1fr);
     }
+
 }
 
-@media(max-width:500px){
+@media(max-width:600px){
+
+    .filter-grid{
+        grid-template-columns:1fr;
+    }
 
     .stats{
         grid-template-columns:1fr;
@@ -353,210 +459,234 @@ tr:hover td{
     .header{
         padding:18px;
     }
+
+    .header h1{
+        font-size:20px;
+    }
+
 }
+
 </style>
 
 </head>
 
 <body>
 
-<!-- ================= HEADER ================= -->
+<!-- =====================================================
+     HEADER
+===================================================== -->
 
 <header class="header">
 
-    <div>
-        <h1>📥 DOWNLOAD HASIL</h1>
+```
+<div>
 
-        <p>
-            RUANG EXAM — SMP Negeri 3 Sibolga
-        </p>
-    </div>
+    <h1>📥 DOWNLOAD HASIL</h1>
 
-    <div class="header-buttons">
+    <p>
+        RUANG EXAM — SMP Negeri 3 Sibolga
+    </p>
 
-        <button
-            class="btn btn-back"
-            onclick="kembaliDashboard()">
-            ← Dashboard
-        </button>
+</div>
 
-        <button
-            class="btn btn-refresh"
-            onclick="loadHasil()">
-            🔄 Refresh
-        </button>
+<div class="header-buttons">
 
-        <button
-            class="btn btn-print"
-            onclick="window.print()">
-            🖨️ Cetak
-        </button>
+    <button
+        class="btn btn-back"
+        onclick="kembaliDashboard()">
+        ← Dashboard
+    </button>
 
-        <button
-            class="btn btn-download"
-            onclick="downloadExcel()">
-            📥 Download Excel
-        </button>
+    <button
+        class="btn btn-refresh"
+        onclick="loadHasil()">
+        🔄 Refresh
+    </button>
 
-    </div>
+    <button
+        class="btn btn-print"
+        onclick="window.print()">
+        🖨️ Cetak
+    </button>
+
+    <button
+        class="btn btn-download"
+        onclick="downloadExcelTerpilih()">
+        📥 Download Excel
+    </button>
+
+</div>
+```
 
 </header>
 
-
 <main class="container">
 
-    <!-- MESSAGE -->
+<!-- =====================================================
+     MESSAGE
+===================================================== -->
+
+<div id="message" class="message"></div>
+
+<!-- =====================================================
+     INFO
+===================================================== -->
+
+<div class="info">
+
+```
+<strong>📥 Download Hasil Ujian</strong>
+
+<br>
+
+Pilih <strong>Rombel</strong> dan
+<strong>Mata Pelajaran</strong> yang ingin diunduh.
+
+<br>
+
+<strong>Contoh:</strong>
+pilih <strong>Kelas 9C</strong> +
+<strong>Prakarya</strong>,
+kemudian klik <strong>Download Excel</strong>.
+
+<br>
+
+<strong>Catatan:</strong>
+sesi 1, sesi 2, sesi 3, dan sesi lainnya
+tidak digunakan sebagai pemisah.
+Semua hasil yang masuk tetap dapat ditampilkan
+bersama.
+```
+
+</div>
+
+<!-- =====================================================
+     STATISTIK
+===================================================== -->
+
+<section class="stats">
+
+```
+<div class="stat">
+
+    <div class="stat-icon">
+        👨‍🎓
+    </div>
 
     <div
-        id="message"
-        class="message">
+        id="totalData"
+        class="stat-number">
+        0
     </div>
 
-
-    <!-- INFO -->
-
-    <div class="info">
-
-        <strong>📥 Download Hasil Ujian</strong>
-
-        <br>
-
-        Pilih <strong>kelas</strong> dan
-        <strong>mata pelajaran</strong> untuk mendapatkan
-        hasil satu rombel.
-
-        <br>
-
-        <strong>
-            Semua sesi ujian akan digabungkan.
-        </strong>
-
-        Jadi misalnya Prakarya kelas 9C mempunyai
-        sesi 1, sesi 2, dan sesi 3, seluruh hasil siswa
-        akan masuk dalam satu daftar.
-
+    <div class="stat-label">
+        Data Ditampilkan
     </div>
 
-
-    <!-- STATISTIK -->
-
-    <section class="stats">
-
-        <div class="stat">
-
-            <div class="stat-icon">
-                👨‍🎓
-            </div>
-
-            <div
-                id="totalData"
-                class="stat-number">
-                0
-            </div>
-
-            <div class="stat-label">
-                Data Ditampilkan
-            </div>
-
-        </div>
+</div>
 
 
-        <div class="stat">
+<div class="stat">
 
-            <div class="stat-icon">
-                💯
-            </div>
+    <div class="stat-icon">
+        💯
+    </div>
 
-            <div
-                id="rataNilai"
-                class="stat-number">
-                0
-            </div>
+    <div
+        id="rataNilai"
+        class="stat-number">
+        0
+    </div>
 
-            <div class="stat-label">
-                Rata-rata Nilai
-            </div>
+    <div class="stat-label">
+        Rata-rata Nilai
+    </div>
 
-        </div>
-
-
-        <div class="stat">
-
-            <div class="stat-icon">
-                🏆
-            </div>
-
-            <div
-                id="tertinggi"
-                class="stat-number">
-                0
-            </div>
-
-            <div class="stat-label">
-                Nilai Tertinggi
-            </div>
-
-        </div>
+</div>
 
 
-        <div class="stat">
+<div class="stat">
 
-            <div class="stat-icon">
-                📊
-            </div>
+    <div class="stat-icon">
+        🏆
+    </div>
 
-            <div
-                id="terendah"
-                class="stat-number">
-                0
-            </div>
+    <div
+        id="tertinggi"
+        class="stat-number">
+        0
+    </div>
 
-            <div class="stat-label">
-                Nilai Terendah
-            </div>
+    <div class="stat-label">
+        Nilai Tertinggi
+    </div>
 
-        </div>
-
-    </section>
+</div>
 
 
-    <!-- FILTER -->
+<div class="stat">
 
-    <section class="filter-box">
+    <div class="stat-icon">
+        📊
+    </div>
+
+    <div
+        id="terendah"
+        class="stat-number">
+        0
+    </div>
+
+    <div class="stat-label">
+        Nilai Terendah
+    </div>
+
+</div>
+```
+
+</section>
+
+<!-- =====================================================
+     FILTER
+===================================================== -->
+
+<section class="filter-box">
+
+```
+<div class="filter-title">
+    🎯 Pilih Hasil yang Akan Didownload
+</div>
+
+
+<div class="filter-grid">
+
+    <!-- ROMBEL -->
+
+    <div class="filter-item">
+
+        <label>
+            ROMBEL / KELAS
+        </label>
 
         <select
-            id="filterKelas"
+            id="filterRombel"
             onchange="filterData()">
 
             <option value="">
-                Semua Kelas
-            </option>
-
-            <option value="7">
-                Kelas 7
-            </option>
-
-            <option value="8">
-                Kelas 8
-            </option>
-
-            <option value="9">
-                Kelas 9
+                Semua Rombel
             </option>
 
         </select>
 
+    </div>
 
-        <select
-            id="filterUjian"
-            onchange="filterData()">
 
-            <option value="">
-                Semua Ujian
-            </option>
+    <!-- MAPEL -->
 
-        </select>
+    <div class="filter-item">
 
+        <label>
+            MATA PELAJARAN
+        </label>
 
         <select
             id="filterMapel"
@@ -568,79 +698,165 @@ tr:hover td{
 
         </select>
 
-
-        <input
-            id="searchInput"
-            class="search"
-            type="text"
-            placeholder="🔎 Cari nama siswa / NISN..."
-            oninput="filterData">
-
-    </section>
+    </div>
 
 
-    <!-- TABLE -->
+    <!-- JENIS UJIAN -->
 
-    <div class="table-box">
+    <div class="filter-item">
 
-        <table id="hasilTable">
+        <label>
+            JENIS UJIAN
+        </label>
 
-            <thead>
+        <select
+            id="filterUjian"
+            onchange="filterData()">
 
-                <tr>
+            <option value="">
+                Semua Jenis Ujian
+            </option>
 
-                    <th>No</th>
-                    <th>Nama Siswa</th>
-                    <th>NISN</th>
-                    <th>Kelas</th>
-                    <th>Mata Pelajaran</th>
-                    <th>Jenis Ujian</th>
-                    <th>Jumlah Soal</th>
-                    <th>Benar</th>
-                    <th>Salah</th>
-                    <th>Nilai</th>
-                    <th>Status</th>
-                    <th>Waktu Selesai</th>
-
-                </tr>
-
-            </thead>
-
-
-            <tbody id="hasilBody">
-
-                <tr>
-
-                    <td
-                        colspan="12"
-                        class="empty">
-
-                        ⏳ Memuat data hasil ujian...
-
-                    </td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
+        </select>
 
     </div>
 
+
+    <!-- SEARCH -->
+
+    <div class="filter-item">
+
+        <label>
+            PENCARIAN
+        </label>
+
+        <input
+            id="searchInput"
+            type="text"
+            placeholder="🔎 Nama siswa / NISN..."
+            oninput="filterData()">
+
+    </div>
+
+</div>
+
+
+<!-- TOMBOL DOWNLOAD -->
+
+<div class="download-area">
+
+    <button
+        class="btn download-selected"
+        onclick="downloadExcelTerpilih()">
+
+        📥 Download Excel Pilihan
+
+    </button>
+
+
+    <button
+        class="btn download-all"
+        onclick="downloadExcelSemua()">
+
+        📊 Download Semua Data
+
+    </button>
+
+</div>
+
+
+<!-- INFO PILIHAN -->
+
+<div
+    id="selectionInfo"
+    class="selection-info">
+
+    Menampilkan:
+    <strong>Semua Data</strong>
+
+</div>
+```
+
+</section>
+
+<!-- =====================================================
+     TABLE
+===================================================== -->
+
+<div class="table-box">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>No</th>
+
+<th>Nama Siswa</th>
+
+<th>NISN</th>
+
+<th>Kelas</th>
+
+<th>Jenis Ujian</th>
+
+<th>Mata Pelajaran</th>
+
+<th>Jumlah Soal</th>
+
+<th>Benar</th>
+
+<th>Salah</th>
+
+<th>Nilai</th>
+
+<th>Status</th>
+
+<th>Waktu Selesai</th>
+
+</tr>
+
+</thead>
+
+<tbody id="hasilBody">
+
+<tr>
+
+<td
+    colspan="12"
+    class="empty">
+
+```
+⏳ Memuat data hasil ujian...
+```
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
 </main>
 
-
-<!-- ================= FOOTER ================= -->
+<!-- =====================================================
+     FOOTER
+===================================================== -->
 
 <footer class="footer">
 
-    RUANG EXAM Online
-    <br>
+```
+RUANG EXAM Online
+<br>
 
-    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+Dibuat oleh Mr. Rahmat Batubara, S.T.P
+```
 
 </footer>
-
 
 <script>
 
@@ -662,16 +878,16 @@ const supabaseClient =
 
 
 /* =====================================================
-   CEK LOGIN ADMIN
+   CEK SESSION ADMIN
 ===================================================== */
 
 const sessionRaw =
     localStorage.getItem("exam_user");
 
+
 if(!sessionRaw){
 
-    window.location.href =
-        "login.html";
+    window.location.href = "login.html";
 
 }
 
@@ -683,9 +899,7 @@ try{
 
     if(user.role !== "admin"){
 
-        localStorage.removeItem(
-            "exam_user"
-        );
+        localStorage.removeItem("exam_user");
 
         window.location.href =
             "login.html";
@@ -694,9 +908,7 @@ try{
 
 }catch(error){
 
-    localStorage.removeItem(
-        "exam_user"
-    );
+    localStorage.removeItem("exam_user");
 
     window.location.href =
         "login.html";
@@ -709,6 +921,7 @@ try{
 ===================================================== */
 
 let semuaHasil = [];
+
 let hasilTampil = [];
 
 
@@ -719,12 +932,9 @@ let hasilTampil = [];
 function showMessage(text,type){
 
     const el =
-        document.getElementById(
-            "message"
-        );
+        document.getElementById("message");
 
-    el.textContent =
-        text;
+    el.textContent = text;
 
     el.className =
         "message " + type;
@@ -732,15 +942,136 @@ function showMessage(text,type){
 }
 
 
-function hideMessage(){
+/* =====================================================
+   NORMALISASI KELAS
+===================================================== */
 
-    const el =
-        document.getElementById(
-            "message"
+function normalisasiKelas(kelas){
+
+    return String(kelas || "")
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g,"");
+
+}
+
+
+/* =====================================================
+   URUTAN KELAS
+===================================================== */
+
+function nilaiUrutKelas(kelas){
+
+    const k =
+        normalisasiKelas(kelas);
+
+    const match =
+        k.match(/^(\d+)([A-Z]*)$/);
+
+    if(!match){
+
+        return 999999;
+
+    }
+
+    const tingkat =
+        Number(match[1]);
+
+    const rombel =
+        match[2] || "";
+
+    let nomorRombel = 0;
+
+    if(rombel){
+
+        nomorRombel =
+            rombel
+            .split("")
+            .reduce(
+                (total,huruf)=>
+                    total +
+                    (
+                        huruf.charCodeAt(0) -
+                        64
+                    ),
+                0
+            );
+
+    }
+
+    return (
+        tingkat * 100 +
+        nomorRombel
+    );
+
+}
+
+
+/* =====================================================
+   URUT DATA
+===================================================== */
+
+function urutData(data){
+
+    return [...data].sort((a,b)=>{
+
+        const kelasA =
+            nilaiUrutKelas(a.kelas);
+
+        const kelasB =
+            nilaiUrutKelas(b.kelas);
+
+        if(kelasA !== kelasB){
+
+            return kelasA - kelasB;
+
+        }
+
+
+        const mapelA =
+            String(
+                a.mata_pelajaran || ""
+            )
+            .trim()
+            .toLowerCase();
+
+        const mapelB =
+            String(
+                b.mata_pelajaran || ""
+            )
+            .trim()
+            .toLowerCase();
+
+        if(mapelA !== mapelB){
+
+            return mapelA.localeCompare(
+                mapelB,
+                "id"
+            );
+
+        }
+
+
+        const namaA =
+            String(
+                a.nama_siswa || ""
+            )
+            .trim()
+            .toLowerCase();
+
+        const namaB =
+            String(
+                b.nama_siswa || ""
+            )
+            .trim()
+            .toLowerCase();
+
+        return namaA.localeCompare(
+            namaB,
+            "id"
         );
 
-    el.textContent = "";
-    el.className = "message";
+    });
 
 }
 
@@ -751,12 +1082,11 @@ function hideMessage(){
 
 async function loadHasil(){
 
-    hideMessage();
-
     const body =
         document.getElementById(
             "hasilBody"
         );
+
 
     body.innerHTML = `
 
@@ -774,13 +1104,12 @@ async function loadHasil(){
 
     `;
 
+
     try{
 
         const hasil =
             await supabaseClient
-
             .from("hasil_ujian")
-
             .select(`
                 id,
                 siswa_id,
@@ -799,7 +1128,6 @@ async function loadHasil(){
                 waktu_selesai,
                 created_at
             `)
-
             .order(
                 "created_at",
                 {
@@ -816,7 +1144,9 @@ async function loadHasil(){
 
 
         semuaHasil =
-            hasil.data || [];
+            urutData(
+                hasil.data || []
+            );
 
 
         isiFilter();
@@ -824,12 +1154,29 @@ async function loadHasil(){
         filterData();
 
 
+        showMessage(
+            "Data hasil ujian berhasil dimuat.",
+            "success"
+        );
+
+
+        setTimeout(()=>{
+
+            document.getElementById(
+                "message"
+            ).className = "message";
+
+        },2500);
+
+
     }catch(error){
 
         console.error(error);
 
         semuaHasil = [];
+
         hasilTampil = [];
+
 
         body.innerHTML = `
 
@@ -853,6 +1200,7 @@ async function loadHasil(){
 
         `;
 
+
         showMessage(
             "Gagal memuat data hasil ujian: " +
             error.message,
@@ -870,9 +1218,9 @@ async function loadHasil(){
 
 function isiFilter(){
 
-    const ujianSelect =
+    const rombelSelect =
         document.getElementById(
-            "filterUjian"
+            "filterRombel"
         );
 
     const mapelSelect =
@@ -880,125 +1228,253 @@ function isiFilter(){
             "filterMapel"
         );
 
+    const ujianSelect =
+        document.getElementById(
+            "filterUjian"
+        );
 
-    const daftarUjian =
+
+    /* =========================
+       SIMPAN NILAI SEBELUMNYA
+    ========================= */
+
+    const rombelLama =
+        rombelSelect.value;
+
+    const mapelLama =
+        mapelSelect.value;
+
+    const ujianLama =
+        ujianSelect.value;
+
+
+    /* =========================
+       ROMBEL
+    ========================= */
+
+    const daftarRombel =
         [
             ...new Set(
+
                 semuaHasil
 
                 .map(
                     x =>
-                    x.jenis_ujian
+                    normalisasiKelas(
+                        x.kelas
+                    )
                 )
 
                 .filter(Boolean)
-            )
-        ];
 
+            )
+        ]
+        .sort(
+            (a,b)=>
+                nilaiUrutKelas(a) -
+                nilaiUrutKelas(b)
+        );
+
+
+    rombelSelect.innerHTML = `
+
+        <option value="">
+            Semua Rombel
+        </option>
+
+    `;
+
+
+    daftarRombel.forEach(
+        rombel=>{
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                rombel;
+
+            option.textContent =
+                "Kelas " + rombel;
+
+            rombelSelect.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    /* =========================
+       MAPEL
+    ========================= */
 
     const daftarMapel =
         [
             ...new Set(
+
                 semuaHasil
 
                 .map(
                     x =>
-                    x.mata_pelajaran
+                    String(
+                        x.mata_pelajaran ||
+                        ""
+                    ).trim()
                 )
 
                 .filter(Boolean)
+
             )
-        ];
-
-
-    ujianSelect.innerHTML = `
-        <option value="">
-            Semua Ujian
-        </option>
-    `;
-
-
-    daftarUjian
-    .sort(
-        (a,b) =>
-        String(a)
-        .localeCompare(
-            String(b),
-            "id"
-        )
-    )
-    .forEach(x=>{
-
-        const option =
-            document.createElement(
-                "option"
-            );
-
-        option.value =
-            x;
-
-        option.textContent =
-            x;
-
-        ujianSelect.appendChild(
-            option
+        ]
+        .sort(
+            (a,b)=>
+                a.localeCompare(
+                    b,
+                    "id"
+                )
         );
-
-    });
 
 
     mapelSelect.innerHTML = `
+
         <option value="">
             Semua Mata Pelajaran
         </option>
+
     `;
 
 
-    daftarMapel
-    .sort(
-        (a,b) =>
-        String(a)
-        .localeCompare(
-            String(b),
-            "id"
-        )
-    )
-    .forEach(x=>{
+    daftarMapel.forEach(
+        mapel=>{
 
-        const option =
-            document.createElement(
-                "option"
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                mapel;
+
+            option.textContent =
+                mapel;
+
+            mapelSelect.appendChild(
+                option
             );
 
-        option.value =
-            x;
+        }
+    );
 
-        option.textContent =
-            x;
 
-        mapelSelect.appendChild(
-            option
+    /* =========================
+       JENIS UJIAN
+    ========================= */
+
+    const daftarUjian =
+        [
+            ...new Set(
+
+                semuaHasil
+
+                .map(
+                    x =>
+                    String(
+                        x.jenis_ujian ||
+                        ""
+                    ).trim()
+                )
+
+                .filter(Boolean)
+
+            )
+        ]
+        .sort(
+            (a,b)=>
+                a.localeCompare(
+                    b,
+                    "id"
+                )
         );
 
-    });
 
-}
+    ujianSelect.innerHTML = `
+
+        <option value="">
+            Semua Jenis Ujian
+        </option>
+
+    `;
 
 
-/* =====================================================
-   NORMALISASI KELAS
-===================================================== */
+    daftarUjian.forEach(
+        ujian=>{
 
-function normalisasiKelas(value){
+            const option =
+                document.createElement(
+                    "option"
+                );
 
-    return String(
-        value ?? ""
-    )
-    .toLowerCase()
-    .replace(
-        /\s+/g,
-        ""
+            option.value =
+                ujian;
+
+            option.textContent =
+                ujian;
+
+            ujianSelect.appendChild(
+                option
+            );
+
+        }
     );
+
+
+    /* =========================
+       KEMBALIKAN PILIHAN
+    ========================= */
+
+    if(
+        [...rombelSelect.options]
+        .some(
+            x =>
+            x.value === rombelLama
+        )
+    ){
+
+        rombelSelect.value =
+            rombelLama;
+
+    }
+
+
+    if(
+        [...mapelSelect.options]
+        .some(
+            x =>
+            x.value === mapelLama
+        )
+    ){
+
+        mapelSelect.value =
+            mapelLama;
+
+    }
+
+
+    if(
+        [...ujianSelect.options]
+        .some(
+            x =>
+            x.value === ujianLama
+        )
+    ){
+
+        ujianSelect.value =
+            ujianLama;
+
+    }
 
 }
 
@@ -1009,21 +1485,21 @@ function normalisasiKelas(value){
 
 function filterData(){
 
-    const kelas =
+    const rombel =
         document.getElementById(
-            "filterKelas"
-        ).value;
-
-
-    const ujian =
-        document.getElementById(
-            "filterUjian"
+            "filterRombel"
         ).value;
 
 
     const mapel =
         document.getElementById(
             "filterMapel"
+        ).value;
+
+
+    const ujian =
+        document.getElementById(
+            "filterUjian"
         ).value;
 
 
@@ -1044,32 +1520,43 @@ function filterData(){
                 );
 
 
-            const cocokKelas =
-                !kelas ||
-                nilaiKelas.startsWith(
-                    kelas
-                );
+            const cocokRombel =
+                !rombel ||
+                nilaiKelas === rombel;
 
 
-            const cocokUjian =
-                !ujian ||
+            const nilaiMapel =
                 String(
-                    x.jenis_ujian || ""
-                ) === ujian;
+                    x.mata_pelajaran ||
+                    ""
+                )
+                .trim();
 
 
             const cocokMapel =
                 !mapel ||
+                nilaiMapel === mapel;
+
+
+            const nilaiUjian =
                 String(
-                    x.mata_pelajaran || ""
-                ) === mapel;
+                    x.jenis_ujian ||
+                    ""
+                )
+                .trim();
+
+
+            const cocokUjian =
+                !ujian ||
+                nilaiUjian === ujian;
 
 
             const teks =
                 (
 
                     String(
-                        x.nama_siswa || ""
+                        x.nama_siswa ||
+                        ""
                     )
 
                     + " "
@@ -1077,7 +1564,8 @@ function filterData(){
                     +
 
                     String(
-                        x.nisn || ""
+                        x.nisn ||
+                        ""
                     )
 
                     + " "
@@ -1085,7 +1573,8 @@ function filterData(){
                     +
 
                     String(
-                        x.kelas || ""
+                        x.kelas ||
+                        ""
                     )
 
                     + " "
@@ -1093,7 +1582,8 @@ function filterData(){
                     +
 
                     String(
-                        x.mata_pelajaran || ""
+                        x.mata_pelajaran ||
+                        ""
                     )
 
                 )
@@ -1108,129 +1598,19 @@ function filterData(){
 
 
             return (
-
-                cocokKelas &&
-
-                cocokUjian &&
-
+                cocokRombel &&
                 cocokMapel &&
-
+                cocokUjian &&
                 cocokSearch
-
             );
 
         });
 
 
-    /* =================================================
-       URUTKAN HASIL
-       
-       1. Kelas
-       2. Mata Pelajaran
-       3. Nama Siswa
-       4. Waktu
-       
-       SESI TIDAK DIJADIKAN PEMISAH
-    ================================================= */
-
-    hasilTampil.sort(
-        (a,b)=>{
-
-            const kelasA =
-                normalisasiKelas(
-                    a.kelas
-                );
-
-            const kelasB =
-                normalisasiKelas(
-                    b.kelas
-                );
-
-
-            if(
-                kelasA !== kelasB
-            ){
-
-                return kelasA.localeCompare(
-                    kelasB,
-                    "id"
-                );
-
-            }
-
-
-            const mapelA =
-                String(
-                    a.mata_pelajaran || ""
-                );
-
-
-            const mapelB =
-                String(
-                    b.mata_pelajaran || ""
-                );
-
-
-            if(
-                mapelA !== mapelB
-            ){
-
-                return mapelA.localeCompare(
-                    mapelB,
-                    "id"
-                );
-
-            }
-
-
-            const namaA =
-                String(
-                    a.nama_siswa || ""
-                )
-                .toLowerCase();
-
-
-            const namaB =
-                String(
-                    b.nama_siswa || ""
-                )
-                .toLowerCase();
-
-
-            if(
-                namaA !== namaB
-            ){
-
-                return namaA.localeCompare(
-                    namaB,
-                    "id"
-                );
-
-            }
-
-
-            const waktuA =
-                new Date(
-                    a.waktu_selesai ||
-                    a.created_at ||
-                    0
-                )
-                .getTime();
-
-
-            const waktuB =
-                new Date(
-                    b.waktu_selesai ||
-                    b.created_at ||
-                    0
-                )
-                .getTime();
-
-
-            return waktuA - waktuB;
-
-        }
-    );
+    hasilTampil =
+        urutData(
+            hasilTampil
+        );
 
 
     updateStatistik(
@@ -1241,6 +1621,117 @@ function filterData(){
     tampilkanRows(
         hasilTampil
     );
+
+
+    updateSelectionInfo();
+
+}
+
+
+/* =====================================================
+   INFO PILIHAN
+===================================================== */
+
+function updateSelectionInfo(){
+
+    const rombel =
+        document.getElementById(
+            "filterRombel"
+        ).value;
+
+    const mapel =
+        document.getElementById(
+            "filterMapel"
+        ).value;
+
+    const ujian =
+        document.getElementById(
+            "filterUjian"
+        ).value;
+
+
+    const info =
+        document.getElementById(
+            "selectionInfo"
+        );
+
+
+    let teks = "";
+
+
+    if(!rombel && !mapel && !ujian){
+
+        teks =
+            "Menampilkan: " +
+            "<strong>Semua Data</strong>";
+
+    }else{
+
+        teks =
+            "Menampilkan: ";
+
+
+        if(rombel){
+
+            teks +=
+                "<strong>Kelas " +
+                escapeHtml(
+                    rombel
+                ) +
+                "</strong>";
+
+        }
+
+
+        if(mapel){
+
+            if(rombel){
+
+                teks += " • ";
+
+            }
+
+            teks +=
+                "<strong>" +
+                escapeHtml(
+                    mapel
+                ) +
+                "</strong>";
+
+        }
+
+
+        if(ujian){
+
+            if(
+                rombel ||
+                mapel
+            ){
+
+                teks += " • ";
+
+            }
+
+            teks +=
+                "<strong>" +
+                escapeHtml(
+                    ujian
+                ) +
+                "</strong>";
+
+        }
+
+    }
+
+
+    teks +=
+        " — " +
+        hasilTampil.length +
+        " data";
+
+
+    info.innerHTML =
+        teks;
 
 }
 
@@ -1291,10 +1782,21 @@ function tampilkanRows(data){
                     ) || 0;
 
 
-                const kelasNilai =
-                    nilai >= 70
-                    ? "nilai lulus"
-                    : "nilai remedial";
+                let kelasNilai =
+                    "nilai";
+
+
+                if(nilai >= 70){
+
+                    kelasNilai +=
+                        " lulus";
+
+                }else{
+
+                    kelasNilai +=
+                        " remedial";
+
+                }
 
 
                 const status =
@@ -1338,85 +1840,110 @@ function tampilkanRows(data){
 
                 return `
 
-                    <tr>
+                <tr>
 
-                        <td>
-                            ${index + 1}
-                        </td>
+                    <td>
+                        ${index + 1}
+                    </td>
 
-                        <td>
-                            <strong>
-                                ${escapeHtml(
-                                    x.nama_siswa
-                                )}
-                            </strong>
-                        </td>
 
-                        <td>
+                    <td>
+
+                        <strong>
                             ${escapeHtml(
-                                x.nisn
+                                x.nama_siswa
                             )}
-                        </td>
+                        </strong>
 
-                        <td>
-                            ${escapeHtml(
+                    </td>
+
+
+                    <td>
+                        ${escapeHtml(
+                            x.nisn
+                        )}
+                    </td>
+
+
+                    <td>
+                        ${escapeHtml(
+                            normalisasiKelas(
                                 x.kelas
-                            )}
-                        </td>
+                            )
+                        )}
+                    </td>
 
-                        <td>
+
+                    <td>
+                        ${escapeHtml(
+                            x.jenis_ujian
+                        )}
+                    </td>
+
+
+                    <td>
+                        ${escapeHtml(
+                            x.mata_pelajaran
+                        )}
+                    </td>
+
+
+                    <td>
+                        ${Number(
+                            x.jumlah_soal
+                        ) || 0}
+                    </td>
+
+
+                    <td>
+                        ${Number(
+                            x.jumlah_benar
+                        ) || 0}
+                    </td>
+
+
+                    <td>
+                        ${Number(
+                            x.jumlah_salah
+                        ) || 0}
+                    </td>
+
+
+                    <td>
+
+                        <span
+                            class="${kelasNilai}">
+
+                            ${nilai.toFixed(2)}
+
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <span
+                            class="${badge}">
+
                             ${escapeHtml(
-                                x.mata_pelajaran
+                                status
                             )}
-                        </td>
 
-                        <td>
-                            ${escapeHtml(
-                                x.jenis_ujian
-                            )}
-                        </td>
+                        </span>
 
-                        <td>
-                            ${Number(
-                                x.jumlah_soal
-                            ) || 0}
-                        </td>
+                    </td>
 
-                        <td>
-                            ${Number(
-                                x.jumlah_benar
-                            ) || 0}
-                        </td>
 
-                        <td>
-                            ${Number(
-                                x.jumlah_salah
-                            ) || 0}
-                        </td>
+                    <td>
 
-                        <td>
-                            <span
-                                class="${kelasNilai}">
-                                ${nilai.toFixed(2)}
-                            </span>
-                        </td>
+                        ${formatTanggal(
+                            x.waktu_selesai
+                        )}
 
-                        <td>
-                            <span
-                                class="${badge}">
-                                ${escapeHtml(
-                                    status
-                                )}
-                            </span>
-                        </td>
+                    </td>
 
-                        <td>
-                            ${formatTanggal(
-                                x.waktu_selesai
-                            )}
-                        </td>
-
-                    </tr>
+                </tr>
 
                 `;
 
@@ -1467,39 +1994,45 @@ function updateStatistik(data){
         : 0;
 
 
-    document.getElementById(
+    document
+    .getElementById(
         "totalData"
-    ).textContent =
+    )
+    .textContent =
         total;
 
 
-    document.getElementById(
+    document
+    .getElementById(
         "rataNilai"
-    ).textContent =
+    )
+    .textContent =
         rata.toFixed(1);
 
 
-    document.getElementById(
+    document
+    .getElementById(
         "tertinggi"
-    ).textContent =
+    )
+    .textContent =
         tertinggi.toFixed(1);
 
 
-    document.getElementById(
+    document
+    .getElementById(
         "terendah"
-    ).textContent =
+    )
+    .textContent =
         terendah.toFixed(1);
 
 }
 
 
 /* =====================================================
-   DOWNLOAD EXCEL
-   FORMAT XLS HTML
-   NILAI TETAP TERBACA DI EXCEL
+   DOWNLOAD EXCEL TERPILIH
 ===================================================== */
 
-function downloadExcel(){
+function downloadExcelTerpilih(){
 
     if(!hasilTampil.length){
 
@@ -1512,403 +2045,311 @@ function downloadExcel(){
     }
 
 
-    /*
-     * Pastikan urutan data tetap rapi
-     * sebelum dibuat file.
-     */
+    buatFileExcel(
+        hasilTampil,
+        "pilihan"
+    );
+
+}
+
+
+/* =====================================================
+   DOWNLOAD SEMUA
+===================================================== */
+
+function downloadExcelSemua(){
+
+    if(!semuaHasil.length){
+
+        alert(
+            "Belum ada data hasil ujian."
+        );
+
+        return;
+
+    }
+
 
     const data =
-        [...hasilTampil];
+        urutData(
+            semuaHasil
+        );
 
 
-    let html = `
+    buatFileExcel(
+        data,
+        "semua"
+    );
 
-        <html>
-
-        <head>
-
-            <meta charset="UTF-8">
-
-            <style>
-
-                body{
-                    font-family:Arial;
-                }
-
-                table{
-                    border-collapse:collapse;
-                    width:100%;
-                }
-
-                th{
-                    background:#dbeafe;
-                    color:#1e3a8a;
-                    font-weight:bold;
-                    border:1px solid #999;
-                    padding:8px;
-                    text-align:center;
-                }
-
-                td{
-                    border:1px solid #999;
-                    padding:7px;
-                }
-
-                .center{
-                    text-align:center;
-                }
-
-                .nilai{
-                    font-weight:bold;
-                    mso-number-format:"0.00";
-                }
-
-                .judul{
-                    font-size:16px;
-                    font-weight:bold;
-                    text-align:center;
-                }
-
-            </style>
-
-        </head>
-
-        <body>
-
-            <table>
-
-                <tr>
-
-                    <td
-                        colspan="12"
-                        class="judul">
-
-                        HASIL UJIAN
-                        ${
-                            getJudulDownload()
-                        }
-
-                    </td>
-
-                </tr>
-
-                <tr>
-
-                    <th>No</th>
-                    <th>Nama Siswa</th>
-                    <th>NISN</th>
-                    <th>Kelas</th>
-                    <th>Mata Pelajaran</th>
-                    <th>Jenis Ujian</th>
-                    <th>Jumlah Soal</th>
-                    <th>Benar</th>
-                    <th>Salah</th>
-                    <th>Nilai</th>
-                    <th>Status</th>
-                    <th>Waktu Selesai</th>
-
-                </tr>
-
-    `;
+}
 
 
-    data.forEach(
-        (x,index)=>{
+/* =====================================================
+   BUAT FILE EXCEL XLSX
+===================================================== */
 
-            const nilai =
-                Number(
-                    x.nilai
-                ) || 0;
+function buatFileExcel(
+    data,
+    mode
+){
 
+    try{
 
-            html += `
+        if(
+            typeof XLSX ===
+            "undefined"
+        ){
 
-                <tr>
+            alert(
+                "Library Excel belum termuat. " +
+                "Silakan refresh halaman."
+            );
 
-                    <td class="center">
-                        ${index + 1}
-                    </td>
-
-                    <td>
-                        ${escapeExcel(
-                            x.nama_siswa
-                        )}
-                    </td>
-
-                    <td
-                        style="
-                            mso-number-format:'\\@';
-                        ">
-
-                        ${escapeExcel(
-                            x.nisn
-                        )}
-
-                    </td>
-
-                    <td>
-                        ${escapeExcel(
-                            x.kelas
-                        )}
-                    </td>
-
-                    <td>
-                        ${escapeExcel(
-                            x.mata_pelajaran
-                        )}
-                    </td>
-
-                    <td>
-                        ${escapeExcel(
-                            x.jenis_ujian
-                        )}
-                    </td>
-
-                    <td class="center">
-                        ${Number(
-                            x.jumlah_soal
-                        ) || 0}
-                    </td>
-
-                    <td class="center">
-                        ${Number(
-                            x.jumlah_benar
-                        ) || 0}
-                    </td>
-
-                    <td class="center">
-                        ${Number(
-                            x.jumlah_salah
-                        ) || 0}
-                    </td>
-
-                    <td
-                        class="nilai center">
-
-                        ${nilai.toFixed(2)}
-
-                    </td>
-
-                    <td>
-                        ${escapeExcel(
-                            x.status ||
-                            "Selesai"
-                        )}
-                    </td>
-
-                    <td>
-                        ${escapeExcel(
-                            formatTanggal(
-                                x.waktu_selesai
-                            )
-                        )}
-                    </td>
-
-                </tr>
-
-            `;
+            return;
 
         }
-    );
 
 
-    html += `
+        /* =========================
+           DATA EXCEL
+        ========================= */
 
-            </table>
+        const rows =
+            data.map(
+                (x,index)=>({
 
-        </body>
+                    "No":
+                        index + 1,
 
-        </html>
+                    "Nama Siswa":
+                        x.nama_siswa || "",
 
-    `;
+                    "NISN":
+                        String(
+                            x.nisn || ""
+                        ),
+
+                    "Kelas":
+                        normalisasiKelas(
+                            x.kelas
+                        ),
+
+                    "Jenis Ujian":
+                        x.jenis_ujian || "",
+
+                    "Mata Pelajaran":
+                        x.mata_pelajaran || "",
+
+                    "Jumlah Soal":
+                        Number(
+                            x.jumlah_soal
+                        ) || 0,
+
+                    "Benar":
+                        Number(
+                            x.jumlah_benar
+                        ) || 0,
+
+                    "Salah":
+                        Number(
+                            x.jumlah_salah
+                        ) || 0,
+
+                    "Nilai":
+                        Number(
+                            x.nilai
+                        ) || 0,
+
+                    "Status":
+                        x.status ||
+                        "Selesai",
+
+                    "Waktu Selesai":
+                        formatTanggal(
+                            x.waktu_selesai
+                        )
+
+                })
+            );
 
 
-    const blob =
-        new Blob(
-            [
-                "\uFEFF" +
-                html
-            ],
-            {
-                type:
-                "application/vnd.ms-excel;charset=utf-8;"
+        /* =========================
+           BUAT WORKSHEET
+        ========================= */
+
+        const worksheet =
+            XLSX.utils.json_to_sheet(
+                rows
+            );
+
+
+        /* =========================
+           LEBAR KOLOM
+        ========================= */
+
+        worksheet["!cols"] = [
+
+            {wch:6},
+
+            {wch:30},
+
+            {wch:18},
+
+            {wch:10},
+
+            {wch:22},
+
+            {wch:28},
+
+            {wch:14},
+
+            {wch:10},
+
+            {wch:10},
+
+            {wch:12},
+
+            {wch:15},
+
+            {wch:22}
+
+        ];
+
+
+        /* =========================
+           FORMAT NILAI
+        ========================= */
+
+        for(
+            let i = 2;
+            i <= rows.length + 1;
+            i++
+        ){
+
+            const cell =
+                worksheet["J" + i];
+
+            if(cell){
+
+                cell.t =
+                    "n";
+
+                cell.z =
+                    "0.00";
+
             }
+
+        }
+
+
+        /* =========================
+           BUAT WORKBOOK
+        ========================= */
+
+        const workbook =
+            XLSX.utils.book_new();
+
+
+        XLSX.utils.book_append_sheet(
+            workbook,
+            worksheet,
+            "Hasil Ujian"
         );
 
 
-    const url =
-        URL.createObjectURL(
-            blob
-        );
+        /* =========================
+           NAMA FILE
+        ========================= */
+
+        const rombel =
+            document.getElementById(
+                "filterRombel"
+            ).value;
 
 
-    const link =
-        document.createElement(
-            "a"
-        );
+        const mapel =
+            document.getElementById(
+                "filterMapel"
+            ).value;
 
 
-    link.href =
-        url;
+        let namaFile =
+            "Hasil-Ujian";
 
 
-    link.download =
-        buatNamaFile();
+        if(rombel){
+
+            namaFile +=
+                "-" +
+                bersihkanNamaFile(
+                    rombel
+                );
+
+        }
 
 
-    document.body.appendChild(
-        link
-    );
+        if(mapel){
+
+            namaFile +=
+                "-" +
+                bersihkanNamaFile(
+                    mapel
+                );
+
+        }
 
 
-    link.click();
+        if(mode === "semua"){
+
+            namaFile +=
+                "-Semua-Data";
+
+        }
 
 
-    document.body.removeChild(
-        link
-    );
-
-
-    URL.revokeObjectURL(
-        url
-    );
-
-
-    showMessage(
-        "✅ File Excel berhasil dibuat. Nilai dan susunan data sudah diperbaiki.",
-        "success"
-    );
-
-}
-
-
-/* =====================================================
-   JUDUL DOWNLOAD
-===================================================== */
-
-function getJudulDownload(){
-
-    const kelas =
-        document.getElementById(
-            "filterKelas"
-        ).value;
-
-
-    const mapel =
-        document.getElementById(
-            "filterMapel"
-        ).value;
-
-
-    const ujian =
-        document.getElementById(
-            "filterUjian"
-        ).value;
-
-
-    const bagian = [];
-
-
-    if(kelas){
-
-        bagian.push(
-            "Kelas " + kelas
-        );
-
-    }
-
-
-    if(mapel){
-
-        bagian.push(
-            mapel
-        );
-
-    }
-
-
-    if(ujian){
-
-        bagian.push(
-            ujian
-        );
-
-    }
-
-
-    return bagian.length
-        ? "— " + escapeExcel(
-            bagian.join(" — ")
-          )
-        : "";
-
-}
-
-
-/* =====================================================
-   NAMA FILE
-===================================================== */
-
-function buatNamaFile(){
-
-    const kelas =
-        document.getElementById(
-            "filterKelas"
-        ).value;
-
-
-    const mapel =
-        document.getElementById(
-            "filterMapel"
-        ).value;
-
-
-    let nama =
-        "Hasil-Ujian";
-
-
-    if(mapel){
-
-        nama +=
+        namaFile +=
             "-" +
-            bersihkanNamaFile(
-                mapel
-            );
-
-    }
+            tanggalFile() +
+            ".xlsx";
 
 
-    if(kelas){
+        /* =========================
+           DOWNLOAD
+        ========================= */
 
-        nama +=
-            "-Kelas-" +
-            bersihkanNamaFile(
-                kelas
-            );
-
-    }
-
-
-    const sekarang =
-        new Date();
-
-
-    const tanggal =
-        sekarang
-        .toISOString()
-        .slice(
-            0,
-            10
+        XLSX.writeFile(
+            workbook,
+            namaFile
         );
 
 
-    nama +=
-        "-" +
-        tanggal;
+        showMessage(
+            "File Excel berhasil dibuat: " +
+            namaFile,
+            "success"
+        );
 
 
-    return nama +
-        ".xls";
+        setTimeout(()=>{
+
+            document.getElementById(
+                "message"
+            ).className =
+                "message";
+
+        },3500);
+
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Gagal membuat file Excel: " +
+            error.message
+        );
+
+    }
 
 }
 
@@ -1917,55 +2358,70 @@ function buatNamaFile(){
    BERSIHKAN NAMA FILE
 ===================================================== */
 
-function bersihkanNamaFile(value){
+function bersihkanNamaFile(
+    value
+){
 
     return String(
         value || ""
     )
+    .trim()
     .replace(
-        /[\\/:*?"<>|]+/g,
-        "-"
+        /[^a-zA-Z0-9À-ÿ\s_-]/g,
+        ""
     )
     .replace(
         /\s+/g,
         "-"
     )
-    .replace(
-        /-+/g,
-        "-"
-    )
-    .replace(
-        /^-|-$/g,
-        ""
+    .substring(
+        0,
+        50
     );
 
 }
 
 
 /* =====================================================
-   ESCAPE EXCEL HTML
+   TANGGAL UNTUK NAMA FILE
 ===================================================== */
 
-function escapeExcel(value){
+function tanggalFile(){
 
-    return String(
-        value ?? ""
-    )
-    .replace(
-        /&/g,
-        "&amp;"
-    )
-    .replace(
-        /</g,
-        "&lt;"
-    )
-    .replace(
-        />/g,
-        "&gt;"
-    )
-    .replace(
-        /"/g,
-        "&quot;"
+    const d =
+        new Date();
+
+
+    const tahun =
+        d.getFullYear();
+
+
+    const bulan =
+        String(
+            d.getMonth() + 1
+        )
+        .padStart(
+            2,
+            "0"
+        );
+
+
+    const tanggal =
+        String(
+            d.getDate()
+        )
+        .padStart(
+            2,
+            "0"
+        );
+
+
+    return (
+        tahun +
+        "-" +
+        bulan +
+        "-" +
+        tanggal
     );
 
 }
@@ -1985,9 +2441,7 @@ function formatTanggal(value){
 
 
     const d =
-        new Date(
-            value
-        );
+        new Date(value);
 
 
     if(
@@ -2069,5 +2523,5 @@ loadHasil();
 </script>
 
 </body>
+
 </html>
-```
