@@ -1,5 +1,5 @@
+```html
 <!DOCTYPE html>
-
 <html lang="id">
 
 <head>
@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Hasil Ujian - Guru | RUANG EXAM</title>
+<title>Hasil Ujian Guru | RUANG EXAM</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -56,6 +56,7 @@ body{
 .header-buttons{
     display:flex;
     gap:8px;
+    flex-wrap:wrap;
 }
 
 .btn{
@@ -116,10 +117,10 @@ body{
     border-radius:12px;
     margin-bottom:20px;
     font-size:13px;
-    line-height:1.6;
+    line-height:1.7;
 }
 
-/* ================= STAT ================= */
+/* ================= STATS ================= */
 
 .stats{
     display:grid;
@@ -173,6 +174,13 @@ input{
     padding:10px 12px;
     font-size:13px;
     background:white;
+    outline:none;
+}
+
+select:focus,
+input:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.08);
 }
 
 .search{
@@ -192,7 +200,7 @@ input{
 table{
     width:100%;
     border-collapse:collapse;
-    min-width:1200px;
+    min-width:1250px;
 }
 
 th{
@@ -290,6 +298,91 @@ tr:hover td{
     padding:30px;
 }
 
+/* ================= MODAL ================= */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.65);
+    z-index:1000;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+}
+
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:700px;
+    max-height:90vh;
+    overflow:auto;
+
+    border-radius:18px;
+    padding:25px;
+
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+
+    margin-bottom:18px;
+}
+
+.modal-header h2{
+    font-size:20px;
+}
+
+.close{
+    border:none;
+    background:#fee2e2;
+    color:#991b1b;
+
+    width:34px;
+    height:34px;
+
+    border-radius:50%;
+
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.detail-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.detail-card{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    padding:12px;
+}
+
+.detail-card.full{
+    grid-column:1 / -1;
+}
+
+.detail-label{
+    font-size:11px;
+    color:#64748b;
+    margin-bottom:5px;
+}
+
+.detail-value{
+    font-size:14px;
+    font-weight:bold;
+    color:#0f172a;
+    line-height:1.5;
+}
+
 /* ================= PRINT ================= */
 
 @media print{
@@ -330,7 +423,7 @@ tr:hover td{
 
 }
 
-@media(max-width:500px){
+@media(max-width:600px){
 
     .stats{
         grid-template-columns:1fr;
@@ -338,6 +431,26 @@ tr:hover td{
 
     .container{
         padding:0 12px;
+    }
+
+    .header{
+        padding:18px;
+    }
+
+    .header-buttons{
+        width:100%;
+    }
+
+    .header-buttons button{
+        flex:1;
+    }
+
+    .detail-grid{
+        grid-template-columns:1fr;
+    }
+
+    .detail-card.full{
+        grid-column:auto;
     }
 
 }
@@ -348,228 +461,219 @@ tr:hover td{
 
 <body>
 
-<!-- ================= HEADER ================= -->
 
 <header class="header">
 
-```
-<div>
+    <div>
 
-    <h1>
-        📊 HASIL UJIAN
-    </h1>
+        <h1>
+            📊 HASIL UJIAN GURU
+        </h1>
 
-    <p>
-        RUANG EXAM — SMP Negeri 3 Sibolga
-    </p>
+        <p>
+            RUANG EXAM — SMP Negeri 3 Sibolga
+        </p>
 
-</div>
+    </div>
 
+    <div class="header-buttons">
 
-<div class="header-buttons">
+        <button
+            class="btn btn-back"
+            onclick="kembaliDashboard()">
 
-    <button
-        class="btn btn-back"
-        onclick="kembaliDashboard()">
+            ← Dashboard
 
-        ← Dashboard
+        </button>
 
-    </button>
+        <button
+            class="btn btn-refresh"
+            onclick="loadSemuaData()">
 
+            🔄 Refresh
 
-    <button
-        class="btn btn-refresh"
-        onclick="loadHasil()">
+        </button>
 
-        🔄 Refresh
-
-    </button>
-
-</div>
-```
+    </div>
 
 </header>
 
-<main class="container">
 
-<!-- ================= MESSAGE ================= -->
+<main class="container">
 
 <div
     id="message"
     class="message">
 </div>
 
-<!-- ================= INFO ================= -->
 
 <div class="info">
 
-```
-<strong>
-    📊 Hasil Ujian Guru
-</strong>
+    <strong>
+        👨‍🏫 Rekap Hasil Ujian
+    </strong>
 
-<br>
+    <br>
 
-Halaman ini menampilkan hasil ujian
-yang dibuat oleh Anda.
-Hasil guru lain tidak ditampilkan.
-```
+    Halaman ini menampilkan hasil ujian siswa
+    untuk ujian yang dibuat/ditugaskan kepada
+    guru yang sedang login.
+
+    <br>
+
+    <strong>
+        Guru tidak dapat melihat hasil ujian
+        guru lain.
+    </strong>
 
 </div>
 
-<!-- ================= STATISTIK ================= -->
 
 <section class="stats">
 
-```
-<div class="stat">
+    <div class="stat">
 
-    <div class="stat-icon">
-        👨‍🎓
+        <div class="stat-icon">
+            👨‍🎓
+        </div>
+
+        <div
+            id="totalHasil"
+            class="stat-number">
+            0
+        </div>
+
+        <div class="stat-label">
+            Total Peserta
+        </div>
+
     </div>
 
-    <div
-        id="totalHasil"
-        class="stat-number">
-        0
+
+    <div class="stat">
+
+        <div class="stat-icon">
+            🟢
+        </div>
+
+        <div
+            id="totalSelesai"
+            class="stat-number">
+            0
+        </div>
+
+        <div class="stat-label">
+            Ujian Selesai
+        </div>
+
     </div>
 
-    <div class="stat-label">
-        Total Peserta
+
+    <div class="stat">
+
+        <div class="stat-icon">
+            💯
+        </div>
+
+        <div
+            id="rataNilai"
+            class="stat-number">
+            0
+        </div>
+
+        <div class="stat-label">
+            Rata-rata Nilai
+        </div>
+
     </div>
 
-</div>
 
+    <div class="stat">
 
-<div class="stat">
+        <div class="stat-icon">
+            🏆
+        </div>
 
-    <div class="stat-icon">
-        🟢
+        <div
+            id="nilaiTertinggi"
+            class="stat-number">
+            0
+        </div>
+
+        <div class="stat-label">
+            Nilai Tertinggi
+        </div>
+
     </div>
-
-    <div
-        id="totalSelesai"
-        class="stat-number">
-        0
-    </div>
-
-    <div class="stat-label">
-        Ujian Selesai
-    </div>
-
-</div>
-
-
-<div class="stat">
-
-    <div class="stat-icon">
-        💯
-    </div>
-
-    <div
-        id="rataNilai"
-        class="stat-number">
-        0
-    </div>
-
-    <div class="stat-label">
-        Rata-rata Nilai
-    </div>
-
-</div>
-
-
-<div class="stat">
-
-    <div class="stat-icon">
-        🏆
-    </div>
-
-    <div
-        id="nilaiTertinggi"
-        class="stat-number">
-        0
-    </div>
-
-    <div class="stat-label">
-        Nilai Tertinggi
-    </div>
-
-</div>
-```
 
 </section>
 
-<!-- ================= FILTER ================= -->
 
 <section class="filter-box">
 
-```
-<select
-    id="filterKelas"
-    onchange="filterData()">
+    <select
+        id="filterKelas"
+        onchange="filterData()">
 
-    <option value="">
-        Semua Kelas
-    </option>
+        <option value="">
+            Semua Kelas
+        </option>
 
-    <option value="7">
-        Kelas 7
-    </option>
+        <option value="7">
+            Kelas 7
+        </option>
 
-    <option value="8">
-        Kelas 8
-    </option>
+        <option value="8">
+            Kelas 8
+        </option>
 
-    <option value="9">
-        Kelas 9
-    </option>
+        <option value="9">
+            Kelas 9
+        </option>
 
-</select>
-
-
-<select
-    id="filterUjian"
-    onchange="filterData()">
-
-    <option value="">
-        Semua Ujian
-    </option>
-
-</select>
+    </select>
 
 
-<select
-    id="filterMapel"
-    onchange="filterData()">
+    <select
+        id="filterUjian"
+        onchange="filterData()">
 
-    <option value="">
-        Semua Mata Pelajaran
-    </option>
+        <option value="">
+            Semua Ujian
+        </option>
 
-</select>
-
-
-<input
-    id="searchInput"
-    class="search"
-    type="text"
-    placeholder="🔎 Cari nama siswa / NISN..."
-    oninput="filterData()">
+    </select>
 
 
-<button
-    class="btn btn-refresh"
-    onclick="window.print()">
+    <select
+        id="filterMapel"
+        onchange="filterData()">
 
-    🖨️ Cetak
+        <option value="">
+            Semua Mata Pelajaran
+        </option>
 
-</button>
-```
+    </select>
+
+
+    <input
+        id="searchInput"
+        class="search"
+        type="text"
+        placeholder="🔎 Cari nama siswa / NISN..."
+        oninput="filterData()">
+
+
+    <button
+        class="btn btn-refresh"
+        onclick="window.print()">
+
+        🖨️ Cetak
+
+    </button>
 
 </section>
 
-<!-- ================= TABLE ================= -->
 
 <div class="table-box">
 
@@ -605,9 +709,7 @@ Hasil guru lain tidak ditampilkan.
     colspan="13"
     class="empty">
 
-```
-⏳ Memuat hasil ujian...
-```
+    ⏳ Memuat hasil ujian...
 
 </td>
 
@@ -621,18 +723,52 @@ Hasil guru lain tidak ditampilkan.
 
 </main>
 
-<!-- ================= FOOTER ================= -->
 
 <footer class="footer">
 
-```
-RUANG EXAM Online
-<br>
+    RUANG EXAM Online
+    <br>
 
-Dibuat oleh Mr. Rahmat Batubara, S.T.P
-```
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
 
 </footer>
+
+
+<!-- ================= MODAL DETAIL ================= -->
+
+<div
+    id="detailModal"
+    class="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2>
+                📋 Detail Hasil Ujian
+            </h2>
+
+            <button
+                class="close"
+                onclick="tutupDetail()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="detailContent"
+            class="detail-grid">
+
+        </div>
+
+    </div>
+
+</div>
+
 
 <script>
 
@@ -654,7 +790,7 @@ const supabaseClient =
 
 
 /* =====================================================
-   CEK LOGIN GURU
+   CEK LOGIN
 ===================================================== */
 
 const sessionRaw =
@@ -667,15 +803,12 @@ if(!sessionRaw){
 
 }
 
-
 let currentUser = null;
-
 
 try{
 
     currentUser =
         JSON.parse(sessionRaw);
-
 
     if(
         !currentUser ||
@@ -709,6 +842,10 @@ try{
 
 let semuaHasil = [];
 
+let semuaUjianGuru = [];
+
+let hasilTampil = [];
+
 
 /* =====================================================
    MESSAGE
@@ -731,16 +868,15 @@ function showMessage(text,type){
 
 
 /* =====================================================
-   LOAD HASIL GURU
+   LOAD SEMUA DATA
 ===================================================== */
 
-async function loadHasil(){
+async function loadSemuaData(){
 
     const body =
         document.getElementById(
             "hasilBody"
         );
-
 
     body.innerHTML = `
 
@@ -750,7 +886,7 @@ async function loadHasil(){
                 colspan="13"
                 class="empty">
 
-                ⏳ Memuat hasil ujian...
+                ⏳ Memuat data...
 
             </td>
 
@@ -758,19 +894,70 @@ async function loadHasil(){
 
     `;
 
-
     try{
 
         /*
-         * Kita ambil hasil ujian sekaligus
-         * dengan data ujian.
+         * 1. Ambil semua ujian.
          *
-         * Hanya ujian dengan guru_id
-         * sesuai akun guru yang login
-         * yang akan ditampilkan.
+         * TIDAK menggunakan relationship.
          */
 
-        const {data,error} =
+        const ujianResponse =
+            await supabaseClient
+            .from("ujian")
+            .select(`
+                id,
+                judul,
+                guru_id,
+                mata_pelajaran_id,
+                kelas_id,
+                jenis_ujian,
+                status,
+                created_at
+            `)
+            .eq(
+                "guru_id",
+                currentUser.id
+            );
+
+
+        if(ujianResponse.error){
+
+            throw ujianResponse.error;
+
+        }
+
+
+        semuaUjianGuru =
+            ujianResponse.data || [];
+
+
+        /*
+         * Jika guru belum mempunyai ujian.
+         */
+
+        if(!semuaUjianGuru.length){
+
+            semuaHasil = [];
+
+            isiFilter();
+
+            updateStatistik([]);
+
+            tampilkanRows([]);
+
+            return;
+
+        }
+
+
+        /*
+         * 2. Ambil hasil ujian.
+         *
+         * TIDAK ada JOIN.
+         */
+
+        const hasilResponse =
             await supabaseClient
             .from("hasil_ujian")
             .select(`
@@ -789,13 +976,7 @@ async function loadHasil(){
                 status,
                 waktu_mulai,
                 waktu_selesai,
-                created_at,
-
-                ujian (
-                    id,
-                    guru_id,
-                    judul
-                )
+                created_at
             `)
             .order(
                 "created_at",
@@ -805,63 +986,51 @@ async function loadHasil(){
             );
 
 
-        if(error){
+        if(hasilResponse.error){
 
-            throw error;
+            throw hasilResponse.error;
 
         }
 
 
+        const semuaHasilDatabase =
+            hasilResponse.data || [];
+
+
         /*
-         * Cari ID guru dari session.
-         *
-         * Sistem mendukung beberapa
-         * kemungkinan nama field.
+         * 3. Hanya ambil hasil dari ujian
+         *    milik guru yang sedang login.
          */
 
-        const guruId =
-            currentUser.id ||
-            currentUser.guru_id ||
-            currentUser.user_id;
-
-
-        if(!guruId){
-
-            throw new Error(
-                "ID guru tidak ditemukan pada sesi login."
+        const daftarUjianId =
+            new Set(
+                semuaUjianGuru.map(
+                    u => String(u.id)
+                )
             );
 
-        }
-
-
-        /*
-         * Filter hanya hasil dari ujian
-         * milik guru yang sedang login.
-         */
 
         semuaHasil =
-            (data || []).filter(x => {
-
-                return (
-                    x.ujian &&
-                    String(
-                        x.ujian.guru_id
-                    ) ===
-                    String(guruId)
-                );
-
-            });
+            semuaHasilDatabase.filter(
+                h =>
+                daftarUjianId.has(
+                    String(h.ujian_id)
+                )
+            );
 
 
         isiFilter();
 
-        tampilkanHasil();
+        updateStatistik(
+            semuaHasil
+        );
+
+        filterData();
 
 
     }catch(error){
 
         console.error(error);
-
 
         body.innerHTML = `
 
@@ -885,7 +1054,6 @@ async function loadHasil(){
 
         `;
 
-
         showMessage(
             "Gagal memuat data hasil ujian: " +
             error.message,
@@ -898,7 +1066,7 @@ async function loadHasil(){
 
 
 /* =====================================================
-   FILTER OPTION
+   FILTER
 ===================================================== */
 
 function isiFilter(){
@@ -908,37 +1076,33 @@ function isiFilter(){
             "filterUjian"
         );
 
-
     const mapelSelect =
         document.getElementById(
             "filterMapel"
         );
 
 
-    const ujian =
-        [
-            ...new Set(
-                semuaHasil
-                .map(
-                    x =>
-                    x.jenis_ujian
-                )
-                .filter(Boolean)
-            )
-        ];
+    const daftarUjian = [];
 
 
-    const mapel =
-        [
-            ...new Set(
-                semuaHasil
-                .map(
-                    x =>
-                    x.mata_pelajaran
-                )
-                .filter(Boolean)
-            )
-        ];
+    semuaHasil.forEach(x => {
+
+        const nama =
+            x.jenis_ujian ||
+            "Ujian";
+
+        if(
+            nama &&
+            !daftarUjian.includes(nama)
+        ){
+
+            daftarUjian.push(
+                nama
+            );
+
+        }
+
+    });
 
 
     ujianSelect.innerHTML = `
@@ -950,20 +1114,41 @@ function isiFilter(){
     `;
 
 
-    ujian.forEach(x=>{
+    daftarUjian
+    .sort()
+    .forEach(x => {
 
-        const option =
-            document.createElement(
-                "option"
+        ujianSelect.innerHTML += `
+
+            <option value="${escapeHtml(x)}">
+
+                ${escapeHtml(x)}
+
+            </option>
+
+        `;
+
+    });
+
+
+    const daftarMapel = [];
+
+
+    semuaHasil.forEach(x => {
+
+        const nama =
+            x.mata_pelajaran;
+
+        if(
+            nama &&
+            !daftarMapel.includes(nama)
+        ){
+
+            daftarMapel.push(
+                nama
             );
 
-        option.value = x;
-
-        option.textContent = x;
-
-        ujianSelect.appendChild(
-            option
-        );
+        }
 
     });
 
@@ -977,20 +1162,19 @@ function isiFilter(){
     `;
 
 
-    mapel.forEach(x=>{
+    daftarMapel
+    .sort()
+    .forEach(x => {
 
-        const option =
-            document.createElement(
-                "option"
-            );
+        mapelSelect.innerHTML += `
 
-        option.value = x;
+            <option value="${escapeHtml(x)}">
 
-        option.textContent = x;
+                ${escapeHtml(x)}
 
-        mapelSelect.appendChild(
-            option
-        );
+            </option>
+
+        `;
 
     });
 
@@ -1029,16 +1213,19 @@ function filterData(){
         .trim();
 
 
-    const hasil =
-        semuaHasil.filter(x=>{
+    hasilTampil =
+        semuaHasil.filter(x => {
 
-            const cocokKelas =
-                !kelas ||
+            const nilaiKelas =
                 String(
                     x.kelas || ""
                 )
-                .toLowerCase()
-                .startsWith(
+                .toLowerCase();
+
+
+            const cocokKelas =
+                !kelas ||
+                nilaiKelas.startsWith(
                     kelas.toLowerCase()
                 );
 
@@ -1086,33 +1273,17 @@ function filterData(){
 
 
     /*
-     * Statistik mengikuti data
-     * setelah filter.
+     * Statistik mengikuti hasil
+     * yang sedang ditampilkan.
      */
 
     updateStatistik(
-        hasil
+        hasilTampil
     );
-
 
     tampilkanRows(
-        hasil
+        hasilTampil
     );
-
-}
-
-
-/* =====================================================
-   TAMPILKAN HASIL
-===================================================== */
-
-function tampilkanHasil(){
-
-    updateStatistik(
-        semuaHasil
-    );
-
-    filterData();
 
 }
 
@@ -1139,8 +1310,8 @@ function tampilkanRows(data){
                     colspan="13"
                     class="empty">
 
-                    👨‍🎓 Belum ada hasil
-                    ujian dari ujian Anda.
+                    👨‍🎓 Belum ada hasil ujian
+                    yang sesuai.
 
                 </td>
 
@@ -1155,7 +1326,7 @@ function tampilkanRows(data){
 
     body.innerHTML =
         data.map(
-            (x,index)=>{
+            (x,index) => {
 
                 const nilai =
                     Number(
@@ -1184,8 +1355,11 @@ function tampilkanRows(data){
                     String(
                         x.status ||
                         "Selesai"
-                    )
-                    .toLowerCase();
+                    );
+
+
+                const statusLower =
+                    status.toLowerCase();
 
 
                 let badge =
@@ -1193,7 +1367,7 @@ function tampilkanRows(data){
 
 
                 if(
-                    status.includes(
+                    statusLower.includes(
                         "proses"
                     )
                 ){
@@ -1205,7 +1379,7 @@ function tampilkanRows(data){
 
 
                 if(
-                    status.includes(
+                    statusLower.includes(
                         "belum"
                     )
                 ){
@@ -1319,8 +1493,7 @@ function tampilkanRows(data){
                             class="${badge}">
 
                             ${escapeHtml(
-                                x.status ||
-                                "Selesai"
+                                status
                             )}
 
                         </span>
@@ -1371,7 +1544,8 @@ function updateStatistik(data){
 
 
     const selesai =
-        data.filter(x=>
+        data.filter(
+            x =>
             String(
                 x.status || ""
             )
@@ -1384,63 +1558,52 @@ function updateStatistik(data){
 
     const nilai =
         data
-        .map(x =>
+        .map(
+            x =>
             Number(
                 x.nilai
             ) || 0
         );
 
 
-    let rata = 0;
-
-
-    if(nilai.length){
-
-        rata =
-            nilai.reduce(
-                (a,b)=>a+b,
-                0
-            ) /
-            nilai.length;
-
-    }
+    const rata =
+        nilai.length
+        ? nilai.reduce(
+            (a,b) => a + b,
+            0
+        ) / nilai.length
+        : 0;
 
 
     const tertinggi =
         nilai.length
-        ? Math.max(...nilai)
+        ? Math.max(
+            ...nilai
+        )
         : 0;
 
 
-    document
-    .getElementById(
+    document.getElementById(
         "totalHasil"
-    )
-    .textContent =
+    ).textContent =
         total;
 
 
-    document
-    .getElementById(
+    document.getElementById(
         "totalSelesai"
-    )
-    .textContent =
+    ).textContent =
         selesai;
 
 
-    document
-    .getElementById(
+    document.getElementById(
         "rataNilai"
-    )
-    .textContent =
+    ).textContent =
         rata.toFixed(1);
 
 
-    document
-    .getElementById(
+    document.getElementById(
         "nilaiTertinggi"
-    )
-    .textContent =
+    ).textContent =
         tertinggi.toFixed(1);
 
 }
@@ -1455,7 +1618,8 @@ function lihatDetail(id){
     const data =
         semuaHasil.find(
             x =>
-            x.id === id
+            String(x.id) ===
+            String(id)
         );
 
 
@@ -1470,54 +1634,240 @@ function lihatDetail(id){
     }
 
 
-    alert(
-
-        "HASIL UJIAN\n\n" +
-
-        "Nama: " +
-        (data.nama_siswa || "-") +
-        "\n" +
-
-        "NISN: " +
-        (data.nisn || "-") +
-        "\n" +
-
-        "Kelas: " +
-        (data.kelas || "-") +
-        "\n" +
-
-        "Ujian: " +
-        (data.jenis_ujian || "-") +
-        "\n" +
-
-        "Mata Pelajaran: " +
-        (data.mata_pelajaran || "-") +
-        "\n" +
-
-        "Jumlah Soal: " +
-        (data.jumlah_soal || 0) +
-        "\n" +
-
-        "Benar: " +
-        (data.jumlah_benar || 0) +
-        "\n" +
-
-        "Salah: " +
-        (data.jumlah_salah || 0) +
-        "\n" +
-
-        "Nilai: " +
+    const nilai =
         Number(
-            data.nilai || 0
-        ).toFixed(2) +
-        "\n\n" +
+            data.nilai
+        ) || 0;
 
-        "Status: " +
-        (data.status || "Selesai")
 
-    );
+    document.getElementById(
+        "detailContent"
+    ).innerHTML = `
+
+        <div class="detail-card">
+
+            <div class="detail-label">
+                Nama Siswa
+            </div>
+
+            <div class="detail-value">
+                ${escapeHtml(
+                    data.nama_siswa
+                )}
+            </div>
+
+        </div>
+
+
+        <div class="detail-card">
+
+            <div class="detail-label">
+                NISN
+            </div>
+
+            <div class="detail-value">
+                ${escapeHtml(
+                    data.nisn
+                )}
+            </div>
+
+        </div>
+
+
+        <div class="detail-card">
+
+            <div class="detail-label">
+                Kelas
+            </div>
+
+            <div class="detail-value">
+                ${escapeHtml(
+                    data.kelas
+                )}
+            </div>
+
+        </div>
+
+
+        <div class="detail-card">
+
+            <div class="detail-label">
+                Jenis Ujian
+            </div>
+
+            <div class="detail-value">
+                ${escapeHtml(
+                    data.jenis_ujian
+                )}
+            </div>
+
+        </div>
+
+
+        <div class="detail-card full">
+
+            <div class="detail-label">
+                Mata Pelajaran
+            </div>
+
+            <div class="detail-value">
+                ${escapeHtml(
+                    data.mata_pelajaran
+                )}
+            </div>
+
+        </div>
+
+
+        <div class="detail-card">
+
+            <div class="detail-label">
+                Jumlah Soal
+            </div>
+
+            <div class="detail-value">
+                ${Number(
+                    data.jumlah_soal
+                ) || 0}
+            </div>
+
+        </div>
+
+
+        <div class="detail-card">
+
+            <div class="detail-label">
+                Benar
+            </div>
+
+            <div class="detail-value">
+                ${Number(
+                    data.jumlah_benar
+                ) || 0}
+            </div>
+
+        </div>
+
+
+        <div class="detail-card">
+
+            <div class="detail-label">
+                Salah
+            </div>
+
+            <div class="detail-value">
+                ${Number(
+                    data.jumlah_salah
+                ) || 0}
+            </div>
+
+        </div>
+
+
+        <div class="detail-card">
+
+            <div class="detail-label">
+                Nilai
+            </div>
+
+            <div class="detail-value">
+
+                <span
+                    class="nilai ${
+                        nilai >= 70
+                        ? "nilai-lulus"
+                        : "nilai-remedial"
+                    }">
+
+                    ${nilai.toFixed(2)}
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="detail-card">
+
+            <div class="detail-label">
+                Status
+            </div>
+
+            <div class="detail-value">
+                ${escapeHtml(
+                    data.status ||
+                    "Selesai"
+                )}
+            </div>
+
+        </div>
+
+
+        <div class="detail-card full">
+
+            <div class="detail-label">
+                Waktu Selesai
+            </div>
+
+            <div class="detail-value">
+
+                ${formatTanggal(
+                    data.waktu_selesai
+                )}
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    document.getElementById(
+        "detailModal"
+    ).style.display =
+        "flex";
 
 }
+
+
+/* =====================================================
+   TUTUP DETAIL
+===================================================== */
+
+function tutupDetail(){
+
+    document.getElementById(
+        "detailModal"
+    ).style.display =
+        "none";
+
+}
+
+
+/* =====================================================
+   KLIK LUAR MODAL
+===================================================== */
+
+document
+.getElementById(
+    "detailModal"
+)
+.addEventListener(
+    "click",
+    function(e){
+
+        if(
+            e.target ===
+            this
+        ){
+
+            tutupDetail();
+
+        }
+
+    }
+);
 
 
 /* =====================================================
@@ -1563,7 +1913,7 @@ function formatTanggal(value){
 
 
 /* =====================================================
-   ESCAPE
+   ESCAPE HTML
 ===================================================== */
 
 function escapeHtml(value){
@@ -1601,11 +1951,6 @@ function escapeHtml(value){
 
 function kembaliDashboard(){
 
-    /*
-     * Sesuaikan nama file dashboard guru
-     * jika di sistem Anda berbeda.
-     */
-
     window.location.href =
         "guru.html";
 
@@ -1616,10 +1961,11 @@ function kembaliDashboard(){
    MULAI
 ===================================================== */
 
-loadHasil();
+loadSemuaData();
 
 </script>
 
 </body>
 
 </html>
+```
