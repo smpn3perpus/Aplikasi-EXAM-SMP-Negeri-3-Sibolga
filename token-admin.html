@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Token Ujian - Admin | RUANG EXAM</title>
+<title>Token Admin - RUANG EXAM</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -17,247 +17,352 @@
 }
 
 body{
-    font-family:Arial,Helvetica,sans-serif;
-    background:#f1f5f9;
-    color:#0f172a;
     min-height:100vh;
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+        linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    color:#0f172a;
+    padding:20px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
 }
 
 .header{
-    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
-    color:white;
-    padding:20px 30px;
+    background:white;
+    border-radius:20px;
+    padding:24px;
+    margin-bottom:20px;
+    box-shadow:0 15px 40px rgba(0,0,0,.18);
+}
+
+.header-top{
     display:flex;
     justify-content:space-between;
     align-items:center;
     gap:15px;
     flex-wrap:wrap;
-    box-shadow:0 5px 20px rgba(0,0,0,.18);
 }
 
-.header h1{
-    font-size:23px;
-}
-
-.header p{
-    font-size:13px;
-    opacity:.85;
-    margin-top:5px;
-}
-
-.header-buttons{
+.logo-title{
     display:flex;
-    gap:8px;
+    align-items:center;
+    gap:15px;
+}
+
+.logo{
+    width:58px;
+    height:58px;
+    border-radius:15px;
+    background:#2563eb;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:24px;
+    font-weight:bold;
+}
+
+h1{
+    font-size:24px;
+    color:#0f172a;
+}
+
+.subtitle{
+    color:#64748b;
+    font-size:13px;
+    margin-top:5px;
 }
 
 .btn{
     border:none;
-    border-radius:9px;
-    padding:10px 14px;
-    cursor:pointer;
+    border-radius:10px;
+    padding:11px 16px;
     font-weight:bold;
+    cursor:pointer;
+    transition:.2s;
 }
 
-.btn-back{
-    background:white;
-    color:#1d4ed8;
+.btn:hover{
+    transform:translateY(-1px);
 }
 
-.btn-refresh{
-    background:#22c55e;
+.btn-primary{
+    background:#2563eb;
     color:white;
 }
 
-.container{
-    max-width:1250px;
-    margin:25px auto;
-    padding:0 20px;
+.btn-primary:hover{
+    background:#1d4ed8;
+}
+
+.btn-success{
+    background:#16a34a;
+    color:white;
+}
+
+.btn-warning{
+    background:#f59e0b;
+    color:white;
+}
+
+.btn-danger{
+    background:#dc2626;
+    color:white;
+}
+
+.btn-secondary{
+    background:#e2e8f0;
+    color:#334155;
 }
 
 .message{
     display:none;
-    padding:12px;
-    border-radius:10px;
+    padding:14px;
+    border-radius:11px;
     margin-bottom:18px;
-    text-align:center;
-    font-size:13px;
+    font-size:14px;
+    line-height:1.5;
+}
+
+.message.show{
+    display:block;
 }
 
 .message.success{
-    display:block;
     background:#dcfce7;
     color:#166534;
 }
 
 .message.error{
-    display:block;
     background:#fee2e2;
     color:#991b1b;
 }
 
-.exam-box{
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 4px 15px rgba(0,0,0,.06);
-    margin-bottom:18px;
+.message.info{
+    background:#dbeafe;
+    color:#1e40af;
 }
 
-.exam-box label{
+.card{
+    background:white;
+    border-radius:20px;
+    padding:22px;
+    margin-bottom:20px;
+    box-shadow:0 10px 30px rgba(15,23,42,.12);
+}
+
+.card-title{
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:16px;
+}
+
+.select-box{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:10px;
+}
+
+select{
+    width:100%;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    padding:13px;
+    font-size:14px;
+    outline:none;
+    background:white;
+}
+
+select:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.12);
+}
+
+.token-display{
+    display:none;
+    margin-top:20px;
+    border:2px dashed #93c5fd;
+    background:#eff6ff;
+    border-radius:16px;
+    padding:25px;
+    text-align:center;
+}
+
+.token-display.show{
     display:block;
-    font-size:13px;
+}
+
+.token-label{
+    font-size:12px;
+    color:#64748b;
+    text-transform:uppercase;
     font-weight:bold;
     margin-bottom:8px;
 }
 
-.exam-row{
-    display:flex;
-    gap:12px;
-}
-
-.exam-row select{
-    flex:1;
-    padding:13px;
-    border:1px solid #cbd5e1;
-    border-radius:10px;
-    background:white;
-    outline:none;
-}
-
-.btn-generate{
-    background:#2563eb;
-    color:white;
-    padding:13px 20px;
-}
-
-.token-card{
-    background:white;
-    border-radius:16px;
-    padding:22px;
-    box-shadow:0 4px 15px rgba(0,0,0,.06);
-    margin-bottom:18px;
-}
-
-.token-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:15px;
-    flex-wrap:wrap;
-}
-
 .token-value{
-    font-size:30px;
+    font-size:42px;
+    letter-spacing:8px;
     font-weight:bold;
-    letter-spacing:5px;
     color:#1d4ed8;
-    background:#eff6ff;
-    border:2px dashed #93c5fd;
-    border-radius:12px;
-    padding:15px 20px;
+    margin:10px 0 18px;
 }
 
 .token-actions{
     display:flex;
+    justify-content:center;
     gap:8px;
     flex-wrap:wrap;
 }
 
-.btn-copy{
-    background:#0ea5e9;
-    color:white;
-}
-
-.btn-toggle{
-    background:#f59e0b;
-    color:white;
-}
-
-.btn-delete{
-    background:#ef4444;
-    color:white;
-}
-
-.token-info{
-    margin-top:18px;
+.info-grid{
     display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:12px;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-top:18px;
 }
 
 .info-item{
     background:#f8fafc;
-    padding:13px;
     border-radius:10px;
+    padding:12px;
 }
 
-.info-item strong{
-    display:block;
-    font-size:12px;
+.info-label{
+    font-size:10px;
     color:#64748b;
-    margin-bottom:5px;
+    text-transform:uppercase;
+    margin-bottom:4px;
 }
 
-.info-item span{
-    font-size:14px;
+.info-value{
+    font-size:13px;
+    font-weight:bold;
+    color:#0f172a;
+    word-break:break-word;
 }
 
-.badge{
+.table-wrap{
+    width:100%;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:850px;
+}
+
+th{
+    background:#f1f5f9;
+    color:#334155;
+    font-size:12px;
+    text-align:left;
+    padding:12px;
+    border-bottom:1px solid #e2e8f0;
+}
+
+td{
+    padding:12px;
+    border-bottom:1px solid #e2e8f0;
+    font-size:13px;
+    vertical-align:middle;
+}
+
+tr:hover td{
+    background:#f8fafc;
+}
+
+.token-table{
+    font-weight:bold;
+    color:#1d4ed8;
+    letter-spacing:2px;
+}
+
+.status{
     display:inline-block;
-    padding:6px 11px;
+    padding:5px 9px;
     border-radius:20px;
     font-size:11px;
     font-weight:bold;
 }
 
-.active{
+.status.aktif{
     background:#dcfce7;
     color:#166534;
 }
 
-.inactive{
+.status.draft{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status.selesai{
+    background:#e2e8f0;
+    color:#475569;
+}
+
+.status-kosong{
     background:#fee2e2;
     color:#991b1b;
 }
 
-.empty{
-    background:white;
-    border-radius:15px;
-    padding:45px;
+.loading{
     text-align:center;
+    padding:30px;
     color:#64748b;
-    box-shadow:0 4px 15px rgba(0,0,0,.05);
+}
+
+.empty{
+    text-align:center;
+    padding:35px;
+    color:#64748b;
 }
 
 .footer{
     text-align:center;
-    color:#94a3b8;
+    color:rgba(255,255,255,.8);
     font-size:12px;
     line-height:1.6;
-    padding:30px;
+    padding:15px;
 }
 
-@media(max-width:700px){
+@media(max-width:800px){
 
-    .container{
-        padding:0 12px;
+    .info-grid{
+        grid-template-columns:repeat(2,1fr);
     }
 
-    .exam-row{
-        flex-direction:column;
+}
+
+@media(max-width:550px){
+
+    body{
+        padding:10px;
     }
 
-    .token-value{
-        font-size:22px;
-        letter-spacing:3px;
+    .header{
+        padding:18px;
     }
 
-    .token-info{
+    h1{
+        font-size:20px;
+    }
+
+    .select-box{
         grid-template-columns:1fr;
     }
 
-    .token-actions button{
-        flex:1;
+    .token-value{
+        font-size:32px;
+        letter-spacing:5px;
+    }
+
+    .info-grid{
+        grid-template-columns:1fr;
     }
 
 }
@@ -266,41 +371,57 @@ body{
 
 <body>
 
-<header class="header">
+<div class="container">
 
-    <div>
-        <h1>🔑 TOKEN UJIAN</h1>
-        <p>RUANG EXAM — SMP Negeri 3 Sibolga</p>
+    <!-- HEADER -->
+    <div class="header">
+
+        <div class="header-top">
+
+            <div class="logo-title">
+
+                <div class="logo">
+                    EX
+                </div>
+
+                <div>
+                    <h1>
+                        🔑 TOKEN UJIAN
+                    </h1>
+
+                    <div class="subtitle">
+                        RUANG EXAM — SMP Negeri 3 Sibolga
+                    </div>
+                </div>
+
+            </div>
+
+            <button
+                class="btn btn-secondary"
+                onclick="kembaliAdmin()">
+                ← Kembali ke Admin
+            </button>
+
+        </div>
+
     </div>
 
-    <div class="header-buttons">
 
-        <button
-            class="btn btn-back"
-            onclick="kembaliDashboard()">
-            ← Dashboard
-        </button>
-
-        <button
-            class="btn btn-refresh"
-            onclick="loadData()">
-            🔄 Refresh
-        </button>
-
+    <!-- MESSAGE -->
+    <div
+        id="message"
+        class="message">
     </div>
 
-</header>
 
+    <!-- PILIH UJIAN -->
+    <div class="card">
 
-<main class="container">
+        <div class="card-title">
+            🎯 Pilih Ujian
+        </div>
 
-    <div id="message" class="message"></div>
-
-    <section class="exam-box">
-
-        <label>Pilih Ujian</label>
-
-        <div class="exam-row">
+        <div class="select-box">
 
             <select id="ujianSelect">
                 <option value="">
@@ -309,33 +430,200 @@ body{
             </select>
 
             <button
-                class="btn btn-generate"
-                onclick="buatToken()">
-                🔑 Generate Token
+                class="btn btn-primary"
+                onclick="tampilkanUjianDipilih()">
+                🔎 Lihat Token
             </button>
 
         </div>
 
-    </section>
+
+        <!-- DETAIL UJIAN -->
+        <div
+            id="detailUjian"
+            style="display:none;">
+
+            <div class="info-grid">
+
+                <div class="info-item">
+
+                    <div class="info-label">
+                        Judul Ujian
+                    </div>
+
+                    <div
+                        id="detailJudul"
+                        class="info-value">
+                        -
+                    </div>
+
+                </div>
 
 
-    <div id="tokenContainer">
+                <div class="info-item">
 
-        <div class="empty">
-            ⏳ Memuat token...
+                    <div class="info-label">
+                        Status
+                    </div>
+
+                    <div
+                        id="detailStatus"
+                        class="info-value">
+                        -
+                    </div>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <div class="info-label">
+                        Durasi
+                    </div>
+
+                    <div
+                        id="detailDurasi"
+                        class="info-value">
+                        -
+                    </div>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <div class="info-label">
+                        Token Database
+                    </div>
+
+                    <div
+                        id="detailToken"
+                        class="info-value">
+                        -
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TOKEN -->
+        <div
+            id="tokenDisplay"
+            class="token-display">
+
+            <div class="token-label">
+                TOKEN UJIAN
+            </div>
+
+            <div
+                id="tokenValue"
+                class="token-value">
+                ------
+            </div>
+
+            <div class="token-actions">
+
+                <button
+                    class="btn btn-success"
+                    onclick="generateTokenBaru()">
+                    🔄 GENERATE TOKEN
+                </button>
+
+                <button
+                    class="btn btn-primary"
+                    onclick="salinToken()">
+                    📋 SALIN TOKEN
+                </button>
+
+                <button
+                    class="btn btn-warning"
+                    onclick="aktifkanUjian()">
+                    ▶ AKTIFKAN UJIAN
+                </button>
+
+            </div>
+
         </div>
 
     </div>
 
-</main>
+
+    <!-- DAFTAR UJIAN -->
+    <div class="card">
+
+        <div class="card-title">
+            📋 Daftar Token Ujian
+        </div>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            No
+                        </th>
+
+                        <th>
+                            Judul Ujian
+                        </th>
+
+                        <th>
+                            Token
+                        </th>
+
+                        <th>
+                            Durasi
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Tindakan
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="tabelUjian">
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="loading">
+                            ⏳ Memuat data ujian...
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
 
 
-<footer class="footer">
+    <div class="footer">
 
-    RUANG EXAM Online<br>
-    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+        RUANG EXAM Online<br>
 
-</footer>
+        Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+    </div>
+
+</div>
 
 
 <script>
@@ -345,474 +633,52 @@ body{
 ===================================================== */
 
 const SUPABASE_URL =
-    "https://sztfucrmjexoalyiwwnq.supabase.co";
+"https://sztfucrmjexoalyiwwnq.supabase.co";
 
 const SUPABASE_KEY =
-    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+"sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
 
 const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
-
-
-/* =====================================================
-   SESSION
-===================================================== */
-
-const sessionRaw =
-    localStorage.getItem("exam_user");
-
-if(!sessionRaw){
-
-    window.location.href = "login.html";
-
-}
-
-let currentUser = null;
-
-try{
-
-    currentUser = JSON.parse(sessionRaw);
-
-    if(currentUser.role !== "admin"){
-
-        localStorage.removeItem("exam_user");
-
-        window.location.href = "login.html";
-
-    }
-
-}catch(error){
-
-    localStorage.removeItem("exam_user");
-
-    window.location.href = "login.html";
-
-}
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
 
 /* =====================================================
    DATA
 ===================================================== */
 
-let semuaUjian = [];
+let daftarUjian = [];
 
-let semuaToken = [];
+let ujianTerpilih = null;
 
 
 /* =====================================================
-   PESAN
+   MESSAGE
 ===================================================== */
 
 function showMessage(text,type){
 
     const el =
-        document.getElementById("message");
+    document.getElementById("message");
 
     el.textContent = text;
 
     el.className =
-        "message " + type;
+        "message show " + type;
 
 }
 
 function hideMessage(){
 
     const el =
-        document.getElementById("message");
+    document.getElementById("message");
+
+    el.className =
+        "message";
 
     el.textContent = "";
-
-    el.className = "message";
-
-}
-
-
-/* =====================================================
-   LOAD DATA
-===================================================== */
-
-async function loadData(){
-
-    hideMessage();
-
-    try{
-
-        const hasilUjian =
-            await supabaseClient
-            .from("ujian")
-            .select(`
-                id,
-                judul,
-                status
-            `)
-            .order(
-                "created_at",
-                {ascending:false}
-            );
-
-        if(hasilUjian.error){
-
-            throw hasilUjian.error;
-
-        }
-
-        semuaUjian =
-            hasilUjian.data || [];
-
-        isiDropdown();
-
-        await loadToken();
-
-    }catch(error){
-
-        console.error(error);
-
-        showMessage(
-            "Gagal memuat data: " +
-            error.message,
-            "error"
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   DROPDOWN
-===================================================== */
-
-function isiDropdown(){
-
-    const select =
-        document.getElementById(
-            "ujianSelect"
-        );
-
-    select.innerHTML = `
-        <option value="">
-            -- Pilih Ujian --
-        </option>
-    `;
-
-    semuaUjian.forEach(ujian=>{
-
-        select.innerHTML += `
-            <option value="${ujian.id}">
-                ${escapeHtml(ujian.judul)}
-            </option>
-        `;
-
-    });
-
-}
-
-
-/* =====================================================
-   LOAD TOKEN
-===================================================== */
-
-async function loadToken(){
-
-    const hasil =
-        await supabaseClient
-        .from("token_ujian")
-        .select(`
-            id,
-            ujian_id,
-            token,
-            aktif,
-            berlaku_mulai,
-            berlaku_sampai,
-            created_at
-        `)
-        .order(
-            "created_at",
-            {ascending:false}
-        );
-
-    if(hasil.error){
-
-        throw hasil.error;
-
-    }
-
-    semuaToken =
-        hasil.data || [];
-
-    tampilkanToken();
-
-}
-
-
-/* =====================================================
-   TAMPILKAN TOKEN
-===================================================== */
-
-function tampilkanToken(){
-
-    const container =
-        document.getElementById(
-            "tokenContainer"
-        );
-
-    if(!semuaToken.length){
-
-        container.innerHTML = `
-            <div class="empty">
-                🔑 Belum ada token ujian.
-                <br><br>
-                Pilih ujian kemudian klik
-                <strong>Generate Token</strong>.
-            </div>
-        `;
-
-        return;
-
-    }
-
-    container.innerHTML =
-        semuaToken.map(token=>{
-
-            const ujian =
-                semuaUjian.find(
-                    u => u.id === token.ujian_id
-                );
-
-            const judul =
-                ujian
-                ? ujian.judul
-                : "Ujian";
-
-            const statusClass =
-                token.aktif
-                ? "active"
-                : "inactive";
-
-            const statusText =
-                token.aktif
-                ? "AKTIF"
-                : "NONAKTIF";
-
-            return `
-
-                <div class="token-card">
-
-                    <div class="token-top">
-
-                        <div>
-
-                            <h2>
-                                ${escapeHtml(judul)}
-                            </h2>
-
-                            <div style="margin-top:12px">
-
-                                <span class="badge ${statusClass}">
-                                    ${statusText}
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="token-value">
-
-                            ${escapeHtml(token.token)}
-
-                        </div>
-
-
-                        <div class="token-actions">
-
-                            <button
-                                class="btn btn-copy"
-                                onclick="salinToken('${escapeJs(token.token)}')">
-
-                                📋 Salin
-
-                            </button>
-
-                            <button
-                                class="btn btn-toggle"
-                                onclick="toggleToken('${token.id}',${token.aktif})">
-
-                                ${token.aktif
-                                    ? "🔴 Nonaktifkan"
-                                    : "🟢 Aktifkan"}
-
-                            </button>
-
-                            <button
-                                class="btn btn-delete"
-                                onclick="hapusToken('${token.id}')">
-
-                                🗑️ Hapus
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="token-info">
-
-                        <div class="info-item">
-
-                            <strong>
-                                Berlaku Mulai
-                            </strong>
-
-                            <span>
-                                ${formatTanggal(token.berlaku_mulai)}
-                            </span>
-
-                        </div>
-
-
-                        <div class="info-item">
-
-                            <strong>
-                                Berlaku Sampai
-                            </strong>
-
-                            <span>
-                                ${formatTanggal(token.berlaku_sampai)}
-                            </span>
-
-                        </div>
-
-
-                        <div class="info-item">
-
-                            <strong>
-                                Dibuat
-                            </strong>
-
-                            <span>
-                                ${formatTanggal(token.created_at)}
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            `;
-
-        }).join("");
-
-}
-
-
-/* =====================================================
-   BUAT TOKEN
-===================================================== */
-
-async function buatToken(){
-
-    const ujianId =
-        document.getElementById(
-            "ujianSelect"
-        ).value;
-
-    if(!ujianId){
-
-        alert(
-            "Silakan pilih ujian terlebih dahulu."
-        );
-
-        return;
-
-    }
-
-
-    const ujian =
-        semuaUjian.find(
-            u => u.id === ujianId
-        );
-
-
-    const token =
-        generateToken();
-
-
-    try{
-
-        /*
-           Token baru berlaku mulai sekarang
-           dan berlaku selama 24 jam.
-        */
-
-        const mulai =
-            new Date();
-
-        const selesai =
-            new Date(
-                mulai.getTime()
-                + 24 * 60 * 60 * 1000
-            );
-
-
-        const hasil =
-            await supabaseClient
-            .from("token_ujian")
-            .insert({
-
-                ujian_id:
-                    ujianId,
-
-                token:
-                    token,
-
-                aktif:
-                    true,
-
-                berlaku_mulai:
-                    mulai.toISOString(),
-
-                berlaku_sampai:
-                    selesai.toISOString()
-
-            });
-
-
-        if(hasil.error){
-
-            throw hasil.error;
-
-        }
-
-
-        showMessage(
-            "Token untuk " +
-            (ujian
-                ? ujian.judul
-                : "ujian") +
-            " berhasil dibuat.",
-            "success"
-        );
-
-
-        await loadToken();
-
-    }catch(error){
-
-        console.error(error);
-
-        showMessage(
-            "Gagal membuat token: " +
-            error.message,
-            "error"
-        );
-
-    }
 
 }
 
@@ -821,26 +687,549 @@ async function buatToken(){
    GENERATE TOKEN
 ===================================================== */
 
-function generateToken(){
+function buatToken(){
 
-    const chars =
+    /*
+     * Karakter yang mudah dibaca.
+     * Tidak menggunakan O, 0, I, 1
+     */
+
+    const karakter =
         "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
-    let hasil = "";
+    let token = "";
 
-    for(let i=0;i<6;i++){
+    for(
+        let i = 0;
+        i < 6;
+        i++
+    ){
 
-        hasil +=
-            chars.charAt(
+        token +=
+            karakter.charAt(
                 Math.floor(
                     Math.random() *
-                    chars.length
+                    karakter.length
                 )
             );
 
     }
 
-    return hasil;
+    return token;
+
+}
+
+
+/* =====================================================
+   LOAD UJIAN
+===================================================== */
+
+async function loadUjian(){
+
+    const select =
+        document.getElementById(
+            "ujianSelect"
+        );
+
+    try{
+
+        const {data,error} =
+            await supabaseClient
+            .from("ujian")
+            .select(`
+                id,
+                judul,
+                mata_pelajaran_id,
+                kelas_id,
+                guru_id,
+                durasi_menit,
+                tanggal_mulai,
+                tanggal_selesai,
+                status,
+                status_kontrol,
+                token,
+                created_at
+            `)
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            );
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        daftarUjian =
+            data || [];
+
+
+        select.innerHTML =
+            `<option value="">
+                -- Pilih Ujian --
+            </option>`;
+
+
+        daftarUjian.forEach(
+            ujian => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    ujian.id;
+
+                option.textContent =
+                    ujian.judul +
+                    " — " +
+                    (
+                        ujian.token ||
+                        "BELUM ADA TOKEN"
+                    );
+
+                select.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        tampilkanTabel();
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal memuat data ujian: " +
+            error.message,
+            "error"
+        );
+
+
+        select.innerHTML =
+            `<option value="">
+                Gagal memuat ujian
+            </option>`;
+
+
+        document.getElementById(
+            "tabelUjian"
+        ).innerHTML =
+            `<tr>
+                <td colspan="6" class="empty">
+                    Gagal memuat data ujian.
+                </td>
+            </tr>`;
+
+    }
+
+}
+
+
+/* =====================================================
+   TAMPILKAN TABEL
+===================================================== */
+
+function tampilkanTabel(){
+
+    const tbody =
+        document.getElementById(
+            "tabelUjian"
+        );
+
+
+    if(!daftarUjian.length){
+
+        tbody.innerHTML =
+            `<tr>
+                <td
+                    colspan="6"
+                    class="empty">
+                    Belum ada data ujian.
+                </td>
+            </tr>`;
+
+        return;
+
+    }
+
+
+    let html = "";
+
+
+    daftarUjian.forEach(
+        (ujian,index)=>{
+
+            const token =
+                ujian.token || "BELUM ADA";
+
+
+            const status =
+                String(
+                    ujian.status || "draft"
+                ).toLowerCase();
+
+
+            let statusClass =
+                "draft";
+
+
+            if(status === "aktif"){
+                statusClass = "aktif";
+            }
+
+            if(status === "selesai"){
+                statusClass = "selesai";
+            }
+
+
+            html += `
+
+                <tr>
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${escapeHtml(
+                                ujian.judul
+                            )}
+                        </strong>
+                    </td>
+
+                    <td>
+                        <span class="token-table">
+                            ${escapeHtml(
+                                token
+                            )}
+                        </span>
+                    </td>
+
+                    <td>
+                        ${
+                            Number(
+                                ujian.durasi_menit
+                            ) || 0
+                        } menit
+                    </td>
+
+                    <td>
+
+                        <span
+                            class="status ${statusClass}">
+                            ${escapeHtml(
+                                status
+                            ).toUpperCase()}
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="btn btn-primary"
+                            onclick="
+                                pilihUjian(
+                                    '${ujian.id}'
+                                )
+                            ">
+                            🔑 Token
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+    );
+
+
+    tbody.innerHTML =
+        html;
+
+}
+
+
+/* =====================================================
+   PILIH UJIAN
+===================================================== */
+
+function pilihUjian(id){
+
+    const select =
+        document.getElementById(
+            "ujianSelect"
+        );
+
+    select.value =
+        id;
+
+    tampilkanUjianDipilih();
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+}
+
+
+/* =====================================================
+   TAMPILKAN DETAIL UJIAN
+===================================================== */
+
+function tampilkanUjianDipilih(){
+
+    const id =
+        document.getElementById(
+            "ujianSelect"
+        ).value;
+
+
+    if(!id){
+
+        showMessage(
+            "Silakan pilih ujian terlebih dahulu.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    ujianTerpilih =
+        daftarUjian.find(
+            x => x.id === id
+        );
+
+
+    if(!ujianTerpilih){
+
+        showMessage(
+            "Data ujian tidak ditemukan.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "detailUjian"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "detailJudul"
+    ).textContent =
+        ujianTerpilih.judul || "-";
+
+
+    document.getElementById(
+        "detailDurasi"
+    ).textContent =
+        (
+            Number(
+                ujianTerpilih.durasi_menit
+            ) || 0
+        ) +
+        " menit";
+
+
+    document.getElementById(
+        "detailToken"
+    ).textContent =
+        ujianTerpilih.token ||
+        "BELUM ADA TOKEN";
+
+
+    const status =
+        String(
+            ujianTerpilih.status ||
+            "draft"
+        ).toLowerCase();
+
+
+    document.getElementById(
+        "detailStatus"
+    ).textContent =
+        status.toUpperCase();
+
+
+    document.getElementById(
+        "tokenValue"
+    ).textContent =
+        ujianTerpilih.token ||
+        "------";
+
+
+    document.getElementById(
+        "tokenDisplay"
+    ).classList.add(
+        "show"
+    );
+
+
+    hideMessage();
+
+}
+
+
+/* =====================================================
+   GENERATE TOKEN BARU
+===================================================== */
+
+async function generateTokenBaru(){
+
+    if(!ujianTerpilih){
+
+        showMessage(
+            "Pilih ujian terlebih dahulu.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const tokenBaru =
+        buatToken();
+
+
+    /*
+     * Token yang dibuat di sini
+     * LANGSUNG disimpan ke tabel ujian.
+     */
+
+    showMessage(
+        "⏳ Menyimpan token baru...",
+        "info"
+    );
+
+
+    try{
+
+        const {data,error} =
+            await supabaseClient
+            .from("ujian")
+            .update({
+                token:tokenBaru
+            })
+            .eq(
+                "id",
+                ujianTerpilih.id
+            )
+            .select(`
+                id,
+                judul,
+                token,
+                status,
+                durasi_menit
+            `)
+            .single();
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        /*
+         * Ambil token yang BENAR-BENAR
+         * dikembalikan database.
+         */
+
+        ujianTerpilih =
+            {
+                ...ujianTerpilih,
+                ...data
+            };
+
+
+        /*
+         * Update data lokal.
+         */
+
+        const index =
+            daftarUjian.findIndex(
+                x =>
+                x.id ===
+                ujianTerpilih.id
+            );
+
+
+        if(index !== -1){
+
+            daftarUjian[index] =
+                {
+                    ...daftarUjian[index],
+                    token:data.token
+                };
+
+        }
+
+
+        /*
+         * Tampilkan token database.
+         */
+
+        document.getElementById(
+            "tokenValue"
+        ).textContent =
+            data.token;
+
+
+        document.getElementById(
+            "detailToken"
+        ).textContent =
+            data.token;
+
+
+        tampilkanTabel();
+
+
+        showMessage(
+            "✅ Token berhasil dibuat dan disimpan ke database: " +
+            data.token,
+            "success"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "GENERATE TOKEN ERROR:",
+            error
+        );
+
+
+        showMessage(
+            "❌ Gagal menyimpan token: " +
+            error.message,
+            "error"
+        );
+
+    }
 
 }
 
@@ -849,7 +1238,35 @@ function generateToken(){
    SALIN TOKEN
 ===================================================== */
 
-async function salinToken(token){
+async function salinToken(){
+
+    if(!ujianTerpilih){
+
+        showMessage(
+            "Pilih ujian terlebih dahulu.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const token =
+        ujianTerpilih.token;
+
+
+    if(!token){
+
+        showMessage(
+            "Ujian belum mempunyai token.",
+            "error"
+        );
+
+        return;
+
+    }
+
 
     try{
 
@@ -857,87 +1274,93 @@ async function salinToken(token){
             token
         );
 
+
         showMessage(
-            "Token " +
+            "✅ Token " +
             token +
             " berhasil disalin.",
             "success"
         );
 
+
     }catch(error){
 
-        alert(
-            "Token: " +
-            token
-        );
+        /*
+         * Fallback browser lama.
+         */
 
-    }
-
-}
-
-
-/* =====================================================
-   TOGGLE
-===================================================== */
-
-async function toggleToken(id,status){
-
-    try{
-
-        const hasil =
-            await supabaseClient
-            .from("token_ujian")
-            .update({
-
-                aktif:
-                    !status
-
-            })
-            .eq(
-                "id",
-                id
+        const textarea =
+            document.createElement(
+                "textarea"
             );
 
-        if(hasil.error){
+        textarea.value =
+            token;
 
-            throw hasil.error;
+        document.body.appendChild(
+            textarea
+        );
 
-        }
+        textarea.select();
+
+        document.execCommand(
+            "copy"
+        );
+
+        textarea.remove();
+
 
         showMessage(
-            !status
-            ? "Token berhasil diaktifkan."
-            : "Token berhasil dinonaktifkan.",
+            "✅ Token " +
+            token +
+            " berhasil disalin.",
             "success"
         );
 
-        await loadToken();
-
-    }catch(error){
-
-        console.error(error);
-
-        showMessage(
-            "Gagal mengubah status token: " +
-            error.message,
-            "error"
-        );
-
     }
 
 }
 
 
 /* =====================================================
-   HAPUS
+   AKTIFKAN UJIAN
 ===================================================== */
 
-async function hapusToken(id){
+async function aktifkanUjian(){
+
+    if(!ujianTerpilih){
+
+        showMessage(
+            "Pilih ujian terlebih dahulu.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if(!ujianTerpilih.token){
+
+        showMessage(
+            "Generate token terlebih dahulu sebelum mengaktifkan ujian.",
+            "error"
+        );
+
+        return;
+
+    }
+
 
     const yakin =
         confirm(
-            "Yakin ingin menghapus token ini?"
+            "Aktifkan ujian ini?\n\n" +
+            "Token: " +
+            ujianTerpilih.token +
+            "\n\n" +
+            "Siswa akan dapat mencari ujian menggunakan token tersebut."
         );
+
 
     if(!yakin){
 
@@ -945,36 +1368,86 @@ async function hapusToken(id){
 
     }
 
+
     try{
 
-        const hasil =
+        const {data,error} =
             await supabaseClient
-            .from("token_ujian")
-            .delete()
+            .from("ujian")
+            .update({
+                status:"aktif",
+                status_kontrol:"dibuka"
+            })
             .eq(
                 "id",
-                id
-            );
+                ujianTerpilih.id
+            )
+            .select(`
+                id,
+                judul,
+                token,
+                status,
+                status_kontrol,
+                durasi_menit
+            `)
+            .single();
 
-        if(hasil.error){
 
-            throw hasil.error;
+        if(error){
+
+            throw error;
 
         }
 
+
+        ujianTerpilih =
+            {
+                ...ujianTerpilih,
+                ...data
+            };
+
+
+        const index =
+            daftarUjian.findIndex(
+                x =>
+                x.id ===
+                ujianTerpilih.id
+            );
+
+
+        if(index !== -1){
+
+            daftarUjian[index] =
+                {
+                    ...daftarUjian[index],
+                    ...data
+                };
+
+        }
+
+
+        document.getElementById(
+            "detailStatus"
+        ).textContent =
+            "AKTIF";
+
+
+        tampilkanTabel();
+
+
         showMessage(
-            "Token berhasil dihapus.",
+            "✅ Ujian berhasil diaktifkan. Token: " +
+            data.token,
             "success"
         );
 
-        await loadToken();
 
     }catch(error){
 
         console.error(error);
 
         showMessage(
-            "Gagal menghapus token: " +
+            "❌ Gagal mengaktifkan ujian: " +
             error.message,
             "error"
         );
@@ -985,66 +1458,10 @@ async function hapusToken(id){
 
 
 /* =====================================================
-   FORMAT TANGGAL
+   KEMBALI ADMIN
 ===================================================== */
 
-function formatTanggal(value){
-
-    if(!value){
-
-        return "-";
-
-    }
-
-    try{
-
-        return new Date(value)
-        .toLocaleString(
-            "id-ID",
-            {
-                dateStyle:"medium",
-                timeStyle:"short"
-            }
-        );
-
-    }catch(error){
-
-        return value;
-
-    }
-
-}
-
-
-/* =====================================================
-   ESCAPE
-===================================================== */
-
-function escapeHtml(value){
-
-    return String(value)
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-
-}
-
-function escapeJs(value){
-
-    return String(value)
-        .replace(/\\/g,"\\\\")
-        .replace(/'/g,"\\'");
-
-}
-
-
-/* =====================================================
-   DASHBOARD
-===================================================== */
-
-function kembaliDashboard(){
+function kembaliAdmin(){
 
     window.location.href =
         "admin.html";
@@ -1053,10 +1470,50 @@ function kembaliDashboard(){
 
 
 /* =====================================================
-   LOAD AWAL
+   ESCAPE HTML
 ===================================================== */
 
-loadData();
+function escapeHtml(value){
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* =====================================================
+   LOAD
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        loadUjian();
+
+    }
+);
 
 </script>
 
