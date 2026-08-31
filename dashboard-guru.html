@@ -1,0 +1,606 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Dashboard Guru - RUANG EXAM</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f5f9;
+    color:#0f172a;
+    min-height:100vh;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    color:white;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+    box-shadow:0 5px 20px rgba(0,0,0,.18);
+}
+
+.header-title h1{
+    font-size:25px;
+    margin-bottom:5px;
+}
+
+.header-title p{
+    font-size:13px;
+    opacity:.85;
+}
+
+.guru-area{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.guru-info{
+    text-align:right;
+}
+
+.guru-info strong{
+    display:block;
+    font-size:14px;
+}
+
+.guru-info span{
+    font-size:12px;
+    opacity:.8;
+}
+
+.avatar{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:white;
+    color:#1d4ed8;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-weight:bold;
+    font-size:18px;
+}
+
+.logout-btn{
+    border:none;
+    background:#ef4444;
+    color:white;
+    padding:10px 15px;
+    border-radius:9px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.logout-btn:hover{
+    background:#dc2626;
+}
+
+/* ================= CONTAINER ================= */
+
+.container{
+    max-width:1250px;
+    margin:28px auto;
+    padding:0 20px;
+}
+
+/* ================= WELCOME ================= */
+
+.welcome{
+    background:white;
+    border-radius:18px;
+    padding:23px;
+    margin-bottom:23px;
+    box-shadow:0 4px 18px rgba(15,23,42,.07);
+}
+
+.welcome h2{
+    font-size:22px;
+    margin-bottom:7px;
+}
+
+.welcome p{
+    color:#64748b;
+    font-size:14px;
+}
+
+/* ================= MENU ================= */
+
+.menu-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:17px;
+}
+
+.menu-card{
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:17px;
+    padding:22px;
+    min-height:160px;
+    cursor:pointer;
+    transition:.2s;
+    box-shadow:0 3px 12px rgba(15,23,42,.05);
+}
+
+.menu-card:hover{
+    transform:translateY(-4px);
+    border-color:#93c5fd;
+    box-shadow:0 10px 25px rgba(15,23,42,.12);
+}
+
+.menu-icon{
+    font-size:35px;
+    margin-bottom:12px;
+}
+
+.menu-card h3{
+    font-size:16px;
+    margin-bottom:7px;
+}
+
+.menu-card p{
+    color:#64748b;
+    font-size:12px;
+    line-height:1.5;
+}
+
+/* ================= INFO ================= */
+
+.info-box{
+    margin-top:23px;
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    border-radius:15px;
+    padding:17px;
+    color:#1e40af;
+    font-size:13px;
+    line-height:1.6;
+}
+
+/* ================= STATUS ================= */
+
+.status{
+    margin-top:18px;
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:15px;
+    padding:17px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.status-dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:#22c55e;
+}
+
+.status span{
+    color:#475569;
+    font-size:13px;
+}
+
+/* ================= FOOTER ================= */
+
+.footer{
+    text-align:center;
+    color:#94a3b8;
+    font-size:12px;
+    line-height:1.6;
+    padding:30px 10px;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:900px){
+
+    .menu-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:700px){
+
+    .header{
+        padding:18px;
+    }
+
+    .guru-info{
+        display:none;
+    }
+
+}
+
+@media(max-width:450px){
+
+    .menu-grid{
+        grid-template-columns:1fr;
+    }
+
+    .container{
+        padding:0 14px;
+    }
+
+    .welcome{
+        padding:18px;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+
+<header class="header">
+
+    <div class="header-title">
+
+        <h1>
+            👨‍🏫 DASHBOARD GURU
+        </h1>
+
+        <p>
+            RUANG EXAM — SMP Negeri 3 Sibolga
+        </p>
+
+    </div>
+
+
+    <div class="guru-area">
+
+        <div class="guru-info">
+
+            <strong id="namaGuru">
+                Guru
+            </strong>
+
+            <span id="usernameGuru">
+                NIP/NIK
+            </span>
+
+        </div>
+
+
+        <div
+            class="avatar"
+            id="avatarGuru">
+
+            G
+
+        </div>
+
+
+        <button
+            class="logout-btn"
+            onclick="logout()">
+
+            Keluar
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- ================= CONTENT ================= -->
+
+<main class="container">
+
+    <!-- WELCOME -->
+
+    <section class="welcome">
+
+        <h2>
+
+            Selamat Datang,
+            <span id="sapaan">
+                Guru
+            </span>
+
+            👋
+
+        </h2>
+
+        <p>
+
+            Kelola ujian, bank soal, dan hasil ujian
+            melalui Dashboard Guru.
+
+        </p>
+
+    </section>
+
+
+    <!-- ================= MENU ================= -->
+
+    <section class="menu-grid">
+
+
+        <!-- DAFTAR UJIAN -->
+
+        <div
+            class="menu-card"
+            onclick="bukaHalaman('ujian-guru.html')">
+
+            <div class="menu-icon">
+                📝
+            </div>
+
+            <h3>
+                Daftar Ujian
+            </h3>
+
+            <p>
+                Membuat dan mengelola ujian
+                yang dibuat oleh guru.
+            </p>
+
+        </div>
+
+
+        <!-- BANK SOAL -->
+
+        <div
+            class="menu-card"
+            onclick="bukaHalaman('bank-soal-guru.html')">
+
+            <div class="menu-icon">
+                📖
+            </div>
+
+            <h3>
+                Bank Soal
+            </h3>
+
+            <p>
+                Membuat, mengedit, dan mengelola
+                soal untuk ujian.
+            </p>
+
+        </div>
+
+
+        <!-- HASIL UJIAN -->
+
+        <div
+            class="menu-card"
+            onclick="bukaHalaman('hasil-ujian-guru.html')">
+
+            <div class="menu-icon">
+                📊
+            </div>
+
+            <h3>
+                Hasil Ujian
+            </h3>
+
+            <p>
+                Melihat nilai dan hasil
+                ujian siswa.
+            </p>
+
+        </div>
+
+
+        <!-- UBAH PASSWORD -->
+
+        <div
+            class="menu-card"
+            onclick="bukaHalaman('ubah-password-guru.html')">
+
+            <div class="menu-icon">
+                🔐
+            </div>
+
+            <h3>
+                Ubah Password
+            </h3>
+
+            <p>
+                Mengubah password akun
+                guru secara aman.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= INFO ================= -->
+
+    <div class="info-box">
+
+        <strong>ℹ️ Informasi Guru</strong><br>
+
+        Gunakan menu <strong>Daftar Ujian</strong>
+        untuk mengelola ujian yang dibuat oleh Anda.
+
+        Menu <strong>Bank Soal</strong> digunakan untuk
+        menyiapkan soal ujian, sedangkan
+        <strong>Hasil Ujian</strong> digunakan untuk
+        melihat hasil siswa.
+
+    </div>
+
+
+    <!-- ================= STATUS ================= -->
+
+    <div class="status">
+
+        <div class="status-dot"></div>
+
+        <span>
+            Sistem Guru aktif —
+            session login terverifikasi.
+        </span>
+
+    </div>
+
+</main>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer class="footer">
+
+    RUANG EXAM Online<br>
+
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+</footer>
+
+
+<script>
+
+/* =====================================================
+   CEK SESSION GURU
+===================================================== */
+
+const sessionRaw =
+    localStorage.getItem("exam_user");
+
+
+if(!sessionRaw){
+
+    window.location.href =
+        "login.html";
+
+}else{
+
+    try{
+
+        const user =
+            JSON.parse(sessionRaw);
+
+
+        /*
+         * Hanya akun guru yang boleh masuk
+         * ke Dashboard Guru.
+         */
+
+        if(user.role !== "guru"){
+
+            localStorage.removeItem(
+                "exam_user"
+            );
+
+            window.location.href =
+                "login.html";
+
+        }else{
+
+            const nama =
+                user.nama ||
+                "Guru";
+
+
+            const username =
+                user.username ||
+                user.nip ||
+                user.nik ||
+                "NIP/NIK";
+
+
+            document
+                .getElementById("namaGuru")
+                .textContent =
+                nama;
+
+
+            document
+                .getElementById("sapaan")
+                .textContent =
+                nama;
+
+
+            document
+                .getElementById("usernameGuru")
+                .textContent =
+                username;
+
+
+            /*
+             * Ambil huruf pertama nama guru
+             * untuk avatar.
+             */
+
+            document
+                .getElementById("avatarGuru")
+                .textContent =
+                nama
+                    .trim()
+                    .charAt(0)
+                    .toUpperCase();
+
+        }
+
+    }catch(error){
+
+        console.error(error);
+
+        localStorage.removeItem(
+            "exam_user"
+        );
+
+        window.location.href =
+            "login.html";
+
+    }
+
+}
+
+
+/* =====================================================
+   BUKA HALAMAN
+===================================================== */
+
+function bukaHalaman(url){
+
+    window.location.href = url;
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function logout(){
+
+    localStorage.removeItem(
+        "exam_user"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+</script>
+
+</body>
+</html>
+```
