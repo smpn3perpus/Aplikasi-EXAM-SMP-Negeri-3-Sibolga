@@ -5,9 +5,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Dashboard Admin - RUANG EXAM</title>
+<title>Roster Ujian - RUANG EXAM</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 *{
     box-sizing:border-box;
     margin:0;
@@ -21,212 +24,508 @@ body{
     min-height:100vh;
 }
 
+/* ================= HEADER ================= */
+
 .header{
     background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
     color:white;
     padding:20px 30px;
+
     display:flex;
     justify-content:space-between;
     align-items:center;
-    gap:20px;
+
+    gap:15px;
     flex-wrap:wrap;
+
     box-shadow:0 5px 20px rgba(0,0,0,.18);
 }
 
-.header-title h1{
-    font-size:25px;
-    margin-bottom:5px;
+.header h1{
+    font-size:23px;
 }
 
-.header-title p{
+.header p{
     font-size:13px;
     opacity:.85;
+    margin-top:5px;
 }
 
-.admin-area{
+.header-buttons{
     display:flex;
-    align-items:center;
-    gap:12px;
+    gap:8px;
+    flex-wrap:wrap;
 }
 
-.admin-info{
-    text-align:right;
-}
-
-.admin-info strong{
-    display:block;
-    font-size:14px;
-}
-
-.admin-info span{
-    font-size:12px;
-    opacity:.8;
-}
-
-.avatar{
-    width:44px;
-    height:44px;
-    border-radius:50%;
-    background:white;
-    color:#1d4ed8;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-weight:bold;
-    font-size:18px;
-}
-
-.logout-btn{
+.btn{
     border:none;
-    background:#ef4444;
-    color:white;
-    padding:10px 15px;
     border-radius:9px;
+    padding:10px 15px;
     cursor:pointer;
     font-weight:bold;
 }
 
-.logout-btn:hover{
-    background:#dc2626;
+.btn-back{
+    background:white;
+    color:#1d4ed8;
 }
 
+.btn-add{
+    background:#22c55e;
+    color:white;
+}
+
+.btn-print{
+    background:#f59e0b;
+    color:white;
+}
+
+.btn-refresh{
+    background:#0ea5e9;
+    color:white;
+}
+
+/* ================= CONTAINER ================= */
+
 .container{
-    max-width:1250px;
-    margin:28px auto;
+    max-width:1350px;
+    margin:25px auto;
     padding:0 20px;
 }
 
-.welcome{
+/* ================= MESSAGE ================= */
+
+.message{
+    display:none;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:18px;
+    text-align:center;
+    font-size:13px;
+}
+
+.message.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.message.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* ================= TOOLBAR ================= */
+
+.toolbar{
     background:white;
-    border-radius:18px;
-    padding:23px;
-    margin-bottom:23px;
+    padding:18px;
+    border-radius:15px;
+    margin-bottom:18px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+
     box-shadow:0 4px 18px rgba(15,23,42,.07);
 }
 
-.welcome h2{
-    font-size:22px;
-    margin-bottom:7px;
+.toolbar-title h2{
+    font-size:18px;
 }
 
-.welcome p{
-    color:#64748b;
-    font-size:14px;
-}
-
-.menu-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:17px;
-}
-
-.menu-card{
-    background:white;
-    border:1px solid #e2e8f0;
-    border-radius:17px;
-    padding:22px;
-    min-height:150px;
-    cursor:pointer;
-    transition:.2s;
-    box-shadow:0 3px 12px rgba(15,23,42,.05);
-}
-
-.menu-card:hover{
-    transform:translateY(-4px);
-    border-color:#93c5fd;
-    box-shadow:0 10px 25px rgba(15,23,42,.12);
-}
-
-.menu-icon{
-    font-size:35px;
-    margin-bottom:12px;
-}
-
-.menu-card h3{
-    font-size:16px;
-    margin-bottom:7px;
-}
-
-.menu-card p{
+.toolbar-title p{
     color:#64748b;
     font-size:12px;
-    line-height:1.5;
+    margin-top:5px;
 }
 
-.status{
-    margin-top:23px;
-    background:white;
-    border:1px solid #e2e8f0;
-    border-radius:15px;
-    padding:17px;
+.filter-box{
     display:flex;
-    align-items:center;
-    gap:10px;
+    gap:8px;
+    flex-wrap:wrap;
 }
 
-.status-dot{
-    width:10px;
-    height:10px;
-    border-radius:50%;
-    background:#22c55e;
-}
-
-.status span{
-    color:#475569;
+select,
+input{
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    padding:9px 11px;
+    background:white;
     font-size:13px;
+    outline:none;
 }
+
+select:focus,
+input:focus{
+    border-color:#2563eb;
+}
+
+/* ================= TABLE ================= */
+
+.table-box{
+    background:white;
+    border-radius:16px;
+    overflow:auto;
+    box-shadow:0 4px 18px rgba(15,23,42,.07);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:1100px;
+}
+
+th{
+    background:#eff6ff;
+    color:#1e3a8a;
+    padding:13px;
+    text-align:left;
+    font-size:12px;
+    white-space:nowrap;
+}
+
+td{
+    padding:13px;
+    border-top:1px solid #e2e8f0;
+    font-size:13px;
+    vertical-align:middle;
+}
+
+tr:hover td{
+    background:#f8fafc;
+}
+
+.empty{
+    text-align:center;
+    padding:45px !important;
+    color:#64748b;
+}
+
+/* ================= BADGE ================= */
+
+.badge{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.badge-kelas{
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+.badge-sesi{
+    background:#f3e8ff;
+    color:#7e22ce;
+}
+
+.badge-lab{
+    background:#dcfce7;
+    color:#166534;
+}
+
+/* ================= ACTION ================= */
+
+.actions{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.action-btn{
+    border:none;
+    border-radius:7px;
+    padding:7px 10px;
+    cursor:pointer;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.edit{
+    background:#2563eb;
+    color:white;
+}
+
+.delete{
+    background:#ef4444;
+    color:white;
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.65);
+
+    justify-content:center;
+    align-items:center;
+
+    padding:20px;
+    z-index:1000;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:650px;
+
+    max-height:90vh;
+    overflow:auto;
+
+    border-radius:18px;
+    padding:24px;
+
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.modal-header h2{
+    font-size:20px;
+}
+
+.close{
+    border:none;
+    background:#fee2e2;
+    color:#991b1b;
+
+    width:34px;
+    height:34px;
+
+    border-radius:50%;
+    cursor:pointer;
+
+    font-size:18px;
+    font-weight:bold;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+.form-group.full{
+    grid-column:1 / -1;
+}
+
+.form-group label{
+    font-size:12px;
+    font-weight:bold;
+    color:#334155;
+}
+
+.form-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-top:20px;
+}
+
+.btn-cancel{
+    background:#e2e8f0;
+    color:#334155;
+}
+
+.btn-save{
+    background:#2563eb;
+    color:white;
+}
+
+/* ================= PREVIEW ================= */
+
+.preview-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+
+    background:rgba(15,23,42,.75);
+
+    justify-content:center;
+    align-items:center;
+
+    padding:15px;
+    z-index:1100;
+}
+
+.preview-modal.show{
+    display:flex;
+}
+
+.preview-container{
+    background:white;
+    width:100%;
+    max-width:1100px;
+
+    max-height:95vh;
+    overflow:auto;
+
+    border-radius:12px;
+    padding:25px;
+}
+
+.preview-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-bottom:15px;
+}
+
+.preview-paper{
+    background:white;
+    border:1px solid #cbd5e1;
+    padding:30px;
+}
+
+.preview-title{
+    text-align:center;
+    margin-bottom:5px;
+}
+
+.preview-title h2{
+    font-size:20px;
+}
+
+.preview-title h3{
+    font-size:16px;
+    margin-top:5px;
+}
+
+.preview-title p{
+    font-size:12px;
+    margin-top:4px;
+}
+
+.preview-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+.preview-table th,
+.preview-table td{
+    border:1px solid #334155;
+    padding:8px;
+    font-size:11px;
+}
+
+.preview-table th{
+    background:#e2e8f0;
+    color:#0f172a;
+}
+
+.preview-footer{
+    text-align:center;
+    margin-top:25px;
+    font-size:11px;
+    color:#64748b;
+}
+
+/* ================= FOOTER ================= */
 
 .footer{
     text-align:center;
     color:#94a3b8;
     font-size:12px;
     line-height:1.6;
-    padding:30px 10px;
+    padding:30px;
 }
 
-@media(max-width:1000px){
-    .menu-grid{
-        grid-template-columns:repeat(3,1fr);
-    }
-}
+/* ================= RESPONSIVE ================= */
 
-@media(max-width:700px){
-    .menu-grid{
-        grid-template-columns:repeat(2,1fr);
-    }
+@media(max-width:650px){
 
     .header{
         padding:18px;
     }
 
-    .admin-info{
-        display:none;
+    .container{
+        padding:0 12px;
     }
-}
 
-@media(max-width:450px){
-    .menu-grid{
+    .form-grid{
         grid-template-columns:1fr;
     }
 
-    .container{
-        padding:0 14px;
+    .form-group.full{
+        grid-column:auto;
     }
 
-    .welcome{
-        padding:18px;
+    .preview-paper{
+        padding:15px;
     }
+
 }
+
+/* ================= PRINT ================= */
+
+@media print{
+
+    body{
+        background:white;
+    }
+
+    body *{
+        visibility:hidden;
+    }
+
+    .preview-paper,
+    .preview-paper *{
+        visibility:visible;
+    }
+
+    .preview-paper{
+        position:absolute;
+        left:0;
+        top:0;
+
+        width:100%;
+        border:none;
+    }
+
+    .preview-actions{
+        display:none !important;
+    }
+
+}
+
 </style>
 </head>
 
 <body>
 
+<!-- ================= HEADER ================= -->
+
 <header class="header">
 
-    <div class="header-title">
+    <div>
 
-        <h1>👑 DASHBOARD ADMIN</h1>
+        <h1>
+            📋 ROSTER UJIAN
+        </h1>
 
         <p>
             RUANG EXAM — SMP Negeri 3 Sibolga
@@ -234,29 +533,37 @@ body{
 
     </div>
 
-    <div class="admin-area">
-
-        <div class="admin-info">
-
-            <strong id="namaAdmin">
-                Administrator
-            </strong>
-
-            <span id="usernameAdmin">
-                Admin
-            </span>
-
-        </div>
-
-        <div class="avatar">
-            A
-        </div>
+    <div class="header-buttons">
 
         <button
-            class="logout-btn"
-            onclick="logout()">
+            class="btn btn-back"
+            onclick="kembaliDashboard()">
 
-            Keluar
+            ← Dashboard
+
+        </button>
+
+        <button
+            class="btn btn-refresh"
+            onclick="loadRoster()">
+
+            🔄 Refresh
+
+        </button>
+
+        <button
+            class="btn btn-print"
+            onclick="bukaPreview()">
+
+            🖨️ Preview
+
+        </button>
+
+        <button
+            class="btn btn-add"
+            onclick="bukaModal()">
+
+            ＋ Tambah Roster
 
         </button>
 
@@ -267,252 +574,439 @@ body{
 
 <main class="container">
 
-    <section class="welcome">
-
-        <h2>
-            Selamat Datang,
-            <span id="sapaan">
-                Administrator
-            </span>
-            👋
-        </h2>
-
-        <p>
-            Kelola seluruh sistem ujian online
-            melalui Dashboard Admin.
-        </p>
-
-    </section>
+    <div
+        id="message"
+        class="message">
+    </div>
 
 
-    <section class="menu-grid">
+    <!-- ================= TOOLBAR ================= -->
 
-        <div
-            class="menu-card"
-            onclick="window.location.href='siswa-admin.html'">
+    <section class="toolbar">
 
-            <div class="menu-icon">👨‍🎓</div>
+        <div class="toolbar-title">
 
-            <h3>Daftar Siswa</h3>
+            <h2>
+                Jadwal Roster Ujian
+            </h2>
 
             <p>
-                Mengelola data siswa, NISN,
-                kelas, dan akun siswa.
+                Jadwal tersusun otomatis berdasarkan
+                tanggal, sesi, dan jam.
             </p>
 
         </div>
 
 
-        <div
-            class="menu-card"
-            onclick="window.location.href='guru-admin.html'">
+        <div class="filter-box">
 
-            <div class="menu-icon">👨‍🏫</div>
+            <select
+                id="filterKelas"
+                onchange="tampilkanRoster()">
 
-            <h3>Daftar Guru</h3>
+                <option value="">
+                    Semua Kelas
+                </option>
 
-            <p>
-                Mengelola data guru,
-                NIP/NIK, dan akun guru.
-            </p>
+                <option value="VII">
+                    Kelas VII
+                </option>
 
-        </div>
+                <option value="VIII">
+                    Kelas VIII
+                </option>
 
+                <option value="IX">
+                    Kelas IX
+                </option>
 
-        <div
-            class="menu-card"
-            onclick="window.location.href='kelas-admin.html'">
+            </select>
 
-            <div class="menu-icon">🏫</div>
 
-            <h3>Daftar Kelas</h3>
-
-            <p>
-                Mengelola kelas VII,
-                VIII, dan IX.
-            </p>
-
-        </div>
-
-
-        <div
-            class="menu-card"
-            onclick="window.location.href='mata-pelajaran-admin.html'">
-
-            <div class="menu-icon">📚</div>
-
-            <h3>Mata Pelajaran</h3>
-
-            <p>
-                Mengelola daftar mata
-                pelajaran yang digunakan
-                dalam ujian.
-            </p>
-
-        </div>
-
-
-        <div
-            class="menu-card"
-            onclick="window.location.href='ujian-admin.html'">
-
-            <div class="menu-icon">📝</div>
-
-            <h3>Daftar Ujian</h3>
-
-            <p>
-                Membuat dan mengelola
-                ujian online.
-            </p>
-
-        </div>
-
-
-        <div
-            class="menu-card"
-            onclick="window.location.href='bank-soal.html'">
-
-            <div class="menu-icon">📖</div>
-
-            <h3>Bank Soal</h3>
-
-            <p>
-                Mengelola kumpulan soal
-                untuk ujian.
-            </p>
-
-        </div>
-
-
-        <div
-            class="menu-card"
-            onclick="window.location.href='token-ujian.html'">
-
-            <div class="menu-icon">🔑</div>
-
-            <h3>Token Ujian</h3>
-
-            <p>
-                Membuat dan mengelola
-                token ujian.
-            </p>
-
-        </div>
-
-
-        <div
-            class="menu-card"
-            onclick="window.location.href='kontrol-ujian.html'">
-
-            <div class="menu-icon">▶️</div>
-
-            <h3>Kontrol Ujian</h3>
-
-            <p>
-                Membuka, menjeda,
-                melanjutkan, dan
-                mengatur waktu ujian.
-            </p>
-
-        </div>
-
-
-        <div
-            class="menu-card"
-            onclick="window.location.href='monitor-peserta.html'">
-
-            <div class="menu-icon">👀</div>
-
-            <h3>Monitor Peserta</h3>
-
-            <p>
-                Memantau peserta
-                yang sedang mengikuti ujian.
-            </p>
-
-        </div>
-
-
-        <div
-            class="menu-card"
-            onclick="window.location.href='kartu-ujian.html'">
-
-            <div class="menu-icon">🪪</div>
-
-            <h3>Kartu Ujian</h3>
-
-            <p>
-                Membuat dan mencetak
-                kartu ujian peserta.
-            </p>
-
-        </div>
-
-
-        <div
-            class="menu-card"
-            onclick="window.location.href='roster-ujian.html'">
-
-            <div class="menu-icon">📋</div>
-
-            <h3>Roster Ujian</h3>
-
-            <p>
-                Mengatur hari, tanggal,
-                sesi, jam, lab, dan
-                mata pelajaran ujian.
-            </p>
-
-        </div>
-
-
-        <div
-            class="menu-card"
-            onclick="window.location.href='hasil-ujian.html'">
-
-            <div class="menu-icon">📊</div>
-
-            <h3>Hasil Ujian</h3>
-
-            <p>
-                Melihat nilai dan
-                hasil ujian peserta.
-            </p>
-
-        </div>
-
-
-        <div
-            class="menu-card"
-            onclick="window.location.href='download-hasil.html'">
-
-            <div class="menu-icon">📥</div>
-
-            <h3>Download Hasil</h3>
-
-            <p>
-                Mengunduh hasil ujian
-                untuk arsip.
-            </p>
+            <input
+                type="date"
+                id="filterTanggal"
+                onchange="tampilkanRoster()">
 
         </div>
 
     </section>
 
 
-    <div class="status">
+    <!-- ================= TABLE ================= -->
 
-        <div class="status-dot"></div>
+    <div class="table-box">
 
-        <span>
-            Sistem Admin aktif —
-            session login terverifikasi.
-        </span>
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>No</th>
+
+                    <th>Hari</th>
+
+                    <th>Tanggal</th>
+
+                    <th>Kelas</th>
+
+                    <th>Sesi</th>
+
+                    <th>Jam</th>
+
+                    <th>Lab</th>
+
+                    <th>Mata Pelajaran</th>
+
+                    <th>Aksi</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="rosterBody">
+
+                <tr>
+
+                    <td
+                        colspan="9"
+                        class="empty">
+
+                        ⏳ Memuat roster...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
 
     </div>
 
 </main>
 
+
+<!-- ================= MODAL FORM ================= -->
+
+<div
+    id="modal"
+    class="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2 id="modalTitle">
+                ＋ Tambah Roster
+            </h2>
+
+            <button
+                class="close"
+                onclick="tutupModal()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <form
+            id="rosterForm"
+            onsubmit="simpanRoster(event)">
+
+            <div class="form-grid">
+
+
+                <!-- KELAS -->
+
+                <div class="form-group">
+
+                    <label>
+                        Kelas
+                    </label>
+
+                    <select
+                        id="kelas"
+                        required>
+
+                        <option value="">
+                            -- Pilih Kelas --
+                        </option>
+
+                        <option value="VII">
+                            VII
+                        </option>
+
+                        <option value="VIII">
+                            VIII
+                        </option>
+
+                        <option value="IX">
+                            IX
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- HARI -->
+
+                <div class="form-group">
+
+                    <label>
+                        Hari
+                    </label>
+
+                    <select
+                        id="hari"
+                        required>
+
+                        <option value="">
+                            -- Pilih Hari --
+                        </option>
+
+                        <option value="Senin">
+                            Senin
+                        </option>
+
+                        <option value="Selasa">
+                            Selasa
+                        </option>
+
+                        <option value="Rabu">
+                            Rabu
+                        </option>
+
+                        <option value="Kamis">
+                            Kamis
+                        </option>
+
+                        <option value="Jumat">
+                            Jumat
+                        </option>
+
+                        <option value="Sabtu">
+                            Sabtu
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- TANGGAL -->
+
+                <div class="form-group">
+
+                    <label>
+                        Tanggal
+                    </label>
+
+                    <input
+                        type="date"
+                        id="tanggal"
+                        required>
+
+                </div>
+
+
+                <!-- SESI -->
+
+                <div class="form-group">
+
+                    <label>
+                        Sesi
+                    </label>
+
+                    <select
+                        id="sesi"
+                        required>
+
+                        <option value="">
+                            -- Pilih Sesi --
+                        </option>
+
+                        <option value="1">
+                            Sesi 1
+                        </option>
+
+                        <option value="2">
+                            Sesi 2
+                        </option>
+
+                        <option value="3">
+                            Sesi 3
+                        </option>
+
+                        <option value="4">
+                            Sesi 4
+                        </option>
+
+                        <option value="5">
+                            Sesi 5
+                        </option>
+
+                        <option value="6">
+                            Sesi 6
+                        </option>
+
+                        <option value="7">
+                            Sesi 7
+                        </option>
+
+                        <option value="8">
+                            Sesi 8
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- JAM -->
+
+                <div class="form-group">
+
+                    <label>
+                        Jam
+                    </label>
+
+                    <input
+                        type="text"
+                        id="jam"
+                        placeholder="Contoh: 07.30 - 09.00"
+                        required>
+
+                </div>
+
+
+                <!-- LAB -->
+
+                <div class="form-group">
+
+                    <label>
+                        Lab
+                    </label>
+
+                    <select
+                        id="lab"
+                        required>
+
+                        <option value="">
+                            -- Pilih Lab --
+                        </option>
+
+                        <option value="Lab 1">
+                            Lab 1
+                        </option>
+
+                        <option value="Lab 2">
+                            Lab 2
+                        </option>
+
+                        <option value="Lab 3">
+                            Lab 3
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- MAPEL -->
+
+                <div class="form-group full">
+
+                    <label>
+                        Mata Pelajaran
+                    </label>
+
+                    <input
+                        type="text"
+                        id="mapel"
+                        placeholder="Contoh: Bahasa Indonesia"
+                        required>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    class="btn btn-cancel"
+                    onclick="tutupModal()">
+
+                    Batal
+
+                </button>
+
+                <button
+                    type="submit"
+                    class="btn btn-save">
+
+                    💾 Simpan Roster
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ================= PREVIEW ================= -->
+
+<div
+    id="previewModal"
+    class="preview-modal">
+
+    <div class="preview-container">
+
+        <div class="preview-actions">
+
+            <button
+                class="btn btn-cancel"
+                onclick="tutupPreview()">
+
+                Tutup
+
+            </button>
+
+            <button
+                class="btn btn-print"
+                onclick="window.print()">
+
+                🖨️ Cetak
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="previewPaper"
+            class="preview-paper">
+
+            <!-- DIISI JAVASCRIPT -->
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= FOOTER ================= -->
 
 <footer class="footer">
 
@@ -526,7 +1020,24 @@ body{
 <script>
 
 /* =====================================================
-   CEK SESSION ADMIN
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =====================================================
+   SESSION ADMIN
 ===================================================== */
 
 const sessionRaw =
@@ -537,45 +1048,14 @@ if(!sessionRaw){
     window.location.href =
         "login.html";
 
-}else{
+}
 
-    try{
+try{
 
-        const user =
-            JSON.parse(sessionRaw);
+    const user =
+        JSON.parse(sessionRaw);
 
-        if(user.role !== "admin"){
-
-            localStorage.removeItem(
-                "exam_user"
-            );
-
-            window.location.href =
-                "login.html";
-
-        }else{
-
-            document
-                .getElementById("namaAdmin")
-                .textContent =
-                user.nama ||
-                "Administrator";
-
-            document
-                .getElementById("sapaan")
-                .textContent =
-                user.nama ||
-                "Administrator";
-
-            document
-                .getElementById("usernameAdmin")
-                .textContent =
-                user.username ||
-                "Admin";
-
-        }
-
-    }catch(error){
+    if(user.role !== "admin"){
 
         localStorage.removeItem(
             "exam_user"
@@ -586,14 +1066,7 @@ if(!sessionRaw){
 
     }
 
-}
-
-
-/* =====================================================
-   LOGOUT
-===================================================== */
-
-function logout(){
+}catch(error){
 
     localStorage.removeItem(
         "exam_user"
@@ -603,6 +1076,968 @@ function logout(){
         "login.html";
 
 }
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let semuaRoster = [];
+
+let editId = null;
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(text,type){
+
+    const el =
+        document.getElementById("message");
+
+    el.textContent =
+        text;
+
+    el.className =
+        "message " + type;
+
+}
+
+function hideMessage(){
+
+    const el =
+        document.getElementById("message");
+
+    el.textContent = "";
+
+    el.className =
+        "message";
+
+}
+
+
+/* =====================================================
+   LOAD ROSTER
+===================================================== */
+
+async function loadRoster(){
+
+    hideMessage();
+
+    const body =
+        document.getElementById(
+            "rosterBody"
+        );
+
+    body.innerHTML = `
+        <tr>
+            <td colspan="9" class="empty">
+                ⏳ Memuat roster...
+            </td>
+        </tr>
+    `;
+
+    try{
+
+        const hasil =
+            await supabaseClient
+            .from("roster_ujian")
+            .select("*")
+            .order(
+                "tanggal",
+                {ascending:true}
+            );
+
+
+        if(hasil.error){
+
+            throw hasil.error;
+
+        }
+
+
+        semuaRoster =
+            hasil.data || [];
+
+
+        tampilkanRoster();
+
+    }catch(error){
+
+        console.error(error);
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="9" class="empty">
+                    ❌ Gagal memuat roster
+                </td>
+            </tr>
+        `;
+
+        showMessage(
+            "Gagal memuat roster: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   URUTKAN
+===================================================== */
+
+function urutkanRoster(data){
+
+    return [...data].sort(
+        (a,b)=>{
+
+            const tanggalA =
+                new Date(
+                    a.tanggal
+                ).getTime();
+
+            const tanggalB =
+                new Date(
+                    b.tanggal
+                ).getTime();
+
+
+            if(
+                tanggalA !==
+                tanggalB
+            ){
+
+                return tanggalA -
+                       tanggalB;
+
+            }
+
+
+            const sesiA =
+                Number(a.sesi) || 0;
+
+            const sesiB =
+                Number(b.sesi) || 0;
+
+
+            if(
+                sesiA !==
+                sesiB
+            ){
+
+                return sesiA -
+                       sesiB;
+
+            }
+
+
+            return String(
+                a.jam || ""
+            ).localeCompare(
+                String(
+                    b.jam || ""
+                )
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   TAMPILKAN
+===================================================== */
+
+function tampilkanRoster(){
+
+    const body =
+        document.getElementById(
+            "rosterBody"
+        );
+
+
+    const filterKelas =
+        document.getElementById(
+            "filterKelas"
+        ).value;
+
+
+    const filterTanggal =
+        document.getElementById(
+            "filterTanggal"
+        ).value;
+
+
+    let data =
+        semuaRoster.filter(
+            item=>{
+
+                const cocokKelas =
+                    !filterKelas ||
+                    item.kelas ===
+                    filterKelas;
+
+
+                const cocokTanggal =
+                    !filterTanggal ||
+                    item.tanggal ===
+                    filterTanggal;
+
+
+                return (
+                    cocokKelas &&
+                    cocokTanggal
+                );
+
+            }
+        );
+
+
+    data =
+        urutkanRoster(data);
+
+
+    if(!data.length){
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="9" class="empty">
+                    📋 Belum ada roster.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    body.innerHTML =
+        data.map(
+            (item,index)=>{
+
+                return `
+
+                <tr>
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${escapeHtml(
+                                item.hari || "-"
+                            )}
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${formatTanggal(
+                            item.tanggal
+                        )}
+                    </td>
+
+                    <td>
+
+                        <span class="badge badge-kelas">
+                            Kelas ${escapeHtml(
+                                item.kelas || "-"
+                            )}
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <span class="badge badge-sesi">
+                            Sesi ${escapeHtml(
+                                item.sesi || "-"
+                            )}
+                        </span>
+
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            item.jam || "-"
+                        )}
+                    </td>
+
+                    <td>
+
+                        <span class="badge badge-lab">
+                            ${escapeHtml(
+                                item.lab || "-"
+                            )}
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <strong>
+                            ${escapeHtml(
+                                item.mapel || "-"
+                            )}
+                        </strong>
+
+                    </td>
+
+                    <td>
+
+                        <div class="actions">
+
+                            <button
+                                class="action-btn edit"
+                                onclick="editRoster('${item.id}')">
+
+                                ✏️ Edit
+
+                            </button>
+
+                            <button
+                                class="action-btn delete"
+                                onclick="hapusRoster('${item.id}')">
+
+                                🗑️ Hapus
+
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function bukaModal(){
+
+    editId = null;
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "＋ Tambah Roster";
+
+
+    document.getElementById(
+        "rosterForm"
+    ).reset();
+
+
+    document.getElementById(
+        "modal"
+    ).classList.add("show");
+
+}
+
+
+function tutupModal(){
+
+    document.getElementById(
+        "modal"
+    ).classList.remove("show");
+
+}
+
+
+/* =====================================================
+   EDIT
+===================================================== */
+
+function editRoster(id){
+
+    const item =
+        semuaRoster.find(
+            x => String(x.id) === String(id)
+        );
+
+
+    if(!item){
+
+        alert(
+            "Data roster tidak ditemukan."
+        );
+
+        return;
+
+    }
+
+
+    editId = id;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "✏️ Edit Roster";
+
+
+    document.getElementById(
+        "kelas"
+    ).value =
+        item.kelas || "";
+
+
+    document.getElementById(
+        "hari"
+    ).value =
+        item.hari || "";
+
+
+    document.getElementById(
+        "tanggal"
+    ).value =
+        item.tanggal || "";
+
+
+    document.getElementById(
+        "sesi"
+    ).value =
+        item.sesi || "";
+
+
+    document.getElementById(
+        "jam"
+    ).value =
+        item.jam || "";
+
+
+    document.getElementById(
+        "lab"
+    ).value =
+        item.lab || "";
+
+
+    document.getElementById(
+        "mapel"
+    ).value =
+        item.mapel || "";
+
+
+    document.getElementById(
+        "modal"
+    ).classList.add("show");
+
+}
+
+
+/* =====================================================
+   SIMPAN
+===================================================== */
+
+async function simpanRoster(event){
+
+    event.preventDefault();
+
+    hideMessage();
+
+
+    const data = {
+
+        kelas:
+            document.getElementById(
+                "kelas"
+            ).value,
+
+        hari:
+            document.getElementById(
+                "hari"
+            ).value,
+
+        tanggal:
+            document.getElementById(
+                "tanggal"
+            ).value,
+
+        sesi:
+            Number(
+                document.getElementById(
+                    "sesi"
+                ).value
+            ),
+
+        jam:
+            document.getElementById(
+                "jam"
+            ).value.trim(),
+
+        lab:
+            document.getElementById(
+                "lab"
+            ).value,
+
+        mapel:
+            document.getElementById(
+                "mapel"
+            ).value.trim()
+
+    };
+
+
+    try{
+
+        let hasil;
+
+
+        /* ================= EDIT ================= */
+
+        if(editId){
+
+            hasil =
+                await supabaseClient
+                .from("roster_ujian")
+                .update(data)
+                .eq(
+                    "id",
+                    editId
+                );
+
+        }
+
+
+        /* ================= TAMBAH ================= */
+
+        else{
+
+            hasil =
+                await supabaseClient
+                .from("roster_ujian")
+                .insert([
+                    data
+                ]);
+
+        }
+
+
+        if(hasil.error){
+
+            throw hasil.error;
+
+        }
+
+
+        tutupModal();
+
+
+        showMessage(
+            editId
+            ?
+            "Roster berhasil diperbarui."
+            :
+            "Roster berhasil ditambahkan.",
+            "success"
+        );
+
+
+        editId = null;
+
+
+        await loadRoster();
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal menyimpan roster: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   HAPUS
+===================================================== */
+
+async function hapusRoster(id){
+
+    const item =
+        semuaRoster.find(
+            x => String(x.id) === String(id)
+        );
+
+
+    if(!item){
+
+        return;
+
+    }
+
+
+    const yakin =
+        confirm(
+            "Hapus roster ini?\n\n" +
+
+            item.hari +
+            ", " +
+            formatTanggal(
+                item.tanggal
+            ) +
+
+            "\nKelas " +
+            item.kelas +
+
+            "\nSesi " +
+            item.sesi +
+
+            "\n" +
+            item.mapel
+        );
+
+
+    if(!yakin){
+
+        return;
+
+    }
+
+
+    try{
+
+        const hasil =
+            await supabaseClient
+            .from("roster_ujian")
+            .delete()
+            .eq(
+                "id",
+                id
+            );
+
+
+        if(hasil.error){
+
+            throw hasil.error;
+
+        }
+
+
+        showMessage(
+            "Roster berhasil dihapus.",
+            "success"
+        );
+
+
+        await loadRoster();
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal menghapus roster: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   PREVIEW
+===================================================== */
+
+function bukaPreview(){
+
+    const filterKelas =
+        document.getElementById(
+            "filterKelas"
+        ).value;
+
+
+    const filterTanggal =
+        document.getElementById(
+            "filterTanggal"
+        ).value;
+
+
+    let data =
+        semuaRoster.filter(
+            item=>{
+
+                return (
+
+                    (!filterKelas ||
+                    item.kelas === filterKelas)
+
+                    &&
+
+                    (!filterTanggal ||
+                    item.tanggal === filterTanggal)
+
+                );
+
+            }
+        );
+
+
+    data =
+        urutkanRoster(data);
+
+
+    const paper =
+        document.getElementById(
+            "previewPaper"
+        );
+
+
+    if(!data.length){
+
+        paper.innerHTML = `
+
+            <div class="preview-title">
+
+                <h2>
+                    ROSTER UJIAN
+                </h2>
+
+                <h3>
+                    SMP NEGERI 3 SIBOLGA
+                </h3>
+
+                <p>
+                    Belum ada data roster untuk ditampilkan.
+                </p>
+
+            </div>
+
+        `;
+
+    }else{
+
+        paper.innerHTML = `
+
+            <div class="preview-title">
+
+                <h2>
+                    ROSTER UJIAN
+                </h2>
+
+                <h3>
+                    SMP NEGERI 3 SIBOLGA
+                </h3>
+
+                <p>
+                    Tahun Pelajaran
+                </p>
+
+            </div>
+
+
+            <table class="preview-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>No</th>
+
+                        <th>Hari</th>
+
+                        <th>Tanggal</th>
+
+                        <th>Kelas</th>
+
+                        <th>Sesi</th>
+
+                        <th>Jam</th>
+
+                        <th>Lab</th>
+
+                        <th>Mata Pelajaran</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    ${
+                        data.map(
+                            (item,index)=>`
+
+                            <tr>
+
+                                <td>
+                                    ${index + 1}
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                        item.hari || "-"
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${formatTanggal(
+                                        item.tanggal
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                        item.kelas || "-"
+                                    )}
+                                </td>
+
+                                <td>
+                                    Sesi ${escapeHtml(
+                                        item.sesi || "-"
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                        item.jam || "-"
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                        item.lab || "-"
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${escapeHtml(
+                                        item.mapel || "-"
+                                    )}
+                                </td>
+
+                            </tr>
+
+                            `
+                        ).join("")
+                    }
+
+                </tbody>
+
+            </table>
+
+
+            <div class="preview-footer">
+
+                RUANG EXAM Online<br>
+
+                Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+            </div>
+
+        `;
+
+    }
+
+
+    document.getElementById(
+        "previewModal"
+    ).classList.add("show");
+
+}
+
+
+function tutupPreview(){
+
+    document.getElementById(
+        "previewModal"
+    ).classList.remove("show");
+
+}
+
+
+/* =====================================================
+   FORMAT TANGGAL
+===================================================== */
+
+function formatTanggal(tanggal){
+
+    if(!tanggal){
+
+        return "-";
+
+    }
+
+
+    const bagian =
+        String(tanggal)
+        .split("-");
+
+
+    if(bagian.length !== 3){
+
+        return tanggal;
+
+    }
+
+
+    return (
+        bagian[2] +
+        "/" +
+        bagian[1] +
+        "/" +
+        bagian[0]
+    );
+
+}
+
+
+/* =====================================================
+   ESCAPE
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function kembaliDashboard(){
+
+    window.location.href =
+        "admin.html";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+loadRoster();
 
 </script>
 
