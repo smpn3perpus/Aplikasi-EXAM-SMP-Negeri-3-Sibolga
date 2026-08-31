@@ -120,7 +120,7 @@ body{
 }
 
 .stat-icon{
-    font-size:28px;
+    font-size:27px;
     margin-bottom:8px;
 }
 
@@ -171,7 +171,7 @@ input{
 table{
     width:100%;
     border-collapse:collapse;
-    min-width:1050px;
+    min-width:1100px;
 }
 
 th{
@@ -196,7 +196,7 @@ tr:hover td{
 
 .badge{
     display:inline-block;
-    padding:6px 10px;
+    padding:7px 11px;
     border-radius:20px;
     font-size:11px;
     font-weight:bold;
@@ -217,24 +217,15 @@ tr:hover td{
     color:#475569;
 }
 
-.timer{
+.jeda{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.jam{
     font-weight:bold;
     color:#1d4ed8;
-    font-size:15px;
-}
-
-.progress-box{
-    width:130px;
-    height:8px;
-    background:#e2e8f0;
-    border-radius:20px;
-    overflow:hidden;
-}
-
-.progress-bar{
-    height:100%;
-    background:#2563eb;
-    border-radius:20px;
+    white-space:nowrap;
 }
 
 .empty{
@@ -292,17 +283,13 @@ tr:hover td{
         <button
             class="btn btn-back"
             onclick="kembaliDashboard()">
-
             ← Dashboard
-
         </button>
 
         <button
             class="btn btn-refresh"
             onclick="loadPeserta()">
-
             🔄 Refresh
-
         </button>
 
     </div>
@@ -314,22 +301,25 @@ tr:hover td{
 
     <div id="message" class="message"></div>
 
-
     <div class="info">
 
         <strong>👀 Monitor Peserta Ujian</strong><br>
 
-        Admin dapat melihat siswa yang sedang mengikuti
-        ujian, status pengerjaan, waktu yang digunakan,
-        serta progress jawaban.
+        Admin dapat melihat daftar siswa yang mengikuti
+        ujian beserta kelas, sesi, laboratorium, jam dan
+        status peserta.
 
-        Halaman ini hanya untuk pemantauan dan
-        <strong>tidak mengubah waktu ujian.</strong>
+        <br><br>
+
+        <strong>ℹ️ Catatan:</strong>
+        Halaman ini hanya untuk pemantauan.
+        Admin tidak memantau layar siswa dan tidak
+        mengubah waktu ujian dari halaman ini.
 
     </div>
 
 
-    <!-- STATISTIK -->
+    <!-- ================= STATISTIK ================= -->
 
     <section class="stats">
 
@@ -340,9 +330,7 @@ tr:hover td{
             <div
                 class="stat-number"
                 id="totalPeserta">
-
                 0
-
             </div>
 
             <div class="stat-label">
@@ -359,9 +347,7 @@ tr:hover td{
             <div
                 class="stat-number"
                 id="pesertaAktif">
-
                 0
-
             </div>
 
             <div class="stat-label">
@@ -378,9 +364,7 @@ tr:hover td{
             <div
                 class="stat-number"
                 id="pesertaSelesai">
-
                 0
-
             </div>
 
             <div class="stat-label">
@@ -397,9 +381,7 @@ tr:hover td{
             <div
                 class="stat-number"
                 id="pesertaBelum">
-
                 0
-
             </div>
 
             <div class="stat-label">
@@ -411,17 +393,64 @@ tr:hover td{
     </section>
 
 
-    <!-- FILTER -->
+    <!-- ================= FILTER ================= -->
 
     <section class="filter-box">
 
         <select
-            id="filterUjian"
+            id="filterKelas"
             onchange="filterData()">
 
             <option value="">
-                Semua Ujian
+                Semua Kelas
             </option>
+
+            <option value="7">
+                Kelas 7
+            </option>
+
+            <option value="8">
+                Kelas 8
+            </option>
+
+            <option value="9">
+                Kelas 9
+            </option>
+
+        </select>
+
+
+        <select
+            id="filterSesi"
+            onchange="filterData()">
+
+            <option value="">
+                Semua Sesi
+            </option>
+
+            <option value="1">Sesi 1</option>
+            <option value="2">Sesi 2</option>
+            <option value="3">Sesi 3</option>
+            <option value="4">Sesi 4</option>
+            <option value="5">Sesi 5</option>
+            <option value="6">Sesi 6</option>
+            <option value="7">Sesi 7</option>
+            <option value="8">Sesi 8</option>
+
+        </select>
+
+
+        <select
+            id="filterLab"
+            onchange="filterData()">
+
+            <option value="">
+                Semua Lab
+            </option>
+
+            <option value="1">Lab 1</option>
+            <option value="2">Lab 2</option>
+            <option value="3">Lab 3</option>
 
         </select>
 
@@ -446,6 +475,10 @@ tr:hover td{
                 Belum Mulai
             </option>
 
+            <option value="jeda">
+                Jeda
+            </option>
+
         </select>
 
 
@@ -454,12 +487,12 @@ tr:hover td{
             class="search"
             type="text"
             placeholder="🔎 Cari nama siswa / NISN..."
-            oninput="filterData()">
+            oninput="filterData">
 
     </section>
 
 
-    <!-- TABLE -->
+    <!-- ================= TABLE ================= -->
 
     <div class="table-box">
 
@@ -479,11 +512,13 @@ tr:hover td{
 
                     <th>Ujian</th>
 
+                    <th>Sesi</th>
+
+                    <th>Lab</th>
+
+                    <th>Jam</th>
+
                     <th>Status</th>
-
-                    <th>Waktu Digunakan</th>
-
-                    <th>Progress</th>
 
                 </tr>
 
@@ -494,7 +529,7 @@ tr:hover td{
                 <tr>
 
                     <td
-                        colspan="8"
+                        colspan="9"
                         class="empty">
 
                         ⏳ Memuat data peserta...
@@ -541,7 +576,7 @@ const supabaseClient =
 
 
 /* =====================================================
-   SESSION ADMIN
+   CEK ADMIN
 ===================================================== */
 
 const sessionRaw =
@@ -590,24 +625,6 @@ let semuaPeserta = [];
 
 
 /* =====================================================
-   MESSAGE
-===================================================== */
-
-function showMessage(text,type){
-
-    const el =
-        document.getElementById("message");
-
-    el.textContent =
-        text;
-
-    el.className =
-        "message " + type;
-
-}
-
-
-/* =====================================================
    LOAD PESERTA
 ===================================================== */
 
@@ -620,51 +637,22 @@ async function loadPeserta(){
 
     body.innerHTML = `
         <tr>
-            <td colspan="8" class="empty">
+            <td colspan="9" class="empty">
                 ⏳ Memuat data peserta...
             </td>
         </tr>
     `;
 
-
     try{
-
-        /*
-         * Mencoba membaca tabel peserta_ujian.
-         *
-         * Struktur yang digunakan:
-         * peserta_ujian
-         * - id
-         * - ujian_id
-         * - siswa_id
-         * - status
-         * - waktu_mulai
-         * - waktu_selesai
-         * - waktu_terpakai_detik
-         * - jumlah_dijawab
-         * - jumlah_soal
-         */
-
 
         const hasil =
             await supabaseClient
             .from("peserta_ujian")
-            .select(`
-                id,
-                ujian_id,
-                siswa_id,
-                status,
-                waktu_mulai,
-                waktu_selesai,
-                waktu_terpakai_detik,
-                jumlah_dijawab,
-                jumlah_soal
-            `)
+            .select("*")
             .order(
-                "waktu_mulai",
+                "created_at",
                 {ascending:false}
             );
-
 
         if(hasil.error){
 
@@ -672,14 +660,14 @@ async function loadPeserta(){
 
         }
 
-
         const peserta =
             hasil.data || [];
-
 
         if(!peserta.length){
 
             semuaPeserta = [];
+
+            updateStatistik();
 
             tampilkanPeserta();
 
@@ -688,7 +676,9 @@ async function loadPeserta(){
         }
 
 
-        /* Ambil ID siswa */
+        /*
+         * Ambil siswa
+         */
 
         const siswaIds =
             [
@@ -700,7 +690,9 @@ async function loadPeserta(){
             ];
 
 
-        /* Ambil ID ujian */
+        /*
+         * Ambil ujian
+         */
 
         const ujianIds =
             [
@@ -718,25 +710,28 @@ async function loadPeserta(){
 
         if(siswaIds.length){
 
-            const siswaHasil =
+            const result =
                 await supabaseClient
                 .from("siswa")
-                .select(`
-                    id,
-                    nama,
-                    nisn,
-                    kelas
-                `)
+                .select(
+                    "id,nama,nisn,kelas"
+                )
                 .in(
                     "id",
                     siswaIds
                 );
 
+            if(result.error){
 
-            if(!siswaHasil.error){
+                console.warn(
+                    "Data siswa:",
+                    result.error.message
+                );
+
+            }else{
 
                 siswaData =
-                    siswaHasil.data || [];
+                    result.data || [];
 
             }
 
@@ -745,24 +740,28 @@ async function loadPeserta(){
 
         if(ujianIds.length){
 
-            const ujianHasil =
+            const result =
                 await supabaseClient
                 .from("ujian")
-                .select(`
-                    id,
-                    judul,
-                    durasi_menit
-                `)
+                .select(
+                    "id,judul"
+                )
                 .in(
                     "id",
                     ujianIds
                 );
 
+            if(result.error){
 
-            if(!ujianHasil.error){
+                console.warn(
+                    "Data ujian:",
+                    result.error.message
+                );
+
+            }else{
 
                 ujianData =
-                    ujianHasil.data || [];
+                    result.data || [];
 
             }
 
@@ -775,16 +774,16 @@ async function loadPeserta(){
                 const siswa =
                     siswaData.find(
                         s =>
-                        s.id ===
-                        p.siswa_id
+                        String(s.id) ===
+                        String(p.siswa_id)
                     ) || {};
 
 
                 const ujian =
                     ujianData.find(
                         u =>
-                        u.id ===
-                        p.ujian_id
+                        String(u.id) ===
+                        String(p.ujian_id)
                     ) || {};
 
 
@@ -793,28 +792,31 @@ async function loadPeserta(){
                     ...p,
 
                     nama:
-                        siswa.nama || "-",
+                        siswa.nama ||
+                        p.nama ||
+                        "-",
 
                     nisn:
-                        siswa.nisn || "-",
+                        siswa.nisn ||
+                        p.nisn ||
+                        "-",
 
                     kelas:
-                        siswa.kelas || "-",
+                        siswa.kelas ||
+                        p.kelas ||
+                        "-",
 
                     judul:
-                        ujian.judul || "-",
-
-                    durasi_menit:
-                        Number(
-                            ujian.durasi_menit
-                        ) || 0
+                        ujian.judul ||
+                        p.judul ||
+                        "-"
 
                 };
 
             });
 
 
-        isiFilterUjian();
+        updateStatistik();
 
         tampilkanPeserta();
 
@@ -826,18 +828,23 @@ async function loadPeserta(){
 
         body.innerHTML = `
             <tr>
-                <td colspan="8" class="empty">
-                    ❌ Data monitor belum tersedia.
+                <td colspan="9" class="empty">
+
+                    ❌ Gagal memuat peserta.
+
                     <br><br>
+
                     ${escapeHtml(
                         error.message
                     )}
+
                 </td>
             </tr>
         `;
 
         showMessage(
-            "Tabel peserta_ujian belum tersedia atau belum sesuai struktur database.",
+            "Gagal memuat data peserta: " +
+            error.message,
             "error"
         );
 
@@ -847,61 +854,37 @@ async function loadPeserta(){
 
 
 /* =====================================================
-   FILTER UJIAN
+   TAMPILKAN PESERTA
 ===================================================== */
 
-function isiFilterUjian(){
+function tampilkanPeserta(){
 
-    const select =
-        document.getElementById(
-            "filterUjian"
-        );
-
-
-    const daftar =
-        [
-            ...new Map(
-                semuaPeserta.map(
-                    p =>
-                    [
-                        p.ujian_id,
-                        p.judul
-                    ]
-                )
-            )
-        ];
-
-
-    select.innerHTML =
-        `<option value="">
-            Semua Ujian
-        </option>`;
-
-
-    daftar.forEach(
-        ([id,judul])=>{
-
-            select.innerHTML += `
-                <option value="${escapeHtml(id)}">
-                    ${escapeHtml(judul)}
-                </option>
-            `;
-
-        }
-    );
+    filterData();
 
 }
 
 
 /* =====================================================
-   FILTER DATA
+   FILTER
 ===================================================== */
 
 function filterData(){
 
-    const ujian =
+    const kelas =
         document.getElementById(
-            "filterUjian"
+            "filterKelas"
+        ).value;
+
+
+    const sesi =
+        document.getElementById(
+            "filterSesi"
+        ).value;
+
+
+    const lab =
+        document.getElementById(
+            "filterLab"
         ).value;
 
 
@@ -923,18 +906,42 @@ function filterData(){
         semuaPeserta.filter(
             p=>{
 
-                const cocokUjian =
-                    !ujian ||
-                    p.ujian_id === ujian;
+                const kelasData =
+                    String(
+                        p.kelas || ""
+                    )
+                    .replace(
+                        /[^0-9]/g,
+                        ""
+                    );
 
 
-                const statusNormal =
+                const cocokKelas =
+                    !kelas ||
+                    kelasData === kelas;
+
+
+                const cocokSesi =
+                    !sesi ||
+                    String(
+                        p.sesi || ""
+                    ) === sesi;
+
+
+                const cocokLab =
+                    !lab ||
+                    String(
+                        p.lab || ""
+                    ) === lab;
+
+
+                const statusData =
                     statusPeserta(p);
 
 
                 const cocokStatus =
                     !status ||
-                    statusNormal === status;
+                    statusData === status;
 
 
                 const teks =
@@ -944,7 +951,8 @@ function filterData(){
                         p.nisn +
                         " " +
                         p.kelas
-                    ).toLowerCase();
+                    )
+                    .toLowerCase();
 
 
                 const cocokSearch =
@@ -953,7 +961,9 @@ function filterData(){
 
 
                 return (
-                    cocokUjian &&
+                    cocokKelas &&
+                    cocokSesi &&
+                    cocokLab &&
                     cocokStatus &&
                     cocokSearch
                 );
@@ -963,21 +973,6 @@ function filterData(){
 
 
     tampilkanRows(hasil);
-
-}
-
-
-/* =====================================================
-   TAMPILKAN PESERTA
-===================================================== */
-
-function tampilkanPeserta(){
-
-    updateStatistik(
-        semuaPeserta
-    );
-
-    filterData();
 
 }
 
@@ -998,8 +993,13 @@ function tampilkanRows(data){
 
         body.innerHTML = `
             <tr>
-                <td colspan="8" class="empty">
-                    👨‍🎓 Belum ada data peserta.
+                <td
+                    colspan="9"
+                    class="empty">
+
+                    👨‍🎓 Belum ada peserta
+                    yang sesuai filter.
+
                 </td>
             </tr>
         `;
@@ -1017,41 +1017,6 @@ function tampilkanRows(data){
                     statusPeserta(p);
 
 
-                const waktu =
-                    waktuPeserta(p);
-
-
-                const dijawab =
-                    Number(
-                        p.jumlah_dijawab
-                    ) || 0;
-
-
-                const jumlahSoal =
-                    Number(
-                        p.jumlah_soal
-                    ) || 0;
-
-
-                let persen = 0;
-
-
-                if(jumlahSoal > 0){
-
-                    persen =
-                        Math.min(
-                            100,
-                            Math.round(
-                                (
-                                    dijawab /
-                                    jumlahSoal
-                                ) * 100
-                            )
-                        );
-
-                }
-
-
                 return `
 
                 <tr>
@@ -1060,31 +1025,87 @@ function tampilkanRows(data){
                         ${index + 1}
                     </td>
 
+
                     <td>
+
                         <strong>
                             ${escapeHtml(
                                 p.nama
                             )}
                         </strong>
+
                     </td>
 
+
                     <td>
+
                         ${escapeHtml(
                             p.nisn
                         )}
+
                     </td>
 
+
                     <td>
+
                         ${escapeHtml(
                             p.kelas
                         )}
+
                     </td>
 
+
                     <td>
+
                         ${escapeHtml(
                             p.judul
                         )}
+
                     </td>
+
+
+                    <td>
+
+                        <strong>
+                            ${escapeHtml(
+                                p.sesi ||
+                                "-"
+                            )}
+                        </strong>
+
+                    </td>
+
+
+                    <td>
+
+                        <strong>
+                            ${
+                                p.lab
+                                ?
+                                "Lab " +
+                                escapeHtml(
+                                    p.lab
+                                )
+                                :
+                                "-"
+                            }
+                        </strong>
+
+                    </td>
+
+
+                    <td>
+
+                        <span class="jam">
+
+                            ${escapeHtml(
+                                ambilJam(p)
+                            )}
+
+                        </span>
+
+                    </td>
+
 
                     <td>
 
@@ -1099,46 +1120,6 @@ function tampilkanRows(data){
 
                     </td>
 
-                    <td>
-
-                        <span
-                            class="timer"
-                            data-start="${
-                                p.waktu_mulai || ""
-                            }"
-                            data-base="${
-                                Number(
-                                    p.waktu_terpakai_detik
-                                ) || 0
-                            }">
-
-                            ${formatWaktu(
-                                waktu
-                            )}
-
-                        </span>
-
-                    </td>
-
-                    <td>
-
-                        <div class="progress-box">
-
-                            <div
-                                class="progress-bar"
-                                style="width:${persen}%">
-
-                            </div>
-
-                        </div>
-
-                        <small>
-                            ${dijawab} /
-                            ${jumlahSoal}
-                        </small>
-
-                    </td>
-
                 </tr>
 
                 `;
@@ -1150,21 +1131,23 @@ function tampilkanRows(data){
 
 
 /* =====================================================
-   STATUS PESERTA
+   STATUS
 ===================================================== */
 
 function statusPeserta(p){
 
-    const status =
+    const s =
         String(
             p.status || ""
-        ).toLowerCase();
+        ).toLowerCase()
+        .trim();
 
 
     if(
-        status === "aktif" ||
-        status === "sedang_ujian" ||
-        status === "dibuka"
+        s === "aktif" ||
+        s === "sedang_ujian" ||
+        s === "dibuka" ||
+        s === "in_progress"
     ){
 
         return "aktif";
@@ -1173,11 +1156,22 @@ function statusPeserta(p){
 
 
     if(
-        status === "selesai" ||
-        status === "completed"
+        s === "selesai" ||
+        s === "completed"
     ){
 
         return "selesai";
+
+    }
+
+
+    if(
+        s === "jeda" ||
+        s === "paused" ||
+        s === "dijeda"
+    ){
+
+        return "jeda";
 
     }
 
@@ -1196,141 +1190,104 @@ function statusText(status){
     const daftar = {
 
         aktif:
-            "AKTIF",
+            "SEDANG UJIAN",
 
         selesai:
             "SELESAI",
 
         belum:
-            "BELUM MULAI"
+            "BELUM MULAI",
+
+        jeda:
+            "JEDA"
 
     };
 
 
     return daftar[status] ||
-        status.toUpperCase();
+        "BELUM MULAI";
 
 }
 
 
 /* =====================================================
-   WAKTU PESERTA
+   AMBIL JAM
 ===================================================== */
 
-function waktuPeserta(p){
+function ambilJam(p){
 
-    let waktu =
-        Number(
-            p.waktu_terpakai_detik
-        ) || 0;
+    /*
+     * Prioritas:
+     * 1. jam pada peserta
+     * 2. jam_mulai
+     * 3. waktu_mulai
+     */
 
+    if(p.jam){
 
-    if(
-        statusPeserta(p) === "aktif" &&
-        p.waktu_mulai
-    ){
-
-        const mulai =
-            new Date(
-                p.waktu_mulai
-            ).getTime();
-
-
-        const sekarang =
-            Date.now();
-
-
-        const tambahan =
-            Math.max(
-                0,
-                Math.floor(
-                    (
-                        sekarang -
-                        mulai
-                    ) / 1000
-                )
-            );
-
-
-        waktu += tambahan;
+        return p.jam;
 
     }
 
 
-    const maksimal =
-        (
-            Number(
-                p.durasi_menit
-            ) || 0
-        ) * 60;
+    if(p.jam_mulai){
 
-
-    if(maksimal > 0){
-
-        waktu =
-            Math.min(
-                waktu,
-                maksimal
-            );
+        return formatTanggalJam(
+            p.jam_mulai
+        );
 
     }
 
 
-    return waktu;
+    if(p.waktu_mulai){
+
+        return formatTanggalJam(
+            p.waktu_mulai
+        );
+
+    }
+
+
+    return "-";
 
 }
 
 
 /* =====================================================
-   UPDATE TIMER
+   FORMAT TANGGAL JAM
 ===================================================== */
 
-function updateTimer(){
+function formatTanggalJam(value){
 
-    document
-    .querySelectorAll(
-        ".timer"
-    )
-    .forEach(
-        el=>{
+    try{
 
-            const start =
-                el.dataset.start;
+        const d =
+            new Date(value);
 
+        if(
+            Number.isNaN(
+                d.getTime()
+            )
+        ){
 
-            const base =
-                Number(
-                    el.dataset.base
-                ) || 0;
-
-
-            if(!start){
-
-                return;
-
-            }
-
-
-            const tambahan =
-                Math.max(
-                    0,
-                    Math.floor(
-                        (
-                            Date.now() -
-                            new Date(start).getTime()
-                        ) / 1000
-                    )
-                );
-
-
-            el.textContent =
-                formatWaktu(
-                    base +
-                    tambahan
-                );
+            return "-";
 
         }
-    );
+
+
+        return d.toLocaleTimeString(
+            "id-ID",
+            {
+                hour:"2-digit",
+                minute:"2-digit"
+            }
+        );
+
+    }catch{
+
+        return "-";
+
+    }
 
 }
 
@@ -1339,14 +1296,14 @@ function updateTimer(){
    STATISTIK
 ===================================================== */
 
-function updateStatistik(data){
+function updateStatistik(){
 
     const total =
-        data.length;
+        semuaPeserta.length;
 
 
     const aktif =
-        data.filter(
+        semuaPeserta.filter(
             p =>
             statusPeserta(p) ===
             "aktif"
@@ -1354,7 +1311,7 @@ function updateStatistik(data){
 
 
     const selesai =
-        data.filter(
+        semuaPeserta.filter(
             p =>
             statusPeserta(p) ===
             "selesai"
@@ -1362,107 +1319,102 @@ function updateStatistik(data){
 
 
     const belum =
-        data.filter(
+        semuaPeserta.filter(
             p =>
             statusPeserta(p) ===
             "belum"
         ).length;
 
 
-    document
-    .getElementById(
+    document.getElementById(
         "totalPeserta"
-    )
-    .textContent =
+    ).textContent =
         total;
 
 
-    document
-    .getElementById(
+    document.getElementById(
         "pesertaAktif"
-    )
-    .textContent =
+    ).textContent =
         aktif;
 
 
-    document
-    .getElementById(
+    document.getElementById(
         "pesertaSelesai"
-    )
-    .textContent =
+    ).textContent =
         selesai;
 
 
-    document
-    .getElementById(
+    document.getElementById(
         "pesertaBelum"
-    )
-    .textContent =
+    ).textContent =
         belum;
 
 }
 
 
 /* =====================================================
-   FORMAT WAKTU
+   MESSAGE
 ===================================================== */
 
-function formatWaktu(totalDetik){
+function showMessage(
+    text,
+    type
+){
 
-    totalDetik =
-        Math.max(
-            0,
-            Math.floor(
-                Number(
-                    totalDetik
-                ) || 0
-            )
+    const el =
+        document.getElementById(
+            "message"
         );
 
 
-    const jam =
-        Math.floor(
-            totalDetik / 3600
-        );
+    el.textContent =
+        text;
 
 
-    const menit =
-        Math.floor(
-            (
-                totalDetik %
-                3600
-            ) / 60
-        );
+    el.className =
+        "message " + type;
 
 
-    const detik =
-        totalDetik %
-        60;
-
-
-    return (
-        String(jam).padStart(2,"0") +
-        ":" +
-        String(menit).padStart(2,"0") +
-        ":" +
-        String(detik).padStart(2,"0")
+    setTimeout(
+        ()=>{
+            el.className =
+                "message";
+        },
+        5000
     );
 
 }
 
 
 /* =====================================================
-   ESCAPE HTML
+   ESCAPE
 ===================================================== */
 
 function escapeHtml(value){
 
-    return String(value ?? "")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
 
 }
 
@@ -1487,17 +1439,7 @@ loadPeserta();
 
 
 /*
- * Refresh tampilan waktu setiap detik.
- */
-
-setInterval(
-    updateTimer,
-    1000
-);
-
-
-/*
- * Refresh data peserta setiap 10 detik.
+ * Refresh data setiap 10 detik.
  */
 
 setInterval(
