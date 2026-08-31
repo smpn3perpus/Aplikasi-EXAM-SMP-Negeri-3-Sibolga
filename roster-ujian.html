@@ -1,0 +1,1224 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Roster Ujian - Admin | RUANG EXAM</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f5f9;
+    color:#0f172a;
+}
+
+.header{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    color:white;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+    box-shadow:0 5px 20px rgba(0,0,0,.18);
+}
+
+.header h1{
+    font-size:23px;
+}
+
+.header p{
+    margin-top:5px;
+    font-size:13px;
+    opacity:.85;
+}
+
+.header-buttons{
+    display:flex;
+    gap:8px;
+}
+
+.btn{
+    border:none;
+    border-radius:9px;
+    padding:10px 15px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-back{
+    background:white;
+    color:#1d4ed8;
+}
+
+.btn-print{
+    background:#22c55e;
+    color:white;
+}
+
+.container{
+    max-width:1250px;
+    margin:25px auto;
+    padding:0 20px;
+}
+
+.card{
+    background:white;
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 4px 18px rgba(15,23,42,.07);
+}
+
+.card h2{
+    font-size:18px;
+    margin-bottom:17px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+}
+
+.form-group label{
+    display:block;
+    font-size:12px;
+    font-weight:bold;
+    margin-bottom:7px;
+    color:#475569;
+}
+
+select{
+    width:100%;
+    padding:11px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    background:white;
+    font-size:13px;
+}
+
+select:focus{
+    outline:none;
+    border-color:#2563eb;
+}
+
+.student-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:15px;
+    flex-wrap:wrap;
+}
+
+.student-header h2{
+    margin:0;
+}
+
+.check-all{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.student-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.student-table th{
+    background:#eff6ff;
+    color:#1e3a8a;
+    padding:12px;
+    text-align:left;
+    font-size:12px;
+}
+
+.student-table td{
+    padding:12px;
+    border-top:1px solid #e2e8f0;
+    font-size:13px;
+}
+
+.student-table tr:hover td{
+    background:#f8fafc;
+}
+
+.student-table input{
+    width:17px;
+    height:17px;
+    cursor:pointer;
+}
+
+.empty{
+    text-align:center;
+    padding:35px !important;
+    color:#64748b;
+}
+
+.message{
+    display:none;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:18px;
+    text-align:center;
+    font-size:13px;
+}
+
+.message.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.message.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* ================= CETAK ================= */
+
+.print-area{
+    display:none;
+}
+
+.print-title{
+    text-align:center;
+    margin-bottom:15px;
+}
+
+.print-title h1{
+    font-size:20px;
+}
+
+.print-title h2{
+    font-size:17px;
+    margin-top:5px;
+}
+
+.print-info{
+    margin-bottom:15px;
+}
+
+.print-info table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.print-info td{
+    padding:4px;
+    font-size:12px;
+}
+
+.print-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.print-table th,
+.print-table td{
+    border:1px solid #000;
+    padding:7px;
+    font-size:11px;
+}
+
+.print-table th{
+    text-align:center;
+}
+
+.footer{
+    text-align:center;
+    color:#94a3b8;
+    font-size:12px;
+    padding:30px;
+}
+
+@media(max-width:900px){
+    .form-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:600px){
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .container{
+        padding:0 12px;
+    }
+
+    .header{
+        padding:18px;
+    }
+}
+
+@media print{
+
+    body{
+        background:white;
+    }
+
+    .header,
+    .container,
+    .footer{
+        display:none !important;
+    }
+
+    .print-area{
+        display:block !important;
+        padding:10mm;
+    }
+
+    @page{
+        size:A4 portrait;
+        margin:10mm;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div>
+        <h1>📋 ROSTER UJIAN</h1>
+        <p>RUANG EXAM — SMP Negeri 3 Sibolga</p>
+    </div>
+
+    <div class="header-buttons">
+
+        <button
+            class="btn btn-back"
+            onclick="kembaliDashboard()">
+            ← Dashboard
+        </button>
+
+        <button
+            class="btn btn-print"
+            onclick="cetakRoster()">
+            🖨️ Cetak Roster
+        </button>
+
+    </div>
+
+</header>
+
+<main class="container">
+
+    <div id="message" class="message"></div>
+
+    <section class="card">
+
+        <h2>⚙️ Pengaturan Roster</h2>
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label>Jenis Ujian</label>
+
+                <select id="jenisUjian" onchange="filterUjian()">
+
+                    <option value="">
+                        Semua Jenis Ujian
+                    </option>
+
+                    <option value="mid">
+                        Ujian MID
+                    </option>
+
+                    <option value="semester1">
+                        Ujian Semester 1
+                    </option>
+
+                    <option value="naik_kelas">
+                        Ujian Naik Kelas
+                    </option>
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Ujian</label>
+
+                <select id="ujianSelect" onchange="ubahFilter()">
+
+                    <option value="">
+                        Pilih Ujian
+                    </option>
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Kelas</label>
+
+                <select id="kelasSelect" onchange="ubahFilter()">
+
+                    <option value="">
+                        Semua Kelas
+                    </option>
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Lab</label>
+
+                <select id="labSelect" onchange="ubahFilter()">
+
+                    <option value="">
+                        Semua Lab
+                    </option>
+
+                    <option value="1">Lab 1</option>
+                    <option value="2">Lab 2</option>
+                    <option value="3">Lab 3</option>
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Sesi</label>
+
+                <select id="sesiSelect" onchange="ubahFilter()">
+
+                    <option value="">
+                        Semua Sesi
+                    </option>
+
+                    <option value="1">Sesi 1</option>
+                    <option value="2">Sesi 2</option>
+                    <option value="3">Sesi 3</option>
+
+                </select>
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="card">
+
+        <div class="student-header">
+
+            <h2>👨‍🎓 Daftar Peserta</h2>
+
+            <label class="check-all">
+
+                <input
+                    type="checkbox"
+                    id="checkAll"
+                    onchange="pilihSemua()">
+
+                Pilih Semua
+
+            </label>
+
+        </div>
+
+        <table class="student-table">
+
+            <thead>
+
+                <tr>
+
+                    <th width="50">Pilih</th>
+                    <th width="60">No</th>
+                    <th>NISN</th>
+                    <th>Nama Siswa</th>
+                    <th>Kelas</th>
+                    <th>Lab</th>
+                    <th>Sesi</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="studentBody">
+
+                <tr>
+                    <td colspan="7" class="empty">
+                        Silakan pilih ujian terlebih dahulu.
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+</main>
+
+<footer class="footer">
+
+    RUANG EXAM Online<br>
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+</footer>
+
+
+<!-- ================= AREA CETAK ================= -->
+
+<div class="print-area" id="printArea">
+
+    <div class="print-title">
+
+        <h1>SMP NEGERI 3 SIBOLGA</h1>
+
+        <h2>ROSTER PESERTA UJIAN</h2>
+
+    </div>
+
+    <div class="print-info">
+
+        <table>
+
+            <tr>
+                <td width="120"><strong>Jenis Ujian</strong></td>
+                <td id="printJenis">-</td>
+            </tr>
+
+            <tr>
+                <td><strong>Ujian</strong></td>
+                <td id="printUjian">-</td>
+            </tr>
+
+            <tr>
+                <td><strong>Kelas</strong></td>
+                <td id="printKelas">-</td>
+            </tr>
+
+            <tr>
+                <td><strong>Lab</strong></td>
+                <td id="printLab">-</td>
+            </tr>
+
+            <tr>
+                <td><strong>Sesi</strong></td>
+                <td id="printSesi">-</td>
+            </tr>
+
+        </table>
+
+    </div>
+
+    <table class="print-table">
+
+        <thead>
+
+            <tr>
+
+                <th width="40">No</th>
+                <th width="120">NISN</th>
+                <th>Nama Siswa</th>
+                <th width="80">Kelas</th>
+                <th width="60">Lab</th>
+                <th width="60">Sesi</th>
+                <th width="100">Tanda Tangan</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody id="printBody"></tbody>
+
+    </table>
+
+    <br>
+
+    <div style="text-align:right;font-size:11px;">
+        Dibuat oleh Mr. Rahmat Batubara, S.T.P
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =====================================================
+   SESSION ADMIN
+===================================================== */
+
+const sessionRaw =
+    localStorage.getItem("exam_user");
+
+if(!sessionRaw){
+
+    window.location.href =
+        "login.html";
+
+}
+
+try{
+
+    const user =
+        JSON.parse(sessionRaw);
+
+    if(user.role !== "admin"){
+
+        localStorage.removeItem(
+            "exam_user"
+        );
+
+        window.location.href =
+            "login.html";
+
+    }
+
+}catch(error){
+
+    localStorage.removeItem(
+        "exam_user"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let semuaUjian = [];
+let semuaSiswa = [];
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(text,type){
+
+    const el =
+        document.getElementById("message");
+
+    el.textContent =
+        text;
+
+    el.className =
+        "message " + type;
+
+}
+
+
+/* =====================================================
+   LOAD UJIAN
+===================================================== */
+
+async function loadUjian(){
+
+    try{
+
+        const hasil =
+            await supabaseClient
+            .from("ujian")
+            .select("*")
+            .order(
+                "created_at",
+                {ascending:false}
+            );
+
+        if(hasil.error)
+            throw hasil.error;
+
+        semuaUjian =
+            hasil.data || [];
+
+        isiPilihanUjian();
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal memuat ujian: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   LOAD SISWA
+===================================================== */
+
+async function loadSiswa(){
+
+    try{
+
+        const hasil =
+            await supabaseClient
+            .from("siswa")
+            .select("*")
+            .order(
+                "nama",
+                {ascending:true}
+            );
+
+        if(hasil.error)
+            throw hasil.error;
+
+        semuaSiswa =
+            hasil.data || [];
+
+        isiPilihanKelas();
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal memuat siswa: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   PILIHAN UJIAN
+===================================================== */
+
+function isiPilihanUjian(){
+
+    const select =
+        document.getElementById(
+            "ujianSelect"
+        );
+
+    select.innerHTML = `
+        <option value="">
+            Pilih Ujian
+        </option>
+    `;
+
+    semuaUjian.forEach(ujian=>{
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value =
+            ujian.id;
+
+        option.textContent =
+            ujian.judul || "Ujian";
+
+        select.appendChild(
+            option
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   FILTER JENIS UJIAN
+===================================================== */
+
+function filterUjian(){
+
+    const jenis =
+        document.getElementById(
+            "jenisUjian"
+        ).value;
+
+    const select =
+        document.getElementById(
+            "ujianSelect"
+        );
+
+    select.innerHTML = `
+        <option value="">
+            Pilih Ujian
+        </option>
+    `;
+
+    semuaUjian
+    .filter(ujian=>{
+
+        if(!jenis)
+            return true;
+
+        const teks =
+            (
+                ujian.judul ||
+                ""
+            ).toLowerCase();
+
+        if(jenis === "mid")
+            return teks.includes("mid");
+
+        if(jenis === "semester1")
+            return (
+                teks.includes("semester") &&
+                (
+                    teks.includes("1") ||
+                    teks.includes("i")
+                )
+            );
+
+        if(jenis === "naik_kelas")
+            return (
+                teks.includes("naik") &&
+                teks.includes("kelas")
+            );
+
+        return true;
+
+    })
+    .forEach(ujian=>{
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value =
+            ujian.id;
+
+        option.textContent =
+            ujian.judul || "Ujian";
+
+        select.appendChild(
+            option
+        );
+
+    });
+
+    ubahFilter();
+
+}
+
+
+/* =====================================================
+   PILIHAN KELAS
+===================================================== */
+
+function isiPilihanKelas(){
+
+    const select =
+        document.getElementById(
+            "kelasSelect"
+        );
+
+    const kelasSet =
+        new Set();
+
+    semuaSiswa.forEach(siswa=>{
+
+        const kelas =
+            siswa.kelas ||
+            siswa.nama_kelas;
+
+        if(kelas)
+            kelasSet.add(kelas);
+
+    });
+
+    [...kelasSet]
+    .sort()
+    .forEach(kelas=>{
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value =
+            kelas;
+
+        option.textContent =
+            kelas;
+
+        select.appendChild(
+            option
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   FILTER PESERTA
+===================================================== */
+
+function ubahFilter(){
+
+    const kelas =
+        document.getElementById(
+            "kelasSelect"
+        ).value;
+
+    tampilkanSiswa(kelas);
+
+}
+
+
+/* =====================================================
+   TAMPILKAN SISWA
+===================================================== */
+
+function tampilkanSiswa(kelas){
+
+    const body =
+        document.getElementById(
+            "studentBody"
+        );
+
+    let data =
+        semuaSiswa.filter(siswa=>{
+
+            const kelasSiswa =
+                siswa.kelas ||
+                siswa.nama_kelas ||
+                "";
+
+            if(
+                kelas &&
+                kelasSiswa !== kelas
+            )
+                return false;
+
+            return true;
+
+        });
+
+
+    if(!data.length){
+
+        body.innerHTML = `
+            <tr>
+                <td
+                    colspan="7"
+                    class="empty">
+
+                    Tidak ada siswa
+                    sesuai pilihan.
+
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    body.innerHTML =
+        data.map((siswa,index)=>{
+
+            const nisn =
+                siswa.nisn ||
+                siswa.username ||
+                "-";
+
+            const nama =
+                siswa.nama ||
+                siswa.nama_siswa ||
+                "-";
+
+            const kelasSiswa =
+                siswa.kelas ||
+                siswa.nama_kelas ||
+                "-";
+
+            return `
+
+                <tr>
+
+                    <td>
+
+                        <input
+                            type="checkbox"
+                            class="student-check"
+                            data-id="${siswa.id}"
+                            data-nama="${escapeHtml(nama)}"
+                            data-nisn="${escapeHtml(nisn)}"
+                            data-kelas="${escapeHtml(kelasSiswa)}">
+
+                    </td>
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(nisn)}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${escapeHtml(nama)}
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${escapeHtml(kelasSiswa)}
+                    </td>
+
+                    <td>
+                        -
+                    </td>
+
+                    <td>
+                        -
+                    </td>
+
+                </tr>
+
+            `;
+
+        }).join("");
+
+    document.getElementById(
+        "checkAll"
+    ).checked = false;
+
+}
+
+
+/* =====================================================
+   PILIH SEMUA
+===================================================== */
+
+function pilihSemua(){
+
+    const checked =
+        document.getElementById(
+            "checkAll"
+        ).checked;
+
+    document
+    .querySelectorAll(
+        ".student-check"
+    )
+    .forEach(cb=>{
+
+        cb.checked =
+            checked;
+
+    });
+
+}
+
+
+/* =====================================================
+   CETAK
+===================================================== */
+
+function cetakRoster(){
+
+    const pilihan =
+        [
+            ...document.querySelectorAll(
+                ".student-check:checked"
+            )
+        ];
+
+    if(!pilihan.length){
+
+        alert(
+            "Silakan centang minimal satu siswa."
+        );
+
+        return;
+
+    }
+
+
+    const ujianSelect =
+        document.getElementById(
+            "ujianSelect"
+        );
+
+    const kelasSelect =
+        document.getElementById(
+            "kelasSelect"
+        );
+
+    const lab =
+        document.getElementById(
+            "labSelect"
+        ).value;
+
+    const sesi =
+        document.getElementById(
+            "sesiSelect"
+        ).value;
+
+
+    document.getElementById(
+        "printJenis"
+    ).textContent =
+        document.getElementById(
+            "jenisUjian"
+        ).selectedOptions[0].text;
+
+
+    document.getElementById(
+        "printUjian"
+    ).textContent =
+        ujianSelect.selectedOptions[0]
+        ?.text || "Semua Ujian";
+
+
+    document.getElementById(
+        "printKelas"
+    ).textContent =
+        kelasSelect.selectedOptions[0]
+        ?.text || "Semua Kelas";
+
+
+    document.getElementById(
+        "printLab"
+    ).textContent =
+        lab ? "Lab " + lab : "Semua Lab";
+
+
+    document.getElementById(
+        "printSesi"
+    ).textContent =
+        sesi ? "Sesi " + sesi : "Semua Sesi";
+
+
+    const printBody =
+        document.getElementById(
+            "printBody"
+        );
+
+
+    printBody.innerHTML =
+        pilihan.map((cb,index)=>{
+
+            return `
+
+                <tr>
+
+                    <td style="text-align:center">
+                        ${index + 1}
+                    </td>
+
+                    <td>
+                        ${cb.dataset.nisn}
+                    </td>
+
+                    <td>
+                        ${cb.dataset.nama}
+                    </td>
+
+                    <td>
+                        ${cb.dataset.kelas}
+                    </td>
+
+                    <td style="text-align:center">
+                        ${lab || "-"}
+                    </td>
+
+                    <td style="text-align:center">
+                        ${sesi || "-"}
+                    </td>
+
+                    <td></td>
+
+                </tr>
+
+            `;
+
+        }).join("");
+
+
+    window.print();
+
+}
+
+
+/* =====================================================
+   ESCAPE
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function kembaliDashboard(){
+
+    window.location.href =
+        "admin.html";
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+Promise.all([
+    loadUjian(),
+    loadSiswa()
+]);
+
+</script>
+
+</body>
+</html>
+```
