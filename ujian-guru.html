@@ -1,0 +1,2916 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Daftar Ujian - Guru | RUANG EXAM</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f5f9;
+    color:#0f172a;
+    min-height:100vh;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    color:white;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.18);
+}
+
+.header h1{
+    font-size:23px;
+}
+
+.header p{
+    font-size:13px;
+    opacity:.85;
+    margin-top:5px;
+}
+
+.header-buttons{
+    display:flex;
+    gap:8px;
+}
+
+.btn{
+    border:none;
+    border-radius:9px;
+    padding:10px 14px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-back{
+    background:white;
+    color:#1d4ed8;
+}
+
+.btn-refresh{
+    background:#22c55e;
+    color:white;
+}
+
+.container{
+    max-width:1250px;
+    margin:25px auto;
+    padding:0 20px;
+}
+
+/* ================= MESSAGE ================= */
+
+.message{
+    display:none;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:18px;
+    text-align:center;
+    font-size:13px;
+}
+
+.message.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.message.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* ================= TOOLBAR ================= */
+
+.toolbar{
+    background:white;
+    padding:18px;
+    border-radius:15px;
+    display:flex;
+    gap:12px;
+    align-items:center;
+    flex-wrap:wrap;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    margin-bottom:18px;
+}
+
+.search{
+    flex:1;
+    min-width:220px;
+}
+
+.search input{
+    width:100%;
+    padding:12px 14px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    outline:none;
+}
+
+.search input:focus{
+    border-color:#2563eb;
+}
+
+.filter{
+    width:180px;
+}
+
+.filter select{
+    width:100%;
+    padding:12px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    background:white;
+}
+
+.btn-add{
+    background:#2563eb;
+    color:white;
+    padding:12px 18px;
+}
+
+/* ================= SUMMARY ================= */
+
+.summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-bottom:18px;
+}
+
+.summary-card{
+    background:white;
+    border-radius:13px;
+    padding:15px 20px;
+    box-shadow:0 4px 15px rgba(0,0,0,.05);
+}
+
+.summary-card strong{
+    display:block;
+    font-size:22px;
+    color:#2563eb;
+}
+
+.summary-card span{
+    color:#64748b;
+    font-size:12px;
+}
+
+/* ================= TABLE ================= */
+
+.table-box{
+    background:white;
+    border-radius:15px;
+    overflow:auto;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:1100px;
+}
+
+th{
+    background:#eff6ff;
+    color:#1e3a8a;
+    padding:14px;
+    text-align:left;
+    font-size:13px;
+    white-space:nowrap;
+}
+
+td{
+    padding:13px;
+    border-top:1px solid #e2e8f0;
+    font-size:13px;
+    vertical-align:top;
+}
+
+tr:hover td{
+    background:#f8fafc;
+}
+
+.empty{
+    text-align:center;
+    padding:40px !important;
+    color:#64748b;
+}
+
+/* ================= BADGE ================= */
+
+.badge{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.draft{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.aktif{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.selesai{
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+.kelas-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+}
+
+.kelas-badge{
+    background:#e0f2fe;
+    color:#075985;
+    border-radius:15px;
+    padding:5px 8px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+/* ================= ACTION ================= */
+
+.action{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.action button{
+    border:none;
+    border-radius:7px;
+    padding:7px 9px;
+    cursor:pointer;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.edit{
+    background:#f59e0b;
+    color:white;
+}
+
+.delete{
+    background:#ef4444;
+    color:white;
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.6);
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    z-index:100;
+    overflow:auto;
+}
+
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:650px;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+    margin:auto;
+}
+
+.modal-box h2{
+    margin-bottom:18px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.form-group{
+    margin-bottom:3px;
+}
+
+.form-group.full{
+    grid-column:1 / -1;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:7px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.form-group input,
+.form-group select{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    outline:none;
+    background:white;
+}
+
+.form-group input:focus,
+.form-group select:focus{
+    border-color:#2563eb;
+}
+
+/* ================= KELAS ================= */
+
+.kelas-container{
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    padding:12px;
+    max-height:230px;
+    overflow-y:auto;
+    background:#f8fafc;
+}
+
+.kelas-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+    padding-bottom:10px;
+    border-bottom:1px solid #e2e8f0;
+}
+
+.kelas-header strong{
+    font-size:12px;
+}
+
+.kelas-header button{
+    border:none;
+    background:#2563eb;
+    color:white;
+    padding:6px 9px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.kelas-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+}
+
+.kelas-item{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    background:white;
+    border:1px solid #e2e8f0;
+    padding:9px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.kelas-item:hover{
+    border-color:#93c5fd;
+    background:#eff6ff;
+}
+
+.kelas-item input{
+    width:auto;
+    cursor:pointer;
+}
+
+.kelas-item span{
+    font-size:12px;
+    font-weight:bold;
+}
+
+.info{
+    background:#eff6ff;
+    color:#1e40af;
+    padding:11px;
+    border-radius:9px;
+    font-size:12px;
+    line-height:1.5;
+    margin-bottom:18px;
+}
+
+.selected-info{
+    margin-top:10px;
+    font-size:12px;
+    color:#475569;
+}
+
+/* ================= MODAL BUTTON ================= */
+
+.modal-buttons{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:22px;
+}
+
+.cancel{
+    background:#e2e8f0;
+    color:#334155;
+}
+
+.save{
+    background:#2563eb;
+    color:white;
+}
+
+/* ================= FOOTER ================= */
+
+.footer{
+    text-align:center;
+    color:#94a3b8;
+    font-size:12px;
+    line-height:1.6;
+    padding:30px;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:800px){
+
+    .summary{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .form-group.full{
+        grid-column:auto;
+    }
+
+    .kelas-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:600px){
+
+    .header{
+        padding:18px;
+    }
+
+    .container{
+        padding:0 12px;
+    }
+
+    .toolbar{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .search,
+    .filter{
+        width:100%;
+    }
+
+    .btn-add{
+        width:100%;
+    }
+
+    .kelas-grid{
+        grid-template-columns:1fr 1fr;
+    }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="header">
+
+    <div>
+
+        <h1>
+            📝 DAFTAR UJIAN
+        </h1>
+
+        <p>
+            RUANG EXAM — SMP Negeri 3 Sibolga
+        </p>
+
+    </div>
+
+    <div class="header-buttons">
+
+        <button
+            class="btn btn-back"
+            onclick="kembaliDashboard()">
+
+            ← Dashboard
+
+        </button>
+
+        <button
+            class="btn btn-refresh"
+            onclick="loadSemuaData()">
+
+            🔄 Refresh
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     CONTENT
+===================================================== -->
+
+<main class="container">
+
+    <div
+        id="message"
+        class="message">
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <div class="summary">
+
+        <div class="summary-card">
+
+            <strong id="totalUjian">
+                0
+            </strong>
+
+            <span>
+                Total Ujian
+            </span>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <strong id="totalDraft">
+                0
+            </strong>
+
+            <span>
+                Draft
+            </span>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <strong id="totalAktif">
+                0
+            </strong>
+
+            <span>
+                Aktif
+            </span>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <strong id="totalSelesai">
+                0
+            </strong>
+
+            <span>
+                Selesai
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- TOOLBAR -->
+
+    <div class="toolbar">
+
+        <div class="search">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="🔍 Cari judul ujian..."
+                oninput="filterUjian()">
+
+        </div>
+
+
+        <div class="filter">
+
+            <select
+                id="statusFilter"
+                onchange="filterUjian()">
+
+                <option value="">
+                    Semua Status
+                </option>
+
+                <option value="draft">
+                    Draft
+                </option>
+
+                <option value="aktif">
+                    Aktif
+                </option>
+
+                <option value="selesai">
+                    Selesai
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <button
+            class="btn btn-add"
+            onclick="bukaTambah()">
+
+            ➕ Buat Ujian
+
+        </button>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="table-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>No</th>
+
+                    <th>
+                        Judul Ujian
+                    </th>
+
+                    <th>
+                        Mata Pelajaran
+                    </th>
+
+                    <th>
+                        Kelas
+                    </th>
+
+                    <th>
+                        Guru
+                    </th>
+
+                    <th>
+                        Durasi
+                    </th>
+
+                    <th>
+                        Mulai
+                    </th>
+
+                    <th>
+                        Selesai
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Aksi
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="ujianBody">
+
+                <tr>
+
+                    <td
+                        colspan="10"
+                        class="empty">
+
+                        ⏳ Memuat data ujian...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="footer">
+
+    RUANG EXAM Online<br>
+
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+</footer>
+
+
+<!-- =====================================================
+     MODAL UJIAN
+===================================================== -->
+
+<div
+    class="modal"
+    id="modal">
+
+    <div class="modal-box">
+
+        <h2 id="modalTitle">
+            Buat Ujian
+        </h2>
+
+
+        <div class="info">
+
+            Satu ujian dapat digunakan untuk
+            <strong>beberapa kelas sekaligus</strong>.
+            Silakan centang semua kelas yang mengikuti ujian.
+
+        </div>
+
+
+        <div class="form-grid">
+
+
+            <!-- JUDUL -->
+
+            <div class="form-group full">
+
+                <label>
+                    Judul Ujian
+                </label>
+
+                <input
+                    type="text"
+                    id="judul"
+                    placeholder="Contoh: PAS Matematika"
+                    maxlength="150">
+
+            </div>
+
+
+            <!-- MAPEL -->
+
+            <div class="form-group">
+
+                <label>
+                    Mata Pelajaran
+                </label>
+
+                <select id="mataPelajaran">
+
+                    <option value="">
+                        ⏳ Memuat...
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- KELAS -->
+
+            <div class="form-group full">
+
+                <label>
+                    Kelas yang Mengikuti Ujian
+                </label>
+
+
+                <div class="kelas-container">
+
+                    <div class="kelas-header">
+
+                        <strong>
+                            Pilih satu atau beberapa kelas
+                        </strong>
+
+                        <button
+                            type="button"
+                            onclick="pilihSemuaKelas()">
+
+                            ☑ Pilih Semua
+
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="kelasList"
+                        class="kelas-grid">
+
+                        <span>
+                            ⏳ Memuat kelas...
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        id="selectedInfo"
+                        class="selected-info">
+
+                        Belum ada kelas dipilih.
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- GURU -->
+
+            <div class="form-group">
+
+                <label>
+                    Guru
+                </label>
+
+                <select id="guru">
+
+                    <option value="">
+                        -- Pilih Guru --
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- DURASI -->
+
+            <div class="form-group">
+
+                <label>
+                    Durasi (menit)
+                </label>
+
+                <input
+                    type="number"
+                    id="durasi"
+                    min="1"
+                    max="600"
+                    value="60">
+
+            </div>
+
+
+            <!-- MULAI -->
+
+            <div class="form-group">
+
+                <label>
+                    Tanggal & Jam Mulai
+                </label>
+
+                <input
+                    type="datetime-local"
+                    id="tanggalMulai">
+
+            </div>
+
+
+            <!-- SELESAI -->
+
+            <div class="form-group">
+
+                <label>
+                    Tanggal & Jam Selesai
+                </label>
+
+                <input
+                    type="datetime-local"
+                    id="tanggalSelesai">
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="form-group">
+
+                <label>
+                    Status
+                </label>
+
+                <select id="status">
+
+                    <option value="draft">
+                        Draft
+                    </option>
+
+                    <option value="aktif">
+                        Aktif
+                    </option>
+
+                    <option value="selesai">
+                        Selesai
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- BUTTON -->
+
+        <div class="modal-buttons">
+
+            <button
+                class="btn cancel"
+                onclick="tutupModal()">
+
+                Batal
+
+            </button>
+
+
+            <button
+                class="btn save"
+                onclick="simpanUjian()">
+
+                💾 Simpan Ujian
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   KONFIGURASI SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =====================================================
+   CEK LOGIN GURU
+===================================================== */
+
+const sessionRaw =
+    localStorage.getItem("exam_user");
+
+
+if(!sessionRaw){
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+let currentUser = null;
+
+
+try{
+
+    currentUser =
+        JSON.parse(sessionRaw);
+
+
+    if(
+        currentUser.role !== "guru" &&
+        currentUser.role !== "admin"
+    ){
+
+        localStorage.removeItem(
+            "exam_user"
+        );
+
+        window.location.href =
+            "login.html";
+
+    }
+
+}catch(error){
+
+    localStorage.removeItem(
+        "exam_user"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let semuaUjian = [];
+
+let semuaMapel = [];
+
+let semuaKelas = [];
+
+let semuaGuru = [];
+
+let semuaUjianKelas = [];
+
+let editId = null;
+
+
+/* =====================================================
+   PESAN
+===================================================== */
+
+function showMessage(text,type){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+    message.textContent =
+        text;
+
+    message.className =
+        "message " + type;
+
+
+    setTimeout(()=>{
+
+        message.textContent =
+            "";
+
+        message.className =
+            "message";
+
+    },3500);
+
+}
+
+
+function hideMessage(){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+    message.textContent =
+        "";
+
+    message.className =
+        "message";
+
+}
+
+
+/* =====================================================
+   LOAD DATA
+===================================================== */
+
+async function loadSemuaData(){
+
+    hideMessage();
+
+
+    document.getElementById(
+        "ujianBody"
+    ).innerHTML = `
+
+        <tr>
+
+            <td
+                colspan="10"
+                class="empty">
+
+                ⏳ Memuat data...
+
+            </td>
+
+        </tr>
+
+    `;
+
+
+    try{
+
+        const [
+
+            hasilUjian,
+
+            hasilMapel,
+
+            hasilKelas,
+
+            hasilGuru,
+
+            hasilUjianKelas
+
+        ] = await Promise.all([
+
+
+            /* UJIAN */
+
+            supabaseClient
+
+            .from("ujian")
+
+            .select(`
+
+                id,
+                judul,
+                mata_pelajaran_id,
+                guru_id,
+                durasi_menit,
+                tanggal_mulai,
+                tanggal_selesai,
+                status,
+                created_at,
+
+                mata_pelajaran (
+                    id,
+                    nama
+                ),
+
+                guru (
+                    id,
+                    nama,
+                    nip
+                )
+
+            `)
+
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            ),
+
+
+            /* MAPEL */
+
+            supabaseClient
+
+            .from("mata_pelajaran")
+
+            .select(
+                "id,nama"
+            )
+
+            .order(
+                "nama",
+                {
+                    ascending:true
+                }
+            ),
+
+
+            /* KELAS */
+
+            supabaseClient
+
+            .from("kelas")
+
+            .select(
+                "id,nama_kelas,tingkat"
+            )
+
+            .order(
+                "tingkat",
+                {
+                    ascending:true
+                }
+            )
+
+            .order(
+                "nama_kelas",
+                {
+                    ascending:true
+                }
+            ),
+
+
+            /* GURU */
+
+            supabaseClient
+
+            .from("guru")
+
+            .select(
+                "id,nama,nip"
+            )
+
+            .order(
+                "nama",
+                {
+                    ascending:true
+                }
+            ),
+
+
+            /* UJIAN KELAS */
+
+            supabaseClient
+
+            .from("ujian_kelas")
+
+            .select(`
+
+                id,
+                ujian_id,
+                kelas_id,
+
+                kelas (
+                    id,
+                    nama_kelas,
+                    tingkat
+                )
+
+            `)
+
+        ]);
+
+
+        if(hasilUjian.error)
+            throw hasilUjian.error;
+
+        if(hasilMapel.error)
+            throw hasilMapel.error;
+
+        if(hasilKelas.error)
+            throw hasilKelas.error;
+
+        if(hasilGuru.error)
+            throw hasilGuru.error;
+
+        if(hasilUjianKelas.error)
+            throw hasilUjianKelas.error;
+
+
+        semuaUjian =
+            hasilUjian.data || [];
+
+
+        semuaMapel =
+            hasilMapel.data || [];
+
+
+        semuaKelas =
+            hasilKelas.data || [];
+
+
+        semuaGuru =
+            hasilGuru.data || [];
+
+
+        semuaUjianKelas =
+            hasilUjianKelas.data || [];
+
+
+        isiPilihan();
+
+        updateSummary();
+
+        tampilkanUjian(
+            semuaUjian
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        document.getElementById(
+            "ujianBody"
+        ).innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="10"
+                    class="empty">
+
+                    ❌ Gagal memuat data ujian.
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+        showMessage(
+            "Gagal mengambil data: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   ISI PILIHAN
+===================================================== */
+
+function isiPilihan(){
+
+    const mapel =
+        document.getElementById(
+            "mataPelajaran"
+        );
+
+
+    const guru =
+        document.getElementById(
+            "guru"
+        );
+
+
+    mapel.innerHTML = `
+
+        <option value="">
+            -- Pilih Mata Pelajaran --
+        </option>
+
+    `;
+
+
+    semuaMapel.forEach(item=>{
+
+        mapel.innerHTML += `
+
+            <option value="${item.id}">
+
+                ${escapeHtml(
+                    item.nama
+                )}
+
+            </option>
+
+        `;
+
+    });
+
+
+    guru.innerHTML = `
+
+        <option value="">
+            -- Pilih Guru --
+        </option>
+
+    `;
+
+
+    semuaGuru.forEach(item=>{
+
+        guru.innerHTML += `
+
+            <option value="${item.id}">
+
+                ${escapeHtml(
+                    item.nama
+                )}
+
+                ${
+                    item.nip
+                    ? " — " +
+                      escapeHtml(
+                          item.nip
+                      )
+                    : ""
+                }
+
+            </option>
+
+        `;
+
+    });
+
+
+    isiKelas();
+
+}
+
+
+/* =====================================================
+   ISI KELAS
+===================================================== */
+
+function isiKelas(selectedIds=[]){
+
+    const container =
+        document.getElementById(
+            "kelasList"
+        );
+
+
+    if(!semuaKelas.length){
+
+        container.innerHTML = `
+
+            <div
+                style="
+                    grid-column:1/-1;
+                    text-align:center;
+                    padding:20px;
+                    color:#64748b;
+                ">
+
+                🏫 Belum ada data kelas.
+
+            </div>
+
+        `;
+
+
+        updateSelectedInfo();
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        semuaKelas.map(item=>{
+
+            const checked =
+                selectedIds.includes(
+                    item.id
+                )
+                ? "checked"
+                : "";
+
+
+            return `
+
+                <label class="kelas-item">
+
+                    <input
+
+                        type="checkbox"
+
+                        name="kelasMulti"
+
+                        value="${item.id}"
+
+                        ${checked}
+
+                        onchange="
+                            updateSelectedInfo()
+                        ">
+
+                    <span>
+
+                        ${escapeHtml(
+                            item.nama_kelas
+                        )}
+
+                    </span>
+
+                </label>
+
+            `;
+
+        }).join("");
+
+
+    updateSelectedInfo();
+
+}
+
+
+/* =====================================================
+   PILIH SEMUA KELAS
+===================================================== */
+
+function pilihSemuaKelas(){
+
+    const checkboxes =
+        document.querySelectorAll(
+            'input[name="kelasMulti"]'
+        );
+
+
+    const semuaSudahDipilih =
+        Array.from(
+            checkboxes
+        )
+        .every(
+            cb => cb.checked
+        );
+
+
+    checkboxes.forEach(cb=>{
+
+        cb.checked =
+            !semuaSudahDipilih;
+
+    });
+
+
+    updateSelectedInfo();
+
+}
+
+
+/* =====================================================
+   INFO KELAS
+===================================================== */
+
+function updateSelectedInfo(){
+
+    const checked =
+        document.querySelectorAll(
+            'input[name="kelasMulti"]:checked'
+        );
+
+
+    const info =
+        document.getElementById(
+            "selectedInfo"
+        );
+
+
+    if(!checked.length){
+
+        info.textContent =
+            "⚠️ Belum ada kelas dipilih.";
+
+        info.style.color =
+            "#dc2626";
+
+        return;
+
+    }
+
+
+    const namaKelas =
+        Array.from(
+            checked
+        )
+        .map(cb=>{
+
+            const kelas =
+                semuaKelas.find(
+                    k =>
+                    k.id === cb.value
+                );
+
+
+            return kelas
+                ? kelas.nama_kelas
+                : "";
+
+        })
+        .filter(Boolean);
+
+
+    info.textContent =
+        "✅ " +
+        checked.length +
+        " kelas dipilih: " +
+        namaKelas.join(", ");
+
+
+    info.style.color =
+        "#166534";
+
+}
+
+
+/* =====================================================
+   AMBIL KELAS
+===================================================== */
+
+function getSelectedKelas(){
+
+    return Array.from(
+
+        document.querySelectorAll(
+            'input[name="kelasMulti"]:checked'
+        )
+
+    )
+    .map(
+        checkbox =>
+        checkbox.value
+    );
+
+}
+
+
+/* =====================================================
+   SUMMARY
+===================================================== */
+
+function updateSummary(){
+
+    document.getElementById(
+        "totalUjian"
+    ).textContent =
+        semuaUjian.length;
+
+
+    document.getElementById(
+        "totalDraft"
+    ).textContent =
+        semuaUjian.filter(
+            u =>
+            u.status === "draft"
+        ).length;
+
+
+    document.getElementById(
+        "totalAktif"
+    ).textContent =
+        semuaUjian.filter(
+            u =>
+            u.status === "aktif"
+        ).length;
+
+
+    document.getElementById(
+        "totalSelesai"
+    ).textContent =
+        semuaUjian.filter(
+            u =>
+            u.status === "selesai"
+        ).length;
+
+}
+
+
+/* =====================================================
+   KELAS UNTUK UJIAN
+===================================================== */
+
+function getKelasUntukUjian(
+    ujianId
+){
+
+    return semuaUjianKelas
+
+        .filter(
+            item =>
+            item.ujian_id === ujianId
+        )
+
+        .map(
+            item =>
+            item.kelas
+        )
+
+        .filter(Boolean);
+
+}
+
+
+/* =====================================================
+   TAMPILKAN UJIAN
+===================================================== */
+
+function tampilkanUjian(data){
+
+    const body =
+        document.getElementById(
+            "ujianBody"
+        );
+
+
+    if(!data.length){
+
+        body.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="10"
+                    class="empty">
+
+                    📝 Belum ada data ujian.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    body.innerHTML =
+        data.map(
+            (ujian,index)=>{
+
+                const status =
+                    ujian.status ||
+                    "draft";
+
+
+                let statusText =
+                    "Draft";
+
+
+                if(
+                    status === "aktif"
+                )
+                    statusText =
+                        "Aktif";
+
+
+                if(
+                    status === "selesai"
+                )
+                    statusText =
+                        "Selesai";
+
+
+                const kelas =
+                    getKelasUntukUjian(
+                        ujian.id
+                    );
+
+
+                const kelasHtml =
+                    kelas.length
+
+                    ? `
+
+                        <div
+                            class="kelas-list">
+
+                            ${
+                                kelas.map(
+                                    k => `
+
+                                    <span
+                                        class="kelas-badge">
+
+                                        ${escapeHtml(
+                                            k.nama_kelas
+                                        )}
+
+                                    </span>
+
+                                `
+                                ).join("")
+                            }
+
+                        </div>
+
+                    `
+
+                    : `
+
+                        <span
+                            style="color:#dc2626">
+
+                            Belum ada kelas
+
+                        </span>
+
+                    `;
+
+
+                return `
+
+                    <tr>
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+
+                        <td>
+
+                            <strong>
+
+                                ${escapeHtml(
+                                    ujian.judul ||
+                                    "-"
+                                )}
+
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            ${
+                                ujian.mata_pelajaran
+
+                                ? escapeHtml(
+                                    ujian
+                                    .mata_pelajaran
+                                    .nama
+                                )
+
+                                : "-"
+                            }
+
+                        </td>
+
+
+                        <td>
+
+                            ${kelasHtml}
+
+                        </td>
+
+
+                        <td>
+
+                            ${
+                                ujian.guru
+
+                                ? escapeHtml(
+                                    ujian.guru.nama
+                                )
+
+                                : "-"
+                            }
+
+                        </td>
+
+
+                        <td>
+
+                            ${
+                                ujian
+                                .durasi_menit ||
+                                0
+                            }
+
+                            menit
+
+                        </td>
+
+
+                        <td>
+
+                            ${formatTanggal(
+                                ujian.tanggal_mulai
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            ${formatTanggal(
+                                ujian.tanggal_selesai
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="
+                                    badge
+                                    ${status}
+                                ">
+
+                                ${statusText}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <div
+                                class="action">
+
+                                <button
+                                    class="edit"
+                                    onclick="
+                                        editUjian(
+                                            '${ujian.id}'
+                                        )
+                                    ">
+
+                                    ✏️ Edit
+
+                                </button>
+
+
+                                <button
+                                    class="delete"
+                                    onclick="
+                                        hapusUjian(
+                                            '${ujian.id}'
+                                        )
+                                    ">
+
+                                    🗑️ Hapus
+
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        )
+        .join("");
+
+}
+
+
+/* =====================================================
+   FILTER
+===================================================== */
+
+function filterUjian(){
+
+    const keyword =
+        document.getElementById(
+            "searchInput"
+        )
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    const status =
+        document.getElementById(
+            "statusFilter"
+        ).value;
+
+
+    const hasil =
+        semuaUjian.filter(
+            ujian=>{
+
+                const cocokJudul =
+                    !keyword ||
+
+                    (
+                        ujian.judul ||
+                        ""
+                    )
+                    .toLowerCase()
+                    .includes(
+                        keyword
+                    );
+
+
+                const cocokStatus =
+                    !status ||
+
+                    ujian.status ===
+                    status;
+
+
+                return
+                    cocokJudul &&
+                    cocokStatus;
+
+            }
+        );
+
+
+    tampilkanUjian(
+        hasil
+    );
+
+}
+
+
+/* =====================================================
+   TAMBAH
+===================================================== */
+
+function bukaTambah(){
+
+    editId = null;
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Buat Ujian";
+
+
+    document.getElementById(
+        "judul"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "mataPelajaran"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "guru"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "durasi"
+    ).value =
+        60;
+
+
+    document.getElementById(
+        "tanggalMulai"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "tanggalSelesai"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "status"
+    ).value =
+        "draft";
+
+
+    isiKelas([]);
+
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* =====================================================
+   EDIT
+===================================================== */
+
+function editUjian(id){
+
+    const ujian =
+        semuaUjian.find(
+            item =>
+            item.id === id
+        );
+
+
+    if(!ujian){
+
+        alert(
+            "Data ujian tidak ditemukan."
+        );
+
+        return;
+
+    }
+
+
+    editId =
+        id;
+
+
+    const kelasTerpilih =
+        semuaUjianKelas
+
+        .filter(
+            item =>
+            item.ujian_id === id
+        )
+
+        .map(
+            item =>
+            item.kelas_id
+        );
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Edit Ujian";
+
+
+    document.getElementById(
+        "judul"
+    ).value =
+        ujian.judul || "";
+
+
+    document.getElementById(
+        "mataPelajaran"
+    ).value =
+        ujian.mata_pelajaran_id ||
+        "";
+
+
+    document.getElementById(
+        "guru"
+    ).value =
+        ujian.guru_id ||
+        "";
+
+
+    document.getElementById(
+        "durasi"
+    ).value =
+        ujian.durasi_menit ||
+        60;
+
+
+    document.getElementById(
+        "tanggalMulai"
+    ).value =
+        toDatetimeLocal(
+            ujian.tanggal_mulai
+        );
+
+
+    document.getElementById(
+        "tanggalSelesai"
+    ).value =
+        toDatetimeLocal(
+            ujian.tanggal_selesai
+        );
+
+
+    document.getElementById(
+        "status"
+    ).value =
+        ujian.status ||
+        "draft";
+
+
+    isiKelas(
+        kelasTerpilih
+    );
+
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* =====================================================
+   SIMPAN UJIAN
+===================================================== */
+
+async function simpanUjian(){
+
+    const judul =
+        document.getElementById(
+            "judul"
+        )
+        .value
+        .trim();
+
+
+    const mataPelajaranId =
+        document.getElementById(
+            "mataPelajaran"
+        ).value;
+
+
+    const guruId =
+        document.getElementById(
+            "guru"
+        ).value;
+
+
+    const durasi =
+        Number(
+            document.getElementById(
+                "durasi"
+            ).value
+        );
+
+
+    const tanggalMulai =
+        document.getElementById(
+            "tanggalMulai"
+        ).value;
+
+
+    const tanggalSelesai =
+        document.getElementById(
+            "tanggalSelesai"
+        ).value;
+
+
+    const status =
+        document.getElementById(
+            "status"
+        ).value;
+
+
+    const kelasIds =
+        getSelectedKelas();
+
+
+    if(!judul){
+
+        alert(
+            "Judul ujian wajib diisi."
+        );
+
+        return;
+
+    }
+
+
+    if(!mataPelajaranId){
+
+        alert(
+            "Mata pelajaran wajib dipilih."
+        );
+
+        return;
+
+    }
+
+
+    if(!kelasIds.length){
+
+        alert(
+            "Pilih minimal satu kelas."
+        );
+
+        return;
+
+    }
+
+
+    if(!durasi || durasi < 1){
+
+        alert(
+            "Durasi ujian tidak valid."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        tanggalMulai &&
+        tanggalSelesai &&
+
+        new Date(
+            tanggalSelesai
+        )
+        <=
+        new Date(
+            tanggalMulai
+        )
+    ){
+
+        alert(
+            "Tanggal selesai harus setelah tanggal mulai."
+        );
+
+        return;
+
+    }
+
+
+    const payload = {
+
+        judul:
+            judul,
+
+        mata_pelajaran_id:
+            mataPelajaranId,
+
+        guru_id:
+            guruId || null,
+
+        durasi_menit:
+            durasi,
+
+        tanggal_mulai:
+
+            tanggalMulai
+
+            ? new Date(
+                tanggalMulai
+              ).toISOString()
+
+            : null,
+
+        tanggal_selesai:
+
+            tanggalSelesai
+
+            ? new Date(
+                tanggalSelesai
+              ).toISOString()
+
+            : null,
+
+        status:
+            status
+
+    };
+
+
+    try{
+
+        let ujianId =
+            editId;
+
+
+        /* =========================================
+           BUAT UJIAN
+        ========================================= */
+
+        if(!editId){
+
+            const {
+                data,
+                error
+            } =
+
+                await supabaseClient
+
+                .from("ujian")
+
+                .insert(
+                    payload
+                )
+
+                .select(
+                    "id"
+                )
+
+                .single();
+
+
+            if(error)
+                throw error;
+
+
+            ujianId =
+                data.id;
+
+
+            /* SIMPAN KELAS */
+
+            const rows =
+                kelasIds.map(
+                    kelasId => ({
+
+                        ujian_id:
+                            ujianId,
+
+                        kelas_id:
+                            kelasId
+
+                    })
+                );
+
+
+            const {
+                error:
+                kelasError
+            } =
+
+                await supabaseClient
+
+                .from("ujian_kelas")
+
+                .insert(
+                    rows
+                );
+
+
+            if(kelasError){
+
+                await supabaseClient
+
+                .from("ujian")
+
+                .delete()
+
+                .eq(
+                    "id",
+                    ujianId
+                );
+
+
+                throw kelasError;
+
+            }
+
+
+            showMessage(
+
+                "Ujian berhasil dibuat untuk " +
+                kelasIds.length +
+                " kelas.",
+
+                "success"
+
+            );
+
+        }
+
+
+        /* =========================================
+           EDIT UJIAN
+        ========================================= */
+
+        else{
+
+            const {
+                error
+            } =
+
+                await supabaseClient
+
+                .from("ujian")
+
+                .update(
+                    payload
+                )
+
+                .eq(
+                    "id",
+                    editId
+                );
+
+
+            if(error)
+                throw error;
+
+
+            /* HAPUS RELASI */
+
+            const {
+                error:
+                deleteError
+            } =
+
+                await supabaseClient
+
+                .from("ujian_kelas")
+
+                .delete()
+
+                .eq(
+                    "ujian_id",
+                    editId
+                );
+
+
+            if(deleteError)
+                throw deleteError;
+
+
+            /* SIMPAN RELASI BARU */
+
+            const rows =
+                kelasIds.map(
+                    kelasId => ({
+
+                        ujian_id:
+                            editId,
+
+                        kelas_id:
+                            kelasId
+
+                    })
+                );
+
+
+            const {
+                error:
+                insertError
+            } =
+
+                await supabaseClient
+
+                .from("ujian_kelas")
+
+                .insert(
+                    rows
+                );
+
+
+            if(insertError)
+                throw insertError;
+
+
+            showMessage(
+                "Ujian berhasil diperbarui.",
+                "success"
+            );
+
+        }
+
+
+        tutupModal();
+
+
+        await loadSemuaData();
+
+
+    }catch(error){
+
+        console.error(
+            error
+        );
+
+
+        alert(
+            "Gagal menyimpan ujian:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   HAPUS
+===================================================== */
+
+async function hapusUjian(id){
+
+    const ujian =
+        semuaUjian.find(
+            item =>
+            item.id === id
+        );
+
+
+    if(!ujian)
+        return;
+
+
+    const yakin =
+        confirm(
+
+            "Hapus ujian berikut?\n\n" +
+
+            ujian.judul +
+
+            "\n\n" +
+
+            "Semua hubungan kelas pada ujian ini juga akan dihapus."
+
+        );
+
+
+    if(!yakin)
+        return;
+
+
+    try{
+
+        /* HAPUS RELASI KELAS */
+
+        const {
+            error:
+            kelasError
+        } =
+
+            await supabaseClient
+
+            .from("ujian_kelas")
+
+            .delete()
+
+            .eq(
+                "ujian_id",
+                id
+            );
+
+
+        if(kelasError)
+            throw kelasError;
+
+
+        /* HAPUS UJIAN */
+
+        const {
+            error
+        } =
+
+            await supabaseClient
+
+            .from("ujian")
+
+            .delete()
+
+            .eq(
+                "id",
+                id
+            );
+
+
+        if(error)
+            throw error;
+
+
+        showMessage(
+            "Ujian berhasil dihapus.",
+            "success"
+        );
+
+
+        await loadSemuaData();
+
+
+    }catch(error){
+
+        console.error(
+            error
+        );
+
+
+        alert(
+            "Gagal menghapus ujian:\n\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function tutupModal(){
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "none";
+
+
+    editId =
+        null;
+
+}
+
+
+/* =====================================================
+   FORMAT TANGGAL
+===================================================== */
+
+function formatTanggal(value){
+
+    if(!value)
+        return "-";
+
+
+    try{
+
+        return new Date(
+            value
+        )
+        .toLocaleString(
+            "id-ID",
+            {
+
+                day:"2-digit",
+
+                month:"2-digit",
+
+                year:"numeric",
+
+                hour:"2-digit",
+
+                minute:"2-digit"
+
+            }
+        );
+
+    }catch(error){
+
+        return "-";
+
+    }
+
+}
+
+
+/* =====================================================
+   DATETIME LOCAL
+===================================================== */
+
+function toDatetimeLocal(value){
+
+    if(!value)
+        return "";
+
+
+    const date =
+        new Date(
+            value
+        );
+
+
+    const offset =
+        date.getTimezoneOffset();
+
+
+    const local =
+        new Date(
+
+            date.getTime() -
+            offset * 60000
+
+        );
+
+
+    return local
+        .toISOString()
+        .slice(
+            0,
+            16
+        );
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =====================================================
+   KEMBALI KE DASHBOARD GURU
+===================================================== */
+
+function kembaliDashboard(){
+
+    window.location.href =
+        "guru.html";
+
+}
+
+
+/* =====================================================
+   KLIK LUAR MODAL
+===================================================== */
+
+document
+    .getElementById(
+        "modal"
+    )
+    .addEventListener(
+        "click",
+        function(e){
+
+            if(
+                e.target === this
+            ){
+
+                tutupModal();
+
+            }
+
+        }
+    );
+
+
+/* =====================================================
+   LOAD AWAL
+===================================================== */
+
+loadSemuaData();
+
+</script>
+
+</body>
+</html>
