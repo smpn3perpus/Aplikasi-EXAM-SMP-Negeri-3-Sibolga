@@ -1,0 +1,1753 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Download Hasil - Admin | RUANG EXAM</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f5f9;
+    color:#0f172a;
+    min-height:100vh;
+}
+
+/* ================= HEADER ================= */
+
+.header{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    color:white;
+    padding:20px 30px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    gap:15px;
+    flex-wrap:wrap;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.18);
+}
+
+.header h1{
+    font-size:24px;
+}
+
+.header p{
+    font-size:13px;
+    opacity:.85;
+    margin-top:5px;
+}
+
+.header-buttons{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:none;
+    border-radius:9px;
+    padding:10px 15px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-back{
+    background:white;
+    color:#1d4ed8;
+}
+
+.btn-refresh{
+    background:#22c55e;
+    color:white;
+}
+
+.btn-download{
+    background:#f59e0b;
+    color:white;
+}
+
+.btn-print{
+    background:#7c3aed;
+    color:white;
+}
+
+/* ================= CONTAINER ================= */
+
+.container{
+    max-width:1400px;
+    margin:25px auto;
+    padding:0 20px;
+}
+
+/* ================= MESSAGE ================= */
+
+.message{
+    display:none;
+
+    padding:13px;
+
+    border-radius:10px;
+
+    margin-bottom:18px;
+
+    text-align:center;
+
+    font-size:13px;
+}
+
+.message.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.message.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* ================= INFO ================= */
+
+.info{
+    background:#eff6ff;
+
+    color:#1e40af;
+
+    padding:16px;
+
+    border-radius:12px;
+
+    margin-bottom:20px;
+
+    font-size:13px;
+
+    line-height:1.6;
+}
+
+/* ================= STAT ================= */
+
+.stats{
+    display:grid;
+
+    grid-template-columns:
+    repeat(4,1fr);
+
+    gap:15px;
+
+    margin-bottom:20px;
+}
+
+.stat{
+    background:white;
+
+    border-radius:15px;
+
+    padding:20px;
+
+    box-shadow:
+    0 4px 15px
+    rgba(15,23,42,.06);
+}
+
+.stat-icon{
+    font-size:28px;
+    margin-bottom:8px;
+}
+
+.stat-number{
+    font-size:25px;
+
+    font-weight:bold;
+
+    color:#1d4ed8;
+}
+
+.stat-label{
+    color:#64748b;
+
+    font-size:12px;
+
+    margin-top:4px;
+}
+
+/* ================= FILTER ================= */
+
+.filter-box{
+    background:white;
+
+    padding:17px;
+
+    border-radius:15px;
+
+    margin-bottom:20px;
+
+    box-shadow:
+    0 4px 15px
+    rgba(15,23,42,.06);
+
+    display:flex;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+}
+
+select,
+input{
+    border:1px solid #cbd5e1;
+
+    border-radius:9px;
+
+    padding:10px 12px;
+
+    font-size:13px;
+
+    background:white;
+}
+
+.search{
+    flex:1;
+    min-width:220px;
+}
+
+/* ================= TABLE ================= */
+
+.table-box{
+    background:white;
+
+    border-radius:16px;
+
+    overflow:auto;
+
+    box-shadow:
+    0 4px 18px
+    rgba(15,23,42,.07);
+}
+
+table{
+    width:100%;
+
+    border-collapse:collapse;
+
+    min-width:1200px;
+}
+
+th{
+    background:#eff6ff;
+
+    color:#1e3a8a;
+
+    padding:14px;
+
+    text-align:left;
+
+    font-size:13px;
+
+    white-space:nowrap;
+}
+
+td{
+    padding:13px;
+
+    border-top:
+    1px solid #e2e8f0;
+
+    font-size:13px;
+
+    vertical-align:middle;
+}
+
+tr:hover td{
+    background:#f8fafc;
+}
+
+/* ================= NILAI ================= */
+
+.nilai{
+    font-weight:bold;
+
+    font-size:16px;
+
+    color:#1d4ed8;
+}
+
+.lulus{
+    color:#16a34a;
+}
+
+.remedial{
+    color:#dc2626;
+}
+
+/* ================= BADGE ================= */
+
+.badge{
+    display:inline-block;
+
+    padding:6px 10px;
+
+    border-radius:20px;
+
+    font-size:11px;
+
+    font-weight:bold;
+}
+
+.selesai{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.proses{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.belum{
+    background:#e2e8f0;
+    color:#475569;
+}
+
+/* ================= EMPTY ================= */
+
+.empty{
+    text-align:center;
+
+    padding:45px !important;
+
+    color:#64748b;
+}
+
+/* ================= FOOTER ================= */
+
+.footer{
+    text-align:center;
+
+    color:#94a3b8;
+
+    font-size:12px;
+
+    line-height:1.6;
+
+    padding:30px;
+}
+
+/* ================= PRINT ================= */
+
+@media print{
+
+    .header-buttons,
+    .filter-box,
+    .info,
+    .stats{
+        display:none !important;
+    }
+
+    body{
+        background:white;
+    }
+
+    .container{
+        max-width:none;
+        margin:0;
+        padding:0;
+    }
+
+    .table-box{
+        box-shadow:none;
+        overflow:visible;
+    }
+
+    table{
+        min-width:0;
+        width:100%;
+    }
+
+    th,
+    td{
+        font-size:10px;
+        padding:6px;
+    }
+
+    .footer{
+        padding:15px;
+    }
+
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:900px){
+
+    .stats{
+        grid-template-columns:
+        repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:500px){
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .container{
+        padding:0 12px;
+    }
+
+    .header{
+        padding:18px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="header">
+
+    <div>
+
+        <h1>
+            📥 DOWNLOAD HASIL
+        </h1>
+
+        <p>
+            RUANG EXAM — SMP Negeri 3 Sibolga
+        </p>
+
+    </div>
+
+
+    <div class="header-buttons">
+
+        <button
+            class="btn btn-back"
+            onclick="kembaliDashboard()">
+
+            ← Dashboard
+
+        </button>
+
+
+        <button
+            class="btn btn-refresh"
+            onclick="loadHasil()">
+
+            🔄 Refresh
+
+        </button>
+
+
+        <button
+            class="btn btn-print"
+            onclick="window.print()">
+
+            🖨️ Cetak
+
+        </button>
+
+
+        <button
+            class="btn btn-download"
+            onclick="downloadCSV()">
+
+            📥 Download Excel
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+<!-- =====================================================
+     MESSAGE
+===================================================== -->
+
+<div
+    id="message"
+    class="message">
+</div>
+
+
+<!-- =====================================================
+     INFO
+===================================================== -->
+
+<div class="info">
+
+    <strong>
+        📥 Download Hasil Ujian
+    </strong>
+
+    <br>
+
+    Pilih kelas, jenis ujian, atau mata pelajaran
+    kemudian download hasil yang tampil.
+    File dapat dibuka menggunakan Microsoft Excel,
+    LibreOffice Calc, atau Google Sheets.
+
+</div>
+
+
+<!-- =====================================================
+     STATISTIK
+===================================================== -->
+
+<section class="stats">
+
+
+    <div class="stat">
+
+        <div class="stat-icon">
+            👨‍🎓
+        </div>
+
+        <div
+            id="totalData"
+            class="stat-number">
+            0
+        </div>
+
+        <div class="stat-label">
+            Data Ditampilkan
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-icon">
+            💯
+        </div>
+
+        <div
+            id="rataNilai"
+            class="stat-number">
+            0
+        </div>
+
+        <div class="stat-label">
+            Rata-rata Nilai
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-icon">
+            🏆
+        </div>
+
+        <div
+            id="tertinggi"
+            class="stat-number">
+            0
+        </div>
+
+        <div class="stat-label">
+            Nilai Tertinggi
+        </div>
+
+    </div>
+
+
+    <div class="stat">
+
+        <div class="stat-icon">
+            📊
+        </div>
+
+        <div
+            id="terendah"
+            class="stat-number">
+            0
+        </div>
+
+        <div class="stat-label">
+            Nilai Terendah
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FILTER
+===================================================== -->
+
+<section class="filter-box">
+
+
+    <select
+        id="filterKelas"
+        onchange="filterData()">
+
+        <option value="">
+            Semua Kelas
+        </option>
+
+        <option value="7">
+            Kelas 7
+        </option>
+
+        <option value="8">
+            Kelas 8
+        </option>
+
+        <option value="9">
+            Kelas 9
+        </option>
+
+    </select>
+
+
+    <select
+        id="filterUjian"
+        onchange="filterData()">
+
+        <option value="">
+            Semua Ujian
+        </option>
+
+    </select>
+
+
+    <select
+        id="filterMapel"
+        onchange="filterData()">
+
+        <option value="">
+            Semua Mata Pelajaran
+        </option>
+
+    </select>
+
+
+    <input
+        id="searchInput"
+        class="search"
+        type="text"
+        placeholder="🔎 Cari nama siswa / NISN..."
+        oninput="filterData()">
+
+
+</section>
+
+
+<!-- =====================================================
+     TABLE
+===================================================== -->
+
+<div class="table-box">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>No</th>
+
+<th>Nama Siswa</th>
+
+<th>NISN</th>
+
+<th>Kelas</th>
+
+<th>Jenis Ujian</th>
+
+<th>Mata Pelajaran</th>
+
+<th>Jumlah Soal</th>
+
+<th>Benar</th>
+
+<th>Salah</th>
+
+<th>Nilai</th>
+
+<th>Status</th>
+
+<th>Waktu Selesai</th>
+
+</tr>
+
+</thead>
+
+
+<tbody id="hasilBody">
+
+<tr>
+
+<td
+    colspan="12"
+    class="empty">
+
+    ⏳ Memuat data hasil ujian...
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="footer">
+
+    RUANG EXAM Online
+    <br>
+
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+</footer>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+
+const SUPABASE_KEY =
+    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =====================================================
+   CEK SESSION ADMIN
+===================================================== */
+
+const sessionRaw =
+    localStorage.getItem("exam_user");
+
+
+if(!sessionRaw){
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+try{
+
+    const user =
+        JSON.parse(sessionRaw);
+
+
+    if(user.role !== "admin"){
+
+        localStorage.removeItem(
+            "exam_user"
+        );
+
+        window.location.href =
+            "login.html";
+
+    }
+
+}catch(error){
+
+    localStorage.removeItem(
+        "exam_user"
+    );
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let semuaHasil = [];
+
+let hasilTampil = [];
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(text,type){
+
+    const el =
+        document.getElementById(
+            "message"
+        );
+
+
+    el.textContent =
+        text;
+
+
+    el.className =
+        "message " + type;
+
+}
+
+
+/* =====================================================
+   LOAD HASIL
+===================================================== */
+
+async function loadHasil(){
+
+    const body =
+        document.getElementById(
+            "hasilBody"
+        );
+
+
+    body.innerHTML = `
+
+        <tr>
+
+            <td
+                colspan="12"
+                class="empty">
+
+                ⏳ Memuat data hasil ujian...
+
+            </td>
+
+        </tr>
+
+    `;
+
+
+    try{
+
+        const hasil =
+            await supabaseClient
+            .from("hasil_ujian")
+            .select(`
+                id,
+                siswa_id,
+                ujian_id,
+                nama_siswa,
+                nisn,
+                kelas,
+                jenis_ujian,
+                mata_pelajaran,
+                jumlah_soal,
+                jumlah_benar,
+                jumlah_salah,
+                nilai,
+                status,
+                waktu_mulai,
+                waktu_selesai,
+                created_at
+            `)
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            );
+
+
+        if(hasil.error){
+
+            throw hasil.error;
+
+        }
+
+
+        semuaHasil =
+            hasil.data || [];
+
+
+        isiFilter();
+
+        filterData();
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        semuaHasil = [];
+
+        hasilTampil = [];
+
+
+        body.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="12"
+                    class="empty">
+
+                    ❌ Gagal memuat hasil ujian.
+
+                    <br><br>
+
+                    ${escapeHtml(
+                        error.message
+                    )}
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+        showMessage(
+            "Gagal memuat data hasil ujian: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   ISI FILTER
+===================================================== */
+
+function isiFilter(){
+
+    const ujianSelect =
+        document.getElementById(
+            "filterUjian"
+        );
+
+
+    const mapelSelect =
+        document.getElementById(
+            "filterMapel"
+        );
+
+
+    const daftarUjian =
+        [
+            ...new Set(
+                semuaHasil
+                .map(
+                    x =>
+                    x.jenis_ujian
+                )
+                .filter(Boolean)
+            )
+        ];
+
+
+    const daftarMapel =
+        [
+            ...new Set(
+                semuaHasil
+                .map(
+                    x =>
+                    x.mata_pelajaran
+                )
+                .filter(Boolean)
+            )
+        ];
+
+
+    ujianSelect.innerHTML = `
+
+        <option value="">
+            Semua Ujian
+        </option>
+
+    `;
+
+
+    daftarUjian
+    .sort()
+    .forEach(x=>{
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value = x;
+
+        option.textContent = x;
+
+        ujianSelect.appendChild(
+            option
+        );
+
+    });
+
+
+    mapelSelect.innerHTML = `
+
+        <option value="">
+            Semua Mata Pelajaran
+        </option>
+
+    `;
+
+
+    daftarMapel
+    .sort()
+    .forEach(x=>{
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value = x;
+
+        option.textContent = x;
+
+        mapelSelect.appendChild(
+            option
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   FILTER DATA
+===================================================== */
+
+function filterData(){
+
+    const kelas =
+        document.getElementById(
+            "filterKelas"
+        ).value;
+
+
+    const ujian =
+        document.getElementById(
+            "filterUjian"
+        ).value;
+
+
+    const mapel =
+        document.getElementById(
+            "filterMapel"
+        ).value;
+
+
+    const search =
+        document.getElementById(
+            "searchInput"
+        ).value
+        .toLowerCase()
+        .trim();
+
+
+    hasilTampil =
+        semuaHasil.filter(x=>{
+
+            const nilaiKelas =
+                String(
+                    x.kelas || ""
+                )
+                .toLowerCase()
+                .trim();
+
+
+            const cocokKelas =
+                !kelas ||
+                nilaiKelas === kelas ||
+                nilaiKelas.startsWith(
+                    kelas
+                );
+
+
+            const cocokUjian =
+                !ujian ||
+                x.jenis_ujian === ujian;
+
+
+            const cocokMapel =
+                !mapel ||
+                x.mata_pelajaran === mapel;
+
+
+            const teks =
+                (
+                    String(
+                        x.nama_siswa || ""
+                    ) +
+                    " " +
+                    String(
+                        x.nisn || ""
+                    ) +
+                    " " +
+                    String(
+                        x.kelas || ""
+                    )
+                )
+                .toLowerCase();
+
+
+            const cocokSearch =
+                !search ||
+                teks.includes(search);
+
+
+            return (
+                cocokKelas &&
+                cocokUjian &&
+                cocokMapel &&
+                cocokSearch
+            );
+
+        });
+
+
+    updateStatistik(
+        hasilTampil
+    );
+
+
+    tampilkanRows(
+        hasilTampil
+    );
+
+}
+
+
+/* =====================================================
+   TAMPILKAN ROW
+===================================================== */
+
+function tampilkanRows(data){
+
+    const body =
+        document.getElementById(
+            "hasilBody"
+        );
+
+
+    if(!data.length){
+
+        body.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="12"
+                    class="empty">
+
+                    👨‍🎓 Belum ada hasil
+                    yang sesuai filter.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    body.innerHTML =
+        data.map(
+            (x,index)=>{
+
+                const nilai =
+                    Number(
+                        x.nilai
+                    ) || 0;
+
+
+                let kelasNilai =
+                    "nilai";
+
+
+                if(nilai >= 70){
+
+                    kelasNilai +=
+                        " lulus";
+
+                }else{
+
+                    kelasNilai +=
+                        " remedial";
+
+                }
+
+
+                const status =
+                    String(
+                        x.status ||
+                        "Selesai"
+                    );
+
+
+                const statusLower =
+                    status.toLowerCase();
+
+
+                let badge =
+                    "badge selesai";
+
+
+                if(
+                    statusLower.includes(
+                        "proses"
+                    )
+                ){
+
+                    badge =
+                        "badge proses";
+
+                }
+
+
+                if(
+                    statusLower.includes(
+                        "belum"
+                    )
+                ){
+
+                    badge =
+                        "badge belum";
+
+                }
+
+
+                return `
+
+                <tr>
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+
+                    <td>
+
+                        <strong>
+                            ${escapeHtml(
+                                x.nama_siswa
+                            )}
+                        </strong>
+
+                    </td>
+
+
+                    <td>
+                        ${escapeHtml(
+                            x.nisn
+                        )}
+                    </td>
+
+
+                    <td>
+                        ${escapeHtml(
+                            x.kelas
+                        )}
+                    </td>
+
+
+                    <td>
+                        ${escapeHtml(
+                            x.jenis_ujian
+                        )}
+                    </td>
+
+
+                    <td>
+                        ${escapeHtml(
+                            x.mata_pelajaran
+                        )}
+                    </td>
+
+
+                    <td>
+                        ${Number(
+                            x.jumlah_soal
+                        ) || 0}
+                    </td>
+
+
+                    <td>
+                        ${Number(
+                            x.jumlah_benar
+                        ) || 0}
+                    </td>
+
+
+                    <td>
+                        ${Number(
+                            x.jumlah_salah
+                        ) || 0}
+                    </td>
+
+
+                    <td>
+
+                        <span
+                            class="${kelasNilai}">
+
+                            ${nilai.toFixed(2)}
+
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        <span
+                            class="${badge}">
+
+                            ${escapeHtml(
+                                status
+                            )}
+
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        ${formatTanggal(
+                            x.waktu_selesai
+                        )}
+
+                    </td>
+
+                </tr>
+
+                `;
+
+            }
+        )
+        .join("");
+
+}
+
+
+/* =====================================================
+   STATISTIK
+===================================================== */
+
+function updateStatistik(data){
+
+    const nilai =
+        data.map(
+            x =>
+            Number(
+                x.nilai
+            ) || 0
+        );
+
+
+    const total =
+        nilai.length;
+
+
+    const rata =
+        total
+        ? nilai.reduce(
+            (a,b)=>a+b,
+            0
+          ) / total
+        : 0;
+
+
+    const tertinggi =
+        total
+        ? Math.max(...nilai)
+        : 0;
+
+
+    const terendah =
+        total
+        ? Math.min(...nilai)
+        : 0;
+
+
+    document
+    .getElementById(
+        "totalData"
+    )
+    .textContent =
+        total;
+
+
+    document
+    .getElementById(
+        "rataNilai"
+    )
+    .textContent =
+        rata.toFixed(1);
+
+
+    document
+    .getElementById(
+        "tertinggi"
+    )
+    .textContent =
+        tertinggi.toFixed(1);
+
+
+    document
+    .getElementById(
+        "terendah"
+    )
+    .textContent =
+        terendah.toFixed(1);
+
+}
+
+
+/* =====================================================
+   DOWNLOAD CSV / EXCEL
+===================================================== */
+
+function downloadCSV(){
+
+    if(!hasilTampil.length){
+
+        alert(
+            "Tidak ada data yang dapat didownload."
+        );
+
+        return;
+
+    }
+
+
+    const header = [
+
+        "No",
+
+        "Nama Siswa",
+
+        "NISN",
+
+        "Kelas",
+
+        "Jenis Ujian",
+
+        "Mata Pelajaran",
+
+        "Jumlah Soal",
+
+        "Benar",
+
+        "Salah",
+
+        "Nilai",
+
+        "Status",
+
+        "Waktu Selesai"
+
+    ];
+
+
+    const rows =
+        hasilTampil.map(
+            (x,index)=>[
+
+                index + 1,
+
+                x.nama_siswa || "",
+
+                x.nisn || "",
+
+                x.kelas || "",
+
+                x.jenis_ujian || "",
+
+                x.mata_pelajaran || "",
+
+                x.jumlah_soal || 0,
+
+                x.jumlah_benar || 0,
+
+                x.jumlah_salah || 0,
+
+                Number(
+                    x.nilai || 0
+                ).toFixed(2),
+
+                x.status || "Selesai",
+
+                formatTanggal(
+                    x.waktu_selesai
+                )
+
+            ]
+        );
+
+
+    const csv =
+        [header,...rows]
+        .map(
+            row =>
+            row
+            .map(
+                cell =>
+                '"' +
+                String(
+                    cell
+                )
+                .replace(
+                    /"/g,
+                    '""'
+                ) +
+                '"'
+            )
+            .join(";")
+        )
+        .join("\r\n");
+
+
+    /*
+     * BOM UTF-8 supaya nama siswa
+     * dan tulisan Indonesia terbaca
+     * dengan baik di Excel.
+     */
+
+    const blob =
+        new Blob(
+            [
+                "\uFEFF" +
+                csv
+            ],
+            {
+                type:
+                "text/csv;charset=utf-8;"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+        document.createElement(
+            "a"
+        );
+
+
+    const sekarang =
+        new Date();
+
+
+    const tanggal =
+        sekarang
+        .toISOString()
+        .slice(
+            0,
+            10
+        );
+
+
+    link.href =
+        url;
+
+
+    link.download =
+        "Hasil-Ujian-" +
+        tanggal +
+        ".csv";
+
+
+    document
+        .body
+        .appendChild(
+            link
+        );
+
+
+    link.click();
+
+
+    document
+        .body
+        .removeChild(
+            link
+        );
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+
+    showMessage(
+        "Hasil ujian berhasil didownload.",
+        "success"
+    );
+
+}
+
+
+/* =====================================================
+   FORMAT TANGGAL
+===================================================== */
+
+function formatTanggal(value){
+
+    if(!value){
+
+        return "-";
+
+    }
+
+
+    const d =
+        new Date(value);
+
+
+    if(
+        Number.isNaN(
+            d.getTime()
+        )
+    ){
+
+        return "-";
+
+    }
+
+
+    return d.toLocaleString(
+        "id-ID",
+        {
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric",
+            hour:"2-digit",
+            minute:"2-digit"
+        }
+    );
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* =====================================================
+   DASHBOARD
+===================================================== */
+
+function kembaliDashboard(){
+
+    window.location.href =
+        "admin.html";
+
+}
+
+
+/* =====================================================
+   MULAI
+===================================================== */
+
+loadHasil();
+
+</script>
+
+</body>
+
+</html>
+```
