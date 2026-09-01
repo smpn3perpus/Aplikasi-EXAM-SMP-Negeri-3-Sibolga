@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -10,6 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 *{
     box-sizing:border-box;
     margin:0;
@@ -48,6 +48,7 @@ body{
 .header-buttons{
     display:flex;
     gap:8px;
+    flex-wrap:wrap;
 }
 
 .btn{
@@ -68,8 +69,13 @@ body{
     color:white;
 }
 
+.btn-preview{
+    background:#7c3aed;
+    color:white;
+}
+
 .container{
-    max-width:1250px;
+    max-width:1350px;
     margin:25px auto;
     padding:0 20px;
 }
@@ -139,7 +145,7 @@ body{
     padding:18px;
     border-radius:15px;
     display:flex;
-    gap:12px;
+    gap:10px;
     align-items:center;
     flex-wrap:wrap;
     box-shadow:0 4px 15px rgba(0,0,0,.06);
@@ -169,14 +175,21 @@ body{
     padding:12px 18px;
 }
 
-.btn-add:disabled{
+.btn-literasi{
+    background:#9333ea;
+    color:white;
+    padding:12px 18px;
+}
+
+.btn-add:disabled,
+.btn-literasi:disabled{
     background:#94a3b8;
     cursor:not-allowed;
 }
 
 .summary{
     display:grid;
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(4,1fr);
     gap:12px;
     margin-bottom:18px;
 }
@@ -209,7 +222,7 @@ body{
 table{
     width:100%;
     border-collapse:collapse;
-    min-width:1100px;
+    min-width:1200px;
 }
 
 th{
@@ -248,6 +261,17 @@ tr:hover td{
     color:#1e40af;
 }
 
+.literasi-badge{
+    display:inline-block;
+    padding:6px 9px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+    background:#f3e8ff;
+    color:#7e22ce;
+    margin-top:5px;
+}
+
 .action{
     display:flex;
     gap:6px;
@@ -273,11 +297,30 @@ tr:hover td{
     color:white;
 }
 
+.preview-small{
+    background:#7c3aed;
+    color:white;
+}
+
+.question-content img,
+.answer-image{
+    max-width:220px;
+    max-height:150px;
+    display:block;
+    margin-top:8px;
+    border-radius:8px;
+    border:1px solid #cbd5e1;
+}
+
+/* =====================================================
+   MODAL UMUM
+===================================================== */
+
 .modal{
     display:none;
     position:fixed;
     inset:0;
-    background:rgba(15,23,42,.6);
+    background:rgba(15,23,42,.65);
     justify-content:center;
     align-items:center;
     padding:20px;
@@ -288,7 +331,7 @@ tr:hover td{
 .modal-box{
     background:white;
     width:100%;
-    max-width:780px;
+    max-width:800px;
     border-radius:18px;
     padding:25px;
     box-shadow:0 20px 60px rgba(0,0,0,.25);
@@ -355,9 +398,9 @@ tr:hover td{
     grid-column:1 / -1;
 }
 
-/* ===============================
+/* =====================================================
    EDITOR MATEMATIKA
-================================ */
+===================================================== */
 
 .math-toolbar{
     background:#f8fafc;
@@ -387,15 +430,9 @@ tr:hover td{
     border-color:#2563eb;
 }
 
-.math-help{
-    font-size:11px;
-    color:#64748b;
-    margin-top:5px;
-}
-
-/* ===============================
+/* =====================================================
    GAMBAR
-================================ */
+===================================================== */
 
 .upload-box{
     border:2px dashed #cbd5e1;
@@ -447,16 +484,6 @@ tr:hover td{
     max-height:120px;
     display:block;
     margin-top:6px;
-    border-radius:8px;
-    border:1px solid #cbd5e1;
-}
-
-.question-content img,
-.answer-image{
-    max-width:220px;
-    max-height:150px;
-    display:block;
-    margin-top:8px;
     border-radius:8px;
     border:1px solid #cbd5e1;
 }
@@ -513,13 +540,7 @@ tr:hover td{
     padding:3px;
 }
 
-.option-preview img{
-    max-width:150px;
-    max-height:100px;
-    margin-top:5px;
-    border-radius:7px;
-}
-
+.option-preview img,
 .option-current img{
     max-width:150px;
     max-height:100px;
@@ -544,6 +565,220 @@ tr:hover td{
     color:white;
 }
 
+/* =====================================================
+   MODAL PREVIEW
+===================================================== */
+
+.preview-modal-box{
+    background:#f8fafc;
+    width:100%;
+    max-width:1000px;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+    margin:auto;
+    max-height:92vh;
+    overflow:auto;
+}
+
+.preview-header{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8);
+    color:white;
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.preview-header h2{
+    font-size:20px;
+    margin-bottom:6px;
+}
+
+.preview-header p{
+    font-size:12px;
+    opacity:.9;
+}
+
+.preview-literasi{
+    background:white;
+    border:2px solid #c4b5fd;
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:18px;
+}
+
+.preview-literasi-label{
+    display:inline-block;
+    background:#7c3aed;
+    color:white;
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+    margin-bottom:12px;
+}
+
+.preview-literasi h3{
+    font-size:17px;
+    color:#581c87;
+    margin-bottom:12px;
+}
+
+.preview-literasi-text{
+    font-size:14px;
+    line-height:1.8;
+    white-space:pre-wrap;
+}
+
+.preview-literasi img{
+    max-width:100%;
+    max-height:350px;
+    display:block;
+    margin-top:15px;
+    border-radius:10px;
+    border:1px solid #cbd5e1;
+}
+
+.preview-question{
+    background:white;
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:15px;
+    box-shadow:0 3px 12px rgba(0,0,0,.06);
+    border:1px solid #e2e8f0;
+}
+
+.preview-question-number{
+    font-size:17px;
+    font-weight:bold;
+    color:#1d4ed8;
+    margin-bottom:12px;
+}
+
+.preview-question-text{
+    font-size:15px;
+    line-height:1.8;
+    white-space:pre-wrap;
+}
+
+.preview-question img{
+    max-width:100%;
+    max-height:300px;
+    display:block;
+    margin-top:12px;
+    border-radius:10px;
+    border:1px solid #cbd5e1;
+}
+
+.preview-options{
+    margin-top:15px;
+}
+
+.preview-option{
+    padding:10px 12px;
+    border:1px solid #e2e8f0;
+    border-radius:9px;
+    margin-bottom:8px;
+    line-height:1.6;
+}
+
+.preview-option img{
+    max-width:180px;
+    max-height:120px;
+    margin-top:8px;
+}
+
+.preview-type{
+    display:inline-block;
+    font-size:10px;
+    background:#e0f2fe;
+    color:#0369a1;
+    padding:5px 8px;
+    border-radius:15px;
+    margin-top:12px;
+}
+
+.no-literasi{
+    background:#fff;
+    border-left:4px solid #94a3b8;
+    padding:12px 15px;
+    border-radius:8px;
+    margin-bottom:15px;
+    font-size:12px;
+    color:#64748b;
+}
+
+.preview-footer{
+    text-align:center;
+    margin-top:20px;
+    padding-top:15px;
+    border-top:1px solid #e2e8f0;
+    color:#64748b;
+    font-size:12px;
+}
+
+/* =====================================================
+   LITERASI LIST
+===================================================== */
+
+.literasi-list{
+    display:grid;
+    gap:12px;
+    margin-top:15px;
+}
+
+.literasi-card{
+    background:#faf5ff;
+    border:1px solid #e9d5ff;
+    border-radius:12px;
+    padding:15px;
+}
+
+.literasi-card-header{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+
+.literasi-card-title{
+    font-weight:bold;
+    color:#581c87;
+}
+
+.literasi-range{
+    background:#7c3aed;
+    color:white;
+    padding:5px 9px;
+    border-radius:15px;
+    font-size:11px;
+    font-weight:bold;
+}
+
+.literasi-card-text{
+    margin-top:9px;
+    color:#475569;
+    font-size:12px;
+    line-height:1.6;
+    white-space:pre-wrap;
+}
+
+.literasi-actions{
+    margin-top:10px;
+    display:flex;
+    gap:6px;
+}
+
+.literasi-actions button{
+    border:none;
+    border-radius:7px;
+    padding:7px 10px;
+    cursor:pointer;
+    font-size:11px;
+    font-weight:bold;
+}
+
 .footer{
     text-align:center;
     color:#94a3b8;
@@ -552,11 +787,14 @@ tr:hover td{
     padding:30px;
 }
 
-@media(max-width:800px){
+@media(max-width:900px){
 
     .summary{
-        grid-template-columns:1fr;
+        grid-template-columns:repeat(2,1fr);
     }
+}
+
+@media(max-width:800px){
 
     .form-grid{
         grid-template-columns:1fr;
@@ -586,371 +824,815 @@ tr:hover td{
         width:100%;
     }
 
-    .btn-add{
+    .btn-add,
+    .btn-literasi,
+    .btn-preview{
         width:100%;
     }
 
-    .modal-box{
+    .summary{
+        grid-template-columns:1fr;
+    }
+
+    .modal-box,
+    .preview-modal-box{
         padding:18px;
     }
 }
-</style>
 
+</style>
 </head>
 
 <body>
 
 <header class="header">
 
-```
-<div>
-    <h1>📚 BANK SOAL GURU</h1>
-    <p>RUANG EXAM — SMP Negeri 3 Sibolga</p>
-</div>
+    <div>
+        <h1>📚 BANK SOAL GURU</h1>
+        <p>RUANG EXAM — SMP Negeri 3 Sibolga</p>
+    </div>
 
-<div class="header-buttons">
+    <div class="header-buttons">
 
-    <button class="btn btn-back"
-            onclick="kembaliDashboard()">
-        ← Dashboard
-    </button>
+        <button class="btn btn-back"
+                onclick="kembaliDashboard()">
+            ← Dashboard
+        </button>
 
-    <button class="btn btn-refresh"
-            onclick="loadSemuaData()">
-        🔄 Refresh
-    </button>
+        <button class="btn btn-refresh"
+                onclick="loadSemuaData()">
+            🔄 Refresh
+        </button>
 
-</div>
-```
+    </div>
 
 </header>
 
 <main class="container">
 
-```
-<div id="message" class="message"></div>
+    <div id="message" class="message"></div>
 
-<div class="select-box">
+    <div class="select-box">
 
-    <label>📝 Pilih Ujian</label>
+        <label>📝 Pilih Ujian</label>
 
-    <select id="ujianSelect"
-            onchange="pilihUjian()">
+        <select id="ujianSelect"
+                onchange="pilihUjian()">
 
-        <option value="">
-            ⏳ Memuat ujian...
-        </option>
+            <option value="">
+                ⏳ Memuat ujian...
+            </option>
 
-    </select>
+        </select>
 
-    <div id="examInfo"
-         class="exam-info">
+        <div id="examInfo"
+             class="exam-info">
+        </div>
+
     </div>
 
-</div>
+    <div class="summary">
 
-<div class="summary">
+        <div class="summary-card">
+            <strong id="totalSoal">0</strong>
+            <span>Total Soal</span>
+        </div>
 
-    <div class="summary-card">
-        <strong id="totalSoal">0</strong>
-        <span>Total Soal</span>
+        <div class="summary-card">
+            <strong id="totalPilihan">0</strong>
+            <span>Pilihan Ganda</span>
+        </div>
+
+        <div class="summary-card">
+            <strong id="totalEsai">0</strong>
+            <span>Esai / Benar-Salah</span>
+        </div>
+
+        <div class="summary-card">
+            <strong id="totalLiterasi">0</strong>
+            <span>Literasi / Stimulus</span>
+        </div>
+
     </div>
 
-    <div class="summary-card">
-        <strong id="totalPilihan">0</strong>
-        <span>Pilihan Ganda</span>
+    <div class="toolbar">
+
+        <div class="search">
+
+            <input type="text"
+                   id="searchInput"
+                   placeholder="🔍 Cari nomor atau pertanyaan...">
+
+        </div>
+
+        <button id="btnTambah"
+                class="btn btn-add"
+                onclick="bukaTambah()"
+                disabled>
+            ➕ Tambah Soal
+        </button>
+
+        <button id="btnLiterasi"
+                class="btn btn-literasi"
+                onclick="bukaLiterasi()"
+                disabled>
+            📖 Literasi
+        </button>
+
+        <button id="btnPreview"
+                class="btn btn-preview"
+                onclick="bukaPreviewSoal()"
+                disabled>
+            👁️ Preview Soal Utuh
+        </button>
+
     </div>
 
-    <div class="summary-card">
-        <strong id="totalEsai">0</strong>
-        <span>Esai / Benar-Salah</span>
+    <div class="table-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>No</th>
+                    <th>Pertanyaan</th>
+                    <th>Tipe</th>
+                    <th>Literasi</th>
+                    <th>Pilihan</th>
+                    <th>Kunci</th>
+                    <th>Bobot</th>
+                    <th>Aksi</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="soalBody">
+
+                <tr>
+                    <td colspan="8"
+                        class="empty">
+                        👆 Pilih ujian terlebih dahulu.
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
     </div>
-
-</div>
-
-<div class="toolbar">
-
-    <div class="search">
-        <input type="text"
-               id="searchInput"
-               placeholder="🔍 Cari nomor atau pertanyaan...">
-    </div>
-
-    <button id="btnTambah"
-            class="btn btn-add"
-            onclick="bukaTambah()"
-            disabled>
-
-        ➕ Tambah Soal
-
-    </button>
-
-</div>
-
-<div class="table-box">
-
-    <table>
-
-        <thead>
-
-            <tr>
-                <th>No</th>
-                <th>Pertanyaan</th>
-                <th>Tipe</th>
-                <th>Pilihan</th>
-                <th>Kunci</th>
-                <th>Bobot</th>
-                <th>Aksi</th>
-            </tr>
-
-        </thead>
-
-        <tbody id="soalBody">
-
-            <tr>
-                <td colspan="7"
-                    class="empty">
-
-                    👆 Pilih ujian terlebih dahulu.
-
-                </td>
-            </tr>
-
-        </tbody>
-
-    </table>
-
-</div>
-```
 
 </main>
 
 <footer class="footer">
-
-```
-RUANG EXAM Online<br>
-Dibuat oleh Mr. Rahmat Batubara, S.T.P
-```
-
+    RUANG EXAM Online<br>
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
 </footer>
 
+
 <!-- =====================================================
-     MODAL
+     MODAL SOAL
 ===================================================== -->
 
-<div class="modal" id="modal">
+<div class="modal" id="modalSoal">
 
-```
-<div class="modal-box">
+    <div class="modal-box">
 
-    <h2 id="modalTitle">
-        Tambah Soal
-    </h2>
+        <h2 id="modalTitle">
+            Tambah Soal
+        </h2>
 
-    <div class="info">
+        <div class="info">
 
-        Soal akan disimpan ke ujian yang sedang dipilih.
-        Nomor soal dibuat otomatis.
+            Soal akan disimpan ke ujian yang sedang dipilih.
+            Nomor soal dibuat otomatis.
 
-        <br>
+            <br><br>
 
-        <strong>💡 Gunakan tombol matematika</strong>
-        untuk memasukkan pangkat, akar, pecahan,
-        simbol matematika dan lainnya.
+            <strong>📖 Literasi:</strong>
+            Jika nomor soal masuk ke rentang literasi,
+            stimulus akan otomatis tampil pada Preview Soal Utuh.
+
+        </div>
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label>Nomor Soal</label>
+
+                <input type="number"
+                       id="nomor"
+                       min="1"
+                       readonly>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Tipe Soal</label>
+
+                <select id="tipe"
+                        onchange="ubahTipeSoal()">
+
+                    <option value="pilihan_ganda">
+                        Pilihan Ganda
+                    </option>
+
+                    <option value="benar_salah">
+                        Benar / Salah
+                    </option>
+
+                    <option value="esai">
+                        Esai
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group full">
+
+                <label>Pertanyaan</label>
+
+                <div class="math-toolbar">
+
+                    <button type="button"
+                            onclick="insertMath('²')">x²</button>
+
+                    <button type="button"
+                            onclick="insertMath('³')">x³</button>
+
+                    <button type="button"
+                            onclick="insertMath('ⁿ')">xⁿ</button>
+
+                    <button type="button"
+                            onclick="insertMath('√')">√</button>
+
+                    <button type="button"
+                            onclick="insertMath('π')">π</button>
+
+                    <button type="button"
+                            onclick="insertMath('½')">½</button>
+
+                    <button type="button"
+                            onclick="insertMath('¼')">¼</button>
+
+                    <button type="button"
+                            onclick="insertMath('¾')">¾</button>
+
+                    <button type="button"
+                            onclick="insertMath('×')">×</button>
+
+                    <button type="button"
+                            onclick="insertMath('÷')">÷</button>
+
+                    <button type="button"
+                            onclick="insertMath('±')">±</button>
+
+                    <button type="button"
+                            onclick="insertMath('≤')">≤</button>
+
+                    <button type="button"
+                            onclick="insertMath('≥')">≥</button>
+
+                    <button type="button"
+                            onclick="insertMath('≠')">≠</button>
+
+                    <button type="button"
+                            onclick="insertMath('∞')">∞</button>
+
+                    <button type="button"
+                            onclick="insertMath('°')">°</button>
+
+                    <button type="button"
+                            onclick="insertMath('₁')">₁</button>
+
+                    <button type="button"
+                            onclick="insertMath('₂')">₂</button>
+
+                    <button type="button"
+                            onclick="insertMath('₃')">₃</button>
+
+                </div>
+
+                <textarea id="pertanyaan"
+                          placeholder="Tuliskan pertanyaan soal di sini..."></textarea>
+
+            </div>
+
+            <!-- GAMBAR SOAL -->
+
+            <div class="form-group full">
+
+                <label>🖼️ Gambar Soal (opsional)</label>
+
+                <div class="upload-box">
+
+                    <input type="file"
+                           id="gambarSoal"
+                           accept="image/*"
+                           onchange="previewImage('soal')">
+
+                    <div id="previewSoal"
+                         class="image-preview">
+
+                        <img id="previewSoalImg">
+
+                        <button type="button"
+                                class="remove-image"
+                                onclick="hapusPreview('soal')">
+                            🗑️ Hapus Gambar
+                        </button>
+
+                    </div>
+
+                    <div id="currentSoal"
+                         class="current-image">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- PILIHAN -->
+
+            <div id="pilihanBox"
+                 class="form-group full">
+
+                <div class="options-box">
+
+                    <div class="options-title">
+                        Pilihan Jawaban
+                    </div>
+
+                    <!-- A -->
+
+                    <div class="option-row">
+
+                        <div class="option-label">A</div>
+
+                        <div class="option-content">
+
+                            <div class="math-toolbar">
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanA','²')">
+                                    x²
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanA','√')">
+                                    √
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanA','½')">
+                                    ½
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanA','×')">
+                                    ×
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanA','÷')">
+                                    ÷
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanA','π')">
+                                    π
+                                </button>
+
+                            </div>
+
+                            <input type="text"
+                                   id="pilihanA"
+                                   placeholder="Jawaban A">
+
+                            <div class="option-upload">
+
+                                <input type="file"
+                                       id="gambarA"
+                                       accept="image/*"
+                                       onchange="previewImage('A')">
+
+                                <div id="previewA"
+                                     class="option-preview"></div>
+
+                                <div id="currentA"
+                                     class="option-current">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- B -->
+
+                    <div class="option-row">
+
+                        <div class="option-label">B</div>
+
+                        <div class="option-content">
+
+                            <div class="math-toolbar">
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanB','²')">
+                                    x²
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanB','√')">
+                                    √
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanB','½')">
+                                    ½
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanB','×')">
+                                    ×
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanB','÷')">
+                                    ÷
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanB','π')">
+                                    π
+                                </button>
+
+                            </div>
+
+                            <input type="text"
+                                   id="pilihanB"
+                                   placeholder="Jawaban B">
+
+                            <div class="option-upload">
+
+                                <input type="file"
+                                       id="gambarB"
+                                       accept="image/*"
+                                       onchange="previewImage('B')">
+
+                                <div id="previewB"
+                                     class="option-preview"></div>
+
+                                <div id="currentB"
+                                     class="option-current">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- C -->
+
+                    <div class="option-row">
+
+                        <div class="option-label">C</div>
+
+                        <div class="option-content">
+
+                            <div class="math-toolbar">
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanC','²')">
+                                    x²
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanC','√')">
+                                    √
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanC','½')">
+                                    ½
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanC','×')">
+                                    ×
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanC','÷')">
+                                    ÷
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanC','π')">
+                                    π
+                                </button>
+
+                            </div>
+
+                            <input type="text"
+                                   id="pilihanC"
+                                   placeholder="Jawaban C">
+
+                            <div class="option-upload">
+
+                                <input type="file"
+                                       id="gambarC"
+                                       accept="image/*"
+                                       onchange="previewImage('C')">
+
+                                <div class="option-upload">
+
+                                    <input type="file"
+                                           id="gambarC"
+                                           accept="image/*"
+                                           onchange="previewImage('C')">
+
+                                    <div id="previewC"
+                                         class="option-preview"></div>
+
+                                    <div id="currentC"
+                                         class="option-current">
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- D -->
+
+                    <div class="option-row">
+
+                        <div class="option-label">D</div>
+
+                        <div class="option-content">
+
+                            <div class="math-toolbar">
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanD','²')">
+                                    x²
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanD','√')">
+                                    √
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanD','½')">
+                                    ½
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanD','×')">
+                                    ×
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanD','÷')">
+                                    ÷
+                                </button>
+
+                                <button type="button"
+                                        onclick="insertMathTo('pilihanD','π')">
+                                    π
+                                </button>
+
+                            </div>
+
+                            <input type="text"
+                                   id="pilihanD"
+                                   placeholder="Jawaban D">
+
+                            <div class="option-upload">
+
+                                <input type="file"
+                                       id="gambarD"
+                                       accept="image/*"
+                                       onchange="previewImage('D')">
+
+                                <div id="previewD"
+                                     class="option-preview"></div>
+
+                                <div id="currentD"
+                                     class="option-current">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- KUNCI -->
+
+            <div class="form-group">
+
+                <label>Kunci Jawaban</label>
+
+                <select id="kunci">
+
+                    <option value="">
+                        -- Pilih Kunci --
+                    </option>
+
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+
+                </select>
+
+            </div>
+
+            <!-- BOBOT -->
+
+            <div class="form-group">
+
+                <label>Bobot</label>
+
+                <input type="number"
+                       id="bobot"
+                       min="0"
+                       max="999"
+                       step="0.01"
+                       value="1">
+
+            </div>
+
+        </div>
+
+        <div class="modal-buttons">
+
+            <button class="btn cancel"
+                    onclick="tutupModalSoal()">
+                Batal
+            </button>
+
+            <button class="btn save"
+                    onclick="simpanSoal()">
+                💾 Simpan Soal
+            </button>
+
+        </div>
 
     </div>
 
-    <div class="form-grid">
+</div>
+
+
+<!-- =====================================================
+     MODAL LITERASI
+===================================================== -->
+
+<div class="modal" id="modalLiterasi">
+
+    <div class="modal-box">
+
+        <h2 id="literasiModalTitle">
+            📖 Literasi / Stimulus
+        </h2>
+
+        <div class="info">
+
+            Satu literasi dapat digunakan oleh beberapa nomor
+            soal.
+
+            <br><br>
+
+            Contoh:
+            <strong>Nomor 1 sampai 4</strong> berarti literasi
+            akan tampil pada soal nomor 1, 2, 3, dan 4.
+
+        </div>
+
+        <input type="hidden"
+               id="literasiId">
 
         <div class="form-group">
 
-            <label>Nomor Soal</label>
+            <label>Judul Literasi / Stimulus</label>
 
-            <input type="number"
-                   id="nomor"
-                   min="1"
-                   readonly>
+            <input type="text"
+                   id="literasiJudul"
+                   placeholder="Contoh: Bacaan tentang Batu">
+
+        </div>
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label>Nomor Mulai</label>
+
+                <input type="number"
+                       id="nomorMulai"
+                       min="1"
+                       value="1">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Nomor Selesai</label>
+
+                <input type="number"
+                       id="nomorSelesai"
+                       min="1"
+                       value="4">
+
+            </div>
 
         </div>
 
         <div class="form-group">
 
-            <label>Tipe Soal</label>
-
-            <select id="tipe"
-                    onchange="ubahTipeSoal()">
-
-                <option value="pilihan_ganda">
-                    Pilihan Ganda
-                </option>
-
-                <option value="benar_salah">
-                    Benar / Salah
-                </option>
-
-                <option value="esai">
-                    Esai
-                </option>
-
-            </select>
-
-        </div>
-
-        <!-- PERTANYAAN -->
-
-        <div class="form-group full">
-
-            <label>
-                Pertanyaan
-            </label>
+            <label>Isi Literasi / Stimulus</label>
 
             <div class="math-toolbar">
 
                 <button type="button"
-                        onclick="insertMath('²')">
+                        onclick="insertMathLiterasi('²')">
                     x²
                 </button>
 
                 <button type="button"
-                        onclick="insertMath('³')">
-                    x³
-                </button>
-
-                <button type="button"
-                        onclick="insertMath('ⁿ')">
-                    xⁿ
-                </button>
-
-                <button type="button"
-                        onclick="insertMath('√')">
+                        onclick="insertMathLiterasi('√')">
                     √
                 </button>
 
                 <button type="button"
-                        onclick="insertMath('π')">
-                    π
-                </button>
-
-                <button type="button"
-                        onclick="insertMath('½')">
+                        onclick="insertMathLiterasi('½')">
                     ½
                 </button>
 
                 <button type="button"
-                        onclick="insertMath('¼')">
-                    ¼
-                </button>
-
-                <button type="button"
-                        onclick="insertMath('¾')">
-                    ¾
-                </button>
-
-                <button type="button"
-                        onclick="insertMath('×')">
+                        onclick="insertMathLiterasi('×')">
                     ×
                 </button>
 
                 <button type="button"
-                        onclick="insertMath('÷')">
+                        onclick="insertMathLiterasi('÷')">
                     ÷
                 </button>
 
                 <button type="button"
-                        onclick="insertMath('±')">
-                    ±
-                </button>
-
-                <button type="button"
-                        onclick="insertMath('≤')">
-                    ≤
-                </button>
-
-                <button type="button"
-                        onclick="insertMath('≥')">
-                    ≥
-                </button>
-
-                <button type="button"
-                        onclick="insertMath('≠')">
-                    ≠
-                </button>
-
-                <button type="button"
-                        onclick="insertMath('∞')">
-                    ∞
-                </button>
-
-                <button type="button"
-                        onclick="insertMath('°')">
-                    °
-                </button>
-
-                <button type="button"
-                        onclick="insertMath('²')">
-                    ²
-                </button>
-
-                <button type="button"
-                        onclick="insertMath('₁')">
-                    ₁
-                </button>
-
-                <button type="button"
-                        onclick="insertMath('₂')">
-                    ₂
-                </button>
-
-                <button type="button"
-                        onclick="insertMath('₃')">
-                    ₃
+                        onclick="insertMathLiterasi('π')">
+                    π
                 </button>
 
             </div>
 
-            <textarea id="pertanyaan"
-                      placeholder="Tuliskan pertanyaan soal di sini..."></textarea>
-
-            <div class="math-help">
-                Contoh:
-                2² + √25 = ?
-                &nbsp; | &nbsp;
-                x² + 3x + 2 = 0
-            </div>
+            <textarea id="isiLiterasi"
+                      style="min-height:220px"
+                      placeholder="Tuliskan bacaan, teks, kasus, tabel, informasi atau stimulus di sini..."></textarea>
 
         </div>
 
-        <!-- GAMBAR SOAL -->
+        <div class="form-group">
 
-        <div class="form-group full">
-
-            <label>
-                🖼️ Gambar Soal (opsional)
-            </label>
+            <label>🖼️ Gambar Literasi (opsional)</label>
 
             <div class="upload-box">
 
                 <input type="file"
-                       id="gambarSoal"
+                       id="gambarLiterasi"
                        accept="image/*"
-                       onchange="previewImage('soal')">
+                       onchange="previewLiterasiImage()">
 
-                <div id="previewSoal"
+                <div id="previewLiterasi"
                      class="image-preview">
 
-                    <img id="previewSoalImg">
+                    <img id="previewLiterasiImg">
 
                     <button type="button"
                             class="remove-image"
-                            onclick="hapusPreview('soal')">
-
+                            onclick="hapusPreviewLiterasi()">
                         🗑️ Hapus Gambar
-
                     </button>
 
                 </div>
 
-                <div id="currentSoal"
+                <div id="currentLiterasi"
                      class="current-image">
                 </div>
 
@@ -958,357 +1640,111 @@ Dibuat oleh Mr. Rahmat Batubara, S.T.P
 
         </div>
 
-        <!-- PILIHAN -->
-
-        <div id="pilihanBox"
-             class="form-group full">
-
-            <div class="options-box">
-
-                <div class="options-title">
-                    Pilihan Jawaban
-                </div>
-
-                <!-- A -->
-
-                <div class="option-row">
-
-                    <div class="option-label">
-                        A
-                    </div>
-
-                    <div class="option-content">
-
-                        <div class="math-toolbar">
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanA','²')">
-                                x²
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanA','√')">
-                                √
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanA','½')">
-                                ½
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanA','×')">
-                                ×
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanA','÷')">
-                                ÷
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanA','π')">
-                                π
-                            </button>
-
-                        </div>
-
-                        <input type="text"
-                               id="pilihanA"
-                               placeholder="Jawaban A">
-
-                        <div class="option-upload">
-
-                            <input type="file"
-                                   id="gambarA"
-                                   accept="image/*"
-                                   onchange="previewImage('A')">
-
-                            <div id="previewA"
-                                 class="option-preview"></div>
-
-                            <div id="currentA"
-                                 class="option-current">
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- B -->
-
-                <div class="option-row">
-
-                    <div class="option-label">
-                        B
-                    </div>
-
-                    <div class="option-content">
-
-                        <div class="math-toolbar">
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanB','²')">
-                                x²
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanB','√')">
-                                √
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanB','½')">
-                                ½
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanB','×')">
-                                ×
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanB','÷')">
-                                ÷
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanB','π')">
-                                π
-                            </button>
-
-                        </div>
-
-                        <input type="text"
-                               id="pilihanB"
-                               placeholder="Jawaban B">
-
-                        <div class="option-upload">
-
-                            <input type="file"
-                                   id="gambarB"
-                                   accept="image/*"
-                                   onchange="previewImage('B')">
-
-                            <div id="previewB"
-                                 class="option-preview"></div>
-
-                            <div id="currentB"
-                                 class="option-current">
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- C -->
-
-                <div class="option-row">
-
-                    <div class="option-label">
-                        C
-                    </div>
-
-                    <div class="option-content">
-
-                        <div class="math-toolbar">
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanC','²')">
-                                x²
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanC','√')">
-                                √
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanC','½')">
-                                ½
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanC','×')">
-                                ×
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanC','÷')">
-                                ÷
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanC','π')">
-                                π
-                            </button>
-
-                        </div>
-
-                        <input type="text"
-                               id="pilihanC"
-                               placeholder="Jawaban C">
-
-                        <div class="option-upload">
-
-                            <input type="file"
-                                   id="gambarC"
-                                   accept="image/*"
-                                   onchange="previewImage('C')">
-
-                            <div id="previewC"
-                                 class="option-preview"></div>
-
-                            <div id="currentC"
-                                 class="option-current">
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <!-- D -->
-
-                <div class="option-row">
-
-                    <div class="option-label">
-                        D
-                    </div>
-
-                    <div class="option-content">
-
-                        <div class="math-toolbar">
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanD','²')">
-                                x²
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanD','√')">
-                                √
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanD','½')">
-                                ½
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanD','×')">
-                                ×
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanD','÷')">
-                                ÷
-                            </button>
-
-                            <button type="button"
-                                    onclick="insertMathTo('pilihanD','π')">
-                                π
-                            </button>
-
-                        </div>
-
-                        <input type="text"
-                               id="pilihanD"
-                               placeholder="Jawaban D">
-
-                        <div class="option-upload">
-
-                            <input type="file"
-                                   id="gambarD"
-                                   accept="image/*"
-                                   onchange="previewImage('D')">
-
-                            <div id="previewD"
-                                 class="option-preview"></div>
-
-                            <div id="currentD"
-                                 class="option-current">
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <!-- KUNCI -->
-
-        <div class="form-group">
-
-            <label>
-                Kunci Jawaban
-            </label>
-
-            <select id="kunci">
-
-                <option value="">
-                    -- Pilih Kunci --
-                </option>
-
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="C">C</option>
-                <option value="D">D</option>
-
-            </select>
-
-        </div>
-
-        <!-- BOBOT -->
-
-        <div class="form-group">
-
-            <label>
-                Bobot
-            </label>
-
-            <input type="number"
-                   id="bobot"
-                   min="0"
-                   max="999"
-                   step="0.01"
-                   value="1">
+        <div class="modal-buttons">
+
+            <button class="btn cancel"
+                    onclick="tutupLiterasiModal()">
+                Batal
+            </button>
+
+            <button class="btn save"
+                    onclick="simpanLiterasi()">
+                💾 Simpan Literasi
+            </button>
 
         </div>
 
     </div>
 
-    <div class="modal-buttons">
+</div>
 
-        <button class="btn cancel"
-                onclick="tutupModal()">
 
-            Batal
+<!-- =====================================================
+     MODAL DAFTAR LITERASI
+===================================================== -->
 
-        </button>
+<div class="modal" id="modalDaftarLiterasi">
 
-        <button class="btn save"
-                onclick="simpanSoal()">
+    <div class="modal-box">
 
-            💾 Simpan Soal
+        <h2>📖 Literasi / Stimulus Ujian</h2>
 
-        </button>
+        <div class="info">
+
+            Literasi dihubungkan berdasarkan rentang nomor soal.
+            Misalnya nomor <strong>1–4</strong>, maka stimulus
+            tersebut digunakan untuk soal 1 sampai 4.
+
+        </div>
+
+        <div id="literasiList"
+             class="literasi-list">
+        </div>
+
+        <div class="modal-buttons">
+
+            <button class="btn cancel"
+                    onclick="tutupDaftarLiterasi()">
+                Tutup
+            </button>
+
+            <button class="btn btn-literasi"
+                    onclick="bukaFormLiterasiBaru()">
+                ➕ Tambah Literasi
+            </button>
+
+        </div>
 
     </div>
 
 </div>
-```
+
+
+<!-- =====================================================
+     MODAL PREVIEW SOAL UTUH
+===================================================== -->
+
+<div class="modal" id="modalPreview">
+
+    <div class="preview-modal-box">
+
+        <div class="preview-header">
+
+            <h2>👁️ Preview Soal Utuh</h2>
+
+            <p id="previewExamTitle">
+                Preview soal ujian
+            </p>
+
+        </div>
+
+        <div id="previewContent">
+        </div>
+
+        <div class="preview-footer">
+
+            Preview ini menampilkan soal sebagaimana
+            struktur soal yang akan diberikan kepada siswa.
+
+            <br><br>
+
+            RUANG EXAM — SMP Negeri 3 Sibolga
+
+        </div>
+
+        <div class="modal-buttons">
+
+            <button class="btn cancel"
+                    onclick="tutupPreview()">
+                Tutup Preview
+            </button>
+
+        </div>
+
+    </div>
 
 </div>
+
 
 <script>
 
@@ -1357,7 +1793,6 @@ try{
         localStorage.removeItem("exam_user");
 
         window.location.href = "login.html";
-
     }
 
 }catch(error){
@@ -1365,7 +1800,6 @@ try{
     localStorage.removeItem("exam_user");
 
     window.location.href = "login.html";
-
 }
 
 
@@ -1388,9 +1822,11 @@ let guruId =
 let semuaUjian = [];
 let semuaSoal = [];
 let soalTampil = [];
+let semuaLiterasi = [];
 
 let ujianTerpilih = null;
 let editId = null;
+let editLiterasiId = null;
 
 
 /* =====================================================
@@ -1398,12 +1834,16 @@ let editId = null;
 ===================================================== */
 
 let gambarUrls = {
+
     soal:null,
     A:null,
     B:null,
     C:null,
     D:null
+
 };
+
+let gambarLiterasiUrl = null;
 
 
 /* =====================================================
@@ -1435,7 +1875,7 @@ function hideMessage(){
 
 
 /* =====================================================
-   LOAD DATA
+   LOAD SEMUA DATA
 ===================================================== */
 
 async function loadSemuaData(){
@@ -1503,7 +1943,7 @@ async function loadSemuaData(){
 
             document.getElementById("soalBody").innerHTML = `
                 <tr>
-                    <td colspan="7" class="empty">
+                    <td colspan="8" class="empty">
                         📝 Belum ada ujian untuk akun guru ini.
                         <br><br>
                         Silakan buat ujian terlebih dahulu.
@@ -1512,6 +1952,8 @@ async function loadSemuaData(){
             `;
 
             document.getElementById("btnTambah").disabled = true;
+            document.getElementById("btnLiterasi").disabled = true;
+            document.getElementById("btnPreview").disabled = true;
 
             return;
         }
@@ -1530,7 +1972,11 @@ async function loadSemuaData(){
 
                 ujianTerpilih = masihAda;
 
+                tampilkanInfoUjian();
+
                 await loadSoal();
+
+                await loadLiterasi();
 
                 return;
             }
@@ -1538,7 +1984,7 @@ async function loadSemuaData(){
 
         document.getElementById("soalBody").innerHTML = `
             <tr>
-                <td colspan="7" class="empty">
+                <td colspan="8" class="empty">
                     👆 Pilih ujian terlebih dahulu.
                 </td>
             </tr>
@@ -1585,12 +2031,16 @@ function isiDropdownUjian(){
             ? ujian.mata_pelajaran.nama
             : "Tanpa Mapel";
 
-        select.innerHTML += `
-            <option value="${escapeHtml(ujian.id)}">
-                ${escapeHtml(ujian.judul)}
-                — ${escapeHtml(mapel)}
-            </option>
-        `;
+        const option =
+            document.createElement("option");
+
+        option.value = ujian.id;
+
+        option.textContent =
+            `${ujian.judul} — ${mapel}`;
+
+        select.appendChild(option);
+
     });
 }
 
@@ -1608,17 +2058,21 @@ async function pilihUjian(){
 
         ujianTerpilih = null;
 
-        document.getElementById("examInfo").style.display = "none";
+        document.getElementById("examInfo").style.display =
+            "none";
 
         document.getElementById("btnTambah").disabled = true;
+        document.getElementById("btnLiterasi").disabled = true;
+        document.getElementById("btnPreview").disabled = true;
 
         document.getElementById("totalSoal").textContent = "0";
         document.getElementById("totalPilihan").textContent = "0";
         document.getElementById("totalEsai").textContent = "0";
+        document.getElementById("totalLiterasi").textContent = "0";
 
         document.getElementById("soalBody").innerHTML = `
             <tr>
-                <td colspan="7" class="empty">
+                <td colspan="8" class="empty">
                     👆 Pilih ujian terlebih dahulu.
                 </td>
             </tr>
@@ -1637,6 +2091,8 @@ async function pilihUjian(){
     tampilkanInfoUjian();
 
     await loadSoal();
+
+    await loadLiterasi();
 }
 
 
@@ -1670,15 +2126,19 @@ function tampilkanInfoUjian(){
         <strong>Ujian:</strong>
         ${escapeHtml(ujian.judul)}
         <br>
+
         <strong>Mata Pelajaran:</strong>
         ${escapeHtml(mapel)}
         <br>
+
         <strong>Kelas:</strong>
         ${escapeHtml(kelas)}
         <br>
+
         <strong>Guru:</strong>
         ${escapeHtml(guru)}
         <br>
+
         <strong>Status:</strong>
         ${escapeHtml(ujian.status || "-")}
     `;
@@ -1697,7 +2157,7 @@ async function loadSoal(){
 
     document.getElementById("soalBody").innerHTML = `
         <tr>
-            <td colspan="7" class="empty">
+            <td colspan="8" class="empty">
                 ⏳ Memuat soal...
             </td>
         </tr>
@@ -1741,6 +2201,8 @@ async function loadSoal(){
         tampilkanSoal(soalTampil);
 
         document.getElementById("btnTambah").disabled = false;
+        document.getElementById("btnLiterasi").disabled = false;
+        document.getElementById("btnPreview").disabled = false;
 
     }catch(error){
 
@@ -1754,12 +2216,86 @@ async function loadSoal(){
 
         document.getElementById("soalBody").innerHTML = `
             <tr>
-                <td colspan="7" class="empty">
+                <td colspan="8" class="empty">
                     ❌ Gagal memuat soal.
                 </td>
             </tr>
         `;
     }
+}
+
+
+/* =====================================================
+   LOAD LITERASI
+===================================================== */
+
+async function loadLiterasi(){
+
+    if(!ujianTerpilih) return;
+
+    try{
+
+        const {data,error} =
+            await supabaseClient
+            .from("literasi_soal")
+            .select(`
+                id,
+                ujian_id,
+                judul,
+                isi_literasi,
+                nomor_mulai,
+                nomor_selesai,
+                gambar_literasi,
+                created_at,
+                updated_at
+            `)
+            .eq("ujian_id",ujianTerpilih.id)
+            .order("nomor_mulai",{ascending:true});
+
+        if(error) throw error;
+
+        semuaLiterasi = data || [];
+
+        document.getElementById("totalLiterasi").textContent =
+            semuaLiterasi.length;
+
+        if(semuaSoal.length){
+
+            tampilkanSoal(soalTampil);
+        }
+
+    }catch(error){
+
+        console.error(error);
+
+        semuaLiterasi = [];
+
+        document.getElementById("totalLiterasi").textContent =
+            "0";
+    }
+}
+
+
+/* =====================================================
+   CARI LITERASI UNTUK NOMOR SOAL
+===================================================== */
+
+function cariLiterasiUntukNomor(nomor){
+
+    return semuaLiterasi.find(literasi => {
+
+        const mulai =
+            Number(literasi.nomor_mulai);
+
+        const selesai =
+            Number(literasi.nomor_selesai);
+
+        return (
+            nomor >= mulai &&
+            nomor <= selesai
+        );
+
+    }) || null;
 }
 
 
@@ -1783,6 +2319,9 @@ function updateSummary(){
                 s.tipe === "esai" ||
                 s.tipe === "benar_salah"
         ).length;
+
+    document.getElementById("totalLiterasi").textContent =
+        semuaLiterasi.length;
 }
 
 
@@ -1799,7 +2338,7 @@ function tampilkanSoal(data){
 
         body.innerHTML = `
             <tr>
-                <td colspan="7" class="empty">
+                <td colspan="8" class="empty">
 
                     📚 Belum ada soal untuk ujian ini.
 
@@ -1827,6 +2366,35 @@ function tampilkanSoal(data){
             if(soal.tipe === "esai")
                 tipeText = "Esai";
 
+            const literasi =
+                cariLiterasiUntukNomor(
+                    Number(soal.nomor)
+                );
+
+            let literasiHtml = "-";
+
+            if(literasi){
+
+                literasiHtml = `
+                    <span class="literasi-badge">
+                        📖 ${escapeHtml(
+                            literasi.judul ||
+                            "Literasi"
+                        )}
+                    </span>
+
+                    <div style="
+                        font-size:10px;
+                        color:#64748b;
+                        margin-top:5px;
+                    ">
+                        No. ${literasi.nomor_mulai}
+                        –
+                        ${literasi.nomor_selesai}
+                    </div>
+                `;
+            }
+
             let gambarSoal = "";
 
             if(soal.gambar_soal){
@@ -1839,15 +2407,21 @@ function tampilkanSoal(data){
             }
 
             let pertanyaan =
-                escapeHtml(soal.pertanyaan || "-");
+                escapeHtml(
+                    soal.pertanyaan || "-"
+                );
 
             let pilihan = "-";
 
             if(soal.tipe === "pilihan_ganda"){
 
                 pilihan = `
+
                     <div>
-                        A. ${escapeHtml(soal.pilihan_a || "-")}
+                        A. ${escapeHtml(
+                            soal.pilihan_a || "-"
+                        )}
+
                         ${soal.gambar_a
                             ? `<img class="answer-image"
                                src="${escapeAttr(soal.gambar_a)}">`
@@ -1855,7 +2429,10 @@ function tampilkanSoal(data){
                     </div>
 
                     <div>
-                        B. ${escapeHtml(soal.pilihan_b || "-")}
+                        B. ${escapeHtml(
+                            soal.pilihan_b || "-"
+                        )}
+
                         ${soal.gambar_b
                             ? `<img class="answer-image"
                                src="${escapeAttr(soal.gambar_b)}">`
@@ -1863,7 +2440,10 @@ function tampilkanSoal(data){
                     </div>
 
                     <div>
-                        C. ${escapeHtml(soal.pilihan_c || "-")}
+                        C. ${escapeHtml(
+                            soal.pilihan_c || "-"
+                        )}
+
                         ${soal.gambar_c
                             ? `<img class="answer-image"
                                src="${escapeAttr(soal.gambar_c)}">`
@@ -1871,12 +2451,16 @@ function tampilkanSoal(data){
                     </div>
 
                     <div>
-                        D. ${escapeHtml(soal.pilihan_d || "-")}
+                        D. ${escapeHtml(
+                            soal.pilihan_d || "-"
+                        )}
+
                         ${soal.gambar_d
                             ? `<img class="answer-image"
                                src="${escapeAttr(soal.gambar_d)}">`
                             : ""}
                     </div>
+
                 `;
             }
 
@@ -1886,10 +2470,13 @@ function tampilkanSoal(data){
             }
 
             return `
+
                 <tr>
 
                     <td>
-                        <strong>${soal.nomor}</strong>
+                        <strong>${escapeHtml(
+                            soal.nomor
+                        )}</strong>
                     </td>
 
                     <td>
@@ -1908,6 +2495,10 @@ function tampilkanSoal(data){
                             ${tipeText}
                         </span>
 
+                    </td>
+
+                    <td>
+                        ${literasiHtml}
                     </td>
 
                     <td>
@@ -1933,17 +2524,19 @@ function tampilkanSoal(data){
                             <button
                                 class="edit"
                                 onclick="editSoal('${escapeAttr(soal.id)}')">
-
                                 ✏️ Edit
+                            </button>
 
+                            <button
+                                class="preview-small"
+                                onclick="previewSatuSoal('${escapeAttr(soal.id)}')">
+                                👁️ Preview
                             </button>
 
                             <button
                                 class="delete"
                                 onclick="hapusSoal('${escapeAttr(soal.id)}')">
-
                                 🗑️ Hapus
-
                             </button>
 
                         </div>
@@ -1951,6 +2544,7 @@ function tampilkanSoal(data){
                     </td>
 
                 </tr>
+
             `;
 
         }).join("");
@@ -1996,7 +2590,9 @@ function filterSoal(){
                     .includes(keyword)
 
                 );
+
             });
+
     }
 
     tampilkanSoal(soalTampil);
@@ -2004,7 +2600,7 @@ function filterSoal(){
 
 
 /* =====================================================
-   TAMBAH
+   TAMBAH SOAL
 ===================================================== */
 
 function bukaTambah(){
@@ -2040,7 +2636,7 @@ function bukaTambah(){
     document.getElementById("nomor").value =
         nomorBaru;
 
-    document.getElementById("modal").style.display =
+    document.getElementById("modalSoal").style.display =
         "flex";
 }
 
@@ -2074,6 +2670,8 @@ function resetForm(){
     document.getElementById("previewSoal").style.display =
         "none";
 
+    document.getElementById("previewSoalImg").src = "";
+
     ["A","B","C","D"].forEach(huruf => {
 
         document.getElementById(
@@ -2089,11 +2687,13 @@ function resetForm(){
     document.getElementById("currentSoal").innerHTML = "";
 
     gambarUrls = {
+
         soal:null,
         A:null,
         B:null,
         C:null,
         D:null
+
     };
 
     ubahTipeSoal();
@@ -2120,6 +2720,7 @@ function ubahTipeSoal(){
         pilihanBox.style.display = "block";
 
         kunci.innerHTML = `
+
             <option value="">
                 -- Pilih Kunci --
             </option>
@@ -2128,6 +2729,7 @@ function ubahTipeSoal(){
             <option value="B">B</option>
             <option value="C">C</option>
             <option value="D">D</option>
+
         `;
     }
 
@@ -2136,6 +2738,7 @@ function ubahTipeSoal(){
         pilihanBox.style.display = "none";
 
         kunci.innerHTML = `
+
             <option value="">
                 -- Pilih Jawaban --
             </option>
@@ -2147,6 +2750,7 @@ function ubahTipeSoal(){
             <option value="Salah">
                 Salah
             </option>
+
         `;
     }
 
@@ -2155,16 +2759,18 @@ function ubahTipeSoal(){
         pilihanBox.style.display = "none";
 
         kunci.innerHTML = `
+
             <option value="">
                 -- Kunci / Pedoman Jawaban --
             </option>
+
         `;
     }
 }
 
 
 /* =====================================================
-   EDIT
+   EDIT SOAL
 ===================================================== */
 
 function editSoal(id){
@@ -2221,15 +2827,12 @@ function editSoal(id){
 
     gambarUrls = {
 
-        soal: soal.gambar_soal || null,
+        soal:soal.gambar_soal || null,
+        A:soal.gambar_a || null,
+        B:soal.gambar_b || null,
+        C:soal.gambar_c || null,
+        D:soal.gambar_d || null
 
-        A: soal.gambar_a || null,
-
-        B: soal.gambar_b || null,
-
-        C: soal.gambar_c || null,
-
-        D: soal.gambar_d || null
     };
 
     tampilkanGambarLama(
@@ -2262,7 +2865,7 @@ function editSoal(id){
     document.getElementById("kunci").value =
         soal.kunci_jawaban || "";
 
-    document.getElementById("modal").style.display =
+    document.getElementById("modalSoal").style.display =
         "flex";
 }
 
@@ -2274,20 +2877,18 @@ function editSoal(id){
 function previewImage(type){
 
     let inputId = "";
-
     let previewId = "";
 
     if(type === "soal"){
 
         inputId = "gambarSoal";
-
         previewId = "previewSoal";
 
     }else{
 
         inputId = "gambar" + type;
-
         previewId = "preview" + type;
+
     }
 
     const input =
@@ -2306,7 +2907,6 @@ function previewImage(type){
         if(type === "soal"){
 
             preview.style.display = "none";
-
         }
 
         return;
@@ -2353,6 +2953,7 @@ function previewImage(type){
                 <img src="${e.target.result}">
             `;
         }
+
     };
 
     reader.readAsDataURL(file);
@@ -2360,7 +2961,7 @@ function previewImage(type){
 
 
 /* =====================================================
-   HAPUS PREVIEW
+   HAPUS PREVIEW GAMBAR
 ===================================================== */
 
 function hapusPreview(type){
@@ -2374,6 +2975,10 @@ function hapusPreview(type){
         document.getElementById(
             "previewSoal"
         ).style.display = "none";
+
+        document.getElementById(
+            "previewSoalImg"
+        ).src = "";
 
         return;
     }
@@ -2401,9 +3006,12 @@ function tampilkanGambarLama(type,url){
         document.getElementById(
             "currentSoal"
         ).innerHTML = `
+
             Gambar saat ini:
+
             <img src="${escapeAttr(url)}"
                  alt="Gambar soal">
+
         `;
 
     }else{
@@ -2411,17 +3019,20 @@ function tampilkanGambarLama(type,url){
         document.getElementById(
             "current" + type
         ).innerHTML = `
+
             Gambar saat ini:
             <br>
+
             <img src="${escapeAttr(url)}"
                  alt="Gambar pilihan">
+
         `;
     }
 }
 
 
 /* =====================================================
-   UPLOAD GAMBAR KE STORAGE
+   UPLOAD GAMBAR
 ===================================================== */
 
 async function uploadGambar(file,jenis){
@@ -2542,7 +3153,7 @@ async function simpanSoal(){
         return;
     }
 
-    if(!bobot || bobot < 0){
+    if(bobot < 0 || isNaN(bobot)){
 
         alert(
             "Bobot soal tidak valid."
@@ -2590,7 +3201,9 @@ async function simpanSoal(){
     }
 
     const tombol =
-        document.querySelector(".save");
+        document.querySelector(
+            "#modalSoal .save"
+        );
 
     const teksAwal =
         tombol.innerHTML;
@@ -2601,10 +3214,6 @@ async function simpanSoal(){
         "⏳ Menyimpan...";
 
     try{
-
-        /* ================================
-           FILE GAMBAR
-        ================================= */
 
         const fileSoal =
             document.getElementById(
@@ -2631,10 +3240,6 @@ async function simpanSoal(){
                 "gambarD"
             ).files[0];
 
-
-        /* ================================
-           UPLOAD
-        ================================= */
 
         let gambarSoal =
             gambarUrls.soal;
@@ -2709,10 +3314,6 @@ async function simpanSoal(){
         }
 
 
-        /* ================================
-           PAYLOAD
-        ================================= */
-
         const payload = {
 
             ujian_id:
@@ -2770,10 +3371,6 @@ async function simpanSoal(){
         };
 
 
-        /* ================================
-           TAMBAH
-        ================================= */
-
         if(!editId){
 
             const {error} =
@@ -2803,17 +3400,11 @@ async function simpanSoal(){
             }
 
             showMessage(
-                "Soal berhasil ditambahkan beserta gambar.",
+                "Soal berhasil ditambahkan.",
                 "success"
             );
 
-        }
-
-        /* ================================
-           EDIT
-        ================================= */
-
-        else{
+        }else{
 
             const {error} =
                 await supabaseClient
@@ -2848,7 +3439,7 @@ async function simpanSoal(){
             );
         }
 
-        tutupModal();
+        tutupModalSoal();
 
         await loadSoal();
 
@@ -2873,7 +3464,7 @@ async function simpanSoal(){
 
 
 /* =====================================================
-   HAPUS
+   HAPUS SOAL
 ===================================================== */
 
 async function hapusSoal(id){
@@ -2935,15 +3526,709 @@ async function hapusSoal(id){
 
 
 /* =====================================================
-   MODAL
+   MODAL SOAL
 ===================================================== */
 
-function tutupModal(){
+function tutupModalSoal(){
 
-    document.getElementById("modal").style.display =
-        "none";
+    document.getElementById(
+        "modalSoal"
+    ).style.display = "none";
 
     editId = null;
+}
+
+
+/* =====================================================
+   LITERASI - BUKA
+===================================================== */
+
+function bukaLiterasi(){
+
+    if(!ujianTerpilih){
+
+        alert(
+            "Pilih ujian terlebih dahulu."
+        );
+
+        return;
+    }
+
+    tampilkanDaftarLiterasi();
+
+    document.getElementById(
+        "modalDaftarLiterasi"
+    ).style.display = "flex";
+}
+
+
+/* =====================================================
+   TAMPIL DAFTAR LITERASI
+===================================================== */
+
+function tampilkanDaftarLiterasi(){
+
+    const container =
+        document.getElementById(
+            "literasiList"
+        );
+
+    if(!semuaLiterasi.length){
+
+        container.innerHTML = `
+
+            <div class="empty"
+                 style="
+                    background:white;
+                    border-radius:12px;
+                 ">
+
+                📖 Belum ada literasi.
+
+                <br><br>
+
+                Klik
+                <strong>➕ Tambah Literasi</strong>
+                untuk membuat stimulus soal.
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+    container.innerHTML =
+        semuaLiterasi.map(l => {
+
+            return `
+
+                <div class="literasi-card">
+
+                    <div class="literasi-card-header">
+
+                        <div class="literasi-card-title">
+
+                            📖
+                            ${escapeHtml(
+                                l.judul ||
+                                "Literasi / Stimulus"
+                            )}
+
+                        </div>
+
+                        <div class="literasi-range">
+
+                            SOAL
+                            ${l.nomor_mulai}
+                            –
+                            ${l.nomor_selesai}
+
+                        </div>
+
+                    </div>
+
+                    <div class="literasi-card-text">
+
+                        ${escapeHtml(
+                            l.isi_literasi || ""
+                        )}
+
+                    </div>
+
+                    ${
+                        l.gambar_literasi
+                        ? `
+                            <img
+                                src="${escapeAttr(
+                                    l.gambar_literasi
+                                )}"
+                                style="
+                                    max-width:250px;
+                                    max-height:150px;
+                                    margin-top:10px;
+                                    border-radius:8px;
+                                ">
+                          `
+                        : ""
+                    }
+
+                    <div class="literasi-actions">
+
+                        <button
+                            class="edit"
+                            onclick="editLiterasi('${escapeAttr(l.id)}')">
+
+                            ✏️ Edit
+
+                        </button>
+
+                        <button
+                            class="delete"
+                            onclick="hapusLiterasi('${escapeAttr(l.id)}')">
+
+                            🗑️ Hapus
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join("");
+}
+
+
+/* =====================================================
+   FORM LITERASI BARU
+===================================================== */
+
+function bukaFormLiterasiBaru(){
+
+    editLiterasiId = null;
+
+    document.getElementById(
+        "literasiModalTitle"
+    ).textContent =
+        "📖 Tambah Literasi / Stimulus";
+
+    document.getElementById(
+        "literasiId"
+    ).value = "";
+
+    document.getElementById(
+        "literasiJudul"
+    ).value = "";
+
+    document.getElementById(
+        "nomorMulai"
+    ).value = "1";
+
+    document.getElementById(
+        "nomorSelesai"
+    ).value = "4";
+
+    document.getElementById(
+        "isiLiterasi"
+    ).value = "";
+
+    document.getElementById(
+        "gambarLiterasi"
+    ).value = "";
+
+    document.getElementById(
+        "previewLiterasi"
+    ).style.display = "none";
+
+    document.getElementById(
+        "previewLiterasiImg"
+    ).src = "";
+
+    document.getElementById(
+        "currentLiterasi"
+    ).innerHTML = "";
+
+    gambarLiterasiUrl = null;
+
+    document.getElementById(
+        "modalDaftarLiterasi"
+    ).style.display = "none";
+
+    document.getElementById(
+        "modalLiterasi"
+    ).style.display = "flex";
+}
+
+
+/* =====================================================
+   EDIT LITERASI
+===================================================== */
+
+function editLiterasi(id){
+
+    const literasi =
+        semuaLiterasi.find(
+            l => l.id === id
+        );
+
+    if(!literasi){
+
+        alert(
+            "Data literasi tidak ditemukan."
+        );
+
+        return;
+    }
+
+    editLiterasiId = id;
+
+    document.getElementById(
+        "literasiModalTitle"
+    ).textContent =
+        "✏️ Edit Literasi / Stimulus";
+
+    document.getElementById(
+        "literasiId"
+    ).value = id;
+
+    document.getElementById(
+        "literasiJudul"
+    ).value =
+        literasi.judul || "";
+
+    document.getElementById(
+        "nomorMulai"
+    ).value =
+        literasi.nomor_mulai;
+
+    document.getElementById(
+        "nomorSelesai"
+    ).value =
+        literasi.nomor_selesai;
+
+    document.getElementById(
+        "isiLiterasi"
+    ).value =
+        literasi.isi_literasi || "";
+
+    document.getElementById(
+        "gambarLiterasi"
+    ).value = "";
+
+    gambarLiterasiUrl =
+        literasi.gambar_literasi || null;
+
+    if(literasi.gambar_literasi){
+
+        document.getElementById(
+            "currentLiterasi"
+        ).innerHTML = `
+
+            Gambar saat ini:
+
+            <img
+                src="${escapeAttr(
+                    literasi.gambar_literasi
+                )}"
+                alt="Gambar literasi">
+
+        `;
+    }else{
+
+        document.getElementById(
+            "currentLiterasi"
+        ).innerHTML = "";
+    }
+
+    document.getElementById(
+        "previewLiterasi"
+    ).style.display = "none";
+
+    document.getElementById(
+        "modalDaftarLiterasi"
+    ).style.display = "none";
+
+    document.getElementById(
+        "modalLiterasi"
+    ).style.display = "flex";
+}
+
+
+/* =====================================================
+   PREVIEW GAMBAR LITERASI
+===================================================== */
+
+function previewLiterasiImage(){
+
+    const input =
+        document.getElementById(
+            "gambarLiterasi"
+        );
+
+    const file =
+        input.files[0];
+
+    const preview =
+        document.getElementById(
+            "previewLiterasi"
+        );
+
+    if(!file){
+
+        preview.style.display = "none";
+
+        return;
+    }
+
+    if(!file.type.startsWith("image/")){
+
+        alert(
+            "File harus berupa gambar."
+        );
+
+        input.value = "";
+
+        return;
+    }
+
+    if(file.size > 5 * 1024 * 1024){
+
+        alert(
+            "Ukuran gambar maksimal 5 MB."
+        );
+
+        input.value = "";
+
+        return;
+    }
+
+    const reader =
+        new FileReader();
+
+    reader.onload = function(e){
+
+        document.getElementById(
+            "previewLiterasiImg"
+        ).src =
+            e.target.result;
+
+        preview.style.display =
+            "block";
+
+    };
+
+    reader.readAsDataURL(file);
+}
+
+
+/* =====================================================
+   HAPUS PREVIEW LITERASI
+===================================================== */
+
+function hapusPreviewLiterasi(){
+
+    document.getElementById(
+        "gambarLiterasi"
+    ).value = "";
+
+    document.getElementById(
+        "previewLiterasi"
+    ).style.display = "none";
+
+    document.getElementById(
+        "previewLiterasiImg"
+    ).src = "";
+}
+
+
+/* =====================================================
+   SIMPAN LITERASI
+===================================================== */
+
+async function simpanLiterasi(){
+
+    if(!ujianTerpilih){
+
+        alert(
+            "Pilih ujian terlebih dahulu."
+        );
+
+        return;
+    }
+
+    const judul =
+        document.getElementById(
+            "literasiJudul"
+        ).value.trim();
+
+    const nomorMulai =
+        Number(
+            document.getElementById(
+                "nomorMulai"
+            ).value
+        );
+
+    const nomorSelesai =
+        Number(
+            document.getElementById(
+                "nomorSelesai"
+            ).value
+        );
+
+    const isi =
+        document.getElementById(
+            "isiLiterasi"
+        ).value.trim();
+
+    if(!isi){
+
+        alert(
+            "Isi literasi wajib diisi."
+        );
+
+        return;
+    }
+
+    if(
+        !nomorMulai ||
+        nomorMulai < 1
+    ){
+
+        alert(
+            "Nomor mulai tidak valid."
+        );
+
+        return;
+    }
+
+    if(
+        !nomorSelesai ||
+        nomorSelesai < nomorMulai
+    ){
+
+        alert(
+            "Nomor selesai harus lebih besar atau sama dengan nomor mulai."
+        );
+
+        return;
+    }
+
+    /* CEK TUMPANG TINDIH */
+
+    const adaBentrok =
+        semuaLiterasi.some(l => {
+
+            if(
+                editLiterasiId &&
+                l.id === editLiterasiId
+            ){
+
+                return false;
+            }
+
+            const mulai =
+                Number(l.nomor_mulai);
+
+            const selesai =
+                Number(l.nomor_selesai);
+
+            return (
+                nomorMulai <= selesai &&
+                nomorSelesai >= mulai
+            );
+
+        });
+
+    if(adaBentrok){
+
+        alert(
+            "Rentang nomor literasi bertabrakan dengan literasi lain.\n\n" +
+            "Silakan gunakan rentang nomor yang berbeda."
+        );
+
+        return;
+    }
+
+
+    const tombol =
+        document.querySelector(
+            "#modalLiterasi .save"
+        );
+
+    const teksAwal =
+        tombol.innerHTML;
+
+    tombol.disabled = true;
+
+    tombol.innerHTML =
+        "⏳ Menyimpan...";
+
+
+    try{
+
+        const file =
+            document.getElementById(
+                "gambarLiterasi"
+            ).files[0];
+
+        let gambar =
+            gambarLiterasiUrl;
+
+        if(file){
+
+            gambar =
+                await uploadGambar(
+                    file,
+                    "literasi"
+                );
+        }
+
+        const payload = {
+
+            ujian_id:
+                ujianTerpilih.id,
+
+            judul:
+                judul || null,
+
+            isi_literasi:
+                isi,
+
+            nomor_mulai:
+                nomorMulai,
+
+            nomor_selesai:
+                nomorSelesai,
+
+            gambar_literasi:
+                gambar || null
+
+        };
+
+
+        if(!editLiterasiId){
+
+            const {error} =
+                await supabaseClient
+                .from("literasi_soal")
+                .insert(payload);
+
+            if(error){
+
+                throw error;
+            }
+
+            showMessage(
+                `Literasi berhasil dibuat untuk soal ${nomorMulai}–${nomorSelesai}.`,
+                "success"
+            );
+
+        }else{
+
+            const {error} =
+                await supabaseClient
+                .from("literasi_soal")
+                .update(payload)
+                .eq("id",editLiterasiId);
+
+            if(error){
+
+                throw error;
+            }
+
+            showMessage(
+                "Literasi berhasil diperbarui.",
+                "success"
+            );
+        }
+
+
+        tutupLiterasiModal();
+
+        await loadLiterasi();
+
+        bukaLiterasi();
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Gagal menyimpan literasi:\n" +
+            error.message
+        );
+
+    }finally{
+
+        tombol.disabled = false;
+
+        tombol.innerHTML =
+            teksAwal;
+    }
+}
+
+
+/* =====================================================
+   HAPUS LITERASI
+===================================================== */
+
+async function hapusLiterasi(id){
+
+    const literasi =
+        semuaLiterasi.find(
+            l => l.id === id
+        );
+
+    if(!literasi) return;
+
+    const yakin =
+        confirm(
+            "Hapus literasi:\n\n" +
+            (literasi.judul || "Literasi / Stimulus") +
+            "\n\nRentang soal: " +
+            literasi.nomor_mulai +
+            "–" +
+            literasi.nomor_selesai +
+            "\n\nLiterasi akan dihapus dari ujian ini."
+        );
+
+    if(!yakin) return;
+
+    try{
+
+        const {error} =
+            await supabaseClient
+            .from("literasi_soal")
+            .delete()
+            .eq("id",id);
+
+        if(error){
+
+            throw error;
+        }
+
+        showMessage(
+            "Literasi berhasil dihapus.",
+            "success"
+        );
+
+        await loadLiterasi();
+
+        tampilkanDaftarLiterasi();
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Gagal menghapus literasi:\n" +
+            error.message
+        );
+    }
+}
+
+
+/* =====================================================
+   TUTUP LITERASI
+===================================================== */
+
+function tutupLiterasiModal(){
+
+    document.getElementById(
+        "modalLiterasi"
+    ).style.display = "none";
+
+    editLiterasiId = null;
+}
+
+
+function tutupDaftarLiterasi(){
+
+    document.getElementById(
+        "modalDaftarLiterasi"
+    ).style.display = "none";
 }
 
 
@@ -2956,6 +4241,20 @@ function insertMath(symbol){
     const textarea =
         document.getElementById(
             "pertanyaan"
+        );
+
+    insertAtCursor(
+        textarea,
+        symbol
+    );
+}
+
+
+function insertMathLiterasi(symbol){
+
+    const textarea =
+        document.getElementById(
+            "isiLiterasi"
         );
 
     insertAtCursor(
@@ -3007,6 +4306,392 @@ function insertAtCursor(element,text){
 
 
 /* =====================================================
+   PREVIEW SOAL UTUH
+===================================================== */
+
+function bukaPreviewSoal(){
+
+    if(!ujianTerpilih){
+
+        alert(
+            "Pilih ujian terlebih dahulu."
+        );
+
+        return;
+    }
+
+    if(!semuaSoal.length){
+
+        alert(
+            "Belum ada soal untuk dipreview."
+        );
+
+        return;
+    }
+
+    const title =
+        document.getElementById(
+            "previewExamTitle"
+        );
+
+    title.textContent =
+        ujianTerpilih.judul ||
+        "Preview Soal Ujian";
+
+    const content =
+        document.getElementById(
+            "previewContent"
+        );
+
+    content.innerHTML =
+        buatPreviewSoal(
+            semuaSoal
+        );
+
+    document.getElementById(
+        "modalPreview"
+    ).style.display = "flex";
+}
+
+
+/* =====================================================
+   PREVIEW SATU SOAL
+===================================================== */
+
+function previewSatuSoal(id){
+
+    const soal =
+        semuaSoal.find(
+            s => s.id === id
+        );
+
+    if(!soal) return;
+
+    document.getElementById(
+        "previewExamTitle"
+    ).textContent =
+        `${ujianTerpilih.judul || "Ujian"} — Preview Soal Nomor ${soal.nomor}`;
+
+    document.getElementById(
+        "previewContent"
+    ).innerHTML =
+        buatPreviewSoal(
+            [soal]
+        );
+
+    document.getElementById(
+        "modalPreview"
+    ).style.display = "flex";
+}
+
+
+/* =====================================================
+   BUAT PREVIEW SOAL
+===================================================== */
+
+function buatPreviewSoal(data){
+
+    if(!data.length){
+
+        return `
+            <div class="empty">
+                Tidak ada soal.
+            </div>
+        `;
+    }
+
+    let html = "";
+
+    let literasiTerakhir = null;
+
+    data.forEach(soal => {
+
+        const literasi =
+            cariLiterasiUntukNomor(
+                Number(soal.nomor)
+            );
+
+        /*
+           Tampilkan literasi hanya sekali
+           untuk kelompok soal yang sama.
+        */
+
+        if(
+            literasi &&
+            (!literasiTerakhir ||
+             literasiTerakhir.id !== literasi.id)
+        ){
+
+            html += `
+
+                <div class="preview-literasi">
+
+                    <div class="preview-literasi-label">
+                        📖 LITERASI / STIMULUS
+                    </div>
+
+                    <h3>
+                        ${escapeHtml(
+                            literasi.judul ||
+                            "Literasi / Stimulus"
+                        )}
+                    </h3>
+
+                    <div class="preview-literasi-text">
+                        ${escapeHtml(
+                            literasi.isi_literasi || ""
+                        )}
+                    </div>
+
+                    ${
+                        literasi.gambar_literasi
+                        ? `
+                            <img
+                                src="${escapeAttr(
+                                    literasi.gambar_literasi
+                                )}"
+                                alt="Gambar literasi">
+                          `
+                        : ""
+                    }
+
+                    <div style="
+                        margin-top:12px;
+                        font-size:11px;
+                        color:#64748b;
+                    ">
+
+                        Stimulus digunakan untuk
+                        soal nomor
+                        <strong>
+                            ${literasi.nomor_mulai}
+                            –
+                            ${literasi.nomor_selesai}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            `;
+
+            literasiTerakhir = literasi;
+        }
+
+
+        /*
+           Jika soal tidak memiliki literasi,
+           tidak perlu menampilkan kotak kosong.
+        */
+
+
+        let tipeText =
+            "Pilihan Ganda";
+
+        if(soal.tipe === "benar_salah")
+            tipeText = "Benar / Salah";
+
+        if(soal.tipe === "esai")
+            tipeText = "Esai";
+
+
+        html += `
+
+            <div class="preview-question">
+
+                <div class="preview-question-number">
+
+                    Soal ${escapeHtml(
+                        soal.nomor
+                    )}
+
+                </div>
+
+                <div class="preview-question-text">
+
+                    ${escapeHtml(
+                        soal.pertanyaan || ""
+                    )}
+
+                </div>
+
+                ${
+                    soal.gambar_soal
+                    ? `
+                        <img
+                            src="${escapeAttr(
+                                soal.gambar_soal
+                            )}"
+                            alt="Gambar soal">
+                      `
+                    : ""
+                }
+
+        `;
+
+
+        if(soal.tipe === "pilihan_ganda"){
+
+            html += `
+
+                <div class="preview-options">
+
+                    <div class="preview-option">
+
+                        <strong>A.</strong>
+                        ${escapeHtml(
+                            soal.pilihan_a || ""
+                        )}
+
+                        ${
+                            soal.gambar_a
+                            ? `
+                                <img
+                                    src="${escapeAttr(
+                                        soal.gambar_a
+                                    )}">
+                              `
+                            : ""
+                        }
+
+                    </div>
+
+                    <div class="preview-option">
+
+                        <strong>B.</strong>
+                        ${escapeHtml(
+                            soal.pilihan_b || ""
+                        )}
+
+                        ${
+                            soal.gambar_b
+                            ? `
+                                <img
+                                    src="${escapeAttr(
+                                        soal.gambar_b
+                                    )}">
+                              `
+                            : ""
+                        }
+
+                    </div>
+
+                    <div class="preview-option">
+
+                        <strong>C.</strong>
+                        ${escapeHtml(
+                            soal.pilihan_c || ""
+                        )}
+
+                        ${
+                            soal.gambar_c
+                            ? `
+                                <img
+                                    src="${escapeAttr(
+                                        soal.gambar_c
+                                    )}">
+                              `
+                            : ""
+                        }
+
+                    </div>
+
+                    <div class="preview-option">
+
+                        <strong>D.</strong>
+                        ${escapeHtml(
+                            soal.pilihan_d || ""
+                        )}
+
+                        ${
+                            soal.gambar_d
+                            ? `
+                                <img
+                                    src="${escapeAttr(
+                                        soal.gambar_d
+                                    )}">
+                              `
+                            : ""
+                        }
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+        if(soal.tipe === "benar_salah"){
+
+            html += `
+
+                <div class="preview-options">
+
+                    <div class="preview-option">
+                        ○ Benar
+                    </div>
+
+                    <div class="preview-option">
+                        ○ Salah
+                    </div>
+
+                </div>
+
+            `;
+        }
+
+        if(soal.tipe === "esai"){
+
+            html += `
+
+                <div class="preview-options">
+
+                    <div class="preview-option"
+                         style="
+                            min-height:100px;
+                            color:#94a3b8;
+                         ">
+
+                        ✍️ Jawaban siswa:
+
+                    </div>
+
+                </div>
+
+            `;
+        }
+
+
+        html += `
+
+                <span class="preview-type">
+                    ${tipeText}
+                </span>
+
+            </div>
+
+        `;
+
+    });
+
+    return html;
+}
+
+
+/* =====================================================
+   TUTUP PREVIEW
+===================================================== */
+
+function tutupPreview(){
+
+    document.getElementById(
+        "modalPreview"
+    ).style.display = "none";
+}
+
+
+/* =====================================================
    KEMBALI
 ===================================================== */
 
@@ -3047,15 +4732,61 @@ function escapeAttr(value){
 ===================================================== */
 
 document
-.getElementById("modal")
+.getElementById("modalSoal")
 .addEventListener(
     "click",
     function(e){
 
         if(e.target === this){
 
-            tutupModal();
+            tutupModalSoal();
         }
+
+    }
+);
+
+
+document
+.getElementById("modalLiterasi")
+.addEventListener(
+    "click",
+    function(e){
+
+        if(e.target === this){
+
+            tutupLiterasiModal();
+        }
+
+    }
+);
+
+
+document
+.getElementById("modalDaftarLiterasi")
+.addEventListener(
+    "click",
+    function(e){
+
+        if(e.target === this){
+
+            tutupDaftarLiterasi();
+        }
+
+    }
+);
+
+
+document
+.getElementById("modalPreview")
+.addEventListener(
+    "click",
+    function(e){
+
+        if(e.target === this){
+
+            tutupPreview();
+        }
+
     }
 );
 
