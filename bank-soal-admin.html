@@ -6,7 +6,2573 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Bank Soal - Admin | RUANG EXAM</title>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Bank Soal - Admin | RUANG EXAM</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f5f9;
+    color:#0f172a;
+    min-height:100vh;
+}
+
+.header{
+    background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
+    color:white;
+    padding:20px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.18);
+}
+
+.header h1{
+    font-size:23px;
+}
+
+.header p{
+    font-size:13px;
+    opacity:.85;
+    margin-top:5px;
+}
+
+.header-buttons{
+    display:flex;
+    gap:8px;
+}
+
+.btn{
+    border:none;
+    border-radius:9px;
+    padding:10px 14px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.btn-back{
+    background:white;
+    color:#1d4ed8;
+}
+
+.btn-refresh{
+    background:#22c55e;
+    color:white;
+}
+
+.container{
+    max-width:1250px;
+    margin:25px auto;
+    padding:0 20px;
+}
+
+.message{
+    display:none;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:18px;
+    text-align:center;
+    font-size:13px;
+}
+
+.message.success{
+    display:block;
+    background:#dcfce7;
+    color:#166534;
+}
+
+.message.error{
+    display:block;
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.select-box{
+    background:white;
+    padding:18px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    margin-bottom:18px;
+}
+
+.select-box label{
+    display:block;
+    font-weight:bold;
+    font-size:14px;
+    margin-bottom:8px;
+}
+
+.select-box select{
+    width:100%;
+    padding:12px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    background:white;
+    outline:none;
+}
+
+.select-box select:focus{
+    border-color:#2563eb;
+}
+
+.exam-info{
+    margin-top:12px;
+    display:none;
+    background:#eff6ff;
+    color:#1e3a8a;
+    padding:12px;
+    border-radius:10px;
+    font-size:13px;
+    line-height:1.7;
+}
+
+.toolbar{
+    background:white;
+    padding:18px;
+    border-radius:15px;
+    display:flex;
+    gap:12px;
+    align-items:center;
+    flex-wrap:wrap;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    margin-bottom:18px;
+}
+
+.search{
+    flex:1;
+    min-width:220px;
+}
+
+.search input{
+    width:100%;
+    padding:12px 14px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    outline:none;
+}
+
+.search input:focus{
+    border-color:#2563eb;
+}
+
+.btn-add{
+    background:#2563eb;
+    color:white;
+    padding:12px 18px;
+}
+
+.btn-add:disabled{
+    background:#94a3b8;
+    cursor:not-allowed;
+}
+
+.summary{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-bottom:18px;
+}
+
+.summary-card{
+    background:white;
+    border-radius:13px;
+    padding:15px 20px;
+    box-shadow:0 4px 15px rgba(0,0,0,.05);
+}
+
+.summary-card strong{
+    display:block;
+    font-size:22px;
+    color:#2563eb;
+}
+
+.summary-card span{
+    color:#64748b;
+    font-size:12px;
+}
+
+.table-box{
+    background:white;
+    border-radius:15px;
+    overflow:auto;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:1050px;
+}
+
+th{
+    background:#eff6ff;
+    color:#1e3a8a;
+    padding:14px;
+    text-align:left;
+    font-size:13px;
+    white-space:nowrap;
+}
+
+td{
+    padding:13px;
+    border-top:1px solid #e2e8f0;
+    font-size:13px;
+    vertical-align:top;
+}
+
+tr:hover td{
+    background:#f8fafc;
+}
+
+.empty{
+    text-align:center;
+    padding:40px !important;
+    color:#64748b;
+}
+
+.type-badge{
+    display:inline-block;
+    padding:6px 9px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:bold;
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+.action{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.action button{
+    border:none;
+    border-radius:7px;
+    padding:7px 9px;
+    cursor:pointer;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.edit{
+    background:#f59e0b;
+    color:white;
+}
+
+.delete{
+    background:#ef4444;
+    color:white;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.6);
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    z-index:100;
+    overflow:auto;
+}
+
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:700px;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+    margin:auto;
+}
+
+.modal-box h2{
+    margin-bottom:18px;
+}
+
+.info{
+    background:#eff6ff;
+    color:#1e40af;
+    padding:11px;
+    border-radius:9px;
+    font-size:12px;
+    line-height:1.5;
+    margin-bottom:18px;
+}
+
+.form-group{
+    margin-bottom:15px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:7px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    outline:none;
+    background:white;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+.form-group textarea{
+    min-height:120px;
+    resize:vertical;
+    line-height:1.5;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.1);
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.full{
+    grid-column:1 / -1;
+}
+
+.options-box{
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:15px;
+    margin-top:5px;
+    background:#f8fafc;
+}
+
+.options-title{
+    font-size:13px;
+    font-weight:bold;
+    margin-bottom:12px;
+}
+
+.option-row{
+    display:grid;
+    grid-template-columns:45px 1fr;
+    gap:8px;
+    align-items:center;
+    margin-bottom:9px;
+}
+
+.option-label{
+    font-weight:bold;
+    text-align:center;
+    background:#dbeafe;
+    color:#1e40af;
+    padding:10px;
+    border-radius:8px;
+}
+
+.option-row input{
+    width:100%;
+    padding:10px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    outline:none;
+}
+
+.option-row input:focus{
+    border-color:#2563eb;
+}
+
+.kunci{
+    background:#fef3c7 !important;
+    border-color:#f59e0b !important;
+}
+
+.modal-buttons{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:22px;
+}
+
+.cancel{
+    background:#e2e8f0;
+    color:#334155;
+}
+
+.save{
+    background:#2563eb;
+    color:white;
+}
+
+.footer{
+    text-align:center;
+    color:#94a3b8;
+    font-size:12px;
+    line-height:1.6;
+    padding:30px;
+}
+
+@media(max-width:800px){
+
+    .summary{
+        grid-template-columns:1fr;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .full{
+        grid-column:auto;
+    }
+
+}
+
+@media(max-width:600px){
+
+    .header{
+        padding:18px;
+    }
+
+    .container{
+        padding:0 12px;
+    }
+
+    .toolbar{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .search{
+        width:100%;
+    }
+
+    .btn-add{
+        width:100%;
+    }
+
+    .modal-box{
+        padding:18px;
+    }
+
+}
+
+/* =====================================================
+   TEKS TERTAUT / STIMULUS NUMERASI
+===================================================== */
+.linked-text-box{
+    border:1px solid #bfdbfe;
+    background:#eff6ff;
+    border-radius:12px;
+    padding:15px;
+    margin-bottom:15px;
+}
+.linked-text-title{
+    font-size:13px;
+    font-weight:bold;
+    color:#1e40af;
+    margin-bottom:10px;
+}
+.linked-text-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:10px;
+}
+.linked-text-grid input{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    outline:none;
+}
+.linked-text-grid input:focus{
+    border-color:#2563eb;
+}
+.linked-text-preview{
+    background:#fff;
+    border-left:4px solid #2563eb;
+    padding:10px 12px;
+    border-radius:8px;
+    color:#334155;
+    font-size:13px;
+    line-height:1.6;
+    margin-top:10px;
+    white-space:pre-wrap;
+}
+.stimulus-display{
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    border-radius:9px;
+    padding:10px 12px;
+    margin-bottom:9px;
+    color:#1e3a8a;
+    font-size:12px;
+    line-height:1.5;
+}
+.stimulus-display strong{
+    display:block;
+    margin-bottom:5px;
+}
+.linked-badge{
+    display:inline-block;
+    background:#dbeafe;
+    color:#1e40af;
+    padding:4px 7px;
+    border-radius:15px;
+    font-size:10px;
+    font-weight:bold;
+    margin-bottom:7px;
+}
+@media(max-width:600px){
+    .linked-text-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div>
+        <h1>📚 BANK SOAL</h1>
+        <p>RUANG EXAM — SMP Negeri 3 Sibolga</p>
+    </div>
+
+    <div class="header-buttons">
+
+        <button
+            class="btn btn-back"
+            onclick="kembaliDashboard()">
+            ← Dashboard
+        </button>
+
+        <button
+            class="btn btn-refresh"
+            onclick="loadSemuaData()">
+            🔄 Refresh
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div id="message" class="message"></div>
+
+
+    <!-- PILIH UJIAN -->
+
+    <div class="select-box">
+
+        <label>
+            📝 Pilih Ujian
+        </label>
+
+        <select
+            id="ujianSelect"
+            onchange="pilihUjian()">
+
+            <option value="">
+                ⏳ Memuat ujian...
+            </option>
+
+        </select>
+
+        <div
+            id="examInfo"
+            class="exam-info">
+        </div>
+
+    </div>
+
+
+    <!-- RINGKASAN -->
+
+    <div class="summary">
+
+        <div class="summary-card">
+            <strong id="totalSoal">0</strong>
+            <span>Total Soal</span>
+        </div>
+
+        <div class="summary-card">
+            <strong id="totalPilihan">0</strong>
+            <span>Pilihan Ganda</span>
+        </div>
+
+        <div class="summary-card">
+            <strong id="totalEsai">0</strong>
+            <span>Esai / Benar-Salah</span>
+        </div>
+
+    </div>
+
+
+    <!-- TOOLBAR -->
+
+    <div class="toolbar">
+
+        <div class="search">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="🔍 Cari nomor atau pertanyaan..."
+                oninput="filterSoal()">
+
+        </div>
+
+        <button
+            id="btnTambah"
+            class="btn btn-add"
+            onclick="bukaTambah()"
+            disabled>
+
+            ➕ Tambah Soal
+
+        </button>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="table-box">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>No</th>
+                    <th>Pertanyaan</th>
+                    <th>Tipe</th>
+                    <th>Pilihan</th>
+                    <th>Kunci</th>
+                    <th>Bobot</th>
+                    <th>Aksi</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="soalBody">
+
+                <tr>
+                    <td
+                        colspan="7"
+                        class="empty">
+
+                        👆 Pilih ujian terlebih dahulu.
+
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</main>
+
+
+<footer class="footer">
+
+    RUANG EXAM Online<br>
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+</footer>
+
+
+<!-- MODAL -->
+
+<div
+    class="modal"
+    id="modal">
+
+    <div class="modal-box">
+
+        <h2 id="modalTitle">
+            Tambah Soal
+        </h2>
+
+        <div class="info">
+
+            Soal akan disimpan ke ujian yang sedang dipilih.
+            Nomor soal dibuat otomatis.<br>
+            Gunakan <strong>Teks Tertaut / Stimulus</strong> jika satu bacaan/data
+            dipakai untuk beberapa nomor soal.
+
+        </div>
+
+
+        <div class="form-grid">
+
+
+            <div class="form-group">
+
+                <label>
+                    Nomor Soal
+                </label>
+
+                <input
+                    type="number"
+                    id="nomor"
+                    min="1"
+                    readonly>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Tipe Soal
+                </label>
+
+                <select
+                    id="tipe"
+                    onchange="ubahTipeSoal()">
+
+                    <option value="pilihan_ganda">
+                        Pilihan Ganda
+                    </option>
+
+                    <option value="benar_salah">
+                        Benar / Salah
+                    </option>
+
+                    <option value="esai">
+                        Esai
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group full">
+
+                <label>
+                    Pertanyaan
+                </label>
+
+                <textarea
+                    id="pertanyaan"
+                    placeholder="Tuliskan pertanyaan soal di sini...">
+                </textarea>
+
+            </div>
+
+
+            <!-- TEKS TERTAUT / STIMULUS -->
+            <div class="form-group full">
+                <div class="linked-text-box">
+                    <div class="linked-text-title">
+                        🔗 Teks Tertaut / Stimulus (Opsional)
+                    </div>
+
+                    <textarea
+                        id="teksTertaut"
+                        placeholder="Contoh: Perhatikan data berikut. Kelompok siswa menggunakan 12 batu kali, 8 batu marmer, 10 batu granit, dan 5 batu apung untuk membuat kerajinan."></textarea>
+
+                    <div class="linked-text-grid">
+                        <div>
+                            <label style="font-size:12px;font-weight:bold;display:block;margin-bottom:5px;">
+                                Berlaku mulai nomor
+                            </label>
+                            <input
+                                type="number"
+                                id="teksMulai"
+                                min="1"
+                                placeholder="Contoh: 1">
+                        </div>
+
+                        <div>
+                            <label style="font-size:12px;font-weight:bold;display:block;margin-bottom:5px;">
+                                Berlaku sampai nomor
+                            </label>
+                            <input
+                                type="number"
+                                id="teksSampai"
+                                min="1"
+                                placeholder="Contoh: 4">
+                        </div>
+                    </div>
+
+                    <div class="info" style="margin-top:10px;margin-bottom:0;">
+                        Teks ini dapat digunakan bersama beberapa soal.
+                        Contoh: isi teks dan nomor <strong>1 sampai 4</strong>,
+                        maka teks akan tampil pada soal nomor 1, 2, 3, dan 4.
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- PILIHAN GANDA -->
+
+            <div
+                id="pilihanBox"
+                class="form-group full">
+
+                <div class="options-box">
+
+                    <div class="options-title">
+                        Pilihan Jawaban
+                    </div>
+
+
+                    <div class="option-row">
+
+                        <div class="option-label">
+                            A
+                        </div>
+
+                        <input
+                            type="text"
+                            id="pilihanA"
+                            placeholder="Jawaban A">
+
+                    </div>
+
+
+                    <div class="option-row">
+
+                        <div class="option-label">
+                            B
+                        </div>
+
+                        <input
+                            type="text"
+                            id="pilihanB"
+                            placeholder="Jawaban B">
+
+                    </div>
+
+
+                    <div class="option-row">
+
+                        <div class="option-label">
+                            C
+                        </div>
+
+                        <input
+                            type="text"
+                            id="pilihanC"
+                            placeholder="Jawaban C">
+
+                    </div>
+
+
+                    <div class="option-row">
+
+                        <div class="option-label">
+                            D
+                        </div>
+
+                        <input
+                            type="text"
+                            id="pilihanD"
+                            placeholder="Jawaban D">
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- KUNCI -->
+
+            <div class="form-group">
+
+                <label>
+                    Kunci Jawaban
+                </label>
+
+                <select
+                    id="kunci">
+
+                    <option value="">
+                        -- Pilih Kunci --
+                    </option>
+
+                    <option value="A">
+                        A
+                    </option>
+
+                    <option value="B">
+                        B
+                    </option>
+
+                    <option value="C">
+                        C
+                    </option>
+
+                    <option value="D">
+                        D
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Bobot
+                </label>
+
+                <input
+                    type="number"
+                    id="bobot"
+                    min="0"
+                    max="999"
+                    step="0.01"
+                    value="1">
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-buttons">
+
+            <button
+                class="btn cancel"
+                onclick="tutupModal()">
+
+                Batal
+
+            </button>
+
+            <button
+                class="btn save"
+                onclick="simpanSoal()">
+
+                💾 Simpan Soal
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+/* =====================================================
+   CEK LOGIN ADMIN
+===================================================== */
+
+const sessionRaw =
+    localStorage.getItem("exam_user");
+
+if(!sessionRaw){
+
+    window.location.href = "login.html";
+
+}
+
+let currentUser = null;
+
+try{
+
+    currentUser =
+        JSON.parse(sessionRaw);
+
+    if(currentUser.role !== "admin"){
+
+        localStorage.removeItem("exam_user");
+
+        window.location.href = "login.html";
+
+    }
+
+}catch(error){
+
+    localStorage.removeItem("exam_user");
+
+    window.location.href = "login.html";
+
+}
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let semuaUjian = [];
+let semuaSoal = [];
+let soalTampil = [];
+
+let ujianTerpilih = null;
+let editId = null;
+
+
+/* =====================================================
+   PESAN
+===================================================== */
+
+function showMessage(text,type){
+
+    const message =
+        document.getElementById("message");
+
+    message.textContent = text;
+
+    message.className =
+        "message " + type;
+
+}
+
+function hideMessage(){
+
+    const message =
+        document.getElementById("message");
+
+    message.textContent = "";
+
+    message.className = "message";
+
+}
+
+
+/* =====================================================
+   LOAD DATA
+===================================================== */
+
+async function loadSemuaData(){
+
+    hideMessage();
+
+    const select =
+        document.getElementById("ujianSelect");
+
+    select.innerHTML = `
+        <option value="">
+            ⏳ Memuat ujian...
+        </option>
+    `;
+
+    try{
+
+        const {data,error} =
+            await supabaseClient
+            .from("ujian")
+            .select(`
+                id,
+                judul,
+                mata_pelajaran_id,
+                kelas_id,
+                guru_id,
+                durasi_menit,
+                tanggal_mulai,
+                tanggal_selesai,
+                status,
+                created_at,
+                mata_pelajaran (
+                    id,
+                    nama
+                ),
+                kelas (
+                    id,
+                    nama_kelas,
+                    tingkat
+                ),
+                guru (
+                    id,
+                    nama,
+                    nip
+                )
+            `)
+            .order(
+                "created_at",
+                {ascending:false}
+            );
+
+        if(error){
+
+            throw error;
+
+        }
+
+        semuaUjian =
+            data || [];
+
+        isiDropdownUjian();
+
+        if(semuaUjian.length === 0){
+
+            document.getElementById(
+                "soalBody"
+            ).innerHTML = `
+                <tr>
+                    <td colspan="7" class="empty">
+                        📝 Belum ada ujian.
+                        Buat ujian terlebih dahulu.
+                    </td>
+                </tr>
+            `;
+
+            document.getElementById(
+                "btnTambah"
+            ).disabled = true;
+
+            return;
+
+        }
+
+        /* Jika sebelumnya ada ujian yang dipilih,
+           pertahankan pilihan */
+
+        if(ujianTerpilih){
+
+            const masihAda =
+                semuaUjian.find(
+                    u => u.id === ujianTerpilih.id
+                );
+
+            if(masihAda){
+
+                document.getElementById(
+                    "ujianSelect"
+                ).value =
+                    masihAda.id;
+
+                ujianTerpilih =
+                    masihAda;
+
+                await loadSoal();
+
+                return;
+
+            }
+
+        }
+
+        document.getElementById(
+            "soalBody"
+        ).innerHTML = `
+            <tr>
+                <td colspan="7" class="empty">
+                    👆 Pilih ujian terlebih dahulu.
+                </td>
+            </tr>
+        `;
+
+    }catch(error){
+
+        console.error(error);
+
+        select.innerHTML = `
+            <option value="">
+                ❌ Gagal memuat ujian
+            </option>
+        `;
+
+        showMessage(
+            "Gagal memuat data ujian: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   DROPDOWN UJIAN
+===================================================== */
+
+function isiDropdownUjian(){
+
+    const select =
+        document.getElementById(
+            "ujianSelect"
+        );
+
+    select.innerHTML = `
+        <option value="">
+            -- Pilih Ujian --
+        </option>
+    `;
+
+    semuaUjian.forEach(ujian => {
+
+        const mapel =
+            ujian.mata_pelajaran
+            ? ujian.mata_pelajaran.nama
+            : "Tanpa Mapel";
+
+        select.innerHTML += `
+            <option value="${ujian.id}">
+                ${escapeHtml(ujian.judul)}
+                — ${escapeHtml(mapel)}
+            </option>
+        `;
+
+    });
+
+}
+
+
+/* =====================================================
+   PILIH UJIAN
+===================================================== */
+
+async function pilihUjian(){
+
+    const id =
+        document.getElementById(
+            "ujianSelect"
+        ).value;
+
+    if(!id){
+
+        ujianTerpilih = null;
+
+        document.getElementById(
+            "examInfo"
+        ).style.display = "none";
+
+        document.getElementById(
+            "btnTambah"
+        ).disabled = true;
+
+        document.getElementById(
+            "totalSoal"
+        ).textContent = "0";
+
+        document.getElementById(
+            "totalPilihan"
+        ).textContent = "0";
+
+        document.getElementById(
+            "totalEsai"
+        ).textContent = "0";
+
+        document.getElementById(
+            "soalBody"
+        ).innerHTML = `
+            <tr>
+                <td colspan="7" class="empty">
+                    👆 Pilih ujian terlebih dahulu.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+    ujianTerpilih =
+        semuaUjian.find(
+            u => u.id === id
+        );
+
+    if(!ujianTerpilih){
+
+        return;
+
+    }
+
+    tampilkanInfoUjian();
+
+    await loadSoal();
+
+}
+
+
+/* =====================================================
+   INFO UJIAN
+===================================================== */
+
+function tampilkanInfoUjian(){
+
+    const ujian =
+        ujianTerpilih;
+
+    const info =
+        document.getElementById(
+            "examInfo"
+        );
+
+    const mapel =
+        ujian.mata_pelajaran
+        ? ujian.mata_pelajaran.nama
+        : "-";
+
+    const guru =
+        ujian.guru
+        ? ujian.guru.nama
+        : "-";
+
+    /*
+       Mendukung data lama yang masih memakai
+       satu kelas_id.
+       Jika nanti multi-kelas sudah dipakai,
+       informasi kelas dapat diperluas.
+    */
+
+    const kelas =
+        ujian.kelas
+        ? ujian.kelas.nama_kelas
+        : "Multi / belum ditentukan";
+
+    info.innerHTML = `
+        <strong>Ujian:</strong>
+        ${escapeHtml(ujian.judul)}
+        <br>
+
+        <strong>Mata Pelajaran:</strong>
+        ${escapeHtml(mapel)}
+        <br>
+
+        <strong>Kelas:</strong>
+        ${escapeHtml(kelas)}
+        <br>
+
+        <strong>Guru:</strong>
+        ${escapeHtml(guru)}
+        <br>
+
+        <strong>Status:</strong>
+        ${escapeHtml(ujian.status || "-")}
+    `;
+
+    info.style.display = "block";
+
+}
+
+
+/* =====================================================
+   LOAD SOAL
+===================================================== */
+
+async function loadSoal(){
+
+    if(!ujianTerpilih){
+
+        return;
+
+    }
+
+    document.getElementById(
+        "soalBody"
+    ).innerHTML = `
+        <tr>
+            <td colspan="7" class="empty">
+                ⏳ Memuat soal...
+            </td>
+        </tr>
+    `;
+
+    try{
+
+        const {data,error} =
+            await supabaseClient
+            .from("soal")
+            .select(`
+                id,
+                ujian_id,
+                nomor,
+                pertanyaan,
+                tipe,
+                teks_tertaut,
+                teks_mulai,
+                teks_sampai,
+                pilihan_a,
+                pilihan_b,
+                pilihan_c,
+                pilihan_d,
+                kunci_jawaban,
+                bobot,
+                created_at
+            `)
+            .eq(
+                "ujian_id",
+                ujianTerpilih.id
+            )
+            .order(
+                "nomor",
+                {ascending:true}
+            );
+
+        if(error){
+
+            throw error;
+
+        }
+
+        semuaSoal =
+            data || [];
+
+        soalTampil =
+            [...semuaSoal];
+
+        updateSummary();
+
+        tampilkanSoal(
+            soalTampil
+        );
+
+        document.getElementById(
+            "btnTambah"
+        ).disabled = false;
+
+    }catch(error){
+
+        console.error(error);
+
+        showMessage(
+            "Gagal memuat soal: " +
+            error.message,
+            "error"
+        );
+
+        document.getElementById(
+            "soalBody"
+        ).innerHTML = `
+            <tr>
+                <td colspan="7" class="empty">
+                    ❌ Gagal memuat soal.
+                </td>
+            </tr>
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   SUMMARY
+===================================================== */
+
+function updateSummary(){
+
+    document.getElementById(
+        "totalSoal"
+    ).textContent =
+        semuaSoal.length;
+
+    document.getElementById(
+        "totalPilihan"
+    ).textContent =
+        semuaSoal.filter(
+            s => s.tipe === "pilihan_ganda"
+        ).length;
+
+    document.getElementById(
+        "totalEsai"
+    ).textContent =
+        semuaSoal.filter(
+            s =>
+                s.tipe === "esai" ||
+                s.tipe === "benar_salah"
+        ).length;
+
+}
+
+
+/* =====================================================
+   TAMPILKAN SOAL
+===================================================== */
+
+function tampilkanSoal(data){
+
+    const body =
+        document.getElementById(
+            "soalBody"
+        );
+
+    if(!data.length){
+
+        body.innerHTML = `
+            <tr>
+                <td colspan="7" class="empty">
+                    📚 Belum ada soal untuk ujian ini.
+                    <br><br>
+                    Klik <strong>➕ Tambah Soal</strong>
+                    untuk membuat soal pertama.
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+    body.innerHTML =
+        data.map(soal => {
+
+            let tipeText =
+                "Pilihan Ganda";
+
+            if(soal.tipe === "benar_salah"){
+                tipeText =
+                    "Benar / Salah";
+            }
+
+            if(soal.tipe === "esai"){
+                tipeText =
+                    "Esai";
+            }
+
+            let pilihan =
+                "-";
+
+            if(soal.tipe === "pilihan_ganda"){
+
+                pilihan = `
+                    A. ${escapeHtml(
+                        soal.pilihan_a || "-"
+                    )}<br>
+
+                    B. ${escapeHtml(
+                        soal.pilihan_b || "-"
+                    )}<br>
+
+                    C. ${escapeHtml(
+                        soal.pilihan_c || "-"
+                    )}<br>
+
+                    D. ${escapeHtml(
+                        soal.pilihan_d || "-"
+                    )}
+                `;
+
+            }
+
+            if(soal.tipe === "benar_salah"){
+
+                pilihan =
+                    "Benar / Salah";
+
+            }
+
+            return `
+
+                <tr>
+
+                    <td>
+                        <strong>
+                            ${soal.nomor}
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${
+                            soal.teks_tertaut
+                            ? `
+                                <div class="stimulus-display">
+                                    <strong>
+                                        🔗 Teks tertaut No. ${soal.teks_mulai || soal.nomor}–${soal.teks_sampai || soal.nomor}
+                                    </strong>
+                                    ${escapeHtml(soal.teks_tertaut)}
+                                </div>
+                            `
+                            : ""
+                        }
+
+                        ${
+                            soal.teks_tertaut
+                            ? `<span class="linked-badge">🔗 TERKAIT</span><br>`
+                            : ""
+                        }
+
+                        ${escapeHtml(
+                            soal.pertanyaan || "-"
+                        )}
+                    </td>
+
+                    <td>
+                        <span class="type-badge">
+                            ${tipeText}
+                        </span>
+                    </td>
+
+                    <td>
+                        ${pilihan}
+                    </td>
+
+                    <td>
+                        <strong>
+                            ${escapeHtml(
+                                soal.kunci_jawaban || "-"
+                            )}
+                        </strong>
+                    </td>
+
+                    <td>
+                        ${soal.bobot ?? 1}
+                    </td>
+
+                    <td>
+
+                        <div class="action">
+
+                            <button
+                                class="edit"
+                                onclick="editSoal('${soal.id}')">
+
+                                ✏️ Edit
+
+                            </button>
+
+                            <button
+                                class="delete"
+                                onclick="hapusSoal('${soal.id}')">
+
+                                🗑️ Hapus
+
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }).join("");
+
+}
+
+
+/* =====================================================
+   FILTER
+===================================================== */
+
+function filterSoal(){
+
+    const keyword =
+        document.getElementById(
+            "searchInput"
+        ).value
+        .toLowerCase()
+        .trim();
+
+    if(!keyword){
+
+        soalTampil =
+            [...semuaSoal];
+
+    }else{
+
+        soalTampil =
+            semuaSoal.filter(soal => {
+
+                return (
+                    String(
+                        soal.nomor
+                    ).includes(keyword)
+
+                    ||
+
+                    (soal.pertanyaan || "")
+                    .toLowerCase()
+                    .includes(keyword)
+
+                    ||
+
+                    (soal.tipe || "")
+                    .toLowerCase()
+                    .includes(keyword)
+                );
+
+            });
+
+    }
+
+    tampilkanSoal(
+        soalTampil
+    );
+
+}
+
+
+/* =====================================================
+   TAMBAH SOAL
+===================================================== */
+
+function bukaTambah(){
+
+    if(!ujianTerpilih){
+
+        alert(
+            "Pilih ujian terlebih dahulu."
+        );
+
+        return;
+
+    }
+
+    editId = null;
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Tambah Soal";
+
+    /*
+       Nomor otomatis berdasarkan
+       nomor terbesar + 1.
+    */
+
+    let nomorBaru = 1;
+
+    if(semuaSoal.length){
+
+        nomorBaru =
+            Math.max(
+                ...semuaSoal.map(
+                    s => Number(s.nomor) || 0
+                )
+            ) + 1;
+
+    }
+
+    resetForm();
+
+    document.getElementById(
+        "nomor"
+    ).value =
+        nomorBaru;
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* =====================================================
+   RESET FORM
+===================================================== */
+
+function resetForm(){
+
+    document.getElementById(
+        "nomor"
+    ).value = "";
+
+    document.getElementById(
+        "pertanyaan"
+    ).value = "";
+
+    document.getElementById(
+        "teksTertaut"
+    ).value = "";
+
+    document.getElementById(
+        "teksMulai"
+    ).value = "";
+
+    document.getElementById(
+        "teksSampai"
+    ).value = "";
+
+    document.getElementById(
+        "tipe"
+    ).value =
+        "pilihan_ganda";
+
+    document.getElementById(
+        "pilihanA"
+    ).value = "";
+
+    document.getElementById(
+        "pilihanB"
+    ).value = "";
+
+    document.getElementById(
+        "pilihanC"
+    ).value = "";
+
+    document.getElementById(
+        "pilihanD"
+    ).value = "";
+
+    document.getElementById(
+        "kunci"
+    ).innerHTML = `
+        <option value="">
+            -- Pilih Kunci --
+        </option>
+
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+    `;
+
+    document.getElementById(
+        "bobot"
+    ).value = "1";
+
+    ubahTipeSoal();
+
+}
+
+
+/* =====================================================
+   TIPE SOAL
+===================================================== */
+
+function ubahTipeSoal(){
+
+    const tipe =
+        document.getElementById(
+            "tipe"
+        ).value;
+
+    const pilihanBox =
+        document.getElementById(
+            "pilihanBox"
+        );
+
+    const kunci =
+        document.getElementById(
+            "kunci"
+        );
+
+    if(tipe === "pilihan_ganda"){
+
+        pilihanBox.style.display =
+            "block";
+
+        kunci.innerHTML = `
+            <option value="">
+                -- Pilih Kunci --
+            </option>
+
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+        `;
+
+    }
+
+    else if(tipe === "benar_salah"){
+
+        pilihanBox.style.display =
+            "none";
+
+        kunci.innerHTML = `
+            <option value="">
+                -- Pilih Jawaban --
+            </option>
+
+            <option value="Benar">
+                Benar
+            </option>
+
+            <option value="Salah">
+                Salah
+            </option>
+        `;
+
+    }
+
+    else{
+
+        pilihanBox.style.display =
+            "none";
+
+        kunci.innerHTML = `
+            <option value="">
+                -- Kunci / Pedoman Jawaban --
+            </option>
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   EDIT SOAL
+===================================================== */
+
+function editSoal(id){
+
+    const soal =
+        semuaSoal.find(
+            s => s.id === id
+        );
+
+    if(!soal){
+
+        alert(
+            "Data soal tidak ditemukan."
+        );
+
+        return;
+
+    }
+
+    editId = id;
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        "Edit Soal";
+
+    document.getElementById(
+        "nomor"
+    ).value =
+        soal.nomor;
+
+    document.getElementById(
+        "tipe"
+    ).value =
+        soal.tipe || "pilihan_ganda";
+
+    document.getElementById(
+        "pertanyaan"
+    ).value =
+        soal.pertanyaan || "";
+
+    document.getElementById(
+        "teksTertaut"
+    ).value =
+        soal.teks_tertaut || "";
+
+    document.getElementById(
+        "teksMulai"
+    ).value =
+        soal.teks_mulai ?? "";
+
+    document.getElementById(
+        "teksSampai"
+    ).value =
+        soal.teks_sampai ?? "";
+
+    document.getElementById(
+        "pilihanA"
+    ).value =
+        soal.pilihan_a || "";
+
+    document.getElementById(
+        "pilihanB"
+    ).value =
+        soal.pilihan_b || "";
+
+    document.getElementById(
+        "pilihanC"
+    ).value =
+        soal.pilihan_c || "";
+
+    document.getElementById(
+        "pilihanD"
+    ).value =
+        soal.pilihan_d || "";
+
+    document.getElementById(
+        "bobot"
+    ).value =
+        soal.bobot ?? 1;
+
+    ubahTipeSoal();
+
+    document.getElementById(
+        "kunci"
+    ).value =
+        soal.kunci_jawaban || "";
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* =====================================================
+   SIMPAN SOAL
+===================================================== */
+
+async function simpanSoal(){
+
+    if(!ujianTerpilih){
+
+        alert(
+            "Pilih ujian terlebih dahulu."
+        );
+
+        return;
+
+    }
+
+    const nomor =
+        Number(
+            document.getElementById(
+                "nomor"
+            ).value
+        );
+
+    const pertanyaan =
+        document.getElementById(
+            "pertanyaan"
+        ).value.trim();
+
+    const teksTertaut =
+        document.getElementById(
+            "teksTertaut"
+        ).value.trim();
+
+    const teksMulaiRaw =
+        document.getElementById(
+            "teksMulai"
+        ).value.trim();
+
+    const teksSampaiRaw =
+        document.getElementById(
+            "teksSampai"
+        ).value.trim();
+
+    const teksMulai =
+        teksMulaiRaw
+        ? Number(teksMulaiRaw)
+        : null;
+
+    const teksSampai =
+        teksSampaiRaw
+        ? Number(teksSampaiRaw)
+        : null;
+
+    const tipe =
+        document.getElementById(
+            "tipe"
+        ).value;
+
+    const pilihanA =
+        document.getElementById(
+            "pilihanA"
+        ).value.trim();
+
+    const pilihanB =
+        document.getElementById(
+            "pilihanB"
+        ).value.trim();
+
+    const pilihanC =
+        document.getElementById(
+            "pilihanC"
+        ).value.trim();
+
+    const pilihanD =
+        document.getElementById(
+            "pilihanD"
+        ).value.trim();
+
+    const kunci =
+        document.getElementById(
+            "kunci"
+        ).value;
+
+    const bobot =
+        Number(
+            document.getElementById(
+                "bobot"
+            ).value
+        );
+
+
+    if(!nomor || nomor < 1){
+
+        alert(
+            "Nomor soal tidak valid."
+        );
+
+        return;
+
+    }
+
+
+    if(!pertanyaan){
+
+        alert(
+            "Pertanyaan wajib diisi."
+        );
+
+        return;
+
+    }
+
+    /* ===============================
+       VALIDASI TEKS TERTAUT
+    =============================== */
+
+    if(teksTertaut){
+
+        if(
+            !teksMulai ||
+            !teksSampai ||
+            teksMulai < 1 ||
+            teksSampai < 1 ||
+            teksMulai > teksSampai
+        ){
+
+            alert(
+                "Jika menggunakan teks tertaut, isi nomor mulai dan nomor sampai dengan benar."
+            );
+
+            return;
+
+        }
+
+        if(
+            nomor < teksMulai ||
+            nomor > teksSampai
+        ){
+
+            alert(
+                "Nomor soal saat ini harus berada dalam rentang teks tertaut."
+            );
+
+            return;
+
+        }
+
+    }else if(teksMulaiRaw || teksSampaiRaw){
+
+        alert(
+            "Isi teks tertaut terlebih dahulu atau kosongkan nomor mulai dan nomor sampai."
+        );
+
+        return;
+
+    }
+
+
+    if(!bobot || bobot < 0){
+
+        alert(
+            "Bobot soal tidak valid."
+        );
+
+        return;
+
+    }
+
+
+    if(tipe === "pilihan_ganda"){
+
+        if(
+            !pilihanA ||
+            !pilihanB ||
+            !pilihanC ||
+            !pilihanD
+        ){
+
+            alert(
+                "Semua pilihan A, B, C, dan D wajib diisi."
+            );
+
+            return;
+
+        }
+
+        if(!kunci){
+
+            alert(
+                "Kunci jawaban wajib dipilih."
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    if(tipe === "benar_salah"){
+
+        if(!kunci){
+
+            alert(
+                "Pilih jawaban Benar atau Salah."
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    const payload = {
+
+        ujian_id:
+            ujianTerpilih.id,
+
+        nomor:
+            nomor,
+
+        pertanyaan:
+            pertanyaan,
+
+        teks_tertaut:
+            teksTertaut || null,
+
+        teks_mulai:
+            teksTertaut ? teksMulai : null,
+
+        teks_sampai:
+            teksTertaut ? teksSampai : null,
+
+        tipe:
+            tipe,
+
+        pilihan_a:
+            tipe === "pilihan_ganda"
+            ? pilihanA
+            : null,
+
+        pilihan_b:
+            tipe === "pilihan_ganda"
+            ? pilihanB
+            : null,
+
+        pilihan_c:
+            tipe === "pilihan_ganda"
+            ? pilihanC
+            : null,
+
+        pilihan_d:
+            tipe === "pilihan_ganda"
+            ? pilihanD
+            : null,
+
+        kunci_jawaban:
+            kunci || null,
+
+        bobot:
+            bobot
+
+    };
+
+
+    try{
+
+        /* ===============================
+           TAMBAH
+        =============================== */
+
+        if(!editId){
+
+            const {error} =
+                await supabaseClient
+                .from("soal")
+                .insert(payload);
+
+            if(error){
+
+                console.error(error);
+
+                if(
+                    error.code === "23505"
+                ){
+
+                    alert(
+                        "Nomor soal tersebut sudah digunakan. Silakan gunakan nomor lain."
+                    );
+
+                }else{
+
+                    alert(
+                        "Gagal menyimpan soal:\n" +
+                        error.message
+                    );
+
+                }
+
+                return;
+
+            }
+
+            showMessage(
+                "Soal berhasil ditambahkan.",
+                "success"
+            );
+
+        }
+
+
+        /* ===============================
+           EDIT
+        =============================== */
+
+        else{
+
+            const {error} =
+                await supabaseClient
+                .from("soal")
+                .update(payload)
+                .eq(
+                    "id",
+                    editId
+                );
+
+            if(error){
+
+                console.error(error);
+
+                if(
+                    error.code === "23505"
+                ){
+
+                    alert(
+                        "Nomor soal tersebut sudah digunakan."
+                    );
+
+                }else{
+
+                    alert(
+                        "Gagal mengubah soal:\n" +
+                        error.message
+                    );
+
+                }
+
+                return;
+
+            }
+
+            showMessage(
+                "Soal berhasil diperbarui.",
+                "success"
+            );
+
+        }
+
+
+        tutupModal();
+
+        await loadSoal();
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Terjadi kesalahan:\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   HAPUS SOAL
+===================================================== */
+
+async function hapusSoal(id){
+
+    const soal =
+        semuaSoal.find(
+            s => s.id === id
+        );
+
+    if(!soal){
+
+        return;
+
+    }
+
+    const yakin =
+        confirm(
+            "Hapus soal nomor " +
+            soal.nomor +
+            "?\n\n" +
+            "Data soal yang dihapus tidak dapat dikembalikan."
+        );
+
+    if(!yakin){
+
+        return;
+
+    }
+
+
+    try{
+
+        const {error} =
+            await supabaseClient
+            .from("soal")
+            .delete()
+            .eq(
+                "id",
+                id
+            );
+
+        if(error){
+
+            console.error(error);
+
+            alert(
+                "Gagal menghapus soal:\n" +
+                error.message
+            );
+
+            return;
+
+        }
+
+        showMessage(
+            "Soal berhasil dihapus.",
+            "success"
+        );
+
+        await loadSoal();
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Terjadi kesalahan:\n" +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function tutupModal(){
+
+    document.getElementById(
+        "modal"
+    ).style.display =
+        "none";
+
+    editId = null;
+
+}
+
+
+/* =====================================================
+   KEMBALI DASHBOARD
+===================================================== */
+
+function kembaliDashboard(){
+
+    window.location.href =
+        "admin.html";
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   KLIK LUAR MODAL
+===================================================== */
+
+document
+.getElementById("modal")
+.addEventListener(
+    "click",
+    function(e){
+
+        if(e.target === this){
+
+            tutupModal();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   LOAD AWAL
+===================================================== */
+
+loadSemuaData();
+
+</script>
+
+</body>
+</html>
+```
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
