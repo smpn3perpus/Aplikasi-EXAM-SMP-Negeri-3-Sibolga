@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -8,6 +7,8 @@
 <title>Bank Soal - Admin | RUANG EXAM</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
 
 <style>
 *{
@@ -22,10 +23,6 @@ body{
     color:#0f172a;
     min-height:100vh;
 }
-
-/* =====================================================
-   HEADER
-===================================================== */
 
 .header{
     background:linear-gradient(135deg,#0f172a,#1d4ed8,#2563eb);
@@ -72,24 +69,11 @@ body{
     color:white;
 }
 
-.btn:disabled{
-    opacity:.6;
-    cursor:not-allowed;
-}
-
-/* =====================================================
-   CONTAINER
-===================================================== */
-
 .container{
     max-width:1250px;
     margin:25px auto;
     padding:0 20px;
 }
-
-/* =====================================================
-   MESSAGE
-===================================================== */
 
 .message{
     display:none;
@@ -111,10 +95,6 @@ body{
     background:#fee2e2;
     color:#991b1b;
 }
-
-/* =====================================================
-   SELECT UJIAN
-===================================================== */
 
 .select-box{
     background:white;
@@ -144,10 +124,6 @@ body{
     border-color:#2563eb;
 }
 
-/* =====================================================
-   INFO UJIAN
-===================================================== */
-
 .exam-info{
     margin-top:12px;
     display:none;
@@ -158,10 +134,6 @@ body{
     font-size:13px;
     line-height:1.7;
 }
-
-/* =====================================================
-   TOOLBAR
-===================================================== */
 
 .toolbar{
     background:white;
@@ -198,9 +170,10 @@ body{
     padding:12px 18px;
 }
 
-/* =====================================================
-   SUMMARY
-===================================================== */
+.btn-add:disabled{
+    background:#94a3b8;
+    cursor:not-allowed;
+}
 
 .summary{
     display:grid;
@@ -227,9 +200,16 @@ body{
     font-size:12px;
 }
 
-/* =====================================================
-   TABLE
-===================================================== */
+.literasi-admin-box{background:white;border-radius:15px;padding:18px;box-shadow:0 4px 15px rgba(0,0,0,.06);margin-bottom:18px}
+.literasi-admin-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.literasi-admin-head h2{font-size:17px;color:#1e3a8a}
+.literasi-admin-list{display:grid;gap:12px}
+.literasi-admin-card{border:1px solid #bfdbfe;background:#eff6ff;border-radius:12px;padding:15px}
+.literasi-admin-card h3{color:#1e3a8a;font-size:15px;margin-bottom:7px}
+.literasi-admin-meta{color:#64748b;font-size:11px;margin-bottom:9px}
+.literasi-admin-text{background:white;border-left:4px solid #2563eb;border-radius:8px;padding:11px 13px;white-space:pre-wrap;line-height:1.65;font-size:13px}
+.literasi-admin-img{max-width:100%;max-height:280px;object-fit:contain;display:block;margin:10px 0;border-radius:8px;background:white}
+.btn-download-admin{background:#0891b2;color:white}
 
 .table-box{
     background:white;
@@ -241,7 +221,7 @@ body{
 table{
     width:100%;
     border-collapse:collapse;
-    min-width:1100px;
+    min-width:1050px;
 }
 
 th{
@@ -270,10 +250,6 @@ tr:hover td{
     color:#64748b;
 }
 
-/* =====================================================
-   BADGE
-===================================================== */
-
 .type-badge{
     display:inline-block;
     padding:6px 9px;
@@ -283,42 +259,6 @@ tr:hover td{
     background:#dbeafe;
     color:#1e40af;
 }
-
-.linked-badge{
-    display:inline-block;
-    background:#dbeafe;
-    color:#1e40af;
-    padding:4px 7px;
-    border-radius:15px;
-    font-size:10px;
-    font-weight:bold;
-    margin-bottom:7px;
-}
-
-/* =====================================================
-   STIMULUS
-===================================================== */
-
-.stimulus-display{
-    background:#eff6ff;
-    border:1px solid #bfdbfe;
-    border-radius:9px;
-    padding:10px 12px;
-    margin-bottom:9px;
-    color:#1e3a8a;
-    font-size:12px;
-    line-height:1.6;
-    white-space:pre-wrap;
-}
-
-.stimulus-display strong{
-    display:block;
-    margin-bottom:5px;
-}
-
-/* =====================================================
-   ACTION
-===================================================== */
 
 .action{
     display:flex;
@@ -344,10 +284,6 @@ tr:hover td{
     background:#ef4444;
     color:white;
 }
-
-/* =====================================================
-   MODAL
-===================================================== */
 
 .modal{
     display:none;
@@ -375,10 +311,6 @@ tr:hover td{
     margin-bottom:18px;
 }
 
-/* =====================================================
-   INFO
-===================================================== */
-
 .info{
     background:#eff6ff;
     color:#1e40af;
@@ -388,10 +320,6 @@ tr:hover td{
     line-height:1.5;
     margin-bottom:18px;
 }
-
-/* =====================================================
-   FORM
-===================================================== */
 
 .form-group{
     margin-bottom:15px;
@@ -439,48 +367,6 @@ tr:hover td{
     grid-column:1 / -1;
 }
 
-/* =====================================================
-   TEKS TERTAUT
-===================================================== */
-
-.linked-text-box{
-    border:1px solid #bfdbfe;
-    background:#eff6ff;
-    border-radius:12px;
-    padding:15px;
-}
-
-.linked-text-title{
-    font-size:13px;
-    font-weight:bold;
-    color:#1e40af;
-    margin-bottom:10px;
-}
-
-.linked-text-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-    margin-top:10px;
-}
-
-.linked-text-grid input{
-    width:100%;
-    padding:10px 12px;
-    border:1px solid #cbd5e1;
-    border-radius:8px;
-    outline:none;
-    background:white;
-}
-
-.linked-text-grid input:focus{
-    border-color:#2563eb;
-}
-
-/* =====================================================
-   PILIHAN
-===================================================== */
-
 .options-box{
     border:1px solid #e2e8f0;
     border-radius:12px;
@@ -524,9 +410,10 @@ tr:hover td{
     border-color:#2563eb;
 }
 
-/* =====================================================
-   MODAL BUTTON
-===================================================== */
+.kunci{
+    background:#fef3c7 !important;
+    border-color:#f59e0b !important;
+}
 
 .modal-buttons{
     display:flex;
@@ -546,9 +433,85 @@ tr:hover td{
 }
 
 /* =====================================================
-   FOOTER
+   TAMBAHAN: TEKS TAUTAN + MATEMATIKA + GAMBAR OPSI
 ===================================================== */
-
+.linked-box{
+    border:1px solid #bfdbfe;
+    background:#eff6ff;
+    border-radius:12px;
+    padding:15px;
+    margin-top:5px;
+}
+.linked-title{
+    font-size:13px;
+    font-weight:bold;
+    color:#1e3a8a;
+    margin-bottom:10px;
+}
+.linked-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:10px;
+}
+.option-extra{
+    margin-top:6px;
+    display:flex;
+    gap:7px;
+    align-items:center;
+    flex-wrap:wrap;
+}
+.math-toggle{
+    border:1px solid #cbd5e1;
+    background:white;
+    color:#334155;
+    border-radius:7px;
+    padding:6px 9px;
+    cursor:pointer;
+    font-size:11px;
+    font-weight:bold;
+}
+.math-toggle.active{
+    background:#dbeafe;
+    border-color:#2563eb;
+    color:#1e40af;
+}
+.img-input{
+    flex:1;
+    min-width:180px;
+    padding:7px 9px !important;
+    font-size:11px;
+}
+.img-preview{
+    display:none;
+    max-width:130px;
+    max-height:80px;
+    object-fit:contain;
+    border:1px solid #cbd5e1;
+    border-radius:7px;
+    background:white;
+    padding:3px;
+}
+.option-preview{
+    font-size:13px;
+    margin-top:5px;
+    min-height:4px;
+}
+.link-badge{
+    display:inline-block;
+    margin-top:6px;
+    padding:4px 7px;
+    border-radius:8px;
+    background:#dbeafe;
+    color:#1d4ed8;
+    font-size:10px;
+    font-weight:bold;
+}
+.question-main{
+    font-size:12px;
+    color:#475569;
+    margin-bottom:5px;
+}
 .footer{
     text-align:center;
     color:#94a3b8;
@@ -556,10 +519,6 @@ tr:hover td{
     line-height:1.6;
     padding:30px;
 }
-
-/* =====================================================
-   RESPONSIVE
-===================================================== */
 
 @media(max-width:800px){
 
@@ -604,547 +563,535 @@ tr:hover td{
         padding:18px;
     }
 
-    .linked-text-grid{
-        grid-template-columns:1fr;
-    }
-
-    .header-buttons{
-        width:100%;
-    }
-
-    .header-buttons button{
-        flex:1;
-    }
-
 }
 
 /* =====================================================
-   LOADING
+   TEKS TERTAUT / STIMULUS NUMERASI
 ===================================================== */
-
-.loading{
-    pointer-events:none;
-    opacity:.65;
+.linked-text-box{
+    border:1px solid #bfdbfe;
+    background:#eff6ff;
+    border-radius:12px;
+    padding:15px;
+    margin-bottom:15px;
 }
-</style>
+.linked-text-title{
+    font-size:13px;
+    font-weight:bold;
+    color:#1e40af;
+    margin-bottom:10px;
+}
+.linked-text-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:10px;
+}
+.linked-text-grid input{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    outline:none;
+}
+.linked-text-grid input:focus{
+    border-color:#2563eb;
+}
+.linked-text-preview{
+    background:#fff;
+    border-left:4px solid #2563eb;
+    padding:10px 12px;
+    border-radius:8px;
+    color:#334155;
+    font-size:13px;
+    line-height:1.6;
+    margin-top:10px;
+    white-space:pre-wrap;
+}
+.stimulus-display{
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    border-radius:9px;
+    padding:10px 12px;
+    margin-bottom:9px;
+    color:#1e3a8a;
+    font-size:12px;
+    line-height:1.5;
+}
+.stimulus-display strong{
+    display:block;
+    margin-bottom:5px;
+}
+.linked-badge{
+    display:inline-block;
+    background:#dbeafe;
+    color:#1e40af;
+    padding:4px 7px;
+    border-radius:15px;
+    font-size:10px;
+    font-weight:bold;
+    margin-bottom:7px;
+}
+@media(max-width:600px){
+    .linked-text-grid{
+        grid-template-columns:1fr;
+    }
+}
 
+</style>
 </head>
 
 <body>
 
-<!-- =====================================================
-     HEADER
-===================================================== -->
-
 <header class="header">
 
-```
-<div>
-    <h1>📚 BANK SOAL</h1>
-    <p>RUANG EXAM — SMP Negeri 3 Sibolga</p>
-</div>
+    <div>
+        <h1>📚 BANK SOAL</h1>
+        <p>RUANG EXAM — SMP Negeri 3 Sibolga</p>
+    </div>
 
-<div class="header-buttons">
+    <div class="header-buttons">
 
-    <button
-        class="btn btn-back"
-        onclick="kembaliDashboard()">
-        ← Dashboard
-    </button>
+        <button
+            class="btn btn-back"
+            onclick="kembaliDashboard()">
+            ← Dashboard
+        </button>
 
-    <button
-        class="btn btn-refresh"
-        onclick="loadSemuaData()">
-        🔄 Refresh
-    </button>
+        <button
+            class="btn btn-refresh"
+            onclick="loadSemuaData()">
+            🔄 Refresh
+        </button>
 
-</div>
-```
+    </div>
 
 </header>
 
-<!-- =====================================================
-     MAIN
-===================================================== -->
 
 <main class="container">
 
-```
-<div id="message" class="message"></div>
+    <div id="message" class="message"></div>
 
 
-<!-- PILIH UJIAN -->
+    <!-- PILIH UJIAN -->
 
-<div class="select-box">
+    <div class="select-box">
 
-    <label>
-        📝 Pilih Ujian
-    </label>
+        <label>
+            📝 Pilih Ujian
+        </label>
 
-    <select
-        id="ujianSelect"
-        onchange="pilihUjian()">
+        <select
+            id="ujianSelect"
+            onchange="pilihUjian()">
 
-        <option value="">
-            ⏳ Memuat ujian...
-        </option>
+            <option value="">
+                ⏳ Memuat ujian...
+            </option>
 
-    </select>
+        </select>
 
-    <div
-        id="examInfo"
-        class="exam-info">
-    </div>
-
-</div>
-
-
-<!-- RINGKASAN -->
-
-<div class="summary">
-
-    <div class="summary-card">
-        <strong id="totalSoal">0</strong>
-        <span>Total Soal</span>
-    </div>
-
-    <div class="summary-card">
-        <strong id="totalPilihan">0</strong>
-        <span>Pilihan Ganda</span>
-    </div>
-
-    <div class="summary-card">
-        <strong id="totalEsai">0</strong>
-        <span>Esai / Benar-Salah</span>
-    </div>
-
-</div>
-
-
-<!-- TOOLBAR -->
-
-<div class="toolbar">
-
-    <div class="search">
-
-        <input
-            type="text"
-            id="searchInput"
-            placeholder="🔍 Cari nomor atau pertanyaan..."
-            oninput="filterSoal()">
+        <div
+            id="examInfo"
+            class="exam-info">
+        </div>
 
     </div>
 
-    <button
-        id="btnTambah"
-        class="btn btn-add"
-        onclick="bukaTambah()"
-        disabled>
 
-        ➕ Tambah Soal
+    <!-- RINGKASAN -->
 
-    </button>
+    <div class="summary">
 
-</div>
+        <div class="summary-card">
+            <strong id="totalSoal">0</strong>
+            <span>Total Soal</span>
+        </div>
+
+        <div class="summary-card">
+            <strong id="totalPilihan">0</strong>
+            <span>Pilihan Ganda</span>
+        </div>
+
+        <div class="summary-card">
+            <strong id="totalEsai">0</strong>
+            <span>Esai / Benar-Salah</span>
+        </div>
+
+        <div class="summary-card">
+            <strong id="totalLiterasi">0</strong>
+            <span>Literasi / Stimulus</span>
+        </div>
+
+    </div>
+
+    <!-- LITERASI YANG DIBUAT GURU -->
+    <div class="literasi-admin-box">
+        <div class="literasi-admin-head">
+            <h2>📖 Literasi / Stimulus yang Dibuat Guru</h2>
+            <button class="btn btn-download-admin" onclick="downloadSoalAdmin()">
+                ⬇️ Download Soal
+            </button>
+        </div>
+        <div id="literasiAdminList" class="literasi-admin-list">
+            <div class="empty">👆 Pilih ujian terlebih dahulu.</div>
+        </div>
+    </div>
 
 
-<!-- TABLE -->
+    <!-- TOOLBAR -->
 
-<div class="table-box">
+    <div class="toolbar">
 
-    <table>
+        <div class="search">
 
-        <thead>
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="🔍 Cari nomor atau pertanyaan..."
+                oninput="filterSoal()">
 
-            <tr>
-                <th>No</th>
-                <th>Pertanyaan</th>
-                <th>Tipe</th>
-                <th>Pilihan</th>
-                <th>Kunci</th>
-                <th>Bobot</th>
-                <th>Aksi</th>
-            </tr>
+        </div>
 
-        </thead>
+        <button
+            id="btnTambah"
+            class="btn btn-add"
+            onclick="bukaTambah()"
+            disabled>
 
-        <tbody id="soalBody">
+            ➕ Tambah Soal
 
-            <tr>
-                <td
-                    colspan="7"
-                    class="empty">
+        </button>
 
-                    👆 Pilih ujian terlebih dahulu.
+    </div>
 
-                </td>
-            </tr>
 
-        </tbody>
+    <!-- TABLE -->
 
-    </table>
+    <div class="table-box">
 
-</div>
-```
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>No</th>
+                    <th>Pertanyaan</th>
+                    <th>Tipe</th>
+                    <th>Pilihan</th>
+                    <th>Kunci</th>
+                    <th>Bobot</th>
+                    <th>Aksi</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="soalBody">
+
+                <tr>
+                    <td
+                        colspan="7"
+                        class="empty">
+
+                        👆 Pilih ujian terlebih dahulu.
+
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 </main>
 
-<!-- =====================================================
-     FOOTER
-===================================================== -->
 
 <footer class="footer">
 
-```
-RUANG EXAM Online<br>
-Dibuat oleh Mr. Rahmat Batubara, S.T.P
-```
+    RUANG EXAM Online<br>
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
 
 </footer>
 
-<!-- =====================================================
-     MODAL SOAL
-===================================================== -->
+
+<!-- MODAL -->
 
 <div
     class="modal"
     id="modal">
 
-```
-<div class="modal-box">
+    <div class="modal-box">
 
-    <h2 id="modalTitle">
-        Tambah Soal
-    </h2>
+        <h2 id="modalTitle">
+            Tambah Soal
+        </h2>
 
-    <div class="info">
+        <div class="info">
 
-        Soal akan disimpan ke ujian yang sedang dipilih.
-        Nomor soal dibuat otomatis.
-
-        <br><br>
-
-        🔗 <strong>Teks Tertaut / Stimulus</strong>
-        dapat digunakan apabila satu bacaan,
-        tabel, data, atau kasus dipakai oleh
-        beberapa nomor soal.
-
-    </div>
-
-
-    <div class="form-grid">
-
-
-        <!-- NOMOR -->
-
-        <div class="form-group">
-
-            <label>
-                Nomor Soal
-            </label>
-
-            <input
-                type="number"
-                id="nomor"
-                min="1"
-                readonly>
+            Soal akan disimpan ke ujian yang sedang dipilih.
+            Nomor soal dibuat otomatis.<br>
+            Gunakan <strong>Teks Tertaut / Stimulus</strong> jika satu bacaan/data
+            dipakai untuk beberapa nomor soal.
 
         </div>
 
 
-        <!-- TIPE -->
-
-        <div class="form-group">
-
-            <label>
-                Tipe Soal
-            </label>
-
-            <select
-                id="tipe"
-                onchange="ubahTipeSoal()">
-
-                <option value="pilihan_ganda">
-                    Pilihan Ganda
-                </option>
-
-                <option value="benar_salah">
-                    Benar / Salah
-                </option>
-
-                <option value="esai">
-                    Esai
-                </option>
-
-            </select>
-
-        </div>
+        <div class="form-grid">
 
 
-        <!-- PERTANYAAN -->
+            <div class="form-group">
 
-        <div class="form-group full">
+                <label>
+                    Nomor Soal
+                </label>
 
-            <label>
-                Pertanyaan
-            </label>
+                <input
+                    type="number"
+                    id="nomor"
+                    min="1"
+                    readonly>
 
-            <textarea
-                id="pertanyaan"
-                placeholder="Tuliskan pertanyaan soal di sini...">
-            </textarea>
-
-        </div>
+            </div>
 
 
-        <!-- =================================================
-             TEKS TERTAUT
-        ================================================== -->
+            <div class="form-group">
 
-        <div class="form-group full">
+                <label>
+                    Tipe Soal
+                </label>
 
-            <div class="linked-text-box">
+                <select
+                    id="tipe"
+                    onchange="ubahTipeSoal()">
 
-                <div class="linked-text-title">
+                    <option value="pilihan_ganda">
+                        Pilihan Ganda
+                    </option>
 
-                    🔗 Teks Tertaut / Stimulus
-                    (Opsional)
+                    <option value="benar_salah">
+                        Benar / Salah
+                    </option>
 
-                </div>
+                    <option value="esai">
+                        Esai
+                    </option>
 
+                </select>
+
+            </div>
+
+
+            <div class="form-group full">
+
+                <label>
+                    Pertanyaan Utama <span style="color:#ef4444">*</span>
+                </label>
 
                 <textarea
-                    id="teksTertaut"
-                    placeholder="Contoh:
-```
+                    id="pertanyaan"
+                    placeholder="Tuliskan pertanyaan utama soal di sini...">
+                </textarea>
 
-Batu merupakan salah satu bahan alam yang dapat dimanfaatkan sebagai bahan kerajinan.
+            </div>
 
-Dalam kegiatan membuat kerajinan, siswa menggunakan 12 batu kali, 8 batu marmer, 10 batu granit, dan 5 batu apung."> </textarea>
-
-```
-                <div class="linked-text-grid">
-
-                    <div>
-
-                        <label
-                            style="
-                            font-size:12px;
-                            font-weight:bold;
-                            display:block;
-                            margin-bottom:5px;
-                            ">
-
-                            Berlaku mulai nomor
-
-                        </label>
-
-                        <input
-                            type="number"
-                            id="teksMulai"
-                            min="1"
-                            placeholder="Contoh: 1">
-
+            <!-- TEKS TERTAUT / STIMULUS -->
+            <div class="form-group full">
+                <div class="linked-text-box">
+                    <div class="linked-text-title">
+                        🔗 Teks Tertaut / Stimulus (Opsional)
                     </div>
 
+                    <textarea
+                        id="teksTertaut"
+                        placeholder="Contoh: Perhatikan data berikut. Kelompok siswa menggunakan 12 batu kali, 8 batu marmer, 10 batu granit, dan 5 batu apung untuk membuat kerajinan."></textarea>
 
-                    <div>
+                    <div class="linked-text-grid">
+                        <div>
+                            <label style="font-size:12px;font-weight:bold;display:block;margin-bottom:5px;">
+                                Berlaku mulai nomor
+                            </label>
+                            <input
+                                type="number"
+                                id="teksMulai"
+                                min="1"
+                                placeholder="Contoh: 1">
+                        </div>
 
-                        <label
-                            style="
-                            font-size:12px;
-                            font-weight:bold;
-                            display:block;
-                            margin-bottom:5px;
-                            ">
-
-                            Berlaku sampai nomor
-
-                        </label>
-
-                        <input
-                            type="number"
-                            id="teksSampai"
-                            min="1"
-                            placeholder="Contoh: 4">
-
+                        <div>
+                            <label style="font-size:12px;font-weight:bold;display:block;margin-bottom:5px;">
+                                Berlaku sampai nomor
+                            </label>
+                            <input
+                                type="number"
+                                id="teksSampai"
+                                min="1"
+                                placeholder="Contoh: 4">
+                        </div>
                     </div>
 
+                    <div class="info" style="margin-top:10px;margin-bottom:0;">
+                        Teks ini dapat digunakan bersama beberapa soal.
+                        Contoh: isi teks dan nomor <strong>1 sampai 4</strong>,
+                        maka teks akan tampil pada soal nomor 1, 2, 3, dan 4.
+                    </div>
                 </div>
+            </div>
 
 
-                <div
-                    class="info"
-                    style="
-                    margin-top:10px;
-                    margin-bottom:0;
-                    ">
+            <!-- PILIHAN GANDA -->
 
-                    Contoh:
+            <div
+                id="pilihanBox"
+                class="form-group full">
 
-                    <strong>
-                        Teks mulai = 1
-                    </strong>
+                <div class="options-box">
 
-                    dan
+                    <div class="options-title">
+                        Pilihan Jawaban
+                    </div>
 
-                    <strong>
-                        Teks sampai = 4
-                    </strong>
 
-                    berarti stimulus akan digunakan
-                    untuk soal nomor 1, 2, 3, dan 4.
+                    <div class="option-row">
+
+                        <div class="option-label">
+                            A
+                        </div>
+
+                        <input
+                            type="text"
+                            id="pilihanA"
+                            placeholder="Jawaban A">
+
+                    </div>
+
+
+                    <div class="option-row">
+
+                        <div class="option-label">
+                            B
+                        </div>
+
+                        <input
+                            type="text"
+                            id="pilihanB"
+                            placeholder="Jawaban B">
+
+                    </div>
+
+
+                    <div class="option-row">
+
+                        <div class="option-label">
+                            C
+                        </div>
+
+                        <input
+                            type="text"
+                            id="pilihanC"
+                            placeholder="Jawaban C">
+
+                    </div>
+
+
+                    <div class="option-row">
+
+                        <div class="option-label">
+                            D
+                        </div>
+
+                        <input
+                            type="text"
+                            id="pilihanD"
+                            placeholder="Jawaban D">
+
+                    </div>
 
                 </div>
 
             </div>
 
-        </div>
 
+            <!-- KUNCI -->
 
-        <!-- =================================================
-             PILIHAN GANDA
-        ================================================== -->
+            <div class="form-group">
 
-        <div
-            id="pilihanBox"
-            class="form-group full">
+                <label>
+                    Kunci Jawaban
+                </label>
 
-            <div class="options-box">
+                <select
+                    id="kunci">
 
-                <div class="options-title">
-                    Pilihan Jawaban
-                </div>
+                    <option value="">
+                        -- Pilih Kunci --
+                    </option>
 
-
-                <div class="option-row">
-
-                    <div class="option-label">
+                    <option value="A">
                         A
-                    </div>
+                    </option>
 
-                    <input
-                        type="text"
-                        id="pilihanA"
-                        placeholder="Jawaban A">
-
-                </div>
-
-
-                <div class="option-row">
-
-                    <div class="option-label">
+                    <option value="B">
                         B
-                    </div>
+                    </option>
 
-                    <input
-                        type="text"
-                        id="pilihanB"
-                        placeholder="Jawaban B">
-
-                </div>
-
-
-                <div class="option-row">
-
-                    <div class="option-label">
+                    <option value="C">
                         C
-                    </div>
+                    </option>
 
-                    <input
-                        type="text"
-                        id="pilihanC"
-                        placeholder="Jawaban C">
-
-                </div>
-
-
-                <div class="option-row">
-
-                    <div class="option-label">
+                    <option value="D">
                         D
-                    </div>
+                    </option>
 
-                    <input
-                        type="text"
-                        id="pilihanD"
-                        placeholder="Jawaban D">
+                </select>
 
-                </div>
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Bobot
+                </label>
+
+                <input
+                    type="number"
+                    id="bobot"
+                    min="0"
+                    max="999"
+                    step="0.01"
+                    value="1">
 
             </div>
 
         </div>
 
 
-        <!-- KUNCI -->
+        <div class="modal-buttons">
 
-        <div class="form-group">
+            <button
+                class="btn cancel"
+                onclick="tutupModal()">
 
-            <label>
-                Kunci Jawaban
-            </label>
+                Batal
 
-            <select
-                id="kunci">
+            </button>
 
-                <option value="">
-                    -- Pilih Kunci --
-                </option>
+            <button
+                class="btn save"
+                onclick="simpanSoal()">
 
-            </select>
+                💾 Simpan Soal
 
-        </div>
-
-
-        <!-- BOBOT -->
-
-        <div class="form-group">
-
-            <label>
-                Bobot
-            </label>
-
-            <input
-                type="number"
-                id="bobot"
-                min="0"
-                max="999"
-                step="0.01"
-                value="1">
+            </button>
 
         </div>
 
     </div>
 
-
-    <!-- BUTTON -->
-
-    <div class="modal-buttons">
-
-        <button
-            class="btn cancel"
-            onclick="tutupModal()">
-
-            Batal
-
-        </button>
-
-        <button
-            id="btnSimpan"
-            class="btn save"
-            onclick="simpanSoal()">
-
-            💾 Simpan Soal
-
-        </button>
-
-    </div>
-
 </div>
-```
 
-</div>
 
 <script>
 
@@ -1172,41 +1119,32 @@ const supabaseClient =
 const sessionRaw =
     localStorage.getItem("exam_user");
 
-let currentUser = null;
-
 if(!sessionRaw){
 
     window.location.href = "login.html";
 
-}else{
+}
 
-    try{
+let currentUser = null;
 
-        currentUser =
-            JSON.parse(sessionRaw);
+try{
 
-        if(
-            !currentUser ||
-            currentUser.role !== "admin"
-        ){
+    currentUser =
+        JSON.parse(sessionRaw);
 
-            localStorage.removeItem("exam_user");
-
-            window.location.href =
-                "login.html";
-
-        }
-
-    }catch(error){
-
-        console.error(error);
+    if(currentUser.role !== "admin"){
 
         localStorage.removeItem("exam_user");
 
-        window.location.href =
-            "login.html";
+        window.location.href = "login.html";
 
     }
+
+}catch(error){
+
+    localStorage.removeItem("exam_user");
+
+    window.location.href = "login.html";
 
 }
 
@@ -1218,9 +1156,12 @@ if(!sessionRaw){
 let semuaUjian = [];
 let semuaSoal = [];
 let soalTampil = [];
+let semuaLiterasi = [];
 
 let ujianTerpilih = null;
 let editId = null;
+let mathMode = {A:false,B:false,C:false,D:false};
+let imageData = {A:"",B:"",C:"",D:""};
 
 
 /* =====================================================
@@ -1232,26 +1173,12 @@ function showMessage(text,type){
     const message =
         document.getElementById("message");
 
-    message.textContent =
-        text;
+    message.textContent = text;
 
     message.className =
         "message " + type;
 
-    setTimeout(() => {
-
-        if(
-            message.textContent === text
-        ){
-
-            hideMessage();
-
-        }
-
-    },5000);
-
 }
-
 
 function hideMessage(){
 
@@ -1260,14 +1187,13 @@ function hideMessage(){
 
     message.textContent = "";
 
-    message.className =
-        "message";
+    message.className = "message";
 
 }
 
 
 /* =====================================================
-   LOAD SEMUA DATA
+   LOAD DATA
 ===================================================== */
 
 async function loadSemuaData(){
@@ -1275,9 +1201,7 @@ async function loadSemuaData(){
     hideMessage();
 
     const select =
-        document.getElementById(
-            "ujianSelect"
-        );
+        document.getElementById("ujianSelect");
 
     select.innerHTML = `
         <option value="">
@@ -1301,18 +1225,15 @@ async function loadSemuaData(){
                 tanggal_selesai,
                 status,
                 created_at,
-
                 mata_pelajaran (
                     id,
                     nama
                 ),
-
                 kelas (
                     id,
                     nama_kelas,
                     tingkat
                 ),
-
                 guru (
                     id,
                     nama,
@@ -1321,9 +1242,7 @@ async function loadSemuaData(){
             `)
             .order(
                 "created_at",
-                {
-                    ascending:false
-                }
+                {ascending:false}
             );
 
         if(error){
@@ -1337,26 +1256,15 @@ async function loadSemuaData(){
 
         isiDropdownUjian();
 
-
-        if(
-            semuaUjian.length === 0
-        ){
+        if(semuaUjian.length === 0){
 
             document.getElementById(
                 "soalBody"
             ).innerHTML = `
                 <tr>
-                    <td
-                        colspan="7"
-                        class="empty">
-
+                    <td colspan="7" class="empty">
                         📝 Belum ada ujian.
-
-                        <br><br>
-
-                        Buat ujian terlebih dahulu
-                        di menu <strong>Daftar Ujian</strong>.
-
+                        Buat ujian terlebih dahulu.
                     </td>
                 </tr>
             `;
@@ -1369,29 +1277,25 @@ async function loadSemuaData(){
 
         }
 
-
-        /* Pertahankan ujian sebelumnya */
+        /* Jika sebelumnya ada ujian yang dipilih,
+           pertahankan pilihan */
 
         if(ujianTerpilih){
 
             const masihAda =
                 semuaUjian.find(
-                    u =>
-                        u.id ===
-                        ujianTerpilih.id
+                    u => u.id === ujianTerpilih.id
                 );
 
             if(masihAda){
-
-                ujianTerpilih =
-                    masihAda;
 
                 document.getElementById(
                     "ujianSelect"
                 ).value =
                     masihAda.id;
 
-                tampilkanInfoUjian();
+                ujianTerpilih =
+                    masihAda;
 
                 await loadSoal();
 
@@ -1401,28 +1305,19 @@ async function loadSemuaData(){
 
         }
 
-
         document.getElementById(
             "soalBody"
         ).innerHTML = `
             <tr>
-                <td
-                    colspan="7"
-                    class="empty">
-
+                <td colspan="7" class="empty">
                     👆 Pilih ujian terlebih dahulu.
-
                 </td>
             </tr>
         `;
 
-
     }catch(error){
 
-        console.error(
-            "LOAD UJIAN ERROR:",
-            error
-        );
+        console.error(error);
 
         select.innerHTML = `
             <option value="">
@@ -1442,7 +1337,7 @@ async function loadSemuaData(){
 
 
 /* =====================================================
-   DROPDOWN
+   DROPDOWN UJIAN
 ===================================================== */
 
 function isiDropdownUjian(){
@@ -1465,26 +1360,12 @@ function isiDropdownUjian(){
             ? ujian.mata_pelajaran.nama
             : "Tanpa Mapel";
 
-        const judul =
-            ujian.judul ||
-            "Tanpa Judul";
-
-        const option =
-            document.createElement(
-                "option"
-            );
-
-        option.value =
-            ujian.id;
-
-        option.textContent =
-            judul +
-            " — " +
-            mapel;
-
-        select.appendChild(
-            option
-        );
+        select.innerHTML += `
+            <option value="${ujian.id}">
+                ${escapeHtml(ujian.judul)}
+                — ${escapeHtml(mapel)}
+            </option>
+        `;
 
     });
 
@@ -1508,25 +1389,30 @@ async function pilihUjian(){
 
         document.getElementById(
             "examInfo"
-        ).style.display =
-            "none";
+        ).style.display = "none";
 
         document.getElementById(
             "btnTambah"
         ).disabled = true;
 
-        resetSummary();
+        document.getElementById(
+            "totalSoal"
+        ).textContent = "0";
+
+        document.getElementById(
+            "totalPilihan"
+        ).textContent = "0";
+
+        document.getElementById(
+            "totalEsai"
+        ).textContent = "0";
 
         document.getElementById(
             "soalBody"
         ).innerHTML = `
             <tr>
-                <td
-                    colspan="7"
-                    class="empty">
-
+                <td colspan="7" class="empty">
                     👆 Pilih ujian terlebih dahulu.
-
                 </td>
             </tr>
         `;
@@ -1535,21 +1421,16 @@ async function pilihUjian(){
 
     }
 
-
     ujianTerpilih =
         semuaUjian.find(
-            u =>
-                String(u.id) ===
-                String(id)
+            u => u.id === id
         );
-
 
     if(!ujianTerpilih){
 
         return;
 
     }
-
 
     tampilkanInfoUjian();
 
@@ -1563,12 +1444,6 @@ async function pilihUjian(){
 ===================================================== */
 
 function tampilkanInfoUjian(){
-
-    if(!ujianTerpilih){
-
-        return;
-
-    }
 
     const ujian =
         ujianTerpilih;
@@ -1588,40 +1463,40 @@ function tampilkanInfoUjian(){
         ? ujian.guru.nama
         : "-";
 
+    /*
+       Mendukung data lama yang masih memakai
+       satu kelas_id.
+       Jika nanti multi-kelas sudah dipakai,
+       informasi kelas dapat diperluas.
+    */
+
     const kelas =
         ujian.kelas
         ? ujian.kelas.nama_kelas
         : "Multi / belum ditentukan";
 
     info.innerHTML = `
-
         <strong>Ujian:</strong>
-        ${escapeHtml(ujian.judul || "-")}
-
+        ${escapeHtml(ujian.judul)}
         <br>
 
         <strong>Mata Pelajaran:</strong>
         ${escapeHtml(mapel)}
-
         <br>
 
         <strong>Kelas:</strong>
         ${escapeHtml(kelas)}
-
         <br>
 
         <strong>Guru:</strong>
         ${escapeHtml(guru)}
-
         <br>
 
         <strong>Status:</strong>
         ${escapeHtml(ujian.status || "-")}
-
     `;
 
-    info.style.display =
-        "block";
+    info.style.display = "block";
 
 }
 
@@ -1642,16 +1517,11 @@ async function loadSoal(){
         "soalBody"
     ).innerHTML = `
         <tr>
-            <td
-                colspan="7"
-                class="empty">
-
+            <td colspan="7" class="empty">
                 ⏳ Memuat soal...
-
             </td>
         </tr>
     `;
-
 
     try{
 
@@ -1664,16 +1534,24 @@ async function loadSoal(){
                 nomor,
                 pertanyaan,
                 tipe,
-
                 teks_tertaut,
                 teks_mulai,
                 teks_sampai,
-
                 pilihan_a,
                 pilihan_b,
                 pilihan_c,
                 pilihan_d,
-
+                pilihan_a_matematika,
+                pilihan_b_matematika,
+                pilihan_c_matematika,
+                pilihan_d_matematika,
+                pilihan_a_gambar,
+                pilihan_b_gambar,
+                pilihan_c_gambar,
+                pilihan_d_gambar,
+                teks_tertaut,
+                teks_mulai,
+                teks_sampai,
                 kunci_jawaban,
                 bobot,
                 created_at
@@ -1684,9 +1562,7 @@ async function loadSoal(){
             )
             .order(
                 "nomor",
-                {
-                    ascending:true
-                }
+                {ascending:true}
             );
 
         if(error){
@@ -1701,6 +1577,8 @@ async function loadSoal(){
         soalTampil =
             [...semuaSoal];
 
+        await loadLiterasi();
+
         updateSummary();
 
         tampilkanSoal(
@@ -1711,13 +1589,9 @@ async function loadSoal(){
             "btnTambah"
         ).disabled = false;
 
-
     }catch(error){
 
-        console.error(
-            "LOAD SOAL ERROR:",
-            error
-        );
+        console.error(error);
 
         showMessage(
             "Gagal memuat soal: " +
@@ -1729,12 +1603,8 @@ async function loadSoal(){
             "soalBody"
         ).innerHTML = `
             <tr>
-                <td
-                    colspan="7"
-                    class="empty">
-
+                <td colspan="7" class="empty">
                     ❌ Gagal memuat soal.
-
                 </td>
             </tr>
         `;
@@ -1748,6 +1618,143 @@ async function loadSoal(){
    SUMMARY
 ===================================================== */
 
+/* =====================================================
+   LOAD LITERASI / STIMULUS YANG DIBUAT GURU
+===================================================== */
+async function loadLiterasi(){
+    const list = document.getElementById("literasiAdminList");
+
+    if(!ujianTerpilih){
+        semuaLiterasi = [];
+        document.getElementById("totalLiterasi").textContent = "0";
+        list.innerHTML = `<div class="empty">👆 Pilih ujian terlebih dahulu.</div>`;
+        return;
+    }
+
+    list.innerHTML = `<div class="empty">⏳ Memuat literasi guru...</div>`;
+
+    try{
+        const {data,error} = await supabaseClient
+            .from("literasi_soal")
+            .select(`id, ujian_id, judul, isi_literasi, nomor_mulai, nomor_selesai, gambar_literasi, created_at, updated_at`)
+            .eq("ujian_id",ujianTerpilih.id)
+            .order("nomor_mulai",{ascending:true});
+
+        if(error) throw error;
+
+        semuaLiterasi = data || [];
+        document.getElementById("totalLiterasi").textContent = semuaLiterasi.length;
+        tampilkanLiterasiAdmin();
+    }catch(error){
+        console.error(error);
+        semuaLiterasi = [];
+        document.getElementById("totalLiterasi").textContent = "0";
+        list.innerHTML = `<div class="empty">❌ Gagal memuat literasi.<br><small>${escapeHtml(error.message || "Terjadi kesalahan")}</small></div>`;
+    }
+}
+
+function tampilkanLiterasiAdmin(){
+    const list = document.getElementById("literasiAdminList");
+
+    if(!semuaLiterasi.length){
+        list.innerHTML = `<div class="empty">📖 Belum ada literasi / stimulus yang dibuat guru untuk ujian ini.</div>`;
+        return;
+    }
+
+    list.innerHTML = semuaLiterasi.map((literasi,index) => `
+        <div class="literasi-admin-card">
+            <h3>📖 ${escapeHtml(literasi.judul || "Literasi / Stimulus " + (index + 1))}</h3>
+            <div class="literasi-admin-meta">
+                Digunakan untuk soal nomor <strong>${literasi.nomor_mulai}</strong> – <strong>${literasi.nomor_selesai}</strong>
+            </div>
+            <div class="literasi-admin-text">${escapeHtml(literasi.isi_literasi || "")}</div>
+            ${literasi.gambar_literasi ? `<img class="literasi-admin-img" src="${escapeHtml(literasi.gambar_literasi)}" alt="Gambar literasi">` : ""}
+        </div>
+    `).join("");
+}
+
+function cariLiterasiUntukNomor(nomor){
+    return semuaLiterasi.find(literasi => {
+        const mulai = Number(literasi.nomor_mulai);
+        const selesai = Number(literasi.nomor_selesai);
+        return nomor >= mulai && nomor <= selesai;
+    }) || null;
+}
+
+/* =====================================================
+   DOWNLOAD SOAL + LITERASI — TANPA KUNCI JAWABAN
+===================================================== */
+function downloadSoalAdmin(){
+    if(!ujianTerpilih){
+        alert("Pilih ujian terlebih dahulu.");
+        return;
+    }
+
+    if(!semuaSoal.length){
+        alert("Belum ada soal untuk di-download.");
+        return;
+    }
+
+    const judul = ujianTerpilih.judul || "Soal Ujian";
+    let html = `<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8">
+<title>${escapeHtml(judul)}</title>
+<style>
+body{font-family:Arial,Helvetica,sans-serif;margin:35px;color:#111;line-height:1.65}
+h1{text-align:center;font-size:22px;margin-bottom:5px}.sub{text-align:center;color:#555;margin-bottom:25px}
+.literasi{border:1px solid #94a3b8;border-left:5px solid #2563eb;padding:18px;margin:20px 0;background:#f8fafc;border-radius:8px}
+.literasi h2{font-size:17px;margin:0 0 8px}.literasi-text{white-space:pre-wrap}
+.gambar{max-width:520px;max-height:360px;display:block;margin:10px 0;border-radius:6px}
+.soal{margin:22px 0;page-break-inside:avoid}.nomor{font-weight:bold;margin-bottom:8px}.pilihan{margin:7px 0 7px 20px}
+.footer{text-align:center;margin-top:40px;padding-top:15px;border-top:1px solid #ccc;font-size:11px;color:#777}
+@media print{body{margin:20mm}.soal{page-break-inside:avoid}}
+</style></head><body>
+<h1>${escapeHtml(judul)}</h1><div class="sub">RUANG EXAM — SMP Negeri 3 Sibolga</div>`;
+
+    let literasiTerakhir = null;
+
+    semuaSoal.forEach(soal => {
+        const literasi = cariLiterasiUntukNomor(Number(soal.nomor));
+
+        if(literasi && (!literasiTerakhir || literasiTerakhir.id !== literasi.id)){
+            html += `<div class="literasi">
+                <h2>📖 ${escapeHtml(literasi.judul || "Literasi / Stimulus")}</h2>
+                <div class="literasi-text">${escapeHtml(literasi.isi_literasi || "")}</div>
+                ${literasi.gambar_literasi ? `<img class="gambar" src="${escapeHtml(literasi.gambar_literasi)}" alt="Gambar literasi">` : ""}
+            </div>`;
+            literasiTerakhir = literasi;
+        }
+
+        html += `<div class="soal"><div class="nomor">${escapeHtml(soal.nomor)}. ${escapeHtml(soal.pertanyaan || "")}</div>`;
+
+        if(soal.tipe === "pilihan_ganda"){
+            ["A","B","C","D"].forEach(huruf => {
+                const key = huruf.toLowerCase();
+                const teks = soal["pilihan_" + key] || "";
+                const gambar = soal["pilihan_" + key + "_gambar"] || "";
+                html += `<div class="pilihan"><strong>${huruf}.</strong> ${escapeHtml(teks)}${gambar ? `<img class="gambar" src="${escapeHtml(gambar)}" alt="Gambar pilihan ${huruf}">` : ""}</div>`;
+            });
+        }else if(soal.tipe === "benar_salah"){
+            html += `<div class="pilihan">○ Benar</div><div class="pilihan">○ Salah</div>`;
+        }else{
+            html += `<div style="margin:18px 0 0 20px;min-height:90px">Jawaban: ______________________________________________</div>`;
+        }
+
+        html += `</div>`;
+    });
+
+    html += `<div class="footer">RUANG EXAM Online<br>Dibuat oleh Mr. Rahmat Batubara, S.T.P</div></body></html>`;
+
+    const blob = new Blob([html],{type:"text/html;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = judul.replace(/[^a-z0-9\-_ ]/gi,"_") + "_soal.html";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url),1000);
+}
+
 function updateSummary(){
 
     document.getElementById(
@@ -1759,9 +1766,7 @@ function updateSummary(){
         "totalPilihan"
     ).textContent =
         semuaSoal.filter(
-            s =>
-                s.tipe ===
-                "pilihan_ganda"
+            s => s.tipe === "pilihan_ganda"
         ).length;
 
     document.getElementById(
@@ -1772,23 +1777,6 @@ function updateSummary(){
                 s.tipe === "esai" ||
                 s.tipe === "benar_salah"
         ).length;
-
-}
-
-
-function resetSummary(){
-
-    document.getElementById(
-        "totalSoal"
-    ).textContent = "0";
-
-    document.getElementById(
-        "totalPilihan"
-    ).textContent = "0";
-
-    document.getElementById(
-        "totalEsai"
-    ).textContent = "0";
 
 }
 
@@ -1808,19 +1796,11 @@ function tampilkanSoal(data){
 
         body.innerHTML = `
             <tr>
-                <td
-                    colspan="7"
-                    class="empty">
-
-                    📚 Belum ada soal untuk
-                    ujian ini.
-
+                <td colspan="7" class="empty">
+                    📚 Belum ada soal untuk ujian ini.
                     <br><br>
-
-                    Klik
-                    <strong>➕ Tambah Soal</strong>
+                    Klik <strong>➕ Tambah Soal</strong>
                     untuk membuat soal pertama.
-
                 </td>
             </tr>
         `;
@@ -1829,130 +1809,51 @@ function tampilkanSoal(data){
 
     }
 
-
     body.innerHTML =
         data.map(soal => {
 
             let tipeText =
                 "Pilihan Ganda";
 
-            if(
-                soal.tipe ===
-                "benar_salah"
-            ){
-
+            if(soal.tipe === "benar_salah"){
                 tipeText =
                     "Benar / Salah";
-
             }
 
-            if(
-                soal.tipe ===
-                "esai"
-            ){
-
+            if(soal.tipe === "esai"){
                 tipeText =
                     "Esai";
-
             }
-
 
             let pilihan =
                 "-";
 
+            const optionHtml = (label, text, math, img) => {
+                let rendered = escapeHtml(text || "-");
+                if(math && window.katex){
+                    try { rendered = katex.renderToString(text || "", {throwOnError:false,displayMode:false}); }
+                    catch(e){}
+                }
+                return `<div><b>${label}.</b> ${rendered}${img ? `<br><img src="${escapeHtml(img)}" style="max-width:110px;max-height:70px;object-fit:contain;margin-top:4px;border-radius:6px;">` : ""}</div>`;
+            };
 
-            if(
-                soal.tipe ===
-                "pilihan_ganda"
-            ){
+            if(soal.tipe === "pilihan_ganda"){
 
                 pilihan = `
-
-                    <strong>A.</strong>
-                    ${escapeHtml(
-                        soal.pilihan_a ||
-                        "-"
-                    )}
-
-                    <br>
-
-                    <strong>B.</strong>
-                    ${escapeHtml(
-                        soal.pilihan_b ||
-                        "-"
-                    )}
-
-                    <br>
-
-                    <strong>C.</strong>
-                    ${escapeHtml(
-                        soal.pilihan_c ||
-                        "-"
-                    )}
-
-                    <br>
-
-                    <strong>D.</strong>
-                    ${escapeHtml(
-                        soal.pilihan_d ||
-                        "-"
-                    )}
-
+                    ${optionHtml("A",soal.pilihan_a,soal.pilihan_a_matematika,soal.pilihan_a_gambar)}
+                    ${optionHtml("B",soal.pilihan_b,soal.pilihan_b_matematika,soal.pilihan_b_gambar)}
+                    ${optionHtml("C",soal.pilihan_c,soal.pilihan_c_matematika,soal.pilihan_c_gambar)}
+                    ${optionHtml("D",soal.pilihan_d,soal.pilihan_d_matematika,soal.pilihan_d_gambar)}
                 `;
 
             }
 
-
-            if(
-                soal.tipe ===
-                "benar_salah"
-            ){
+            if(soal.tipe === "benar_salah"){
 
                 pilihan =
                     "Benar / Salah";
 
             }
-
-
-            const stimulus =
-                soal.teks_tertaut
-                ? `
-
-                    <div
-                        class="stimulus-display">
-
-                        <strong>
-                            🔗 Stimulus
-                            No.
-                            ${escapeHtml(
-                                soal.teks_mulai ??
-                                soal.nomor
-                            )}
-                            –
-                            ${escapeHtml(
-                                soal.teks_sampai ??
-                                soal.nomor
-                            )}
-                        </strong>
-
-                        ${escapeHtml(
-                            soal.teks_tertaut
-                        )}
-
-                    </div>
-
-                    <span
-                        class="linked-badge">
-
-                        🔗 TERKAIT
-
-                    </span>
-
-                    <br>
-
-                `
-                : "";
-
 
             return `
 
@@ -1960,67 +1861,56 @@ function tampilkanSoal(data){
 
                     <td>
                         <strong>
-                            ${escapeHtml(
-                                soal.nomor
-                            )}
+                            ${soal.nomor}
                         </strong>
                     </td>
 
-
                     <td>
+                        ${
+                            soal.teks_tertaut
+                            ? `
+                                <div class="stimulus-display">
+                                    <strong>
+                                        🔗 Teks tertaut No. ${soal.teks_mulai || soal.nomor}–${soal.teks_sampai || soal.nomor}
+                                    </strong>
+                                    ${escapeHtml(soal.teks_tertaut)}
+                                </div>
+                            `
+                            : ""
+                        }
 
-                        ${stimulus}
+                        ${
+                            soal.teks_tertaut
+                            ? `<span class="linked-badge">🔗 TERKAIT</span><br>`
+                            : ""
+                        }
 
                         ${escapeHtml(
-                            soal.pertanyaan ||
-                            "-"
+                            soal.pertanyaan || "-"
                         )}
-
                     </td>
 
-
                     <td>
-
-                        <span
-                            class="type-badge">
-
+                        <span class="type-badge">
                             ${tipeText}
-
                         </span>
-
                     </td>
 
-
                     <td>
-
                         ${pilihan}
-
                     </td>
 
-
                     <td>
-
                         <strong>
-
                             ${escapeHtml(
-                                soal.kunci_jawaban ||
-                                "-"
+                                soal.kunci_jawaban || "-"
                             )}
-
                         </strong>
-
                     </td>
-
 
                     <td>
-
-                        ${escapeHtml(
-                            soal.bobot ??
-                            1
-                        )}
-
+                        ${soal.bobot ?? 1}
                     </td>
-
 
                     <td>
 
@@ -2033,7 +1923,6 @@ function tampilkanSoal(data){
                                 ✏️ Edit
 
                             </button>
-
 
                             <button
                                 class="delete"
@@ -2069,7 +1958,6 @@ function filterSoal(){
         .toLowerCase()
         .trim();
 
-
     if(!keyword){
 
         soalTampil =
@@ -2078,50 +1966,29 @@ function filterSoal(){
     }else{
 
         soalTampil =
-            semuaSoal.filter(
-                soal => {
+            semuaSoal.filter(soal => {
 
-                    return (
+                return (
+                    String(
+                        soal.nomor
+                    ).includes(keyword)
 
-                        String(
-                            soal.nomor
-                        )
-                        .includes(keyword)
+                    ||
 
-                        ||
+                    (soal.pertanyaan || "")
+                    .toLowerCase()
+                    .includes(keyword)
 
-                        (
-                            soal.pertanyaan ||
-                            ""
-                        )
-                        .toLowerCase()
-                        .includes(keyword)
+                    ||
 
-                        ||
+                    (soal.tipe || "")
+                    .toLowerCase()
+                    .includes(keyword)
+                );
 
-                        (
-                            soal.tipe ||
-                            ""
-                        )
-                        .toLowerCase()
-                        .includes(keyword)
-
-                        ||
-
-                        (
-                            soal.teks_tertaut ||
-                            ""
-                        )
-                        .toLowerCase()
-                        .includes(keyword)
-
-                    );
-
-                }
-            );
+            });
 
     }
-
 
     tampilkanSoal(
         soalTampil
@@ -2146,58 +2013,42 @@ function bukaTambah(){
 
     }
 
-
     editId = null;
-
 
     document.getElementById(
         "modalTitle"
     ).textContent =
         "Tambah Soal";
 
-
-    resetForm();
-
+    /*
+       Nomor otomatis berdasarkan
+       nomor terbesar + 1.
+    */
 
     let nomorBaru = 1;
 
-
-    if(
-        semuaSoal.length
-    ){
+    if(semuaSoal.length){
 
         nomorBaru =
             Math.max(
                 ...semuaSoal.map(
-                    s =>
-                        Number(
-                            s.nomor
-                        ) || 0
+                    s => Number(s.nomor) || 0
                 )
             ) + 1;
 
     }
 
+    resetForm();
 
     document.getElementById(
         "nomor"
     ).value =
         nomorBaru;
 
-
     document.getElementById(
         "modal"
     ).style.display =
         "flex";
-
-
-    setTimeout(() => {
-
-        document.getElementById(
-            "pertanyaan"
-        ).focus();
-
-    },100);
 
 }
 
@@ -2250,8 +2101,34 @@ function resetForm(){
     ).value = "";
 
     document.getElementById(
-        "bobot"
-    ).value = "1";
+        "kunci"
+    ).innerHTML = `
+        <option value="">
+            -- Pilih Kunci --
+        </option>
+
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+        <option value="D">D</option>
+    `;
+
+    document.getElementById("bobot").value = "1";
+
+    document.getElementById("teksTertaut").value = "";
+    document.getElementById("teksMulai").value = "";
+    document.getElementById("teksSampai").value = "";
+
+    mathMode = {A:false,B:false,C:false,D:false};
+    imageData = {A:"",B:"",C:"",D:""};
+    ["A","B","C","D"].forEach(l=>{
+        document.getElementById("mathBtn"+l).classList.remove("active");
+        document.getElementById("mathBtn"+l).textContent = "∑ Mode Matematika";
+        document.getElementById("gambar"+l).value = "";
+        document.getElementById("previewGambar"+l).style.display = "none";
+        document.getElementById("previewGambar"+l).src = "";
+        document.getElementById("previewMath"+l).innerHTML = "";
+    });
 
     ubahTipeSoal();
 
@@ -2279,51 +2156,30 @@ function ubahTipeSoal(){
             "kunci"
         );
 
-
-    if(
-        tipe ===
-        "pilihan_ganda"
-    ){
+    if(tipe === "pilihan_ganda"){
 
         pilihanBox.style.display =
             "block";
 
         kunci.innerHTML = `
-
             <option value="">
                 -- Pilih Kunci --
             </option>
 
-            <option value="A">
-                A
-            </option>
-
-            <option value="B">
-                B
-            </option>
-
-            <option value="C">
-                C
-            </option>
-
-            <option value="D">
-                D
-            </option>
-
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
         `;
 
     }
 
-    else if(
-        tipe ===
-        "benar_salah"
-    ){
+    else if(tipe === "benar_salah"){
 
         pilihanBox.style.display =
             "none";
 
         kunci.innerHTML = `
-
             <option value="">
                 -- Pilih Jawaban --
             </option>
@@ -2335,7 +2191,6 @@ function ubahTipeSoal(){
             <option value="Salah">
                 Salah
             </option>
-
         `;
 
     }
@@ -2346,17 +2201,78 @@ function ubahTipeSoal(){
             "none";
 
         kunci.innerHTML = `
-
             <option value="">
                 -- Kunci / Pedoman Jawaban --
             </option>
-
         `;
 
     }
 
 }
 
+
+/* =====================================================
+   MATEMATIKA & GAMBAR OPSI
+===================================================== */
+
+function toggleMathOption(letter){
+    mathMode[letter] = !mathMode[letter];
+    const btn = document.getElementById("mathBtn"+letter);
+    btn.classList.toggle("active", mathMode[letter]);
+    btn.textContent = mathMode[letter] ? "✓ Matematika" : "∑ Mode Matematika";
+    previewMathOption(letter);
+}
+
+function previewMathOption(letter){
+    const text = document.getElementById("pilihan"+letter).value || "";
+    const box = document.getElementById("previewMath"+letter);
+    if(!mathMode[letter] || !window.katex){
+        box.innerHTML = "";
+        return;
+    }
+    try{
+        box.innerHTML = "Preview: " + katex.renderToString(text,{throwOnError:false});
+    }catch(e){
+        box.textContent = "Format matematika belum valid.";
+    }
+}
+
+["A","B","C","D"].forEach(letter=>{
+    document.addEventListener("input",e=>{
+        if(e.target && e.target.id === "pilihan"+letter) previewMathOption(letter);
+        if(e.target && e.target.id === "gambar"+letter){
+            imageData[letter] = e.target.value.trim();
+            const img=document.getElementById("previewGambar"+letter);
+            if(imageData[letter]){
+                img.src=imageData[letter];
+                img.style.display="block";
+            }else{
+                img.style.display="none";
+            }
+        }
+    });
+});
+
+function bacaGambarOpsi(letter,input){
+    const file=input.files && input.files[0];
+    if(!file) return;
+
+    if(file.size > 1024 * 1024){
+        alert("Ukuran gambar maksimal 1 MB.");
+        input.value="";
+        return;
+    }
+
+    const reader=new FileReader();
+    reader.onload=()=>{
+        imageData[letter]=reader.result;
+        document.getElementById("gambar"+letter).value="";
+        const img=document.getElementById("previewGambar"+letter);
+        img.src=reader.result;
+        img.style.display="block";
+    };
+    reader.readAsDataURL(file);
+}
 
 /* =====================================================
    EDIT SOAL
@@ -2366,11 +2282,8 @@ function editSoal(id){
 
     const soal =
         semuaSoal.find(
-            s =>
-                String(s.id) ===
-                String(id)
+            s => s.id === id
         );
-
 
     if(!soal){
 
@@ -2382,102 +2295,100 @@ function editSoal(id){
 
     }
 
-
-    editId =
-        id;
-
+    editId = id;
 
     document.getElementById(
         "modalTitle"
     ).textContent =
         "Edit Soal";
 
-
     document.getElementById(
         "nomor"
     ).value =
         soal.nomor;
 
-
     document.getElementById(
         "tipe"
     ).value =
-        soal.tipe ||
-        "pilihan_ganda";
-
+        soal.tipe || "pilihan_ganda";
 
     document.getElementById(
         "pertanyaan"
     ).value =
-        soal.pertanyaan ||
-        "";
+        soal.pertanyaan || "";
 
+    document.getElementById("teksTertaut").value = soal.teks_tertaut || "";
+    document.getElementById("teksMulai").value = soal.teks_mulai ?? "";
+    document.getElementById("teksSampai").value = soal.teks_sampai ?? "";
 
     document.getElementById(
         "teksTertaut"
     ).value =
-        soal.teks_tertaut ||
-        "";
-
+        soal.teks_tertaut || "";
 
     document.getElementById(
         "teksMulai"
     ).value =
-        soal.teks_mulai ??
-        "";
-
+        soal.teks_mulai ?? "";
 
     document.getElementById(
         "teksSampai"
     ).value =
-        soal.teks_sampai ??
-        "";
-
+        soal.teks_sampai ?? "";
 
     document.getElementById(
         "pilihanA"
     ).value =
-        soal.pilihan_a ||
-        "";
-
+        soal.pilihan_a || "";
 
     document.getElementById(
         "pilihanB"
     ).value =
-        soal.pilihan_b ||
-        "";
-
+        soal.pilihan_b || "";
 
     document.getElementById(
         "pilihanC"
     ).value =
-        soal.pilihan_c ||
-        "";
-
+        soal.pilihan_c || "";
 
     document.getElementById(
         "pilihanD"
     ).value =
-        soal.pilihan_d ||
-        "";
+        soal.pilihan_d || "";
 
+    mathMode = {
+        A: !!soal.pilihan_a_matematika,
+        B: !!soal.pilihan_b_matematika,
+        C: !!soal.pilihan_c_matematika,
+        D: !!soal.pilihan_d_matematika
+    };
+    imageData = {
+        A: soal.pilihan_a_gambar || "",
+        B: soal.pilihan_b_gambar || "",
+        C: soal.pilihan_c_gambar || "",
+        D: soal.pilihan_d_gambar || ""
+    };
+    ["A","B","C","D"].forEach(l=>{
+        document.getElementById("mathBtn"+l).classList.toggle("active", mathMode[l]);
+        document.getElementById("mathBtn"+l).textContent = mathMode[l] ? "✓ Matematika" : "∑ Mode Matematika";
+        document.getElementById("gambar"+l).value = imageData[l] || "";
+        if(imageData[l]){
+            document.getElementById("previewGambar"+l).src = imageData[l];
+            document.getElementById("previewGambar"+l).style.display = "block";
+        }
+    });
 
     document.getElementById(
         "bobot"
     ).value =
-        soal.bobot ??
-        1;
-
+        soal.bobot ?? 1;
 
     ubahTipeSoal();
-
 
     document.getElementById(
         "kunci"
     ).value =
-        soal.kunci_jawaban ||
-        "";
-
+        soal.kunci_jawaban || "";
 
     document.getElementById(
         "modal"
@@ -2503,7 +2414,6 @@ async function simpanSoal(){
 
     }
 
-
     const nomor =
         Number(
             document.getElementById(
@@ -2511,82 +2421,65 @@ async function simpanSoal(){
             ).value
         );
 
-
     const pertanyaan =
         document.getElementById(
             "pertanyaan"
         ).value.trim();
-
 
     const teksTertaut =
         document.getElementById(
             "teksTertaut"
         ).value.trim();
 
-
     const teksMulaiRaw =
         document.getElementById(
             "teksMulai"
         ).value.trim();
-
 
     const teksSampaiRaw =
         document.getElementById(
             "teksSampai"
         ).value.trim();
 
-
     const teksMulai =
         teksMulaiRaw
-        ? Number(
-            teksMulaiRaw
-          )
+        ? Number(teksMulaiRaw)
         : null;
-
 
     const teksSampai =
         teksSampaiRaw
-        ? Number(
-            teksSampaiRaw
-          )
+        ? Number(teksSampaiRaw)
         : null;
-
 
     const tipe =
         document.getElementById(
             "tipe"
         ).value;
 
-
     const pilihanA =
         document.getElementById(
             "pilihanA"
         ).value.trim();
-
 
     const pilihanB =
         document.getElementById(
             "pilihanB"
         ).value.trim();
 
-
     const pilihanC =
         document.getElementById(
             "pilihanC"
         ).value.trim();
-
 
     const pilihanD =
         document.getElementById(
             "pilihanD"
         ).value.trim();
 
-
     const kunci =
         document.getElementById(
             "kunci"
         ).value;
-
 
     const bobot =
         Number(
@@ -2596,14 +2489,7 @@ async function simpanSoal(){
         );
 
 
-    /* =================================================
-       VALIDASI DASAR
-    ================================================= */
-
-    if(
-        !nomor ||
-        nomor < 1
-    ){
+    if(!nomor || nomor < 1){
 
         alert(
             "Nomor soal tidak valid."
@@ -2624,24 +2510,9 @@ async function simpanSoal(){
 
     }
 
-
-    if(
-        Number.isNaN(bobot) ||
-        bobot < 0
-    ){
-
-        alert(
-            "Bobot soal tidak valid."
-        );
-
-        return;
-
-    }
-
-
-    /* =================================================
+    /* ===============================
        VALIDASI TEKS TERTAUT
-    ================================================= */
+    =============================== */
 
     if(teksTertaut){
 
@@ -2661,7 +2532,6 @@ async function simpanSoal(){
 
         }
 
-
         if(
             nomor < teksMulai ||
             nomor > teksSampai
@@ -2675,12 +2545,7 @@ async function simpanSoal(){
 
         }
 
-    }
-
-    else if(
-        teksMulaiRaw ||
-        teksSampaiRaw
-    ){
+    }else if(teksMulaiRaw || teksSampaiRaw){
 
         alert(
             "Isi teks tertaut terlebih dahulu atau kosongkan nomor mulai dan nomor sampai."
@@ -2691,14 +2556,17 @@ async function simpanSoal(){
     }
 
 
-    /* =================================================
-       VALIDASI PILIHAN
-    ================================================= */
+    if(!bobot || bobot < 0){
 
-    if(
-        tipe ===
-        "pilihan_ganda"
-    ){
+        alert(
+            "Bobot soal tidak valid."
+        );
+
+        return;
+
+    }
+
+    if(tipe === "pilihan_ganda"){
 
         if(
             !pilihanA ||
@@ -2715,7 +2583,6 @@ async function simpanSoal(){
 
         }
 
-
         if(!kunci){
 
             alert(
@@ -2729,14 +2596,7 @@ async function simpanSoal(){
     }
 
 
-    /* =================================================
-       BENAR SALAH
-    ================================================= */
-
-    if(
-        tipe ===
-        "benar_salah"
-    ){
+    if(tipe === "benar_salah"){
 
         if(!kunci){
 
@@ -2751,54 +2611,6 @@ async function simpanSoal(){
     }
 
 
-    /* =================================================
-       ESAI
-    ================================================= */
-
-    if(
-        tipe ===
-        "esai"
-    ){
-
-        /*
-           Untuk esai, kunci boleh kosong
-           karena dapat dinilai manual.
-        */
-
-    }
-
-
-    /* =================================================
-       CEK NOMOR DUPLIKAT
-    ================================================= */
-
-    const nomorSama =
-        semuaSoal.find(
-            s =>
-                Number(s.nomor) ===
-                nomor &&
-                String(s.id) !==
-                String(editId)
-        );
-
-
-    if(nomorSama){
-
-        alert(
-            "Nomor soal " +
-            nomor +
-            " sudah digunakan."
-        );
-
-        return;
-
-    }
-
-
-    /* =================================================
-       PAYLOAD
-    ================================================= */
-
     const payload = {
 
         ujian_id:
@@ -2810,50 +2622,54 @@ async function simpanSoal(){
         pertanyaan:
             pertanyaan,
 
+        teks_tertaut:
+            teksTertaut || null,
+
+        teks_mulai:
+            teksTertaut ? teksMulai : null,
+
+        teks_sampai:
+            teksTertaut ? teksSampai : null,
+
         tipe:
             tipe,
 
-        teks_tertaut:
-            teksTertaut ||
-            null,
-
-        teks_mulai:
-            teksTertaut
-            ? teksMulai
-            : null,
-
-        teks_sampai:
-            teksTertaut
-            ? teksSampai
-            : null,
-
         pilihan_a:
-            tipe ===
-            "pilihan_ganda"
+            tipe === "pilihan_ganda"
             ? pilihanA
             : null,
 
         pilihan_b:
-            tipe ===
-            "pilihan_ganda"
+            tipe === "pilihan_ganda"
             ? pilihanB
             : null,
 
         pilihan_c:
-            tipe ===
-            "pilihan_ganda"
+            tipe === "pilihan_ganda"
             ? pilihanC
             : null,
 
         pilihan_d:
-            tipe ===
-            "pilihan_ganda"
+            tipe === "pilihan_ganda"
             ? pilihanD
             : null,
 
+        pilihan_a_matematika: tipe === "pilihan_ganda" ? !!mathMode.A : false,
+        pilihan_b_matematika: tipe === "pilihan_ganda" ? !!mathMode.B : false,
+        pilihan_c_matematika: tipe === "pilihan_ganda" ? !!mathMode.C : false,
+        pilihan_d_matematika: tipe === "pilihan_ganda" ? !!mathMode.D : false,
+
+        pilihan_a_gambar: tipe === "pilihan_ganda" ? (document.getElementById("gambarA").value.trim() || imageData.A || null) : null,
+        pilihan_b_gambar: tipe === "pilihan_ganda" ? (document.getElementById("gambarB").value.trim() || imageData.B || null) : null,
+        pilihan_c_gambar: tipe === "pilihan_ganda" ? (document.getElementById("gambarC").value.trim() || imageData.C || null) : null,
+        pilihan_d_gambar: tipe === "pilihan_ganda" ? (document.getElementById("gambarD").value.trim() || imageData.D || null) : null,
+
+        teks_tertaut: document.getElementById("teksTertaut").value.trim() || null,
+        teks_mulai: document.getElementById("teksMulai").value ? Number(document.getElementById("teksMulai").value) : null,
+        teks_sampai: document.getElementById("teksSampai").value ? Number(document.getElementById("teksSampai").value) : null,
+
         kunci_jawaban:
-            kunci ||
-            null,
+            kunci || null,
 
         bobot:
             bobot
@@ -2861,52 +2677,29 @@ async function simpanSoal(){
     };
 
 
-    /* =================================================
-       DISABLE BUTTON
-    ================================================= */
-
-    const btnSimpan =
-        document.getElementById(
-            "btnSimpan"
-        );
-
-    btnSimpan.disabled =
-        true;
-
-    btnSimpan.textContent =
-        "⏳ Menyimpan...";
-
-
     try{
 
-        /* =============================================
+        /* ===============================
            TAMBAH
-        ============================================= */
+        =============================== */
 
         if(!editId){
 
             const {error} =
                 await supabaseClient
                 .from("soal")
-                .insert(
-                    payload
-                );
-
+                .insert(payload);
 
             if(error){
 
-                console.error(
-                    error
-                );
-
+                console.error(error);
 
                 if(
-                    error.code ===
-                    "23505"
+                    error.code === "23505"
                 ){
 
                     alert(
-                        "Nomor soal tersebut sudah digunakan."
+                        "Nomor soal tersebut sudah digunakan. Silakan gunakan nomor lain."
                     );
 
                 }else{
@@ -2922,45 +2715,35 @@ async function simpanSoal(){
 
             }
 
-
             showMessage(
-                "Soal nomor " +
-                nomor +
-                " berhasil ditambahkan.",
+                "Soal berhasil ditambahkan.",
                 "success"
             );
 
         }
 
 
-        /* =============================================
+        /* ===============================
            EDIT
-        ============================================= */
+        =============================== */
 
         else{
 
             const {error} =
                 await supabaseClient
                 .from("soal")
-                .update(
-                    payload
-                )
+                .update(payload)
                 .eq(
                     "id",
                     editId
                 );
 
-
             if(error){
 
-                console.error(
-                    error
-                );
-
+                console.error(error);
 
                 if(
-                    error.code ===
-                    "23505"
+                    error.code === "23505"
                 ){
 
                     alert(
@@ -2980,11 +2763,8 @@ async function simpanSoal(){
 
             }
 
-
             showMessage(
-                "Soal nomor " +
-                nomor +
-                " berhasil diperbarui.",
+                "Soal berhasil diperbarui.",
                 "success"
             );
 
@@ -2995,27 +2775,14 @@ async function simpanSoal(){
 
         await loadSoal();
 
-
     }catch(error){
 
-        console.error(
-            "SIMPAN SOAL ERROR:",
-            error
-        );
+        console.error(error);
 
         alert(
             "Terjadi kesalahan:\n" +
             error.message
         );
-
-
-    }finally{
-
-        btnSimpan.disabled =
-            false;
-
-        btnSimpan.textContent =
-            "💾 Simpan Soal";
 
     }
 
@@ -3030,11 +2797,8 @@ async function hapusSoal(id){
 
     const soal =
         semuaSoal.find(
-            s =>
-                String(s.id) ===
-                String(id)
+            s => s.id === id
         );
-
 
     if(!soal){
 
@@ -3042,18 +2806,13 @@ async function hapusSoal(id){
 
     }
 
-
     const yakin =
         confirm(
-
             "Hapus soal nomor " +
             soal.nomor +
             "?\n\n" +
-
             "Data soal yang dihapus tidak dapat dikembalikan."
-
         );
-
 
     if(!yakin){
 
@@ -3073,12 +2832,9 @@ async function hapusSoal(id){
                 id
             );
 
-
         if(error){
 
-            console.error(
-                error
-            );
+            console.error(error);
 
             alert(
                 "Gagal menghapus soal:\n" +
@@ -3089,23 +2845,16 @@ async function hapusSoal(id){
 
         }
 
-
         showMessage(
-            "Soal nomor " +
-            soal.nomor +
-            " berhasil dihapus.",
+            "Soal berhasil dihapus.",
             "success"
         );
 
-
         await loadSoal();
-
 
     }catch(error){
 
-        console.error(
-            error
-        );
+        console.error(error);
 
         alert(
             "Terjadi kesalahan:\n" +
@@ -3118,7 +2867,7 @@ async function hapusSoal(id){
 
 
 /* =====================================================
-   TUTUP MODAL
+   MODAL
 ===================================================== */
 
 function tutupModal(){
@@ -3128,8 +2877,7 @@ function tutupModal(){
     ).style.display =
         "none";
 
-    editId =
-        null;
+    editId = null;
 
 }
 
@@ -3152,29 +2900,12 @@ function kembaliDashboard(){
 
 function escapeHtml(value){
 
-    return String(
-        value ?? ""
-    )
-    .replace(
-        /&/g,
-        "&amp;"
-    )
-    .replace(
-        /</g,
-        "&lt;"
-    )
-    .replace(
-        />/g,
-        "&gt;"
-    )
-    .replace(
-        /"/g,
-        "&quot;"
-    )
-    .replace(
-        /'/g,
-        "&#039;"
-    );
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
 
 }
 
@@ -3184,49 +2915,14 @@ function escapeHtml(value){
 ===================================================== */
 
 document
-    .getElementById("modal")
-    .addEventListener(
-        "click",
-        function(e){
-
-            if(
-                e.target ===
-                this
-            ){
-
-                tutupModal();
-
-            }
-
-        }
-    );
-
-
-/* =====================================================
-   TOMBOL ESC UNTUK MODAL
-===================================================== */
-
-document.addEventListener(
-    "keydown",
+.getElementById("modal")
+.addEventListener(
+    "click",
     function(e){
 
-        if(
-            e.key === "Escape"
-        ){
+        if(e.target === this){
 
-            const modal =
-                document.getElementById(
-                    "modal"
-                );
-
-            if(
-                modal.style.display ===
-                "flex"
-            ){
-
-                tutupModal();
-
-            }
+            tutupModal();
 
         }
 
@@ -3244,3 +2940,4 @@ loadSemuaData();
 
 </body>
 </html>
+```
