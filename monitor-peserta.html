@@ -9,6 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 *{
     box-sizing:border-box;
     margin:0;
@@ -62,6 +63,11 @@ body{
     opacity:.9;
 }
 
+.btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
 .btn-back{
     background:white;
     color:#1d4ed8;
@@ -84,14 +90,8 @@ body{
     font-size:11px;
 }
 
-.btn-reset:disabled,
-.btn-reset-all:disabled{
-    opacity:.5;
-    cursor:not-allowed;
-}
-
 .container{
-    max-width:1350px;
+    max-width:1450px;
     margin:25px auto;
     padding:0 20px;
 }
@@ -124,6 +124,16 @@ body{
     border-radius:12px;
     margin-bottom:20px;
     font-size:13px;
+    line-height:1.6;
+}
+
+.reset-info{
+    background:#fff7ed;
+    color:#9a3412;
+    padding:13px 16px;
+    border-radius:12px;
+    margin-bottom:20px;
+    font-size:12px;
     line-height:1.6;
 }
 
@@ -178,14 +188,22 @@ input{
     background:white;
 }
 
-.search{
-    flex:1;
-    min-width:220px;
+select{
+    min-width:150px;
 }
 
 .exam-filter{
     min-width:230px;
     max-width:350px;
+}
+
+.mapel-filter{
+    min-width:180px;
+}
+
+.search{
+    flex:1;
+    min-width:220px;
 }
 
 .table-box{
@@ -198,7 +216,7 @@ input{
 table{
     width:100%;
     border-collapse:collapse;
-    min-width:1250px;
+    min-width:1350px;
 }
 
 th{
@@ -227,6 +245,7 @@ tr:hover td{
     border-radius:20px;
     font-size:11px;
     font-weight:bold;
+    white-space:nowrap;
 }
 
 .aktif{
@@ -255,6 +274,11 @@ tr:hover td{
     white-space:nowrap;
 }
 
+.nilai{
+    font-weight:bold;
+    color:#166534;
+}
+
 .empty{
     text-align:center;
     padding:45px !important;
@@ -269,14 +293,10 @@ tr:hover td{
     padding:30px;
 }
 
-.reset-info{
-    background:#fff7ed;
-    color:#9a3412;
-    padding:12px 15px;
-    border-radius:10px;
-    margin-bottom:15px;
-    font-size:12px;
-    line-height:1.5;
+.status-keterangan{
+    font-size:10px;
+    color:#64748b;
+    margin-top:4px;
 }
 
 @media(max-width:800px){
@@ -300,6 +320,7 @@ tr:hover td{
     .header-buttons .btn{
         flex:1;
     }
+
 }
 
 @media(max-width:450px){
@@ -315,7 +336,9 @@ tr:hover td{
     .header-buttons .btn{
         width:100%;
     }
+
 }
+
 </style>
 </head>
 
@@ -324,11 +347,13 @@ tr:hover td{
 <header class="header">
 
     <div>
+
         <h1>👀 MONITOR PESERTA</h1>
 
         <p>
             RUANG EXAM — SMP Negeri 3 Sibolga
         </p>
+
     </div>
 
     <div class="header-buttons">
@@ -348,7 +373,8 @@ tr:hover td{
         <button
             class="btn btn-reset-all"
             id="btnResetSemua"
-            onclick="resetSemuaPeserta()">
+            onclick="resetSemuaPeserta()"
+            disabled>
             🗑️ Reset Semua
         </button>
 
@@ -364,39 +390,42 @@ tr:hover td{
 
     <div class="info">
 
-        <strong>👀 Monitor Peserta Ujian</strong><br>
+        <strong>👀 MONITOR PESERTA UJIAN</strong><br>
 
-        Admin dapat melihat daftar siswa yang mengikuti
-        ujian beserta kelas, sesi, laboratorium, jam dan
-        status peserta.
+        Admin dapat memantau siswa berdasarkan
+        <strong>rombel, mata pelajaran, ujian dan status pengerjaan</strong>.
 
         <br><br>
 
-        <strong>🔄 Reset Ujian:</strong>
-        Admin dapat menghapus hasil ujian seorang siswa
-        atau seluruh peserta pada satu ujian.
-        Setelah di-reset, siswa dapat mengikuti ujian
-        kembali menggunakan NISN yang sama.
+        <strong>🟢 SEDANG UJIAN</strong>
+        berarti siswa sudah masuk/mengikuti ujian tetapi
+        belum mengumpulkan hasil.
+
+        <br>
+
+        <strong>✅ SUDAH SELESAI</strong>
+        berarti hasil ujian sudah tersimpan di
+        <strong>hasil_ujian</strong>.
 
         <br><br>
 
         <strong>⚠️ Catatan:</strong>
-        Reset hanya menghapus data pada
+        Tombol Reset hanya menghapus hasil pada
         <strong>hasil_ujian</strong>.
-        Data peserta ujian tidak dihapus.
+        Soal, siswa, ujian dan peserta ujian tidak dihapus.
+
     </div>
 
 
-    <!-- ================= RESET INFO ================= -->
+    <div class="reset-info">
 
-    <div
-        id="resetInfo"
-        class="reset-info">
+        💡 <strong>Cara Reset:</strong>
+        Pilih <strong>Ujian</strong> terlebih dahulu.
+        Untuk satu siswa gunakan tombol
+        <strong>🔄 Reset</strong>.
+        Untuk menghapus seluruh hasil pada ujian tersebut,
+        gunakan <strong>🗑️ Reset Semua</strong>.
 
-        💡 Pilih <strong>ujian</strong> pada filter untuk
-        mengaktifkan tombol <strong>Reset Semua</strong>.
-        Untuk reset satu siswa, gunakan tombol
-        <strong>Reset</strong> pada baris siswa.
     </div>
 
 
@@ -406,7 +435,9 @@ tr:hover td{
 
         <div class="stat">
 
-            <div class="stat-icon">👥</div>
+            <div class="stat-icon">
+                👥
+            </div>
 
             <div
                 class="stat-number"
@@ -423,7 +454,9 @@ tr:hover td{
 
         <div class="stat">
 
-            <div class="stat-icon">🟢</div>
+            <div class="stat-icon">
+                🟢
+            </div>
 
             <div
                 class="stat-number"
@@ -440,7 +473,9 @@ tr:hover td{
 
         <div class="stat">
 
-            <div class="stat-icon">✅</div>
+            <div class="stat-icon">
+                ✅
+            </div>
 
             <div
                 class="stat-number"
@@ -449,7 +484,7 @@ tr:hover td{
             </div>
 
             <div class="stat-label">
-                Selesai
+                Sudah Selesai
             </div>
 
         </div>
@@ -457,7 +492,9 @@ tr:hover td{
 
         <div class="stat">
 
-            <div class="stat-icon">⏳</div>
+            <div class="stat-icon">
+                ⏳
+            </div>
 
             <div
                 class="stat-number"
@@ -479,6 +516,8 @@ tr:hover td{
     <section class="filter-box">
 
 
+        <!-- UJIAN -->
+
         <select
             id="filterUjian"
             class="exam-filter"
@@ -491,63 +530,34 @@ tr:hover td{
         </select>
 
 
+        <!-- MAPEL -->
+
+        <select
+            id="filterMapel"
+            class="mapel-filter"
+            onchange="filterData()">
+
+            <option value="">
+                Semua Mata Pelajaran
+            </option>
+
+        </select>
+
+
+        <!-- ROMBEL -->
+
         <select
             id="filterKelas"
             onchange="filterData()">
 
             <option value="">
-                Semua Kelas
-            </option>
-
-            <option value="7">
-                Kelas 7
-            </option>
-
-            <option value="8">
-                Kelas 8
-            </option>
-
-            <option value="9">
-                Kelas 9
+                Semua Rombel
             </option>
 
         </select>
 
 
-        <select
-            id="filterSesi"
-            onchange="filterData()">
-
-            <option value="">
-                Semua Sesi
-            </option>
-
-            <option value="1">Sesi 1</option>
-            <option value="2">Sesi 2</option>
-            <option value="3">Sesi 3</option>
-            <option value="4">Sesi 4</option>
-            <option value="5">Sesi 5</option>
-            <option value="6">Sesi 6</option>
-            <option value="7">Sesi 7</option>
-            <option value="8">Sesi 8</option>
-
-        </select>
-
-
-        <select
-            id="filterLab"
-            onchange="filterData()">
-
-            <option value="">
-                Semua Lab
-            </option>
-
-            <option value="1">Lab 1</option>
-            <option value="2">Lab 2</option>
-            <option value="3">Lab 3</option>
-
-        </select>
-
+        <!-- STATUS -->
 
         <select
             id="filterStatus"
@@ -558,23 +568,91 @@ tr:hover td{
             </option>
 
             <option value="aktif">
-                Aktif
+                🟢 Sedang Ujian
             </option>
 
             <option value="selesai">
-                Selesai
+                ✅ Sudah Selesai
             </option>
 
             <option value="belum">
-                Belum Mulai
-            </option>
-
-            <option value="jeda">
-                Jeda
+                ⏳ Belum Mulai
             </option>
 
         </select>
 
+
+        <!-- SESI -->
+
+        <select
+            id="filterSesi"
+            onchange="filterData()">
+
+            <option value="">
+                Semua Sesi
+            </option>
+
+            <option value="1">
+                Sesi 1
+            </option>
+
+            <option value="2">
+                Sesi 2
+            </option>
+
+            <option value="3">
+                Sesi 3
+            </option>
+
+            <option value="4">
+                Sesi 4
+            </option>
+
+            <option value="5">
+                Sesi 5
+            </option>
+
+            <option value="6">
+                Sesi 6
+            </option>
+
+            <option value="7">
+                Sesi 7
+            </option>
+
+            <option value="8">
+                Sesi 8
+            </option>
+
+        </select>
+
+
+        <!-- LAB -->
+
+        <select
+            id="filterLab"
+            onchange="filterData()">
+
+            <option value="">
+                Semua Lab
+            </option>
+
+            <option value="1">
+                Lab 1
+            </option>
+
+            <option value="2">
+                Lab 2
+            </option>
+
+            <option value="3">
+                Lab 3
+            </option>
+
+        </select>
+
+
+        <!-- SEARCH -->
 
         <input
             id="searchInput"
@@ -602,7 +680,9 @@ tr:hover td{
 
                     <th>NISN</th>
 
-                    <th>Kelas</th>
+                    <th>Rombel</th>
+
+                    <th>Mata Pelajaran</th>
 
                     <th>Ujian</th>
 
@@ -614,18 +694,21 @@ tr:hover td{
 
                     <th>Status</th>
 
+                    <th>Nilai</th>
+
                     <th>Aksi</th>
 
                 </tr>
 
             </thead>
 
+
             <tbody id="pesertaBody">
 
                 <tr>
 
                     <td
-                        colspan="10"
+                        colspan="12"
                         class="empty">
 
                         ⏳ Memuat data peserta...
@@ -678,6 +761,7 @@ const supabaseClient =
 const sessionRaw =
     localStorage.getItem("exam_user");
 
+
 if(!sessionRaw){
 
     window.location.href =
@@ -685,10 +769,12 @@ if(!sessionRaw){
 
 }
 
+
 try{
 
     const user =
         JSON.parse(sessionRaw);
+
 
     if(user.role !== "admin"){
 
@@ -721,6 +807,10 @@ let semuaPeserta = [];
 
 let daftarUjian = [];
 
+let daftarMapel = [];
+
+let daftarKelas = [];
+
 
 /* =====================================================
    LOAD PESERTA
@@ -733,34 +823,52 @@ async function loadPeserta(){
             "pesertaBody"
         );
 
+
     body.innerHTML = `
         <tr>
-            <td colspan="10" class="empty">
-                ⏳ Memuat data peserta...
+            <td
+                colspan="12"
+                class="empty">
+
+                ⏳ Membaca data peserta ujian...
+
             </td>
         </tr>
     `;
 
+
     try{
 
-        const hasil =
+        /* ============================================
+           1. PESERTA UJIAN
+        ============================================ */
+
+        const pesertaResult =
             await supabaseClient
             .from("peserta_ujian")
             .select("*")
             .order(
                 "created_at",
-                {ascending:false}
+                {
+                    ascending:false
+                }
             );
 
-        if(hasil.error){
 
-            throw hasil.error;
+        if(pesertaResult.error){
+
+            throw pesertaResult.error;
 
         }
 
-        const peserta =
-            hasil.data || [];
 
+        const peserta =
+            pesertaResult.data || [];
+
+
+        /* ============================================
+           JIKA TIDAK ADA PESERTA
+        ============================================ */
 
         if(!peserta.length){
 
@@ -768,7 +876,11 @@ async function loadPeserta(){
 
             daftarUjian = [];
 
-            isiFilterUjian();
+            daftarMapel = [];
+
+            daftarKelas = [];
+
+            isiFilter();
 
             updateStatistik();
 
@@ -779,37 +891,52 @@ async function loadPeserta(){
         }
 
 
-        /*
-         * Ambil siswa
-         */
+        /* ============================================
+           2. AMBIL ID SISWA
+        ============================================ */
 
         const siswaIds =
             [
                 ...new Set(
                     peserta
-                    .map(p => p.siswa_id)
+                    .map(
+                        p =>
+                        p.siswa_id
+                    )
                     .filter(Boolean)
                 )
             ];
 
 
-        /*
-         * Ambil ujian
-         */
+        /* ============================================
+           3. AMBIL ID UJIAN
+        ============================================ */
 
         const ujianIds =
             [
                 ...new Set(
                     peserta
-                    .map(p => p.ujian_id)
+                    .map(
+                        p =>
+                        p.ujian_id
+                    )
                     .filter(Boolean)
                 )
             ];
 
 
         let siswaData = [];
+
         let ujianData = [];
 
+        let mapelData = [];
+
+        let hasilData = [];
+
+
+        /* ============================================
+           4. SISWA
+        ============================================ */
 
         if(siswaIds.length){
 
@@ -823,6 +950,7 @@ async function loadPeserta(){
                     "id",
                     siswaIds
                 );
+
 
             if(result.error){
 
@@ -841,18 +969,23 @@ async function loadPeserta(){
         }
 
 
+        /* ============================================
+           5. UJIAN
+        ============================================ */
+
         if(ujianIds.length){
 
             const result =
                 await supabaseClient
                 .from("ujian")
                 .select(
-                    "id,judul"
+                    "id,judul,mata_pelajaran_id"
                 )
                 .in(
                     "id",
                     ujianIds
                 );
+
 
             if(result.error){
 
@@ -871,86 +1004,373 @@ async function loadPeserta(){
         }
 
 
-        /*
-         * Buat daftar ujian
-         */
+        /* ============================================
+           6. MATA PELAJARAN
+        ============================================ */
+
+        const mapelIds =
+            [
+                ...new Set(
+                    ujianData
+                    .map(
+                        u =>
+                        u.mata_pelajaran_id
+                    )
+                    .filter(Boolean)
+                )
+            ];
+
+
+        if(mapelIds.length){
+
+            const result =
+                await supabaseClient
+                .from("mata_pelajaran")
+                .select(
+                    "id,nama"
+                )
+                .in(
+                    "id",
+                    mapelIds
+                );
+
+
+            if(result.error){
+
+                console.warn(
+                    "Data mata pelajaran:",
+                    result.error.message
+                );
+
+            }else{
+
+                mapelData =
+                    result.data || [];
+
+            }
+
+        }
+
+
+        /* ============================================
+           7. AMBIL HASIL UJIAN
+           
+           INI YANG MENENTUKAN:
+           
+           SUDAH SELESAI = ADA DATA HASIL_UJIAN
+        ============================================ */
+
+        if(ujianIds.length){
+
+            const result =
+                await supabaseClient
+                .from("hasil_ujian")
+                .select(
+                    "id,siswa_id,ujian_id,nisn,nilai,waktu_mulai,waktu_selesai"
+                )
+                .in(
+                    "ujian_id",
+                    ujianIds
+                );
+
+
+            if(result.error){
+
+                console.warn(
+                    "Data hasil ujian:",
+                    result.error.message
+                );
+
+            }else{
+
+                hasilData =
+                    result.data || [];
+
+            }
+
+        }
+
+
+        /* ============================================
+           8. DAFTAR UJIAN
+        ============================================ */
 
         daftarUjian =
-            ujianData.map(u => ({
-                id:u.id,
-                judul:u.judul || "-"
-            }));
+            ujianData.map(
+                u => {
+
+                    const mapel =
+                        mapelData.find(
+                            m =>
+                            String(m.id) ===
+                            String(
+                                u.mata_pelajaran_id
+                            )
+                        );
 
 
-        /*
-         * Gabungkan data
-         */
+                    return {
+
+                        id:
+                            u.id,
+
+                        judul:
+                            u.judul ||
+                            "-",
+
+                        mata_pelajaran_id:
+                            u.mata_pelajaran_id,
+
+                        mapel:
+                            mapel?.nama ||
+                            "-"
+
+                    };
+
+                }
+            );
+
+
+        /* ============================================
+           9. DAFTAR MAPEL
+        ============================================ */
+
+        daftarMapel =
+            [
+                ...new Map(
+                    daftarUjian
+                    .map(
+                        u =>
+                        [
+                            String(
+                                u.mata_pelajaran_id ||
+                                u.mapel
+                            ),
+                            {
+                                id:
+                                    u.mata_pelajaran_id ||
+                                    u.mapel,
+
+                                nama:
+                                    u.mapel
+                            }
+                        ]
+                    )
+                ).values()
+            ];
+
+
+        /* ============================================
+           10. DAFTAR ROMBEL
+        ============================================ */
+
+        daftarKelas =
+            [
+                ...new Set(
+                    siswaData
+                    .map(
+                        s =>
+                        String(
+                            s.kelas ||
+                            ""
+                        ).trim()
+                    )
+                    .filter(Boolean)
+                )
+            ]
+            .sort(
+                sortRombel
+            );
+
+
+        /* ============================================
+           11. GABUNGKAN DATA
+        ============================================ */
 
         semuaPeserta =
-            peserta.map(p=>{
+            peserta.map(
+                p => {
 
-                const siswa =
-                    siswaData.find(
-                        s =>
-                        String(s.id) ===
-                        String(p.siswa_id)
-                    ) || {};
-
-
-                const ujian =
-                    ujianData.find(
-                        u =>
-                        String(u.id) ===
-                        String(p.ujian_id)
-                    ) || {};
+                    const siswa =
+                        siswaData.find(
+                            s =>
+                            String(s.id) ===
+                            String(
+                                p.siswa_id
+                            )
+                        ) || {};
 
 
-                return {
-
-                    ...p,
-
-                    nama:
-                        siswa.nama ||
-                        p.nama ||
-                        "-",
-
-                    nisn:
-                        siswa.nisn ||
-                        p.nisn ||
-                        "-",
-
-                    kelas:
-                        siswa.kelas ||
-                        p.kelas ||
-                        "-",
-
-                    judul:
-                        ujian.judul ||
-                        p.judul ||
-                        "-"
-
-                };
-
-            });
+                    const ujian =
+                        ujianData.find(
+                            u =>
+                            String(u.id) ===
+                            String(
+                                p.ujian_id
+                            )
+                        ) || {};
 
 
-        isiFilterUjian();
+                    const mapel =
+                        mapelData.find(
+                            m =>
+                            String(m.id) ===
+                            String(
+                                ujian.mata_pelajaran_id
+                            )
+                        ) || {};
+
+
+                    /*
+                     * Cari hasil berdasarkan
+                     * siswa + ujian.
+                     *
+                     * Jika siswa_id tidak tersedia
+                     * gunakan NISN.
+                     */
+
+                    const hasil =
+                        hasilData.find(
+                            h => {
+
+                                const cocokUjian =
+                                    String(
+                                        h.ujian_id
+                                    ) ===
+                                    String(
+                                        p.ujian_id
+                                    );
+
+
+                                if(!cocokUjian){
+
+                                    return false;
+
+                                }
+
+
+                                if(
+                                    p.siswa_id &&
+                                    h.siswa_id
+                                ){
+
+                                    return (
+                                        String(
+                                            h.siswa_id
+                                        ) ===
+                                        String(
+                                            p.siswa_id
+                                        )
+                                    );
+
+                                }
+
+
+                                const nisn =
+                                    siswa.nisn ||
+                                    p.nisn ||
+                                    "";
+
+
+                                return (
+                                    String(
+                                        h.nisn ||
+                                        ""
+                                    ).trim()
+                                    ===
+                                    String(
+                                        nisn
+                                    ).trim()
+                                );
+
+                            }
+                        ) || null;
+
+
+                    /*
+                     * STATUS SEBENARNYA
+                     */
+
+                    const status =
+                        tentukanStatus(
+                            p,
+                            hasil
+                        );
+
+
+                    return {
+
+                        ...p,
+
+                        nama:
+                            siswa.nama ||
+                            p.nama ||
+                            "-",
+
+                        nisn:
+                            siswa.nisn ||
+                            p.nisn ||
+                            "-",
+
+                        kelas:
+                            siswa.kelas ||
+                            p.kelas ||
+                            "-",
+
+                        judul:
+                            ujian.judul ||
+                            p.judul ||
+                            "-",
+
+                        mata_pelajaran:
+                            mapel.nama ||
+                            p.mata_pelajaran ||
+                            p.mapel ||
+                            "-",
+
+                        mata_pelajaran_id:
+                            ujian.mata_pelajaran_id ||
+                            p.mata_pelajaran_id ||
+                            "",
+
+                        hasil:
+                            hasil,
+
+                        status_monitor:
+                            status
+
+                    };
+
+                }
+            );
+
+
+        isiFilter();
 
         updateStatistik();
 
         tampilkanPeserta();
 
-    }catch(error){
+    }
+    catch(error){
 
-        console.error(error);
+        console.error(
+            "LOAD PESERTA:",
+            error
+        );
+
 
         semuaPeserta = [];
 
+
         body.innerHTML = `
             <tr>
-                <td colspan="10" class="empty">
 
-                    ❌ Gagal memuat peserta.
+                <td
+                    colspan="12"
+                    class="empty">
+
+                    ❌ Gagal membaca data peserta.
 
                     <br><br>
 
@@ -959,8 +1379,10 @@ async function loadPeserta(){
                     )}
 
                 </td>
+
             </tr>
         `;
+
 
         showMessage(
             "Gagal memuat data peserta: " +
@@ -969,6 +1391,108 @@ async function loadPeserta(){
         );
 
     }
+
+}
+
+
+/* =====================================================
+   TENTUKAN STATUS MONITOR
+===================================================== */
+
+function tentukanStatus(
+    peserta,
+    hasil
+){
+
+    /*
+     * PRIORITAS PERTAMA:
+     * Jika sudah ada hasil ujian,
+     * berarti SUDAH SELESAI.
+     */
+
+    if(hasil){
+
+        return "selesai";
+
+    }
+
+
+    const s =
+        String(
+            peserta.status ||
+            ""
+        )
+        .toLowerCase()
+        .trim();
+
+
+    /*
+     * Sedang mengerjakan
+     */
+
+    if(
+        s === "aktif" ||
+        s === "sedang_ujian" ||
+        s === "dibuka" ||
+        s === "in_progress" ||
+        s === "started" ||
+        s === "ongoing"
+    ){
+
+        return "aktif";
+
+    }
+
+
+    /*
+     * Jeda tetap dianggap
+     * sedang mengikuti ujian.
+     */
+
+    if(
+        s === "jeda" ||
+        s === "paused" ||
+        s === "dijeda"
+    ){
+
+        return "aktif";
+
+    }
+
+
+    /*
+     * Jika ada waktu mulai
+     * tetapi belum ada hasil,
+     * anggap sedang ujian.
+     */
+
+    if(
+        peserta.waktu_mulai ||
+        peserta.jam_mulai ||
+        peserta.started_at
+    ){
+
+        return "aktif";
+
+    }
+
+
+    return "belum";
+
+}
+
+
+/* =====================================================
+   ISI SEMUA FILTER
+===================================================== */
+
+function isiFilter(){
+
+    isiFilterUjian();
+
+    isiFilterMapel();
+
+    isiFilterKelas();
 
 }
 
@@ -983,6 +1507,7 @@ function isiFilterUjian(){
         document.getElementById(
             "filterUjian"
         );
+
 
     const nilaiLama =
         select.value;
@@ -1004,24 +1529,38 @@ function isiFilterUjian(){
             "id"
         )
     )
-    .forEach(u=>{
+    .forEach(
+        u => {
 
-        const option =
-            document.createElement(
-                "option"
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                u.id;
+
+
+            option.textContent =
+                u.judul +
+                (
+                    u.mapel &&
+                    u.mapel !== "-"
+                    ?
+                    " — " +
+                    u.mapel
+                    :
+                    ""
+                );
+
+
+            select.appendChild(
+                option
             );
 
-        option.value =
-            u.id;
-
-        option.textContent =
-            u.judul;
-
-        select.appendChild(
-            option
-        );
-
-    });
+        }
+    );
 
 
     if(
@@ -1038,24 +1577,238 @@ function isiFilterUjian(){
 
     }
 
+
     updateTombolResetSemua();
 
 }
 
 
 /* =====================================================
-   TAMPILKAN PESERTA
+   FILTER MAPEL
 ===================================================== */
 
-function tampilkanPeserta(){
+function isiFilterMapel(){
 
-    filterData();
+    const select =
+        document.getElementById(
+            "filterMapel"
+        );
+
+
+    const nilaiLama =
+        select.value;
+
+
+    select.innerHTML = `
+        <option value="">
+            Semua Mata Pelajaran
+        </option>
+    `;
+
+
+    const mapelUnik =
+        [
+            ...new Map(
+                daftarUjian
+                .map(
+                    u =>
+                    [
+                        String(
+                            u.mata_pelajaran_id ||
+                            u.mapel
+                        ),
+                        u
+                    ]
+                )
+            ).values()
+        ];
+
+
+    mapelUnik
+    .sort(
+        (a,b) =>
+        String(a.mapel)
+        .localeCompare(
+            String(b.mapel),
+            "id"
+        )
+    )
+    .forEach(
+        u => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                u.mata_pelajaran_id ||
+                u.mapel;
+
+
+            option.textContent =
+                u.mapel;
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    if(
+        nilaiLama &&
+        [
+            ...select.options
+        ].some(
+            o =>
+            String(o.value) ===
+            String(nilaiLama)
+        )
+    ){
+
+        select.value =
+            nilaiLama;
+
+    }
 
 }
 
 
 /* =====================================================
-   FILTER
+   FILTER ROMBEL
+===================================================== */
+
+function isiFilterKelas(){
+
+    const select =
+        document.getElementById(
+            "filterKelas"
+        );
+
+
+    const nilaiLama =
+        select.value;
+
+
+    select.innerHTML = `
+        <option value="">
+            Semua Rombel
+        </option>
+    `;
+
+
+    daftarKelas
+    .forEach(
+        kelas => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                kelas;
+
+
+            option.textContent =
+                "Kelas " +
+                kelas;
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    if(
+        nilaiLama &&
+        daftarKelas.includes(
+            nilaiLama
+        )
+    ){
+
+        select.value =
+            nilaiLama;
+
+    }
+
+}
+
+
+/* =====================================================
+   ALIAS
+===================================================== */
+
+function isiFilterKelas(){
+
+    const select =
+        document.getElementById(
+            "filterKelas"
+        );
+
+
+    const nilaiLama =
+        select.value;
+
+
+    select.innerHTML = `
+        <option value="">
+            Semua Rombel
+        </option>
+    `;
+
+
+    daftarKelas.forEach(
+        kelas => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                kelas;
+
+
+            option.textContent =
+                "Kelas " +
+                kelas;
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    if(
+        nilaiLama &&
+        daftarKelas.includes(
+            nilaiLama
+        )
+    ){
+
+        select.value =
+            nilaiLama;
+
+    }
+
+}
+
+
+/* =====================================================
+   FILTER UTAMA
 ===================================================== */
 
 function filterData(){
@@ -1066,9 +1819,21 @@ function filterData(){
         ).value;
 
 
+    const mapel =
+        document.getElementById(
+            "filterMapel"
+        ).value;
+
+
     const kelas =
         document.getElementById(
             "filterKelas"
+        ).value;
+
+
+    const status =
+        document.getElementById(
+            "filterStatus"
         ).value;
 
 
@@ -1084,12 +1849,6 @@ function filterData(){
         ).value;
 
 
-    const status =
-        document.getElementById(
-            "filterStatus"
-        ).value;
-
-
     const search =
         document.getElementById(
             "searchInput"
@@ -1100,52 +1859,67 @@ function filterData(){
 
     const hasil =
         semuaPeserta.filter(
-            p=>{
-
-                const kelasData =
-                    String(
-                        p.kelas || ""
-                    )
-                    .replace(
-                        /[^0-9]/g,
-                        ""
-                    );
-
+            p => {
 
                 const cocokUjian =
                     !ujian ||
                     String(
-                        p.ujian_id || ""
+                        p.ujian_id ||
+                        ""
                     ) ===
-                    String(ujian);
+                    String(
+                        ujian
+                    );
+
+
+                const cocokMapel =
+                    !mapel ||
+                    String(
+                        p.mata_pelajaran_id ||
+                        p.mata_pelajaran ||
+                        ""
+                    ) ===
+                    String(
+                        mapel
+                    );
 
 
                 const cocokKelas =
                     !kelas ||
-                    kelasData === kelas;
+                    String(
+                        p.kelas ||
+                        ""
+                    ).trim()
+                    .toLowerCase()
+                    ===
+                    String(
+                        kelas
+                    ).trim()
+                    .toLowerCase();
+
+
+                const cocokStatus =
+                    !status ||
+                    p.status_monitor ===
+                    status;
 
 
                 const cocokSesi =
                     !sesi ||
                     String(
-                        p.sesi || ""
-                    ) === sesi;
+                        p.sesi ||
+                        ""
+                    ) ===
+                    sesi;
 
 
                 const cocokLab =
                     !lab ||
                     String(
-                        p.lab || ""
-                    ) === lab;
-
-
-                const statusData =
-                    statusPeserta(p);
-
-
-                const cocokStatus =
-                    !status ||
-                    statusData === status;
+                        p.lab ||
+                        ""
+                    ) ===
+                    lab;
 
 
                 const teks =
@@ -1154,22 +1928,29 @@ function filterData(){
                         " " +
                         p.nisn +
                         " " +
-                        p.kelas
+                        p.kelas +
+                        " " +
+                        p.mata_pelajaran +
+                        " " +
+                        p.judul
                     )
                     .toLowerCase();
 
 
                 const cocokSearch =
                     !search ||
-                    teks.includes(search);
+                    teks.includes(
+                        search
+                    );
 
 
                 return (
                     cocokUjian &&
+                    cocokMapel &&
                     cocokKelas &&
+                    cocokStatus &&
                     cocokSesi &&
                     cocokLab &&
-                    cocokStatus &&
                     cocokSearch
                 );
 
@@ -1177,7 +1958,10 @@ function filterData(){
         );
 
 
-    tampilkanRows(hasil);
+    tampilkanRows(
+        hasil
+    );
+
 
     updateTombolResetSemua();
 
@@ -1185,10 +1969,23 @@ function filterData(){
 
 
 /* =====================================================
-   TAMPILKAN ROW
+   TAMPILKAN
 ===================================================== */
 
-function tampilkanRows(data){
+function tampilkanPeserta(){
+
+    filterData();
+
+}
+
+
+/* =====================================================
+   ROW
+===================================================== */
+
+function tampilkanRows(
+    data
+){
 
     const body =
         document.getElementById(
@@ -1200,14 +1997,16 @@ function tampilkanRows(data){
 
         body.innerHTML = `
             <tr>
+
                 <td
-                    colspan="10"
+                    colspan="12"
                     class="empty">
 
-                    👨‍🎓 Belum ada peserta
-                    yang sesuai filter.
+                    👨‍🎓 Tidak ada peserta
+                    sesuai filter.
 
                 </td>
+
             </tr>
         `;
 
@@ -1218,10 +2017,24 @@ function tampilkanRows(data){
 
     body.innerHTML =
         data.map(
-            (p,index)=>{
+            (p,index) => {
 
                 const status =
-                    statusPeserta(p);
+                    p.status_monitor;
+
+
+                const hasil =
+                    p.hasil;
+
+
+                const nilai =
+                    hasil &&
+                    hasil.nilai !== null &&
+                    hasil.nilai !== undefined
+                    ?
+                    hasil.nilai
+                    :
+                    "-";
 
 
                 return `
@@ -1245,10 +2058,19 @@ function tampilkanRows(data){
 
 
                     <td>
-
                         ${escapeHtml(
                             p.nisn
                         )}
+                    </td>
+
+
+                    <td>
+
+                        <strong>
+                            ${escapeHtml(
+                                p.kelas
+                            )}
+                        </strong>
 
                     </td>
 
@@ -1256,7 +2078,7 @@ function tampilkanRows(data){
                     <td>
 
                         ${escapeHtml(
-                            p.kelas
+                            p.mata_pelajaran
                         )}
 
                     </td>
@@ -1286,6 +2108,7 @@ function tampilkanRows(data){
                     <td>
 
                         <strong>
+
                             ${
                                 p.lab
                                 ?
@@ -1296,6 +2119,7 @@ function tampilkanRows(data){
                                 :
                                 "-"
                             }
+
                         </strong>
 
                     </td>
@@ -1306,7 +2130,10 @@ function tampilkanRows(data){
                         <span class="jam">
 
                             ${escapeHtml(
-                                ambilJam(p)
+                                ambilJam(
+                                    p,
+                                    hasil
+                                )
                             )}
 
                         </span>
@@ -1325,6 +2152,45 @@ function tampilkanRows(data){
 
                         </span>
 
+
+                        ${
+                            status ===
+                            "selesai"
+                            ?
+                            `
+                            <div
+                                class="status-keterangan">
+
+                                Hasil tersimpan
+
+                            </div>
+                            `
+                            :
+                            ""
+                        }
+
+                    </td>
+
+
+                    <td>
+
+                        ${
+                            status ===
+                            "selesai"
+                            ?
+                            `
+                            <span class="nilai">
+
+                                ${escapeHtml(
+                                    nilai
+                                )}
+
+                            </span>
+                            `
+                            :
+                            "-"
+                        }
+
                     </td>
 
 
@@ -1334,16 +2200,20 @@ function tampilkanRows(data){
                             class="btn btn-reset"
                             onclick='resetSatuSiswa(
                                 ${JSON.stringify(
-                                    p.ujian_id || ""
+                                    p.ujian_id ||
+                                    ""
                                 )},
                                 ${JSON.stringify(
-                                    p.siswa_id || ""
+                                    p.siswa_id ||
+                                    ""
                                 )},
                                 ${JSON.stringify(
-                                    p.nisn || ""
+                                    p.nisn ||
+                                    ""
                                 )},
                                 ${JSON.stringify(
-                                    p.nama || ""
+                                    p.nama ||
+                                    ""
                                 )}
                             )'>
 
@@ -1358,7 +2228,211 @@ function tampilkanRows(data){
                 `;
 
             }
-        ).join("");
+        )
+        .join("");
+
+}
+
+
+/* =====================================================
+   STATUS TEXT
+===================================================== */
+
+function statusText(
+    status
+){
+
+    const daftar = {
+
+        aktif:
+            "🟢 SEDANG UJIAN",
+
+        selesai:
+            "✅ SUDAH SELESAI",
+
+        belum:
+            "⏳ BELUM MULAI"
+
+    };
+
+
+    return daftar[
+        status
+    ] ||
+    "⏳ BELUM MULAI";
+
+}
+
+
+/* =====================================================
+   AMBIL JAM
+===================================================== */
+
+function ambilJam(
+    p,
+    hasil
+){
+
+    /*
+     * Jika sudah selesai,
+     * tampilkan waktu selesai.
+     */
+
+    if(
+        hasil &&
+        hasil.waktu_selesai
+    ){
+
+        return formatTanggalJam(
+            hasil.waktu_selesai
+        );
+
+    }
+
+
+    if(p.jam){
+
+        return p.jam;
+
+    }
+
+
+    if(p.jam_mulai){
+
+        return formatTanggalJam(
+            p.jam_mulai
+        );
+
+    }
+
+
+    if(p.waktu_mulai){
+
+        return formatTanggalJam(
+            p.waktu_mulai
+        );
+
+    }
+
+
+    if(p.started_at){
+
+        return formatTanggalJam(
+            p.started_at
+        );
+
+    }
+
+
+    return "-";
+
+}
+
+
+/* =====================================================
+   FORMAT TANGGAL JAM
+===================================================== */
+
+function formatTanggalJam(
+    value
+){
+
+    try{
+
+        const d =
+            new Date(
+                value
+            );
+
+
+        if(
+            Number.isNaN(
+                d.getTime()
+            )
+        ){
+
+            return "-";
+
+        }
+
+
+        return d.toLocaleTimeString(
+            "id-ID",
+            {
+                hour:
+                    "2-digit",
+
+                minute:
+                    "2-digit"
+            }
+        );
+
+    }
+    catch{
+
+        return "-";
+
+    }
+
+}
+
+
+/* =====================================================
+   STATISTIK
+===================================================== */
+
+function updateStatistik(){
+
+    const total =
+        semuaPeserta.length;
+
+
+    const aktif =
+        semuaPeserta.filter(
+            p =>
+            p.status_monitor ===
+            "aktif"
+        ).length;
+
+
+    const selesai =
+        semuaPeserta.filter(
+            p =>
+            p.status_monitor ===
+            "selesai"
+        ).length;
+
+
+    const belum =
+        semuaPeserta.filter(
+            p =>
+            p.status_monitor ===
+            "belum"
+        ).length;
+
+
+    document.getElementById(
+        "totalPeserta"
+    ).textContent =
+        total;
+
+
+    document.getElementById(
+        "pesertaAktif"
+    ).textContent =
+        aktif;
+
+
+    document.getElementById(
+        "pesertaSelesai"
+    ).textContent =
+        selesai;
+
+
+    document.getElementById(
+        "pesertaBelum"
+    ).textContent =
+        belum;
 
 }
 
@@ -1375,16 +2449,24 @@ async function resetSatuSiswa(
 ){
 
     ujianId =
-        String(ujianId || "").trim();
+        String(
+            ujianId ||
+            ""
+        ).trim();
 
-    siswaId =
-        String(siswaId || "").trim();
 
     nisn =
-        String(nisn || "").trim();
+        String(
+            nisn ||
+            ""
+        ).trim();
+
 
     nama =
-        String(nama || "-").trim();
+        String(
+            nama ||
+            "-"
+        ).trim();
 
 
     if(!ujianId){
@@ -1413,16 +2495,26 @@ async function resetSatuSiswa(
 
     const konfirmasi =
         confirm(
+
             "⚠️ RESET UJIAN SISWA\n\n" +
 
-            "Nama : " + nama + "\n" +
-            "NISN : " + nisn + "\n\n" +
+            "Nama : " +
+            nama +
+            "\n" +
 
-            "Hasil ujian siswa ini akan dihapus.\n" +
-            "Setelah reset, siswa dapat mengerjakan\n" +
+            "NISN : " +
+            nisn +
+            "\n\n" +
+
+            "Hasil ujian siswa ini akan dihapus.\n\n" +
+
+            "Setelah reset, siswa dapat mengikuti\n" +
             "ujian kembali.\n\n" +
 
-            "Lanjutkan reset?"
+            "Data siswa dan soal TIDAK dihapus.\n\n" +
+
+            "Lanjutkan?"
+
         );
 
 
@@ -1462,21 +2554,21 @@ async function resetSatuSiswa(
 
 
         showMessage(
+
             "✅ Hasil ujian " +
             nama +
-            " berhasil di-reset. Siswa dapat mengikuti ujian kembali.",
+            " berhasil di-reset. " +
+            "Siswa dapat mengikuti ujian kembali.",
+
             "success"
+
         );
 
 
-        /*
-         * Refresh data
-         */
-
         await loadPeserta();
 
-
-    }catch(error){
+    }
+    catch(error){
 
         console.error(
             "RESET SISWA:",
@@ -1485,9 +2577,12 @@ async function resetSatuSiswa(
 
 
         showMessage(
+
             "❌ Gagal melakukan reset: " +
             error.message,
+
             "error"
+
         );
 
     }
@@ -1496,7 +2591,7 @@ async function resetSatuSiswa(
 
 
 /* =====================================================
-   RESET SEMUA PESERTA
+   RESET SEMUA
 ===================================================== */
 
 async function resetSemuaPeserta(){
@@ -1510,9 +2605,12 @@ async function resetSemuaPeserta(){
     if(!ujianId){
 
         alert(
-            "⚠️ Pilih satu ujian terlebih dahulu.\n\n" +
-            "Reset Semua hanya dapat dilakukan " +
-            "untuk satu ujian."
+
+            "⚠️ Pilih UJIAN terlebih dahulu.\n\n" +
+
+            "Reset Semua hanya berlaku untuk\n" +
+            "satu ujian yang dipilih."
+
         );
 
         return;
@@ -1523,8 +2621,12 @@ async function resetSemuaPeserta(){
     const ujian =
         daftarUjian.find(
             u =>
-            String(u.id) ===
-            String(ujianId)
+            String(
+                u.id
+            ) ===
+            String(
+                ujianId
+            )
         );
 
 
@@ -1533,37 +2635,43 @@ async function resetSemuaPeserta(){
         "Ujian";
 
 
-    const jumlahPeserta =
+    const jumlahHasil =
         semuaPeserta.filter(
             p =>
-            String(p.ujian_id) ===
-            String(ujianId)
+            String(
+                p.ujian_id
+            ) ===
+            String(
+                ujianId
+            ) &&
+            p.status_monitor ===
+            "selesai"
         ).length;
 
 
     const konfirmasi =
         confirm(
 
-            "🚨 RESET SEMUA PESERTA\n\n" +
+            "🚨 RESET SEMUA HASIL UJIAN\n\n" +
 
             "Ujian:\n" +
             namaUjian +
             "\n\n" +
 
-            "Jumlah peserta monitor: " +
-            jumlahPeserta +
+            "Jumlah hasil yang akan di-reset: " +
+            jumlahHasil +
             "\n\n" +
 
-            "SEMUA HASIL UJIAN pada ujian ini\n" +
-            "akan dihapus dari hasil_ujian.\n\n" +
+            "SEMUA hasil pada ujian ini akan\n" +
+            "dihapus dari hasil_ujian.\n\n" +
 
-            "Semua siswa dapat mengerjakan\n" +
-            "ujian kembali.\n\n" +
+            "Semua siswa dapat mengikuti ujian\n" +
+            "kembali.\n\n" +
 
-            "Tindakan ini tidak menghapus soal,\n" +
-            "data siswa atau peserta ujian.\n\n" +
+            "Soal dan data siswa TIDAK dihapus.\n\n" +
 
-            "Yakin ingin RESET SEMUA?"
+            "Yakin ingin melanjutkan?"
+
         );
 
 
@@ -1574,22 +2682,20 @@ async function resetSemuaPeserta(){
     }
 
 
-    /*
-     * Konfirmasi kedua
-     */
-
     const konfirmasiKedua =
         confirm(
 
             "⚠️ PERINGATAN TERAKHIR\n\n" +
 
-            "Hasil ujian:\n" +
+            "Hasil ujian \"" +
             namaUjian +
-            "\n\n" +
+            "\" akan dihapus.\n\n" +
 
-            "akan DIHAPUS untuk seluruh NISN.\n\n" +
+            "Tindakan ini tidak dapat dibatalkan\n" +
+            "kecuali siswa mengikuti ujian kembali.\n\n" +
 
-            "Klik OK untuk benar-benar melakukan reset."
+            "Klik OK untuk RESET."
+
         );
 
 
@@ -1606,18 +2712,15 @@ async function resetSemuaPeserta(){
         );
 
 
-    btn.disabled = true;
+    btn.disabled =
+        true;
+
 
     btn.textContent =
         "⏳ Mereset...";
 
 
     try{
-
-        /*
-         * Hapus seluruh hasil ujian
-         * berdasarkan ujian_id
-         */
 
         const result =
             await supabaseClient
@@ -1637,17 +2740,20 @@ async function resetSemuaPeserta(){
 
 
         showMessage(
+
             "✅ Semua hasil ujian \"" +
             namaUjian +
-            "\" berhasil di-reset. Seluruh peserta dapat mengikuti kembali.",
+            "\" berhasil di-reset.",
+
             "success"
+
         );
 
 
         await loadPeserta();
 
-
-    }catch(error){
+    }
+    catch(error){
 
         console.error(
             "RESET SEMUA:",
@@ -1656,18 +2762,20 @@ async function resetSemuaPeserta(){
 
 
         showMessage(
+
             "❌ Gagal melakukan reset semua: " +
             error.message,
+
             "error"
+
         );
 
     }
 
 
-    btn.disabled = false;
-
     btn.textContent =
         "🗑️ Reset Semua";
+
 
     updateTombolResetSemua();
 
@@ -1675,7 +2783,7 @@ async function resetSemuaPeserta(){
 
 
 /* =====================================================
-   UPDATE TOMBOL RESET SEMUA
+   TOMBOL RESET SEMUA
 ===================================================== */
 
 function updateTombolResetSemua(){
@@ -1686,256 +2794,62 @@ function updateTombolResetSemua(){
         );
 
 
-    const filter =
+    const ujian =
         document.getElementById(
             "filterUjian"
         );
 
 
-    if(!btn || !filter){
+    if(!btn || !ujian){
 
         return;
 
     }
 
 
-    if(filter.value){
-
-        btn.disabled = false;
-
-        btn.title =
-            "Reset semua hasil untuk ujian yang dipilih";
-
-    }else{
-
-        btn.disabled = true;
-
-        btn.title =
-            "Pilih ujian terlebih dahulu";
-
-    }
+    btn.disabled =
+        !ujian.value;
 
 }
 
 
 /* =====================================================
-   STATUS
+   SORT ROMBEL
 ===================================================== */
 
-function statusPeserta(p){
+function sortRombel(
+    a,
+    b
+){
 
-    const s =
-        String(
-            p.status || ""
-        ).toLowerCase()
-        .trim();
-
-
-    if(
-        s === "aktif" ||
-        s === "sedang_ujian" ||
-        s === "dibuka" ||
-        s === "in_progress"
-    ){
-
-        return "aktif";
-
-    }
-
-
-    if(
-        s === "selesai" ||
-        s === "completed"
-    ){
-
-        return "selesai";
-
-    }
-
-
-    if(
-        s === "jeda" ||
-        s === "paused" ||
-        s === "dijeda"
-    ){
-
-        return "jeda";
-
-    }
-
-
-    return "belum";
-
-}
-
-
-/* =====================================================
-   STATUS TEXT
-===================================================== */
-
-function statusText(status){
-
-    const daftar = {
-
-        aktif:
-            "SEDANG UJIAN",
-
-        selesai:
-            "SELESAI",
-
-        belum:
-            "BELUM MULAI",
-
-        jeda:
-            "JEDA"
-
-    };
-
-
-    return daftar[status] ||
-        "BELUM MULAI";
-
-}
-
-
-/* =====================================================
-   AMBIL JAM
-===================================================== */
-
-function ambilJam(p){
-
-    /*
-     * Prioritas:
-     * 1. jam pada peserta
-     * 2. jam_mulai
-     * 3. waktu_mulai
-     */
-
-    if(p.jam){
-
-        return p.jam;
-
-    }
-
-
-    if(p.jam_mulai){
-
-        return formatTanggalJam(
-            p.jam_mulai
+    const pa =
+        parseInt(
+            String(a)
+            .match(/\d+/)?.[0] ||
+            "0"
         );
 
-    }
 
-
-    if(p.waktu_mulai){
-
-        return formatTanggalJam(
-            p.waktu_mulai
+    const pb =
+        parseInt(
+            String(b)
+            .match(/\d+/)?.[0] ||
+            "0"
         );
 
+
+    if(pa !== pb){
+
+        return pa - pb;
+
     }
 
 
-    return "-";
-
-}
-
-
-/* =====================================================
-   FORMAT TANGGAL JAM
-===================================================== */
-
-function formatTanggalJam(value){
-
-    try{
-
-        const d =
-            new Date(value);
-
-        if(
-            Number.isNaN(
-                d.getTime()
-            )
-        ){
-
-            return "-";
-
-        }
-
-
-        return d.toLocaleTimeString(
-            "id-ID",
-            {
-                hour:"2-digit",
-                minute:"2-digit"
-            }
+    return String(a)
+        .localeCompare(
+            String(b),
+            "id"
         );
-
-    }catch{
-
-        return "-";
-
-    }
-
-}
-
-
-/* =====================================================
-   STATISTIK
-===================================================== */
-
-function updateStatistik(){
-
-    const total =
-        semuaPeserta.length;
-
-
-    const aktif =
-        semuaPeserta.filter(
-            p =>
-            statusPeserta(p) ===
-            "aktif"
-        ).length;
-
-
-    const selesai =
-        semuaPeserta.filter(
-            p =>
-            statusPeserta(p) ===
-            "selesai"
-        ).length;
-
-
-    const belum =
-        semuaPeserta.filter(
-            p =>
-            statusPeserta(p) ===
-            "belum"
-        ).length;
-
-
-    document.getElementById(
-        "totalPeserta"
-    ).textContent =
-        total;
-
-
-    document.getElementById(
-        "pesertaAktif"
-    ).textContent =
-        aktif;
-
-
-    document.getElementById(
-        "pesertaSelesai"
-    ).textContent =
-        selesai;
-
-
-    document.getElementById(
-        "pesertaBelum"
-    ).textContent =
-        belum;
 
 }
 
@@ -1960,13 +2874,16 @@ function showMessage(
 
 
     el.className =
-        "message " + type;
+        "message " +
+        type;
 
 
     setTimeout(
-        ()=>{
+        () => {
+
             el.className =
                 "message";
+
         },
         5000
     );
@@ -1975,10 +2892,12 @@ function showMessage(
 
 
 /* =====================================================
-   ESCAPE
+   ESCAPE HTML
 ===================================================== */
 
-function escapeHtml(value){
+function escapeHtml(
+    value
+){
 
     return String(
         value ?? ""
@@ -2027,7 +2946,7 @@ loadPeserta();
 
 
 /*
- * Refresh data setiap 10 detik.
+ * Refresh otomatis setiap 10 detik.
  */
 
 setInterval(
