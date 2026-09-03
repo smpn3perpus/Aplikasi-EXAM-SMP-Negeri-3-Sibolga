@@ -4344,7 +4344,6 @@ function buatNomorSoal(){
             "questionNumbers"
         );
 
-
     container.innerHTML =
         semuaSoal
         .map(
@@ -4363,6 +4362,15 @@ function buatNomorSoal(){
                         ]
                     ).trim() !== "";
 
+                /*
+                   NOMOR YANG DITAMPILKAN
+                   ADALAH NOMOR URUT EXAM.
+
+                   BUKAN nomor dari Bank Soal.
+                */
+
+                const nomorTampil =
+                    index + 1;
 
                 return `
 
@@ -4387,10 +4395,7 @@ function buatNomorSoal(){
                             )
                         ">
 
-                        ${
-                            soal.nomor ||
-                            index + 1
-                        }
+                        ${nomorTampil}
 
                     </button>
 
@@ -4438,17 +4443,22 @@ function tampilkanSoal(index){
        tetap benar.
     */
 
-    const nomor =
-        soal.nomor ||
-        index + 1;
+   /*
+   NOMOR EXAM SELALU BERURUT
+   SESUAI POSISI SOAL SETELAH ACAK.
+
+   Nomor asli Bank Soal tidak ditampilkan.
+*/
+
+const nomorTampil =
+    index + 1;
 
 
-    document.getElementById(
-        "questionLabel"
-    ).textContent =
-        "Soal " +
-        nomor;
-
+document.getElementById(
+    "questionLabel"
+).textContent =
+    "Soal " +
+    nomorTampil;
 
     document.getElementById(
         "questionType"
