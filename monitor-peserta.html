@@ -63,8 +63,6 @@ body{
     padding:0 15px;
 }
 
-/* STATISTIK */
-
 .stats{
     display:grid;
     grid-template-columns:repeat(4,1fr);
@@ -102,8 +100,6 @@ body{
     font-size:28px;
     font-weight:bold;
 }
-
-/* FILTER */
 
 .filter-box{
     background:white;
@@ -151,8 +147,6 @@ body{
 .field input:focus{
     border-color:#2563eb;
 }
-
-/* ACTION */
 
 .action-bar{
     display:flex;
@@ -205,8 +199,6 @@ body{
     background:#1d4ed8;
 }
 
-/* TABLE */
-
 .table-box{
     background:white;
     border-radius:12px;
@@ -240,7 +232,7 @@ body{
 table{
     width:100%;
     border-collapse:collapse;
-    min-width:1050px;
+    min-width:1100px;
 }
 
 thead{
@@ -266,8 +258,6 @@ td{
 tbody tr:hover{
     background:#f8fafc;
 }
-
-/* STATUS */
 
 .status{
     display:inline-flex;
@@ -309,8 +299,6 @@ tbody tr:hover{
     color:#94a3b8;
 }
 
-/* RESET */
-
 .btn-reset-small{
     border:none;
     background:#fee2e2;
@@ -326,8 +314,6 @@ tbody tr:hover{
     background:#fecaca;
 }
 
-/* EMPTY */
-
 .empty{
     padding:50px 20px;
     text-align:center;
@@ -339,15 +325,11 @@ tbody tr:hover{
     margin-bottom:10px;
 }
 
-/* LOADING */
-
 .loading{
     padding:35px;
     text-align:center;
     color:#64748b;
 }
-
-/* TOAST */
 
 .toast{
     position:fixed;
@@ -374,8 +356,6 @@ tbody tr:hover{
 .toast.error{
     background:#b91c1c;
 }
-
-/* RESPONSIVE */
 
 @media(max-width:1000px){
     .stats{
@@ -436,9 +416,8 @@ tbody tr:hover{
     </div>
 </header>
 
-<main class="container">
 
-    <!-- STATISTIK -->
+<main class="container">
 
     <section class="stats">
 
@@ -464,8 +443,6 @@ tbody tr:hover{
 
     </section>
 
-
-    <!-- FILTER -->
 
     <section class="filter-box">
 
@@ -521,8 +498,6 @@ tbody tr:hover{
     </section>
 
 
-    <!-- ACTION -->
-
     <section class="action-bar">
 
         <div class="action-left">
@@ -543,8 +518,6 @@ tbody tr:hover{
 
     </section>
 
-
-    <!-- TABLE -->
 
     <section class="table-box">
 
@@ -581,15 +554,13 @@ tbody tr:hover{
                 </thead>
 
                 <tbody id="tableBody">
-
                     <tr>
                         <td colspan="11">
                             <div class="loading">
-                                Memuat data peserta...
+                                🔄 Memuat data peserta...
                             </div>
                         </td>
                     </tr>
-
                 </tbody>
 
             </table>
@@ -624,17 +595,23 @@ const supabaseClient =
 
 
 /* =========================================================
-   AUTH ADMIN
+   ADMIN
 ========================================================= */
 
 const examUser =
-    JSON.parse(localStorage.getItem("exam_user") || "null");
+    JSON.parse(
+        localStorage.getItem("exam_user") || "null"
+    );
 
-if(!examUser || examUser.role !== "admin"){
+if(
+    !examUser ||
+    examUser.role !== "admin"
+){
 
     alert("Akses hanya untuk Admin.");
 
-    window.location.href = "login.html";
+    window.location.href =
+        "login.html";
 }
 
 
@@ -658,7 +635,10 @@ let barisTampil = [];
 
 function escapeHTML(value){
 
-    if(value === null || value === undefined){
+    if(
+        value === null ||
+        value === undefined
+    ){
         return "";
     }
 
@@ -671,60 +651,14 @@ function escapeHTML(value){
 }
 
 
-function formatTanggal(value){
+function escapeJS(value){
 
-    if(!value){
-        return "-";
-    }
-
-    const d = new Date(value);
-
-    if(isNaN(d.getTime())){
-        return "-";
-    }
-
-    return d.toLocaleString("id-ID",{
-        day:"2-digit",
-        month:"2-digit",
-        year:"numeric",
-        hour:"2-digit",
-        minute:"2-digit"
-    });
-}
-
-
-function formatJam(value){
-
-    if(!value){
-        return "-";
-    }
-
-    const d = new Date(value);
-
-    if(isNaN(d.getTime())){
-        return "-";
-    }
-
-    return d.toLocaleTimeString("id-ID",{
-        hour:"2-digit",
-        minute:"2-digit"
-    });
-}
-
-
-function showToast(message,type="success"){
-
-    const toast =
-        document.getElementById("toast");
-
-    toast.textContent = message;
-
-    toast.className =
-        "toast show " + type;
-
-    setTimeout(()=>{
-        toast.className = "toast";
-    },3000);
+    return String(value || "")
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'")
+        .replace(/"/g,'\\"')
+        .replace(/\n/g,"\\n")
+        .replace(/\r/g,"\\r");
 }
 
 
@@ -736,15 +670,63 @@ function normalisasi(value){
 }
 
 
+function formatJam(value){
+
+    if(!value){
+        return "-";
+    }
+
+    const d =
+        new Date(value);
+
+    if(
+        isNaN(d.getTime())
+    ){
+        return "-";
+    }
+
+    return d.toLocaleTimeString(
+        "id-ID",
+        {
+            hour:"2-digit",
+            minute:"2-digit"
+        }
+    );
+}
+
+
+function showToast(
+    message,
+    type="success"
+){
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent =
+        message;
+
+    toast.className =
+        "toast show " + type;
+
+    setTimeout(()=>{
+        toast.className = "toast";
+    },3000);
+}
+
+
 /* =========================================================
    STATUS
 ========================================================= */
 
-function tentukanStatus(peserta, hasil, ujian){
+function tentukanStatus(
+    peserta,
+    hasil,
+    ujian
+){
 
     /*
-       HASIL UJIAN SELALU MENJADI PRIORITAS
-       karena berarti siswa sudah submit.
+       HASIL ADA = SUDAH SELESAI
     */
 
     if(hasil){
@@ -752,18 +734,20 @@ function tentukanStatus(peserta, hasil, ujian){
     }
 
 
-    const statusPeserta =
-        normalisasi(peserta?.status);
+    const status =
+        normalisasi(
+            peserta?.status
+        );
 
 
     if(
-        statusPeserta === "aktif" ||
-        statusPeserta === "sedang" ||
-        statusPeserta === "sedang_ujian" ||
-        statusPeserta === "in_progress" ||
-        statusPeserta === "mengerjakan" ||
-        statusPeserta === "berlangsung" ||
-        statusPeserta === "jeda"
+        status === "aktif" ||
+        status === "sedang" ||
+        status === "sedang_ujian" ||
+        status === "in_progress" ||
+        status === "mengerjakan" ||
+        status === "berlangsung" ||
+        status === "jeda"
     ){
 
         return "sedang";
@@ -771,9 +755,8 @@ function tentukanStatus(peserta, hasil, ujian){
 
 
     /*
-       Kalau sudah punya waktu_mulai
-       tetapi belum ada waktu_selesai,
-       berarti sedang mengerjakan.
+       ADA WAKTU MULAI
+       TAPI BELUM SELESAI
     */
 
     if(
@@ -786,32 +769,36 @@ function tentukanStatus(peserta, hasil, ujian){
 
 
     /*
-       Cek jadwal ujian.
+       UJIAN BELUM DIMULAI
     */
 
-    const sekarang = new Date();
-
-    const mulai =
+    if(
         ujian?.tanggal_mulai
-            ? new Date(ujian.tanggal_mulai)
-            : null;
+    ){
 
-    if(mulai && sekarang < mulai){
+        const sekarang =
+            new Date();
 
-        return "belum";
+        const mulai =
+            new Date(
+                ujian.tanggal_mulai
+            );
+
+        if(
+            sekarang < mulai
+        ){
+
+            return "belum";
+        }
     }
 
-
-    /*
-       Kalau peserta belum mulai.
-    */
 
     return "belum";
 }
 
 
 /* =========================================================
-   LABEL STATUS
+   STATUS HTML
 ========================================================= */
 
 function statusHTML(status){
@@ -836,19 +823,9 @@ function statusHTML(status){
     }
 
 
-    if(status === "belum"){
-
-        return `
-            <span class="status status-belum">
-                ⏳ Belum Mulai
-            </span>
-        `;
-    }
-
-
     return `
-        <span class="status status-lain">
-            -
+        <span class="status status-belum">
+            ⏳ Belum Mulai
         </span>
     `;
 }
@@ -862,11 +839,13 @@ async function loadData(){
 
     try{
 
-        document.getElementById("tableBody").innerHTML = `
+        document.getElementById(
+            "tableBody"
+        ).innerHTML = `
             <tr>
                 <td colspan="11">
                     <div class="loading">
-                        🔄 Memuat data peserta...
+                        🔄 Mengambil data dari database...
                     </div>
                 </td>
             </tr>
@@ -874,39 +853,62 @@ async function loadData(){
 
 
         /*
-         * PESERTA
-         */
+        ======================================================
+        1. PESERTA UJIAN
+        ======================================================
+        */
 
         const pesertaResult =
             await supabaseClient
                 .from("peserta_ujian")
                 .select("*")
-                .order("created_at",{ascending:false});
+                .order(
+                    "created_at",
+                    {
+                        ascending:false
+                    }
+                );
 
 
-        if(pesertaResult.error){
-            throw pesertaResult.error;
+        if(
+            pesertaResult.error
+        ){
+            throw new Error(
+                "peserta_ujian: " +
+                pesertaResult.error.message
+            );
         }
 
 
         /*
-         * SISWA
-         */
+        ======================================================
+        2. SISWA
+        ======================================================
+        */
 
         const siswaResult =
             await supabaseClient
                 .from("siswa")
-                .select("id,nama,nisn,kelas");
+                .select(
+                    "id,nama,nisn,kelas"
+                );
 
 
-        if(siswaResult.error){
-            throw siswaResult.error;
+        if(
+            siswaResult.error
+        ){
+            throw new Error(
+                "siswa: " +
+                siswaResult.error.message
+            );
         }
 
 
         /*
-         * UJIAN
-         */
+        ======================================================
+        3. UJIAN
+        ======================================================
+        */
 
         const ujianResult =
             await supabaseClient
@@ -923,33 +925,54 @@ async function loadData(){
                     status,
                     status_kontrol
                 `)
-                .order("created_at",{ascending:false});
+                .order(
+                    "created_at",
+                    {
+                        ascending:false
+                    }
+                );
 
 
-        if(ujianResult.error){
-            throw ujianResult.error;
+        if(
+            ujianResult.error
+        ){
+            throw new Error(
+                "ujian: " +
+                ujianResult.error.message
+            );
         }
 
 
         /*
-         * MATA PELAJARAN
-         */
+        ======================================================
+        4. MATA PELAJARAN
+        ======================================================
+        */
 
         const mapelResult =
             await supabaseClient
                 .from("mata_pelajaran")
-                .select("id,nama")
+                .select(
+                    "id,nama"
+                )
                 .order("nama");
 
 
-        if(mapelResult.error){
-            throw mapelResult.error;
+        if(
+            mapelResult.error
+        ){
+            throw new Error(
+                "mata_pelajaran: " +
+                mapelResult.error.message
+            );
         }
 
 
         /*
-         * HASIL UJIAN
-         */
+        ======================================================
+        5. HASIL UJIAN
+        ======================================================
+        */
 
         const hasilResult =
             await supabaseClient
@@ -967,13 +990,30 @@ async function loadData(){
                     jawaban,
                     waktu_mulai,
                     waktu_selesai
-                `);
+                `)
+                .order(
+                    "waktu_selesai",
+                    {
+                        ascending:false
+                    }
+                );
 
 
-        if(hasilResult.error){
-            throw hasilResult.error;
+        if(
+            hasilResult.error
+        ){
+            throw new Error(
+                "hasil_ujian: " +
+                hasilResult.error.message
+            );
         }
 
+
+        /*
+        ======================================================
+        SIMPAN DATA
+        ======================================================
+        */
 
         semuaPeserta =
             pesertaResult.data || [];
@@ -991,46 +1031,122 @@ async function loadData(){
             hasilResult.data || [];
 
 
-        console.log("PESERTA:",semuaPeserta);
-        console.log("SISWA:",semuaSiswa);
-        console.log("UJIAN:",semuaUjian);
-        console.log("MAPEL:",semuaMapel);
-        console.log("HASIL:",semuaHasil);
+        console.log(
+            "=== MONITOR PESERTA ==="
+        );
 
+        console.log(
+            "Peserta:",
+            semuaPeserta.length,
+            semuaPeserta
+        );
+
+        console.log(
+            "Siswa:",
+            semuaSiswa.length,
+            semuaSiswa
+        );
+
+        console.log(
+            "Ujian:",
+            semuaUjian.length,
+            semuaUjian
+        );
+
+        console.log(
+            "Mapel:",
+            semuaMapel.length,
+            semuaMapel
+        );
+
+        console.log(
+            "Hasil:",
+            semuaHasil.length,
+            semuaHasil
+        );
+
+
+        /*
+        ======================================================
+        BANGUN RELASI
+        ======================================================
+        */
 
         bangunRelasi();
 
+
+        /*
+        ======================================================
+        FILTER
+        ======================================================
+        */
+
         isiFilter();
+
+
+        /*
+        ======================================================
+        TAMPIL
+        ======================================================
+        */
 
         terapkanFilter();
 
-        document.getElementById("lastUpdate").textContent =
+
+        document.getElementById(
+            "lastUpdate"
+        ).textContent =
             "Diperbarui " +
-            new Date().toLocaleTimeString("id-ID");
+            new Date().toLocaleTimeString(
+                "id-ID"
+            );
+
 
     }
     catch(error){
 
-        console.error(error);
+        console.error(
+            "MONITOR ERROR:",
+            error
+        );
 
-        document.getElementById("tableBody").innerHTML = `
+
+        document.getElementById(
+            "tableBody"
+        ).innerHTML = `
             <tr>
                 <td colspan="11">
                     <div class="empty">
-                        <div class="empty-icon">⚠️</div>
-                        <b>Gagal memuat data</b>
-                        <br>
-                        <small>${escapeHTML(error.message || error)}</small>
+
+                        <div class="empty-icon">
+                            ⚠️
+                        </div>
+
+                        <b>
+                            Gagal memuat data
+                        </b>
+
+                        <br><br>
+
+                        <small>
+                            ${escapeHTML(
+                                error.message ||
+                                error
+                            )}
+                        </small>
+
                     </div>
                 </td>
             </tr>
         `;
 
+
         showToast(
-            "Gagal memuat data: " +
-            (error.message || error),
+            error.message ||
+            "Gagal memuat data",
             "error"
         );
+
     }
 
 }
@@ -1043,38 +1159,110 @@ async function loadData(){
 function bangunRelasi(){
 
     /*
-       MAP BY ID
+    ======================================================
+    MAP SISWA
+    ======================================================
     */
 
     const siswaById =
-        new Map(
-            semuaSiswa.map(
-                s => [String(s.id),s]
-            )
-        );
+        new Map();
+
+    const siswaByNisn =
+        new Map();
 
 
-    const ujianById =
-        new Map(
-            semuaUjian.map(
-                u => [String(u.id),u]
-            )
-        );
+    semuaSiswa.forEach(
+        siswa => {
+
+            if(
+                siswa.id
+            ){
+
+                siswaById.set(
+                    String(siswa.id),
+                    siswa
+                );
+
+            }
 
 
-    const mapelById =
-        new Map(
-            semuaMapel.map(
-                m => [String(m.id),m]
-            )
-        );
+            if(
+                siswa.nisn
+            ){
+
+                siswaByNisn.set(
+                    String(
+                        siswa.nisn
+                    ).trim(),
+                    siswa
+                );
+
+            }
+
+        }
+    );
 
 
     /*
-       INDEX HASIL
-       siswa_id + ujian_id
-       DAN
-       nisn + ujian_id
+    ======================================================
+    MAP UJIAN
+    ======================================================
+    */
+
+    const ujianById =
+        new Map();
+
+
+    semuaUjian.forEach(
+        ujian => {
+
+            if(
+                ujian.id
+            ){
+
+                ujianById.set(
+                    String(ujian.id),
+                    ujian
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+    ======================================================
+    MAP MATA PELAJARAN
+    ======================================================
+    */
+
+    const mapelById =
+        new Map();
+
+
+    semuaMapel.forEach(
+        mapel => {
+
+            if(
+                mapel.id
+            ){
+
+                mapelById.set(
+                    String(mapel.id),
+                    mapel
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+    ======================================================
+    INDEX HASIL
+    ======================================================
     */
 
     const hasilBySiswaUjian =
@@ -1084,76 +1272,98 @@ function bangunRelasi(){
         new Map();
 
 
-    semuaHasil.forEach(h=>{
+    semuaHasil.forEach(
+        hasil => {
 
-        if(
-            h.siswa_id &&
-            h.ujian_id
-        ){
+            if(
+                hasil.siswa_id &&
+                hasil.ujian_id
+            ){
 
-            hasilBySiswaUjian.set(
-                String(h.siswa_id) +
-                "|" +
-                String(h.ujian_id),
-                h
-            );
+                hasilBySiswaUjian.set(
+                    String(hasil.siswa_id) +
+                    "|" +
+                    String(hasil.ujian_id),
+                    hasil
+                );
+
+            }
+
+
+            if(
+                hasil.nisn &&
+                hasil.ujian_id
+            ){
+
+                hasilByNisnUjian.set(
+                    String(
+                        hasil.nisn
+                    ).trim() +
+                    "|" +
+                    String(hasil.ujian_id),
+                    hasil
+                );
+
+            }
+
         }
-
-
-        if(
-            h.nisn &&
-            h.ujian_id
-        ){
-
-            hasilByNisnUjian.set(
-                String(h.nisn).trim() +
-                "|" +
-                String(h.ujian_id),
-                h
-            );
-        }
-
-    });
+    );
 
 
     /*
-       BENTUK BARIS MONITOR
+    ======================================================
+    BUAT KEY PESERTA
+    ======================================================
     */
 
-    semuaBaris =
-        semuaPeserta.map(p=>{
+    const pesertaKeys =
+        new Set();
+
+
+    semuaPeserta.forEach(
+        p => {
+
+            pesertaKeys.add(
+                String(
+                    p.siswa_id || ""
+                ) +
+                "|" +
+                String(
+                    p.ujian_id || ""
+                )
+            );
+
+        }
+    );
+
+
+    /*
+    ======================================================
+    BARIS DARI PESERTA_UJIAN
+    ======================================================
+    */
+
+    const baris =
+        [];
+
+
+    semuaPeserta.forEach(
+        peserta => {
 
             const siswa =
                 siswaById.get(
-                    String(p.siswa_id)
-                );
+                    String(
+                        peserta.siswa_id
+                    )
+                ) || null;
 
 
             const ujian =
                 ujianById.get(
-                    String(p.ujian_id)
-                );
-
-
-            const mapel =
-                ujian
-                    ? mapelById.get(
-                        String(
-                            ujian.mata_pelajaran_id
-                        )
+                    String(
+                        peserta.ujian_id
                     )
-                    : null;
-
-
-            /*
-               NISN DARI DATA SISWA
-            */
-
-            const nisn =
-                String(
-                    siswa?.nisn ||
-                    ""
-                ).trim();
+                ) || null;
 
 
             /*
@@ -1164,8 +1374,8 @@ function bangunRelasi(){
 
 
             if(
-                siswa?.id &&
-                ujian?.id
+                siswa &&
+                ujian
             ){
 
                 hasil =
@@ -1174,31 +1384,82 @@ function bangunRelasi(){
                         "|" +
                         String(ujian.id)
                     ) || null;
+
             }
 
 
             /*
-               FALLBACK KE NISN
+               FALLBACK NISN
             */
 
             if(
                 !hasil &&
-                nisn &&
-                ujian?.id
+                siswa?.nisn &&
+                ujian
             ){
 
                 hasil =
                     hasilByNisnUjian.get(
-                        nisn +
+                        String(
+                            siswa.nisn
+                        ).trim() +
                         "|" +
                         String(ujian.id)
                     ) || null;
+
             }
 
 
             /*
-               KELAS SISWA
-               LANGSUNG DARI siswa.kelas
+               KALAU SISWA TIDAK DITEMUKAN
+               CARI HASIL BERDASARKAN PESERTA
+            */
+
+            if(
+                !hasil &&
+                peserta.siswa_id &&
+                peserta.ujian_id
+            ){
+
+                hasil =
+                    semuaHasil.find(
+                        h =>
+                            String(
+                                h.siswa_id || ""
+                            ) ===
+                            String(
+                                peserta.siswa_id
+                            ) &&
+                            String(
+                                h.ujian_id || ""
+                            ) ===
+                            String(
+                                peserta.ujian_id
+                            )
+                    ) || null;
+
+            }
+
+
+            /*
+               MAPEL
+            */
+
+            const mapel =
+                ujian?.mata_pelajaran_id
+                    ? mapelById.get(
+                        String(
+                            ujian.mata_pelajaran_id
+                        )
+                    ) || null
+                    : null;
+
+
+            /*
+               KELAS
+               PRIORITAS:
+               siswa.kelas
+               lalu hasil.kelas
             */
 
             const kelas =
@@ -1210,40 +1471,42 @@ function bangunRelasi(){
 
 
             /*
+               NISN
+            */
+
+            const nisn =
+                String(
+                    siswa?.nisn ||
+                    hasil?.nisn ||
+                    ""
+                ).trim();
+
+
+            /*
+               NAMA
+            */
+
+            const nama =
+                siswa?.nama ||
+                hasil?.nama_siswa ||
+                "Peserta";
+
+
+            /*
                STATUS
             */
 
             const status =
                 tentukanStatus(
-                    p,
+                    peserta,
                     hasil,
                     ujian
                 );
 
 
-            /*
-               WAKTU MULAI
-            */
+            baris.push({
 
-            const waktuMulai =
-                hasil?.waktu_mulai ||
-                p?.waktu_mulai ||
-                null;
-
-
-            /*
-               WAKTU SELESAI
-            */
-
-            const waktuSelesai =
-                hasil?.waktu_selesai ||
-                p?.waktu_selesai ||
-                null;
-
-
-            return {
-
-                peserta:p,
+                peserta:peserta,
 
                 siswa:siswa,
 
@@ -1253,16 +1516,9 @@ function bangunRelasi(){
 
                 hasil:hasil,
 
-                nama:
-                    siswa?.nama ||
-                    hasil?.nama_siswa ||
-                    "-",
+                nama:nama,
 
-                nisn:
-                    nisn ||
-                    String(
-                        hasil?.nisn || ""
-                    ).trim(),
+                nisn:nisn,
 
                 kelas:kelas,
 
@@ -1275,10 +1531,14 @@ function bangunRelasi(){
                     "-",
 
                 waktuMulai:
-                    waktuMulai,
+                    hasil?.waktu_mulai ||
+                    peserta?.waktu_mulai ||
+                    null,
 
                 waktuSelesai:
-                    waktuSelesai,
+                    hasil?.waktu_selesai ||
+                    peserta?.waktu_selesai ||
+                    null,
 
                 nilai:
                     hasil?.nilai ??
@@ -1286,36 +1546,310 @@ function bangunRelasi(){
 
                 status:status
 
-            };
+            });
 
-        });
+        }
+    );
 
 
     /*
-       URUTKAN:
-       SEDANG → BELUM → SELESAI
+    ======================================================
+    TAMBAHKAN HASIL UJIAN YANG TIDAK ADA
+    DI PESERTA_UJIAN
+    ======================================================
     */
 
-    semuaBaris.sort((a,b)=>{
+    semuaHasil.forEach(
+        hasil => {
 
-        const urutan = {
-            sedang:1,
-            belum:2,
-            selesai:3
-        };
+            const key =
+                String(
+                    hasil.siswa_id || ""
+                ) +
+                "|" +
+                String(
+                    hasil.ujian_id || ""
+                );
 
-        return (
-            (urutan[a.status] || 9) -
-            (urutan[b.status] || 9)
+
+            /*
+               SUDAH ADA DI PESERTA
+            */
+
+            if(
+                pesertaKeys.has(key)
+            ){
+
+                return;
+
+            }
+
+
+            const ujian =
+                ujianById.get(
+                    String(
+                        hasil.ujian_id
+                    )
+                ) || null;
+
+
+            /*
+               CARI SISWA
+               1. siswa_id
+               2. NISN
+            */
+
+            let siswa = null;
+
+
+            if(
+                hasil.siswa_id
+            ){
+
+                siswa =
+                    siswaById.get(
+                        String(
+                            hasil.siswa_id
+                        )
+                    ) || null;
+
+            }
+
+
+            if(
+                !siswa &&
+                hasil.nisn
+            ){
+
+                siswa =
+                    siswaByNisn.get(
+                        String(
+                            hasil.nisn
+                        ).trim()
+                    ) || null;
+
+            }
+
+
+            /*
+               MAPEL
+            */
+
+            const mapel =
+                ujian?.mata_pelajaran_id
+                    ? mapelById.get(
+                        String(
+                            ujian.mata_pelajaran_id
+                        )
+                    ) || null
+                    : null;
+
+
+            /*
+               KELAS
+            */
+
+            const kelas =
+                String(
+                    siswa?.kelas ||
+                    hasil?.kelas ||
+                    "-"
+                ).trim();
+
+
+            /*
+               NAMA
+            */
+
+            const nama =
+                siswa?.nama ||
+                hasil?.nama_siswa ||
+                "Peserta";
+
+
+            /*
+               NISN
+            */
+
+            const nisn =
+                String(
+                    siswa?.nisn ||
+                    hasil?.nisn ||
+                    ""
+                ).trim();
+
+
+            /*
+               MASUKKAN SEBAGAI SUDAH SELESAI
+            */
+
+            baris.push({
+
+                peserta:null,
+
+                siswa:siswa,
+
+                ujian:ujian,
+
+                mapel:mapel,
+
+                hasil:hasil,
+
+                nama:nama,
+
+                nisn:nisn,
+
+                kelas:kelas,
+
+                judul:
+                    ujian?.judul ||
+                    "-",
+
+                mapelNama:
+                    mapel?.nama ||
+                    "-",
+
+                waktuMulai:
+                    hasil?.waktu_mulai ||
+                    null,
+
+                waktuSelesai:
+                    hasil?.waktu_selesai ||
+                    null,
+
+                nilai:
+                    hasil?.nilai ??
+                    null,
+
+                status:"selesai"
+
+            });
+
+        }
+    );
+
+
+    /*
+    ======================================================
+    HILANGKAN DUPLIKAT
+    ======================================================
+    */
+
+    const unik =
+        new Map();
+
+
+    baris.forEach(
+        row => {
+
+            const key =
+                String(
+                    row.ujian?.id ||
+                    ""
+                ) +
+                "|" +
+                String(
+                    row.siswa?.id ||
+                    ""
+                ) +
+                "|" +
+                String(
+                    row.nisn ||
+                    ""
+                );
+
+
+            /*
+               Jika sudah ada hasil,
+               prioritaskan baris yang punya hasil.
+            */
+
+            if(
+                !unik.has(key)
+            ){
+
+                unik.set(
+                    key,
+                    row
+                );
+
+            }
+            else{
+
+                const lama =
+                    unik.get(key);
+
+                if(
+                    !lama.hasil &&
+                    row.hasil
+                ){
+
+                    unik.set(
+                        key,
+                        row
+                    );
+
+                }
+
+            }
+
+        }
+    );
+
+
+    semuaBaris =
+        Array.from(
+            unik.values()
         );
 
-    });
+
+    /*
+    ======================================================
+    URUTAN
+    ======================================================
+    */
+
+    semuaBaris.sort(
+        (a,b)=>{
+
+            const urutan = {
+                sedang:1,
+                belum:2,
+                selesai:3
+            };
+
+            const sa =
+                urutan[a.status] || 9;
+
+            const sb =
+                urutan[b.status] || 9;
+
+
+            if(
+                sa !== sb
+            ){
+
+                return sa - sb;
+
+            }
+
+
+            return String(
+                a.nama
+            ).localeCompare(
+                String(b.nama),
+                "id"
+            );
+
+        }
+    );
 
 
     console.log(
-        "BARIS MONITOR:",
+        "SEMUA BARIS MONITOR:",
         semuaBaris
     );
+
 }
 
 
@@ -1325,224 +1859,295 @@ function bangunRelasi(){
 
 function isiFilter(){
 
-    const selectUjian =
-        document.getElementById("filterUjian");
+    const filterUjian =
+        document.getElementById(
+            "filterUjian"
+        );
 
-    const selectMapel =
-        document.getElementById("filterMapel");
+    const filterMapel =
+        document.getElementById(
+            "filterMapel"
+        );
 
-    const selectKelas =
-        document.getElementById("filterKelas");
+    const filterKelas =
+        document.getElementById(
+            "filterKelas"
+        );
 
     const resetUjian =
-        document.getElementById("resetUjian");
+        document.getElementById(
+            "resetUjian"
+        );
 
 
     /*
-       SIMPAN NILAI FILTER SEBELUM REFRESH
+       SIMPAN FILTER
     */
 
     const oldUjian =
-        selectUjian.value;
+        filterUjian.value;
 
     const oldMapel =
-        selectMapel.value;
+        filterMapel.value;
 
     const oldKelas =
-        selectKelas.value;
+        filterKelas.value;
 
 
     /*
-       UJIAN
+    ======================================================
+    UJIAN
+    ======================================================
     */
 
-    selectUjian.innerHTML =
-        `<option value="">Semua Ujian</option>`;
+    filterUjian.innerHTML =
+        `<option value="">
+            Semua Ujian
+        </option>`;
 
 
     resetUjian.innerHTML =
-        `<option value="">Pilih ujian untuk Reset Semua</option>`;
+        `<option value="">
+            Pilih ujian untuk Reset Semua
+        </option>`;
 
 
-    semuaUjian.forEach(u=>{
+    semuaUjian.forEach(
+        ujian => {
 
-        const option =
-            document.createElement("option");
+            const option =
+                document.createElement(
+                    "option"
+                );
 
-        option.value = u.id;
+            option.value =
+                ujian.id;
 
-        option.textContent =
-            u.judul || "Ujian";
+            option.textContent =
+                ujian.judul ||
+                "Ujian";
 
-        selectUjian.appendChild(option);
-
-
-        const resetOption =
-            document.createElement("option");
-
-        resetOption.value = u.id;
-
-        resetOption.textContent =
-            u.judul || "Ujian";
-
-        resetUjian.appendChild(resetOption);
-
-    });
-
-
-    /*
-       MATA PELAJARAN
-    */
-
-    selectMapel.innerHTML =
-        `<option value="">Semua Mata Pelajaran</option>`;
-
-
-    const mapelUnik = [];
-
-    const mapelIds = new Set();
-
-
-    semuaMapel.forEach(m=>{
-
-        if(
-            m?.id &&
-            !mapelIds.has(
-                String(m.id)
-            )
-        ){
-
-            mapelIds.add(
-                String(m.id)
+            filterUjian.appendChild(
+                option
             );
 
-            mapelUnik.push(m);
+
+            const resetOption =
+                document.createElement(
+                    "option"
+                );
+
+            resetOption.value =
+                ujian.id;
+
+            resetOption.textContent =
+                ujian.judul ||
+                "Ujian";
+
+            resetUjian.appendChild(
+                resetOption
+            );
+
         }
-
-    });
-
-
-    mapelUnik.forEach(m=>{
-
-        const option =
-            document.createElement("option");
-
-        option.value = m.id;
-
-        option.textContent =
-            m.nama || "-";
-
-        selectMapel.appendChild(option);
-
-    });
+    );
 
 
     /*
-       ROMBEL
-       DIAMBIL LANGSUNG DARI siswa.kelas
+    ======================================================
+    MATA PELAJARAN
+    ======================================================
     */
 
-    selectKelas.innerHTML =
-        `<option value="">Semua Rombel</option>`;
+    filterMapel.innerHTML =
+        `<option value="">
+            Semua Mata Pelajaran
+        </option>`;
+
+
+    /*
+       Ambil SEMUA mapel dari tabel
+       mata_pelajaran
+    */
+
+    const mapelUnik =
+        new Map();
+
+
+    semuaMapel.forEach(
+        mapel => {
+
+            if(
+                mapel.id
+            ){
+
+                mapelUnik.set(
+                    String(mapel.id),
+                    mapel
+                );
+
+            }
+
+        }
+    );
+
+
+    Array.from(
+        mapelUnik.values()
+    )
+    .sort(
+        (a,b)=>
+            String(a.nama || "")
+            .localeCompare(
+                String(b.nama || ""),
+                "id"
+            )
+    )
+    .forEach(
+        mapel => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                mapel.id;
+
+            option.textContent =
+                mapel.nama ||
+                "-";
+
+            filterMapel.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    /*
+    ======================================================
+    ROMBEL
+    ======================================================
+    */
+
+    filterKelas.innerHTML =
+        `<option value="">
+            Semua Rombel
+        </option>`;
 
 
     const kelasSet =
         new Set();
 
 
-    semuaSiswa.forEach(s=>{
-
-        const kelas =
-            String(
-                s.kelas || ""
-            ).trim();
-
-
-        if(kelas){
-            kelasSet.add(kelas);
-        }
-
-    });
-
-
     /*
-       Tambahkan juga kelas dari hasil
-       bila siswa sudah tidak ditemukan.
+       Dari siswa
     */
 
-    semuaHasil.forEach(h=>{
+    semuaSiswa.forEach(
+        siswa => {
 
-        const kelas =
-            String(
-                h.kelas || ""
-            ).trim();
+            const kelas =
+                String(
+                    siswa.kelas || ""
+                ).trim();
 
+            if(kelas){
+                kelasSet.add(kelas);
+            }
 
-        if(kelas){
-            kelasSet.add(kelas);
         }
-
-    });
-
-
-    /*
-       Urutan rombel:
-       7A...7G
-       8A...8F
-       9A...9H
-    */
-
-    const kelasArray =
-        Array.from(kelasSet);
-
-
-    kelasArray.sort(
-        urutkanRombel
     );
 
 
-    kelasArray.forEach(kelas=>{
+    /*
+       Dari hasil
+    */
 
-        const option =
-            document.createElement("option");
+    semuaHasil.forEach(
+        hasil => {
 
-        option.value = kelas;
+            const kelas =
+                String(
+                    hasil.kelas || ""
+                ).trim();
 
-        option.textContent = kelas;
+            if(kelas){
+                kelasSet.add(kelas);
+            }
 
-        selectKelas.appendChild(option);
+        }
+    );
 
-    });
+
+    Array.from(kelasSet)
+        .sort(urutkanRombel)
+        .forEach(
+            kelas => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    kelas;
+
+                option.textContent =
+                    kelas;
+
+                filterKelas.appendChild(
+                    option
+                );
+
+            }
+        );
 
 
     /*
-       KEMBALIKAN FILTER LAMA
+       KEMBALIKAN FILTER
     */
 
     if(
-        [...selectUjian.options]
-        .some(o=>o.value === oldUjian)
+        [...filterUjian.options]
+        .some(
+            o =>
+                o.value === oldUjian
+        )
     ){
 
-        selectUjian.value = oldUjian;
+        filterUjian.value =
+            oldUjian;
+
     }
 
 
     if(
-        [...selectMapel.options]
-        .some(o=>o.value === oldMapel)
+        [...filterMapel.options]
+        .some(
+            o =>
+                o.value === oldMapel
+        )
     ){
 
-        selectMapel.value = oldMapel;
+        filterMapel.value =
+            oldMapel;
+
     }
 
 
     if(
-        [...selectKelas.options]
-        .some(o=>o.value === oldKelas)
+        [...filterKelas.options]
+        .some(
+            o =>
+                o.value === oldKelas
+        )
     ){
 
-        selectKelas.value = oldKelas;
+        filterKelas.value =
+            oldKelas;
+
     }
 
 }
@@ -1552,34 +2157,51 @@ function isiFilter(){
    URUTAN ROMBEL
 ========================================================= */
 
-function urutkanRombel(a,b){
+function urutkanRombel(
+    a,
+    b
+){
 
     const pa =
         String(a)
-        .trim()
-        .match(/^(\d+)\s*([A-Za-z]*)/);
+            .trim()
+            .match(
+                /^(\d+)\s*([A-Za-z]*)/
+            );
 
     const pb =
         String(b)
-        .trim()
-        .match(/^(\d+)\s*([A-Za-z]*)/);
+            .trim()
+            .match(
+                /^(\d+)\s*([A-Za-z]*)/
+            );
 
 
-    if(!pa || !pb){
+    if(
+        !pa ||
+        !pb
+    ){
 
         return String(a)
             .localeCompare(
                 String(b),
                 "id"
             );
+
     }
 
 
     const tingkatA =
-        parseInt(pa[1],10);
+        parseInt(
+            pa[1],
+            10
+        );
 
     const tingkatB =
-        parseInt(pb[1],10);
+        parseInt(
+            pb[1],
+            10
+        );
 
 
     if(
@@ -1587,17 +2209,23 @@ function urutkanRombel(a,b){
         tingkatB
     ){
 
-        return tingkatA - tingkatB;
+        return tingkatA -
+            tingkatB;
+
     }
 
 
-    return String(pa[2] || "")
-        .toUpperCase()
-        .localeCompare(
-            String(pb[2] || "")
-                .toUpperCase(),
-            "id"
-        );
+    return String(
+        pa[2] || ""
+    )
+    .toUpperCase()
+    .localeCompare(
+        String(
+            pb[2] || ""
+        ).toUpperCase(),
+        "id"
+    );
+
 }
 
 
@@ -1640,104 +2268,124 @@ function terapkanFilter(){
 
 
     barisTampil =
-        semuaBaris.filter(row=>{
+        semuaBaris.filter(
+            row => {
 
-            /*
-               UJIAN
-            */
-
-            if(
-                filterUjian &&
-                String(row.ujian?.id) !==
-                String(filterUjian)
-            ){
-
-                return false;
-            }
-
-
-            /*
-               MAPEL
-            */
-
-            if(
-                filterMapel &&
-                String(
-                    row.ujian?.mata_pelajaran_id
-                ) !==
-                String(filterMapel)
-            ){
-
-                return false;
-            }
-
-
-            /*
-               KELAS
-            */
-
-            if(
-                filterKelas &&
-                normalisasi(row.kelas) !==
-                normalisasi(filterKelas)
-            ){
-
-                return false;
-            }
-
-
-            /*
-               STATUS
-            */
-
-            if(
-                filterStatus &&
-                row.status !==
-                filterStatus
-            ){
-
-                return false;
-            }
-
-
-            /*
-               PENCARIAN
-            */
-
-            if(search){
-
-                const gabungan =
-                    normalisasi(
-                        row.nama +
-                        " " +
-                        row.nisn +
-                        " " +
-                        row.kelas +
-                        " " +
-                        row.judul +
-                        " " +
-                        row.mapelNama
-                    );
-
+                /*
+                   FILTER UJIAN
+                */
 
                 if(
-                    !gabungan.includes(search)
+                    filterUjian &&
+                    String(
+                        row.ujian?.id ||
+                        ""
+                    ) !==
+                    String(
+                        filterUjian
+                    )
                 ){
 
                     return false;
+
                 }
 
+
+                /*
+                   FILTER MAPEL
+                */
+
+                if(
+                    filterMapel &&
+                    String(
+                        row.ujian?.mata_pelajaran_id ||
+                        ""
+                    ) !==
+                    String(
+                        filterMapel
+                    )
+                ){
+
+                    return false;
+
+                }
+
+
+                /*
+                   FILTER KELAS
+                */
+
+                if(
+                    filterKelas &&
+                    normalisasi(
+                        row.kelas
+                    ) !==
+                    normalisasi(
+                        filterKelas
+                    )
+                ){
+
+                    return false;
+
+                }
+
+
+                /*
+                   FILTER STATUS
+                */
+
+                if(
+                    filterStatus &&
+                    row.status !==
+                    filterStatus
+                ){
+
+                    return false;
+
+                }
+
+
+                /*
+                   PENCARIAN
+                */
+
+                if(search){
+
+                    const teks =
+                        normalisasi(
+                            [
+                                row.nama,
+                                row.nisn,
+                                row.kelas,
+                                row.judul,
+                                row.mapelNama
+                            ].join(" ")
+                        );
+
+
+                    if(
+                        !teks.includes(
+                            search
+                        )
+                    ){
+
+                        return false;
+
+                    }
+
+                }
+
+
+                return true;
+
             }
-
-
-            return true;
-
-        });
+        );
 
 
     renderTable();
 
     updateStats();
+
 }
 
 
@@ -1753,20 +2401,34 @@ function renderTable(){
         );
 
 
-    if(!barisTampil.length){
+    if(
+        !barisTampil.length
+    ){
 
         tbody.innerHTML = `
             <tr>
                 <td colspan="11">
+
                     <div class="empty">
-                        <div class="empty-icon">📭</div>
-                        <b>Tidak ada data peserta</b>
-                        <br>
+
+                        <div class="empty-icon">
+                            📭
+                        </div>
+
+                        <b>
+                            Tidak ada data peserta
+                        </b>
+
+                        <br><br>
+
                         <small>
-                            Coba ubah filter atau pastikan
-                            peserta sudah terdaftar pada ujian.
+                            Data peserta akan muncul
+                            dari peserta_ujian atau
+                            hasil_ujian.
                         </small>
+
                     </div>
+
                 </td>
             </tr>
         `;
@@ -1779,27 +2441,27 @@ function renderTable(){
         barisTampil.map(
             (row,index)=>{
 
-                const pesertaId =
-                    row.peserta?.id || "";
-
                 const ujianId =
-                    row.ujian?.id || "";
-
-                const nisn =
-                    row.nisn || "";
+                    row.ujian?.id ||
+                    row.peserta?.ujian_id ||
+                    row.hasil?.ujian_id ||
+                    "";
 
 
                 const nilai =
                     row.nilai !== null &&
                     row.nilai !== undefined
-                        ? Number(row.nilai)
-                            .toLocaleString(
-                                "id-ID",
-                                {
-                                    maximumFractionDigits:2
-                                }
-                            )
-                        : "-";
+                        ?
+                        Number(
+                            row.nilai
+                        ).toLocaleString(
+                            "id-ID",
+                            {
+                                maximumFractionDigits:2
+                            }
+                        )
+                        :
+                        "-";
 
 
                 return `
@@ -1811,26 +2473,36 @@ function renderTable(){
 
                         <td>
                             <b>
-                                ${escapeHTML(row.nama)}
+                                ${escapeHTML(
+                                    row.nama
+                                )}
                             </b>
                         </td>
 
                         <td>
-                            ${escapeHTML(row.nisn || "-")}
+                            ${escapeHTML(
+                                row.nisn || "-"
+                            )}
                         </td>
 
                         <td>
                             <b>
-                                ${escapeHTML(row.kelas)}
+                                ${escapeHTML(
+                                    row.kelas || "-"
+                                )}
                             </b>
                         </td>
 
                         <td>
-                            ${escapeHTML(row.judul)}
+                            ${escapeHTML(
+                                row.judul
+                            )}
                         </td>
 
                         <td>
-                            ${escapeHTML(row.mapelNama)}
+                            ${escapeHTML(
+                                row.mapelNama
+                            )}
                         </td>
 
                         <td>
@@ -1875,16 +2547,24 @@ function renderTable(){
                         <td>
 
                             ${
-                                row.hasil
+                                row.hasil &&
+                                row.nisn &&
+                                ujianId
 
                                 ?
 
                                 `<button
                                     class="btn-reset-small"
                                     onclick="resetSatu(
-                                        '${escapeJS(ujianId)}',
-                                        '${escapeJS(nisn)}',
-                                        '${escapeJS(row.nama)}'
+                                        '${escapeJS(
+                                            ujianId
+                                        )}',
+                                        '${escapeJS(
+                                            row.nisn
+                                        )}',
+                                        '${escapeJS(
+                                            row.nama
+                                        )}'
                                     )"
                                 >
                                     ↻ Reset
@@ -1914,21 +2594,6 @@ function renderTable(){
 
 
 /* =========================================================
-   ESCAPE JS
-========================================================= */
-
-function escapeJS(value){
-
-    return String(value || "")
-        .replace(/\\/g,"\\\\")
-        .replace(/'/g,"\\'")
-        .replace(/"/g,'\\"')
-        .replace(/\n/g,"\\n")
-        .replace(/\r/g,"\\r");
-}
-
-
-/* =========================================================
    STATISTIK
 ========================================================= */
 
@@ -1940,46 +2605,53 @@ function updateStats(){
 
     const sedang =
         barisTampil.filter(
-            x=>x.status === "sedang"
+            x =>
+                x.status === "sedang"
         ).length;
 
 
     const selesai =
         barisTampil.filter(
-            x=>x.status === "selesai"
+            x =>
+                x.status === "selesai"
         ).length;
 
 
     const belum =
         barisTampil.filter(
-            x=>x.status === "belum"
+            x =>
+                x.status === "belum"
         ).length;
 
 
     document.getElementById(
         "totalPeserta"
-    ).textContent = total;
+    ).textContent =
+        total;
 
 
     document.getElementById(
         "sedangUjian"
-    ).textContent = sedang;
+    ).textContent =
+        sedang;
 
 
     document.getElementById(
         "sudahSelesai"
-    ).textContent = selesai;
+    ).textContent =
+        selesai;
 
 
     document.getElementById(
         "belumMulai"
-    ).textContent = belum;
+    ).textContent =
+        belum;
 
 }
 
 
 /* =========================================================
-   RESET SATU SISWA
+   RESET SATU
 ========================================================= */
 
 async function resetSatu(
@@ -1988,7 +2660,10 @@ async function resetSatu(
     nama
 ){
 
-    if(!ujianId || !nisn){
+    if(
+        !ujianId ||
+        !nisn
+    ){
 
         showToast(
             "Data ujian atau NISN tidak ditemukan.",
@@ -1996,16 +2671,20 @@ async function resetSatu(
         );
 
         return;
+
     }
 
 
     const yakin =
         confirm(
-            "Reset hasil ujian siswa berikut?\n\n" +
-            "Nama : " + nama + "\n" +
-            "NISN : " + nisn + "\n\n" +
-            "Setelah di-reset, siswa dapat mengikuti " +
-            "ujian kembali."
+            "Reset hasil ujian?\n\n" +
+            "Nama : " +
+            nama +
+            "\n" +
+            "NISN : " +
+            nisn +
+            "\n\n" +
+            "Siswa dapat mengikuti ujian kembali."
         );
 
 
@@ -2016,45 +2695,87 @@ async function resetSatu(
 
     try{
 
-        const {error} =
+        /*
+           HAPUS HASIL
+        */
+
+        const hasilDelete =
             await supabaseClient
                 .from("hasil_ujian")
                 .delete()
-                .eq("ujian_id",ujianId)
-                .eq("nisn",nisn);
+                .eq(
+                    "ujian_id",
+                    ujianId
+                )
+                .eq(
+                    "nisn",
+                    nisn
+                );
 
 
-        if(error){
-            throw error;
+        if(
+            hasilDelete.error
+        ){
+
+            throw hasilDelete.error;
+
         }
 
 
         /*
-           Hapus juga peserta_ujian
-           milik siswa tersebut agar status
-           monitor kembali bersih.
+           CARI SISWA
         */
 
         const siswa =
             semuaSiswa.find(
                 s =>
-                    String(s.nisn).trim() ===
-                    String(nisn).trim()
+                    String(
+                        s.nisn || ""
+                    ).trim() ===
+                    String(
+                        nisn
+                    ).trim()
             );
 
 
-        if(siswa){
+        /*
+           HAPUS PESERTA
+        */
 
-            await supabaseClient
-                .from("peserta_ujian")
-                .delete()
-                .eq("ujian_id",ujianId)
-                .eq("siswa_id",siswa.id);
+        if(
+            siswa?.id
+        ){
+
+            const pesertaDelete =
+                await supabaseClient
+                    .from("peserta_ujian")
+                    .delete()
+                    .eq(
+                        "ujian_id",
+                        ujianId
+                    )
+                    .eq(
+                        "siswa_id",
+                        siswa.id
+                    );
+
+
+            if(
+                pesertaDelete.error
+            ){
+
+                console.warn(
+                    "peserta_ujian:",
+                    pesertaDelete.error
+                );
+
+            }
+
         }
 
 
         showToast(
-            "Hasil ujian " +
+            "Hasil " +
             nama +
             " berhasil di-reset."
         );
@@ -2069,7 +2790,10 @@ async function resetSatu(
 
         showToast(
             "Gagal reset: " +
-            (error.message || error),
+            (
+                error.message ||
+                error
+            ),
             "error"
         );
 
@@ -2098,6 +2822,7 @@ async function resetSemua(){
         );
 
         return;
+
     }
 
 
@@ -2111,29 +2836,33 @@ async function resetSemua(){
 
     const namaUjian =
         ujian?.judul ||
-        "ujian";
+        "Ujian";
 
 
     const jumlah =
         semuaHasil.filter(
             h =>
-                String(h.ujian_id) ===
-                String(ujianId)
+                String(
+                    h.ujian_id
+                ) ===
+                String(
+                    ujianId
+                )
         ).length;
 
 
     const yakin =
         confirm(
-            "PERINGATAN!\n\n" +
-            "Anda akan mereset SEMUA hasil " +
-            "untuk ujian:\n\n" +
+            "RESET SEMUA HASIL?\n\n" +
+            "Ujian:\n" +
             namaUjian +
             "\n\n" +
             "Jumlah hasil: " +
             jumlah +
             "\n\n" +
-            "Semua siswa yang sudah selesai " +
-            "dapat mengikuti ujian kembali.\n\n" +
+            "Semua siswa dapat mengikuti "
+            +
+            "ujian kembali.\n\n" +
             "Lanjutkan?"
         );
 
@@ -2153,11 +2882,18 @@ async function resetSemua(){
             await supabaseClient
                 .from("hasil_ujian")
                 .delete()
-                .eq("ujian_id",ujianId);
+                .eq(
+                    "ujian_id",
+                    ujianId
+                );
 
 
-        if(hasilDelete.error){
+        if(
+            hasilDelete.error
+        ){
+
             throw hasilDelete.error;
+
         }
 
 
@@ -2169,13 +2905,18 @@ async function resetSemua(){
             await supabaseClient
                 .from("peserta_ujian")
                 .delete()
-                .eq("ujian_id",ujianId);
+                .eq(
+                    "ujian_id",
+                    ujianId
+                );
 
 
-        if(pesertaDelete.error){
+        if(
+            pesertaDelete.error
+        ){
 
             console.warn(
-                "Peserta ujian tidak dapat dihapus:",
+                "peserta_ujian:",
                 pesertaDelete.error
             );
 
@@ -2196,7 +2937,10 @@ async function resetSemua(){
 
         showToast(
             "Gagal reset semua: " +
-            (error.message || error),
+            (
+                error.message ||
+                error
+            ),
             "error"
         );
 
@@ -2211,22 +2955,22 @@ async function resetSemua(){
 
 function kembaliAdmin(){
 
-    /*
-       Sesuaikan jika halaman dashboard admin
-       Anda menggunakan nama file berbeda.
-    */
-
     window.location.href =
         "dashboard-admin.html";
+
 }
 
 
 /* =========================================================
-   AUTO REFRESH
+   START
 ========================================================= */
 
 loadData();
 
+
+/*
+   AUTO REFRESH 10 DETIK
+*/
 
 setInterval(
     ()=>{
