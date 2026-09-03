@@ -432,6 +432,15 @@ body{
 }
 
 
+/* STATUS SUDAH UJIAN */
+
+.status-already{
+    background:#fee2e2;
+
+    color:#991b1b;
+}
+
+
 .exam-info{
     display:grid;
 
@@ -1674,8 +1683,6 @@ body{
 <main class="container">
 
 
-    <!-- MESSAGE -->
-
     <div
         id="message"
         class="message">
@@ -1765,8 +1772,6 @@ body{
         <div class="exam-layout">
 
 
-            <!-- QUESTION NUMBER -->
-
             <aside class="question-nav">
 
                 <h3>
@@ -1781,8 +1786,6 @@ body{
 
             </aside>
 
-
-            <!-- QUESTION -->
 
             <section class="question-area">
 
@@ -2101,6 +2104,325 @@ let tokenUjianAktif = null;
 
 
 /* =====================================================
+   FUNGSI HASH UNTUK ACAK SOAL
+===================================================== */
+
+/*
+   Pengacakan dibuat berdasarkan:
+
+   NISN + ID UJIAN
+
+   Artinya:
+   - siswa A mendapat urutan berbeda
+   - siswa B mendapat urutan berbeda
+   - refresh halaman tidak mengubah urutan
+   - nomor asli soal tetap tidak berubah
+*/
+
+function hashSeed(text){
+
+    let hash = 2166136261;
+
+    const value =
+        String(
+            text || ""
+        );
+
+
+    for(
+        let i = 0;
+        i < value.length;
+        i++
+    ){
+
+        hash ^=
+            value.charCodeAt(i);
+
+        hash =
+            Math.imul(
+                hash,
+                16777619
+            );
+
+    }
+
+
+    return hash >>> 0;
+
+}
+
+
+function seededRandom(seed){
+
+    return function(){
+
+        seed +=
+            0x6D2B79F5;
+
+        let t =
+            seed;
+
+
+        t =
+            Math.imul(
+                t ^ (t >>> 15),
+                t | 1
+            );
+
+
+        t ^=
+            t +
+            Math.imul(
+                t ^ (t >>> 7),
+                t | 61
+            );
+
+
+        return (
+            (
+                t ^
+                (t >>> 14)
+            ) >>> 0
+        ) /
+        4294967296;
+
+    };
+
+}
+
+
+/* =====================================================
+   ACAK SOAL UNTUK SISWA
+===================================================== */
+
+function acakSoalUntukSiswa(){
+
+    if(
+        !semuaSoal.length ||
+        !siswaAktif ||
+        !ujianAktif
+    ){
+
+        return;
+
+    }
+
+
+    const nisn =
+        String(
+            siswaAktif?.nisn ||
+            examUser?.nisn ||
+            examUser?.username ||
+            examUser?.no_induk ||
+            ""
+        ).trim();
+
+
+    if(!nisn){
+
+        console.warn(
+            "NISN tidak ditemukan. Soal tidak diacak."
+        );
+
+        return;
+
+    }
+
+
+    const seedText =
+        nisn +
+        "|" +
+        String(
+            ujianAktif.id
+        );
+
+
+    const random =
+        seededRandom(
+            hashSeed(
+                seedText
+            )
+        );
+
+
+    for(
+        let i =
+            semuaSoal.length - 1;
+
+        i > 0;
+
+        i--
+    ){
+
+        const j =
+            Math.floor(
+                random() *
+                (i + 1)
+            );
+
+
+        [
+            semuaSoal[i],
+            semuaSoal[j]
+        ] =
+        [
+            semuaSoal[j],
+            semuaSoal[i]
+        ];
+
+    }
+
+}
+
+
+/* =====================================================
+   CEK SUDAH UJIAN
+===================================================== */
+
+async function cekSudahUjian(
+    ujianId
+){
+
+    if(!ujianId){
+
+        return {
+            sudah:false,
+            data:null,
+            error:null
+        };
+
+    }
+
+
+    const nisn =
+        String(
+            siswaAktif?.nisn ||
+            examUser?.nisn ||
+            examUser?.username ||
+            examUser?.no_induk ||
+            ""
+        ).trim();
+
+
+    if(!nisn){
+
+        return {
+
+            sudah:false,
+
+            data:null,
+
+            error:
+                new Error(
+                    "NISN siswa tidak ditemukan."
+                )
+
+        };
+
+    }
+
+
+    try{
+
+        const result =
+            await supabaseClient
+            .from("hasil_ujian")
+            .select(`
+                id,
+                siswa_id,
+                ujian_id,
+                nama_siswa,
+                nisn,
+                nilai,
+                waktu_mulai,
+                waktu_selesai
+            `)
+            .eq(
+                "ujian_id",
+                ujianId
+            )
+            .eq(
+                "nisn",
+                nisn
+            )
+            .limit(1);
+
+
+        if(result.error){
+
+            console.error(
+                "CEK HASIL UJIAN:",
+                result.error
+            );
+
+
+            return {
+
+                sudah:false,
+
+                data:null,
+
+                error:
+                    result.error
+
+            };
+
+        }
+
+
+        const data =
+            result.data || [];
+
+
+        if(data.length){
+
+            return {
+
+                sudah:true,
+
+                data:data[0],
+
+                error:null
+
+            };
+
+        }
+
+
+        return {
+
+            sudah:false,
+
+            data:null,
+
+            error:null
+
+        };
+
+    }catch(error){
+
+        console.error(
+            "CEK SUDAH UJIAN:",
+            error
+        );
+
+
+        return {
+
+            sudah:false,
+
+            data:null,
+
+            error:error
+
+        };
+
+    }
+
+}
+
+
+/* =====================================================
    DOM READY
 ===================================================== */
 
@@ -2135,6 +2457,7 @@ async function loadSiswaDanUjian(){
                 "error"
             );
 
+
             document.getElementById(
                 "examList"
             ).innerHTML = `
@@ -2158,6 +2481,7 @@ async function loadSiswaDanUjian(){
 
             `;
 
+
             return;
 
         }
@@ -2174,6 +2498,7 @@ async function loadSiswaDanUjian(){
             "LOAD SISWA/UJIAN:",
             error
         );
+
 
         showMessage(
             "Gagal memuat data: " +
@@ -2194,10 +2519,6 @@ async function ambilDataSiswa(){
 
     let siswa = null;
 
-
-    /* ================================================
-       1. CARI BERDASARKAN NISN
-    ================================================= */
 
     const nisn =
         examUser?.nisn ||
@@ -2236,10 +2557,6 @@ async function ambilDataSiswa(){
     }
 
 
-    /* ================================================
-       2. FALLBACK siswa_id
-    ================================================= */
-
     if(
         !siswa &&
         examUser?.siswa_id
@@ -2265,10 +2582,6 @@ async function ambilDataSiswa(){
 
     }
 
-
-    /* ================================================
-       3. FALLBACK auth_user_id
-    ================================================= */
 
     if(
         !siswa &&
@@ -2306,10 +2619,6 @@ async function ambilDataSiswa(){
     siswaAktif =
         siswa;
 
-
-    /* ================================================
-       TAMPILKAN IDENTITAS
-    ================================================= */
 
     document.getElementById(
         "namaSiswa"
@@ -2364,14 +2673,6 @@ async function cariKelasSiswa(){
     let kelas = null;
 
 
-    /* ================================================
-       UTAMA:
-       siswa.kelas_id -> kelas.id
-
-       Kita ambil semua kelas lalu cocokkan String
-       supaya aman jika ada perbedaan tipe ID.
-    ================================================= */
-
     if(
         siswaAktif.kelas_id !== null &&
         siswaAktif.kelas_id !== undefined
@@ -2406,10 +2707,6 @@ async function cariKelasSiswa(){
 
     }
 
-
-    /* ================================================
-       FALLBACK DARI SESSION
-    ================================================= */
 
     if(!kelas){
 
@@ -2569,12 +2866,6 @@ async function loadUjian(){
 
     try{
 
-        /* =========================================
-           AMBIL SEMUA RELASI UJIAN-KELAS
-
-           Tidak memakai JOIN agar lebih aman.
-        ========================================= */
-
         const relasiResult =
             await supabaseClient
             .from("ujian_kelas")
@@ -2593,10 +2884,6 @@ async function loadUjian(){
         const semuaRelasi =
             relasiResult.data || [];
 
-
-        /* =========================================
-           CARI RELASI KELAS SISWA
-        ========================================= */
 
         const relasiKelas =
             semuaRelasi.filter(
@@ -2620,13 +2907,6 @@ async function loadUjian(){
                 )
             ];
 
-
-        /* =========================================
-           AMBIL SEMUA UJIAN
-
-           Dipakai juga sebagai fallback
-           jika ujian.kelas_id masih digunakan.
-        ========================================= */
 
         const ujianResult =
             await supabaseClient
@@ -2666,10 +2946,6 @@ async function loadUjian(){
             ujianResult.data || [];
 
 
-        /* =========================================
-           UJIAN YANG TERHUBUNG DENGAN KELAS SISWA
-        ========================================= */
-
         semuaUjian =
             semuaDataUjian.filter(
                 ujian => {
@@ -2699,10 +2975,6 @@ async function loadUjian(){
                 }
             );
 
-
-        /* =========================================
-           AMBIL MAPEL
-        ========================================= */
 
         const mapelIds =
             [
@@ -2751,10 +3023,6 @@ async function loadUjian(){
         }
 
 
-        /* =========================================
-           TEMPELKAN NAMA MAPEL
-        ========================================= */
-
         semuaUjian =
             semuaUjian.map(
                 ujian => ({
@@ -2772,7 +3040,7 @@ async function loadUjian(){
             );
 
 
-        tampilkanDaftarUjian();
+        await tampilkanDaftarUjian();
 
 
     }catch(error){
@@ -2835,10 +3103,6 @@ function statusUjian(ujian){
         new Date();
 
 
-    /* ================================================
-       SELESAI
-    ================================================= */
-
     if(
         status === "selesai" ||
         kontrol === "selesai"
@@ -2856,10 +3120,6 @@ function statusUjian(ujian){
 
     }
 
-
-    /* ================================================
-       TANGGAL SELESAI
-    ================================================= */
 
     if(ujian.tanggal_selesai){
 
@@ -2888,13 +3148,6 @@ function statusUjian(ujian){
     }
 
 
-    /* ================================================
-       TANGGAL MULAI
-
-       Hanya blok jika tanggal mulai benar-benar
-       berada di masa depan.
-    ================================================= */
-
     if(ujian.tanggal_mulai){
 
         const mulai =
@@ -2922,13 +3175,6 @@ function statusUjian(ujian){
     }
 
 
-    /* ================================================
-       KONTROL DIBUKA
-
-       INI PENTING.
-       Admin membuka ujian melalui status_kontrol.
-    ================================================= */
-
     if(
         kontrol === "dibuka"
     ){
@@ -2946,10 +3192,6 @@ function statusUjian(ujian){
     }
 
 
-    /* ================================================
-       JIKA DIJEDA
-    ================================================= */
-
     if(
         kontrol === "dijeda"
     ){
@@ -2966,17 +3208,6 @@ function statusUjian(ujian){
 
     }
 
-
-    /* ================================================
-       STATUS AKTIF
-
-       Karena ujian-admin.html membuat:
-       status = aktif
-       status_kontrol = draft
-
-       kita tampilkan sebagai aktif tetapi
-       menunggu Admin membuka kontrol.
-    ================================================= */
 
     if(
         status === "aktif"
@@ -3012,7 +3243,7 @@ function statusUjian(ujian){
    TAMPILKAN DAFTAR UJIAN
 ===================================================== */
 
-function tampilkanDaftarUjian(){
+async function tampilkanDaftarUjian(){
 
     const container =
         document.getElementById(
@@ -3054,17 +3285,67 @@ function tampilkanDaftarUjian(){
     }
 
 
+    /*
+       CEK STATUS HASIL SEMUA UJIAN
+    */
+
+    const hasilPengecekan =
+        await Promise.all(
+            semuaUjian.map(
+                async ujian => {
+
+                    const hasil =
+                        await cekSudahUjian(
+                            ujian.id
+                        );
+
+
+                    return {
+
+                        ujian:ujian,
+
+                        hasil:hasil
+
+                    };
+
+                }
+            )
+        );
+
+
+    /*
+       Jika ada error pengecekan,
+       jangan menganggap siswa belum ujian.
+    */
+
+    const adaError =
+        hasilPengecekan.some(
+            item =>
+                item.hasil.error
+        );
+
+
+    if(adaError){
+
+        console.warn(
+            "Sebagian status hasil ujian tidak dapat diperiksa."
+        );
+
+    }
+
+
     container.innerHTML = `
 
         <div class="exam-grid">
 
             ${
-                semuaUjian
+                hasilPengecekan
                 .map(
-                    (ujian,index) =>
+                    (item,index) =>
                         buatKartuUjian(
-                            ujian,
-                            index
+                            item.ujian,
+                            index,
+                            item.hasil
                         )
                 )
                 .join("")
@@ -3083,13 +3364,22 @@ function tampilkanDaftarUjian(){
 
 function buatKartuUjian(
     ujian,
-    index
+    index,
+    hasilCek
 ){
 
     const status =
         statusUjian(
             ujian
         );
+
+
+    const sudahUjian =
+        hasilCek?.sudah === true;
+
+
+    const adaError =
+        !!hasilCek?.error;
 
 
     const mulai =
@@ -3102,6 +3392,75 @@ function buatKartuUjian(
         formatTanggal(
             ujian.tanggal_selesai
         );
+
+
+    let tombol = "";
+
+
+    if(sudahUjian){
+
+        tombol = `
+
+            <button
+                class="start-btn"
+                disabled>
+
+                🔒 Sudah Dikerjakan
+
+            </button>
+
+        `;
+
+    }
+
+    else if(adaError){
+
+        tombol = `
+
+            <button
+                class="start-btn"
+                disabled>
+
+                ⚠️ Status Tidak Dapat Diperiksa
+
+            </button>
+
+        `;
+
+    }
+
+    else{
+
+        tombol = `
+
+            <button
+                class="start-btn"
+                ${
+                    status.canStart
+                    ? ""
+                    : "disabled"
+                }
+                onclick="
+                    bukaTokenModal(
+                        '${escapeJs(
+                            ujian.id
+                        )}'
+                    )
+                ">
+
+                ${
+                    status.canStart
+                    ? "🔐 Mulai Ujian"
+                    : escapeHtml(
+                        status.text
+                    )
+                }
+
+            </button>
+
+        `;
+
+    }
 
 
     return `
@@ -3136,12 +3495,21 @@ function buatKartuUjian(
                 <span
                     class="
                         status-badge
-                        status-${status.key}
+                        ${
+                            sudahUjian
+                            ? "status-already"
+                            : "status-" +
+                              status.key
+                        }
                     ">
 
-                    ${escapeHtml(
-                        status.text
-                    )}
+                    ${
+                        sudahUjian
+                        ? "Sudah Dikerjakan"
+                        : escapeHtml(
+                            status.text
+                        )
+                    }
 
                 </span>
 
@@ -3217,30 +3585,7 @@ function buatKartuUjian(
 
             <div class="exam-action">
 
-                <button
-                    class="start-btn"
-                    ${
-                        status.canStart
-                        ? ""
-                        : "disabled"
-                    }
-                    onclick="
-                        bukaTokenModal(
-                            '${escapeJs(
-                                ujian.id
-                            )}'
-                        )
-                    ">
-
-                    ${
-                        status.canStart
-                        ? "🔐 Mulai Ujian"
-                        : escapeHtml(
-                            status.text
-                        )
-                    }
-
-                </button>
+                ${tombol}
 
             </div>
 
@@ -3255,7 +3600,7 @@ function buatKartuUjian(
    TOKEN MODAL
 ===================================================== */
 
-function bukaTokenModal(
+async function bukaTokenModal(
     ujianId
 ){
 
@@ -3289,6 +3634,44 @@ function bukaTokenModal(
         alert(
             status.text
         );
+
+        return;
+
+    }
+
+
+    /*
+       CEK LAGI SEBELUM TOKEN
+    */
+
+    const cek =
+        await cekSudahUjian(
+            ujian.id
+        );
+
+
+    if(cek.error){
+
+        alert(
+            "Tidak dapat memeriksa status ujian.\n\n" +
+            "Silakan coba lagi atau hubungi Admin."
+        );
+
+        return;
+
+    }
+
+
+    if(cek.sudah){
+
+        alert(
+            "🔒 Anda sudah mengikuti ujian ini.\n\n" +
+            "Ujian tidak dapat dikerjakan kembali.\n\n" +
+            "Jika perlu mengikuti kembali, silakan hubungi Admin untuk melakukan reset."
+        );
+
+
+        await loadUjian();
 
         return;
 
@@ -3382,9 +3765,49 @@ async function prosesTokenMasuk(){
 
     try{
 
-        /* =========================================
-           AMBIL DATA TERBARU DARI SUPABASE
-        ========================================= */
+        /*
+           CEK HASIL TERLEBIH DAHULU
+        */
+
+        const cekHasil =
+            await cekSudahUjian(
+                ujianAktif.id
+            );
+
+
+        if(cekHasil.error){
+
+            alert(
+                "Tidak dapat memeriksa status ujian.\n\n" +
+                "Silakan coba lagi atau hubungi Admin."
+            );
+
+            return;
+
+        }
+
+
+        if(cekHasil.sudah){
+
+            alert(
+                "🔒 Anda sudah mengikuti ujian ini.\n\n" +
+                "Ujian tidak dapat dikerjakan kembali.\n\n" +
+                "Jika Anda perlu mengikuti kembali, silakan hubungi Admin untuk melakukan reset."
+            );
+
+
+            tutupTokenModal();
+
+            await loadUjian();
+
+            return;
+
+        }
+
+
+        /*
+           AMBIL DATA TERBARU
+        */
 
         const result =
             await supabaseClient
@@ -3430,9 +3853,9 @@ async function prosesTokenMasuk(){
             result.data;
 
 
-        /* =========================================
+        /*
            CEK TOKEN
-        ========================================= */
+        */
 
         if(
             String(
@@ -3452,9 +3875,9 @@ async function prosesTokenMasuk(){
         }
 
 
-        /* =========================================
+        /*
            CEK STATUS TERBARU
-        ========================================= */
+        */
 
         const status =
             statusUjian(
@@ -3467,6 +3890,44 @@ async function prosesTokenMasuk(){
             alert(
                 "Ujian belum dapat dimulai.\n\n" +
                 status.text
+            );
+
+            tutupTokenModal();
+
+            await loadUjian();
+
+            return;
+
+        }
+
+
+        /*
+           CEK SEKALI LAGI
+           SEBELUM BENAR-BENAR MASUK
+        */
+
+        const cekHasilAkhir =
+            await cekSudahUjian(
+                dataUjian.id
+            );
+
+
+        if(cekHasilAkhir.error){
+
+            alert(
+                "Tidak dapat memeriksa status ujian.\n\n" +
+                "Ujian belum dimulai."
+            );
+
+            return;
+
+        }
+
+
+        if(cekHasilAkhir.sudah){
+
+            alert(
+                "🔒 Ujian ini sudah pernah Anda kerjakan."
             );
 
             tutupTokenModal();
@@ -3492,16 +3953,16 @@ async function prosesTokenMasuk(){
         tutupTokenModal();
 
 
-        /* =========================================
+        /*
            MASUK FULLSCREEN
-        ========================================= */
+        */
 
         await masukFullscreen();
 
 
-        /* =========================================
+        /*
            MULAI UJIAN
-        ========================================= */
+        */
 
         await mulaiUjian();
 
@@ -3547,10 +4008,6 @@ async function mulaiUjian(){
         new Date();
 
 
-    /* =========================================
-       DURASI
-    ========================================= */
-
     const durasi =
         Number(
             ujianAktif.durasi_menit ||
@@ -3587,10 +4044,6 @@ async function mulaiUjian(){
         "Ujian";
 
 
-    /* =========================================
-       MAPEL
-    ========================================= */
-
     document.getElementById(
         "examSubject"
     ).textContent =
@@ -3602,6 +4055,15 @@ async function mulaiUjian(){
 
 
     await muatSoalUjian();
+
+
+    if(!semuaSoal.length){
+
+        await keluarFullscreen();
+
+        return;
+
+    }
 
 
     mulaiTimer();
@@ -3641,10 +4103,6 @@ async function muatSoalUjian(){
 
 
     try{
-
-        /* =========================================
-           SOAL
-        ========================================= */
 
         const soalResult =
             await supabaseClient
@@ -3694,6 +4152,17 @@ async function muatSoalUjian(){
 
         semuaSoal =
             soalResult.data || [];
+
+
+        /* =================================================
+           PENTING:
+           ACAK SETELAH SOAL DIAMBIL.
+
+           NOMOR ASLI SOAL TIDAK DIUBAH.
+           HANYA URUTAN ARRAY YANG DIACAK.
+        ================================================= */
+
+        acakSoalUntukSiswa();
 
 
         /* =========================================
@@ -3789,10 +4258,6 @@ async function muatSoalUjian(){
         semuaLiterasiLegacy =
             legacyResult.data || [];
 
-
-        /* =========================================
-           TIDAK ADA SOAL
-        ========================================= */
 
         if(!semuaSoal.length){
 
@@ -3961,6 +4426,17 @@ function tampilkanSoal(index){
     const soal =
         semuaSoal[index];
 
+
+    /*
+       PENTING:
+
+       soal.nomor tetap nomor asli database.
+       Jadi walaupun urutannya acak:
+       5, 2, 8, 1, 7
+
+       pencarian literasi berdasarkan nomor
+       tetap benar.
+    */
 
     const nomor =
         soal.nomor ||
@@ -4172,16 +4648,8 @@ function tampilkanSoal(index){
         html;
 
 
-    /* =========================================
-       UPDATE NOMOR
-    ========================================= */
-
     buatNomorSoal();
 
-
-    /* =========================================
-       BUTTON
-    ========================================= */
 
     document.getElementById(
         "prevBtn"
@@ -4790,6 +5258,11 @@ async function kirimUjian(
     }
 
 
+    /*
+       Jangan langsung mengunci permanen sebelum
+       pengecekan database selesai.
+    */
+
     sudahDikirim = true;
 
 
@@ -4803,6 +5276,71 @@ async function kirimUjian(
 
 
     try{
+
+        /*
+           =================================================
+           PENGECEKAN TERAKHIR SEBELUM SIMPAN
+           =================================================
+
+           Ini penting agar siswa tidak bisa mempunyai
+           dua hasil walaupun membuka dua tab / perangkat.
+        */
+
+        const cekTerakhir =
+            await cekSudahUjian(
+                ujianAktif.id
+            );
+
+
+        if(cekTerakhir.error){
+
+            throw new Error(
+                "Tidak dapat memastikan status hasil ujian. " +
+                "Hasil belum disimpan. Silakan coba lagi."
+            );
+
+        }
+
+
+        if(cekTerakhir.sudah){
+
+            await keluarFullscreen();
+
+
+            sudahDikirim = true;
+
+
+            alert(
+                "🔒 Hasil ujian untuk NISN ini sudah tersimpan.\n\n" +
+                "Ujian tidak dapat disimpan dua kali."
+            );
+
+
+            document.getElementById(
+                "examArea"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "homeArea"
+            ).style.display =
+                "block";
+
+
+            ujianAktif = null;
+
+            semuaSoal = [];
+
+            jawabanSiswa = {};
+
+
+            await loadUjian();
+
+            return;
+
+        }
+
 
         let jumlahBenar = 0;
 
@@ -4970,6 +5508,29 @@ async function kirimUjian(
 
 
         /* =========================================
+           NORMALISASI NISN
+        ========================================= */
+
+        const nisnSiswa =
+            String(
+                siswaAktif?.nisn ||
+                examUser?.nisn ||
+                examUser?.username ||
+                examUser?.no_induk ||
+                ""
+            ).trim();
+
+
+        if(!nisnSiswa){
+
+            throw new Error(
+                "NISN siswa tidak ditemukan."
+            );
+
+        }
+
+
+        /* =========================================
            DATA HASIL
         ========================================= */
 
@@ -4989,10 +5550,7 @@ async function kirimUjian(
                 "",
 
             nisn:
-                siswaAktif?.nisn ||
-                examUser?.nisn ||
-                examUser?.username ||
-                "",
+                nisnSiswa,
 
             kelas:
                 kelasSiswaAktif.nama ||
@@ -5038,6 +5596,27 @@ async function kirimUjian(
 
 
         if(result.error){
+
+            /*
+               23505 =
+               duplicate unique constraint.
+
+               Jika Admin sudah membuat unique index,
+               dua submit bersamaan akan ditolak database.
+            */
+
+            if(
+                result.error.code ===
+                "23505"
+            ){
+
+                throw new Error(
+                    "Ujian ini sudah tersimpan untuk NISN Anda. " +
+                    "Anda tidak dapat mengerjakan ujian yang sama dua kali."
+                );
+
+            }
+
 
             throw result.error;
 
@@ -5158,6 +5737,10 @@ async function kembaliDaftarUjian(){
     ujianAktif = null;
 
     semuaSoal = [];
+
+    semuaLiterasiModern = [];
+
+    semuaLiterasiLegacy = [];
 
     jawabanSiswa = {};
 
@@ -5500,6 +6083,9 @@ function cariLiterasiUntukSoalSiswa(
     /* =========================================
        PRIORITAS 2:
        RANGE MODERN
+
+       NOMOR SOAL ASLI DIGUNAKAN DI SINI.
+       Jadi pengacakan tidak merusak literasi.
     ========================================= */
 
     const nomor =
@@ -5668,10 +6254,6 @@ function renderIsiLiterasi(
         String(value);
 
 
-    /* =========================================
-       HAPUS SCRIPT BERBAHAYA
-    ========================================= */
-
     html =
         html.replace(
             /<script[\s\S]*?>[\s\S]*?<\/script>/gi,
@@ -5714,10 +6296,6 @@ function renderIsiLiterasi(
         );
 
 
-    /* =========================================
-       HAPUS EVENT ATTRIBUTE
-    ========================================= */
-
     html =
         html.replace(
             /\son[a-z]+\s*=\s*"[^"]*"/gi,
@@ -5738,10 +6316,6 @@ function renderIsiLiterasi(
             ""
         );
 
-
-    /* =========================================
-       HAPUS JAVASCRIPT URL
-    ========================================= */
 
     html =
         html.replace(
@@ -6005,10 +6579,6 @@ function setupKeyboard(){
         "keydown",
         function(e){
 
-            /* =====================================
-               ENTER TOKEN
-            ===================================== */
-
             if(
                 e.key === "Enter"
             ){
@@ -6055,10 +6625,6 @@ function setupKeyboard(){
             }
 
 
-            /* =====================================
-               BLOK F11
-            ===================================== */
-
             if(
                 e.key === "F11" &&
                 ujianAktif &&
@@ -6069,10 +6635,6 @@ function setupKeyboard(){
 
             }
 
-
-            /* =====================================
-               BLOK CTRL+U
-            ===================================== */
 
             if(
                 e.ctrlKey &&
@@ -6086,15 +6648,6 @@ function setupKeyboard(){
                 e.preventDefault();
 
             }
-
-
-            /* =====================================
-               ESC
-
-               Browser tetap dapat keluar fullscreen
-               dengan ESC. Sistem kemudian menangkap
-               fullscreenchange dan meminta token.
-            ===================================== */
 
         }
     );
