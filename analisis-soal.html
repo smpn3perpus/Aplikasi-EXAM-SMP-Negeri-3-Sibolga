@@ -777,8 +777,7 @@ function cariLiterasi(soal){
 
 
 /* =========================================================
-   AMBIL PILIHAN JAWABAN SECARA OTOMATIS
-   Mendukung beberapa kemungkinan nama kolom Supabase
+   AMBIL PILIHAN JAWABAN
 ========================================================= */
 
 function ambilPilihan(soal){
@@ -850,11 +849,6 @@ function ambilPilihan(soal){
 
         }
     );
-
-    /*
-       Dukungan jika pilihan disimpan sebagai array/string JSON
-       misalnya kolom "pilihan".
-    */
 
     if(
         hasil.length === 0 &&
@@ -954,7 +948,7 @@ function bersihkanPilihan(text){
 
 
 /* =========================================================
-   HITUNG KERUMITAN PILIHAN JAWABAN
+   ANALISIS PILIHAN JAWABAN
 ========================================================= */
 
 function analisisPilihanJawaban(soal){
@@ -996,21 +990,15 @@ function analisisPilihanJawaban(soal){
 
     }
 
-
     let skor = 0;
     let alasan = [];
 
-
-    /*
-       Jumlah opsi yang tersedia.
-       4–5 opsi merupakan bentuk pilihan ganda yang lengkap.
-    */
 
     if(
         pilihan.length >= 5
     ){
 
-        skor += 4;
+        skor += 3;
 
     }else if(
         pilihan.length >= 4
@@ -1021,12 +1009,6 @@ function analisisPilihanJawaban(soal){
     }
 
 
-    /*
-       Hitung rata-rata panjang opsi.
-       Hanya bobot kecil agar panjang pilihan tidak
-       menjadi penentu utama.
-    */
-
     const panjang =
         pilihan.map(
             x =>
@@ -1036,6 +1018,7 @@ function analisisPilihanJawaban(soal){
                     .length
         );
 
+
     const rataRata =
         panjang.reduce(
             (a,b)=>a+b,
@@ -1044,11 +1027,15 @@ function analisisPilihanJawaban(soal){
         panjang.length;
 
 
+    /*
+       Panjang pilihan hanya menjadi indikator kecil.
+    */
+
     if(
         rataRata >= 15
     ){
 
-        skor += 5;
+        skor += 3;
 
         alasan.push(
             "pilihan jawaban memuat penjelasan cukup kompleks"
@@ -1058,15 +1045,10 @@ function analisisPilihanJawaban(soal){
         rataRata >= 8
     ){
 
-        skor += 2;
+        skor += 1;
 
     }
 
-
-    /*
-       Periksa apakah opsi berupa tindakan/penalaran,
-       bukan sekadar satu kata.
-    */
 
     const opsiPenalaran =
         pilihan.filter(
@@ -1079,7 +1061,7 @@ function analisisPilihanJawaban(soal){
         opsiPenalaran >= 2
     ){
 
-        skor += 6;
+        skor += 4;
 
         alasan.push(
             "alternatif jawaban memuat alasan atau hubungan logis"
@@ -1087,14 +1069,6 @@ function analisisPilihanJawaban(soal){
 
     }
 
-
-    /*
-       Periksa variasi panjang opsi.
-
-       Jika ada satu opsi sangat panjang dan lainnya
-       sangat pendek, biasanya soal kurang seimbang.
-       Ini TIDAK digunakan untuk membuat soal otomatis sukar.
-    */
 
     const maxPanjang =
         Math.max(
@@ -1118,11 +1092,6 @@ function analisisPilihanJawaban(soal){
     }
 
 
-    /*
-       Periksa apakah pilihan berupa beberapa tindakan/
-       konsekuensi yang harus dibedakan.
-    */
-
     const opsiKompleks =
         pilihan.filter(
             x =>
@@ -1134,7 +1103,7 @@ function analisisPilihanJawaban(soal){
         opsiKompleks >= 3
     ){
 
-        skor += 5;
+        skor += 3;
 
         alasan.push(
             "beberapa alternatif memiliki lebih dari satu unsur"
@@ -1151,7 +1120,7 @@ function analisisPilihanJawaban(soal){
         skor:
             Math.min(
                 skor,
-                20
+                15
             ),
 
         alasan:
@@ -1165,22 +1134,62 @@ function analisisPilihanJawaban(soal){
 
 
 /* =========================================================
+   UTILITAS TEKS
+========================================================= */
+
+function normalisasiTeks(text){
+
+    return String(
+        text || ""
+    )
+    .toLowerCase()
+    .replace(
+        /\s+/g,
+        " "
+    )
+    .trim();
+
+}
+
+
+function hitungKata(text){
+
+    return normalisasiTeks(text)
+        .split(/\s+/)
+        .filter(Boolean)
+        .length;
+
+}
+
+
+function hitungKemunculan(text, regex){
+
+    const hasil =
+        text.match(regex);
+
+    return hasil
+        ? hasil.length
+        : 0;
+
+}
+
+
+/* =========================================================
    DETEKSI C6
 ========================================================= */
 
 function deteksiC6(text){
 
-    const pola = [
+    const polaKuat = [
 
-        /\brancang\b/i,
         /\brancanglah\b/i,
         /\bmerancang\b/i,
         /\bdesainlah\b/i,
         /\bdesainkan\b/i,
-        /\bkembangkan\b/i,
         /\bkembangkanlah\b/i,
-        /\bciptakan\b/i,
+        /\bkembangkan\b/i,
         /\bciptakanlah\b/i,
+        /\bciptakan\b/i,
         /\bsusunlah solusi\b/i,
         /\bsusun strategi\b/i,
         /\bbuatlah solusi\b/i,
@@ -1191,29 +1200,38 @@ function deteksiC6(text){
 
     ];
 
-    return pola.some(
-        p=>p.test(text)
+    return polaKuat.some(
+        p =>
+            p.test(text)
     );
+
 }
 
 
 /* =========================================================
    DETEKSI C5
+   LEBIH KETAT
 ========================================================= */
 
 function deteksiC5(text){
 
     /*
-       "Manakah yang paling tepat" saja tidak cukup.
-       Harus ada indikasi evaluasi/pertimbangan.
+       Jangan menganggap:
+       "manakah yang paling tepat"
+       sebagai C5.
+
+       Harus ada tindakan evaluasi,
+       kriteria, pertimbangan,
+       efektivitas, kelayakan,
+       atau justifikasi.
     */
 
-    const evaluasiLangsung = [
+    const polaKuat = [
 
         /\bevaluasi\b/i,
         /\bmengevaluasi\b/i,
-        /\bmenilai\b/i,
         /\bnilailah\b/i,
+        /\bmenilai\b.*\bberdasarkan\b/i,
         /\bkritisi\b/i,
         /\bkritikilah\b/i,
         /\bsetujukah\b/i,
@@ -1223,33 +1241,45 @@ function deteksiC5(text){
         /\bberikan justifikasi\b/i,
         /\bberikan alasan atas pilihan\b/i,
         /\bjelaskan alasan pilihan\b/i,
-        /\bpaling efektif.*mengapa\b/i,
-        /\bpaling tepat.*mengapa\b/i,
-        /\bpaling sesuai.*mengapa\b/i
+        /\bpaling efektif\b.*\bmengapa\b/i,
+        /\bpaling tepat\b.*\bmengapa\b/i,
+        /\bpaling sesuai\b.*\bmengapa\b/i,
+        /\bpilihan yang lebih efektif\b/i,
+        /\bpilihan yang paling efektif\b/i,
+        /\bkelayakan\b/i
 
     ];
 
-    return evaluasiLangsung.some(
-        p=>p.test(text)
+    return polaKuat.some(
+        p =>
+            p.test(text)
     );
+
 }
 
 
 /* =========================================================
    DETEKSI C4
+   TIDAK HANYA BERDASARKAN KATA "ANALISIS"
 ========================================================= */
 
 function deteksiC4(text){
 
-    const pola = [
+    /*
+       C4 kuat:
+       soal meminta hubungan antar informasi,
+       penerapan aturan pada situasi,
+       perbandingan, konsekuensi,
+       sebab-akibat, pola, atau ketidaksesuaian.
+    */
 
-        /\banalisis\b/i,
-        /\bmenganalisis\b/i,
+    const polaKuat = [
+
         /\banalisislah\b/i,
+        /\bmenganalisis\b/i,
 
         /\bbandingkan\b/i,
         /\bmembandingkan\b/i,
-        /\bperbandingan\b/i,
 
         /\bhubungkan\b/i,
         /\bmenghubungkan\b/i,
@@ -1258,33 +1288,85 @@ function deteksiC4(text){
 
         /\bsebab dan akibat\b/i,
         /\bsebab-akibat\b/i,
-        /\bakibat\b/i,
-        /\bdampak\b/i,
-        /\bkonsekuensi\b/i,
 
         /\bkemungkinan yang terjadi\b/i,
         /\bkemungkinan terjadi\b/i,
-        /\bapa yang terjadi jika\b/i,
 
+        /\bapa yang terjadi jika\b/i,
+        /\bapa akibatnya jika\b/i,
+        /\bapa dampaknya jika\b/i,
+
+        /\bberdasarkan kondisi\b/i,
+        /\bberdasarkan informasi\b/i,
         /\bberdasarkan data\b/i,
         /\bberdasarkan tabel\b/i,
         /\bberdasarkan grafik\b/i,
-        /\bberdasarkan informasi\b/i,
-        /\bberdasarkan kondisi\b/i,
 
         /\bkesalahan\b/i,
         /\bketidaksesuaian\b/i,
-        /\btidak sesuai\b/i,
         /\bbertentangan\b/i,
 
-        /\bpola\b/i,
-        /\bperubahan\b/i
+        /\bpola\b.*\bperubahan\b/i,
+        /\bperubahan\b.*\bpola\b/i,
+
+        /\bmengapa .* terjadi\b/i,
+        /\bmengapa .* dapat terjadi\b/i
 
     ];
 
-    return pola.some(
-        p=>p.test(text)
+    if(
+        polaKuat.some(
+            p =>
+                p.test(text)
+        )
+    ){
+
+        return true;
+
+    }
+
+
+    /*
+       Kombinasi beberapa indikator juga
+       dapat menunjukkan analisis walaupun
+       tidak menggunakan kata "analisis".
+    */
+
+    const indikatorKombinasi = [
+
+        /\bjika\b|\bapabila\b|\bseandainya\b/i,
+        /\bnamun\b|\bsedangkan\b|\bmeskipun\b|\bwalaupun\b/i,
+        /\bkarena\b|\bsehingga\b|\bakibatnya\b/i,
+        /\bdibandingkan\b|\bperbedaan\b/i,
+        /\bdua\b|\bkedua\b|\bkeduanya\b/i,
+        /\bkemungkinan\b|\bdampak\b|\bkonsekuensi\b/i
+
+    ];
+
+    let jumlah = 0;
+
+    indikatorKombinasi.forEach(
+        p=>{
+
+            if(
+                p.test(text)
+            ){
+
+                jumlah++;
+
+            }
+
+        }
     );
+
+
+    /*
+       Minimal dua indikator yang saling
+       berkaitan agar dianggap C4.
+    */
+
+    return jumlah >= 2;
+
 }
 
 
@@ -1310,8 +1392,10 @@ function deteksiC3(text){
     ];
 
     return pola.some(
-        p=>p.test(text)
+        p =>
+            p.test(text)
     );
+
 }
 
 
@@ -1336,8 +1420,10 @@ function deteksiC2(text){
     ];
 
     return pola.some(
-        p=>p.test(text)
+        p =>
+            p.test(text)
     );
+
 }
 
 
@@ -1364,13 +1450,16 @@ function deteksiC1(text){
     ];
 
     return pola.some(
-        p=>p.test(text)
+        p =>
+            p.test(text)
     );
+
 }
 
 
 /* =========================================================
-   HITUNG INDIKATOR PENALARAN
+   HITUNG STRUKTUR PENALARAN
+   INI YANG MENENTUKAN KESUKARAN
 ========================================================= */
 
 function hitungIndikatorPenalaran(text){
@@ -1380,79 +1469,252 @@ function hitungIndikatorPenalaran(text){
     let alasan = [];
 
 
-    const indikator = [
+    /*
+       1. KONDISI
+    */
 
-        {
-            pola:/\bjika\b|\bapabila\b|\bseandainya\b/i,
-            poin:5,
-            label:"kondisi"
-        },
+    const kondisi =
+        hitungKemunculan(
+            text,
+            /\b(jika|apabila|seandainya|ketika)\b/gi
+        );
 
-        {
-            pola:/\bnamun\b|\bsedangkan\b|\bmeskipun\b|\bwalaupun\b/i,
-            poin:5,
-            label:"kontras informasi"
-        },
+    if(kondisi){
 
-        {
-            pola:/\bkarena\b|\bsehingga\b|\bakibatnya\b/i,
-            poin:5,
-            label:"sebab-akibat"
-        },
+        skor += Math.min(
+            kondisi * 6,
+            10
+        );
 
-        {
-            pola:/\bdibandingkan\b|\bbandingkan\b|\bperbedaan\b/i,
-            poin:5,
-            label:"perbandingan"
-        },
+        jumlah++;
 
-        {
-            pola:/\bkemungkinan\b|\bdampak\b|\bkonsekuensi\b/i,
-            poin:6,
-            label:"prediksi konsekuensi"
-        },
+        alasan.push(
+            "memuat kondisi yang harus dipertimbangkan"
+        );
 
-        {
-            pola:/\bkesalahan\b|\btidak sesuai\b|\bbertentangan\b/i,
-            poin:6,
-            label:"identifikasi ketidaksesuaian"
-        },
-
-        {
-            pola:/\bdua\b|\bkedua\b|\bkeduanya\b|\bmasing-masing\b/i,
-            poin:4,
-            label:"beberapa objek/kondisi"
-        },
-
-        {
-            pola:/\bberdasarkan\b.*\bkemudian\b/i,
-            poin:5,
-            label:"pengolahan beberapa informasi"
-        }
-
-    ];
+    }
 
 
-    indikator.forEach(
-        item=>{
+    /*
+       2. KONTRAS
+    */
 
-            if(
-                item.pola.test(text)
-            ){
+    const kontras =
+        hitungKemunculan(
+            text,
+            /\b(namun|sedangkan|meskipun|walaupun|sebaliknya)\b/gi
+        );
 
-                skor +=
-                    item.poin;
+    if(kontras){
 
-                jumlah++;
+        skor += Math.min(
+            kontras * 6,
+            10
+        );
 
-                alasan.push(
-                    item.label
-                );
+        jumlah++;
 
-            }
+        alasan.push(
+            "memuat kontras atau perbedaan kondisi"
+        );
 
-        }
-    );
+    }
+
+
+    /*
+       3. SEBAB-AKIBAT
+    */
+
+    const sebab =
+        hitungKemunculan(
+            text,
+            /\b(karena|sehingga|akibatnya|disebabkan|berdampak)\b/gi
+        );
+
+    if(sebab){
+
+        skor += Math.min(
+            sebab * 6,
+            10
+        );
+
+        jumlah++;
+
+        alasan.push(
+            "memuat hubungan sebab-akibat"
+        );
+
+    }
+
+
+    /*
+       4. PERBANDINGAN
+    */
+
+    const banding =
+        hitungKemunculan(
+            text,
+            /\b(bandingkan|dibandingkan|perbedaan|berbeda|lebih .* daripada|sedangkan)\b/gi
+        );
+
+    if(banding){
+
+        skor += Math.min(
+            banding * 6,
+            10
+        );
+
+        jumlah++;
+
+        alasan.push(
+            "memerlukan perbandingan informasi"
+        );
+
+    }
+
+
+    /*
+       5. KONSEKUENSI / PREDIKSI
+    */
+
+    const konsekuensi =
+        hitungKemunculan(
+            text,
+            /\b(kemungkinan|dampak|konsekuensi|akibat|apa yang terjadi)\b/gi
+        );
+
+    if(konsekuensi){
+
+        skor += Math.min(
+            konsekuensi * 6,
+            10
+        );
+
+        jumlah++;
+
+        alasan.push(
+            "memerlukan prediksi atau penentuan konsekuensi"
+        );
+
+    }
+
+
+    /*
+       6. KETIDAKSESUAIAN
+    */
+
+    const tidakSesuai =
+        hitungKemunculan(
+            text,
+            /\b(kesalahan|tidak sesuai|bertentangan|keliru|ketidaksesuaian)\b/gi
+        );
+
+    if(tidakSesuai){
+
+        skor += Math.min(
+            tidakSesuai * 7,
+            10
+        );
+
+        jumlah++;
+
+        alasan.push(
+            "memerlukan identifikasi ketidaksesuaian"
+        );
+
+    }
+
+
+    /*
+       7. BEBERAPA OBJEK / KASUS
+    */
+
+    const beberapaObjek =
+        /\b(dua|kedua|keduanya|masing-masing|dua kondisi|dua kasus|beberapa)\b/i
+        .test(text);
+
+    if(beberapaObjek){
+
+        skor += 5;
+
+        jumlah++;
+
+        alasan.push(
+            "melibatkan lebih dari satu objek atau kondisi"
+        );
+
+    }
+
+
+    /*
+       8. URUTAN PROSES
+    */
+
+    const urutan =
+        hitungKemunculan(
+            text,
+            /\b(sebelum|setelah|kemudian|selanjutnya|pada saat)\b/gi
+        );
+
+    if(
+        urutan >= 2
+    ){
+
+        skor += 6;
+
+        jumlah++;
+
+        alasan.push(
+            "memerlukan pengolahan urutan informasi"
+        );
+
+    }
+
+
+    /*
+       9. DATA / INFORMASI
+    */
+
+    const data =
+        /\bberdasarkan data\b|\bberdasarkan tabel\b|\bberdasarkan grafik\b|\bberdasarkan informasi\b/i
+        .test(text);
+
+    if(data){
+
+        skor += 5;
+
+        jumlah++;
+
+        alasan.push(
+            "menggunakan informasi atau data sebagai dasar"
+        );
+
+    }
+
+
+    /*
+       10. BANYAK KEPUTUSAN
+    */
+
+    const keputusan =
+        hitungKemunculan(
+            text,
+            /\b(pilih|tentukan|tentukanlah|manakah|strategi|solusi)\b/gi
+        );
+
+    if(
+        keputusan >= 2
+    ){
+
+        skor += 5;
+
+        jumlah++;
+
+        alasan.push(
+            "memerlukan lebih dari satu pertimbangan keputusan"
+        );
+
+    }
 
 
     return {
@@ -1460,7 +1722,7 @@ function hitungIndikatorPenalaran(text){
         skor:
             Math.min(
                 skor,
-                40
+                50
             ),
 
         jumlah,
@@ -1479,11 +1741,9 @@ function hitungIndikatorPenalaran(text){
 function analisisKognitif(soal){
 
     const text =
-        String(
-            soal.pertanyaan || ""
-        )
-        .toLowerCase()
-        .trim();
+        normalisasiTeks(
+            soal.pertanyaan
+        );
 
 
     /*
@@ -1501,7 +1761,7 @@ function analisisKognitif(soal){
             kategori:"HOTS",
 
             alasan:
-                "Menuntut peserta didik merancang, menciptakan, mengembangkan, atau menghasilkan solusi/produk."
+                "Menuntut peserta didik merancang, menciptakan, mengembangkan, memodifikasi, atau menghasilkan solusi/produk."
 
         };
     }
@@ -1522,7 +1782,7 @@ function analisisKognitif(soal){
             kategori:"HOTS",
 
             alasan:
-                "Menuntut peserta didik menilai, mempertimbangkan, mengkritisi, atau memberikan justifikasi."
+                "Menuntut peserta didik memberikan penilaian berdasarkan pertimbangan, kriteria, efektivitas, kelayakan, atau justifikasi."
 
         };
     }
@@ -1543,7 +1803,7 @@ function analisisKognitif(soal){
             kategori:"HOTS",
 
             alasan:
-                "Menuntut peserta didik menguraikan hubungan, membandingkan informasi, menemukan sebab-akibat, mengenali pola, atau menentukan konsekuensi."
+                "Menuntut peserta didik menghubungkan informasi, membandingkan kondisi, menemukan sebab-akibat, menentukan konsekuensi, atau mengenali ketidaksesuaian."
 
         };
     }
@@ -1564,7 +1824,7 @@ function analisisKognitif(soal){
             kategori:"MOTS",
 
             alasan:
-                "Menuntut peserta didik menerapkan konsep, prinsip, rumus, atau prosedur."
+                "Menuntut peserta didik menerapkan konsep, prinsip, rumus, atau prosedur pada suatu situasi."
 
         };
     }
@@ -1585,7 +1845,7 @@ function analisisKognitif(soal){
             kategori:"LOTS",
 
             alasan:
-                "Menuntut peserta didik menjelaskan, menguraikan, atau memahami suatu konsep."
+                "Menuntut peserta didik menjelaskan, menguraikan, menerangkan, atau menunjukkan pemahaman terhadap suatu konsep."
 
         };
     }
@@ -1619,7 +1879,7 @@ function analisisKognitif(soal){
         kategori:"LOTS",
 
         alasan:
-            "Tidak ditemukan tuntutan berpikir tingkat tinggi yang cukup kuat; diklasifikasikan sebagai pemahaman."
+            "Tidak ditemukan tuntutan analisis, evaluasi, penerapan, atau penciptaan yang cukup kuat; soal diklasifikasikan sebagai pemahaman."
 
     };
 
@@ -1627,16 +1887,15 @@ function analisisKognitif(soal){
 
 
 /* =========================================================
-   ANALISIS KESUKARAN REALISTIS
-   PERTANYAAN + PILIHAN JAWABAN
+   ANALISIS KESUKARAN BARU
 ========================================================= */
 
 function analisisKesukaran(soal){
 
     const text =
-        String(
-            soal.pertanyaan || ""
-        ).trim();
+        normalisasiTeks(
+            soal.pertanyaan
+        );
 
 
     if(!text){
@@ -1673,27 +1932,26 @@ function analisisKesukaran(soal){
 
 
     /*
-       BASE BERDASARKAN LEVEL KOGNITIF
+       =====================================================
+       DASAR KOGNITIF
+       =====================================================
 
-       C1  = 15
-       C2  = 22
-       C3  = 30
-       C4  = 34
-       C5  = 46
-       C6  = 52
-
-       Ini sengaja dibuat agar:
-       C4 sederhana masih bisa MUDAH.
+       C1  -> sangat rendah
+       C2  -> rendah
+       C3  -> menengah
+       C4  -> dapat mudah/sedang/sukar
+       C5  -> tinggi
+       C6  -> tinggi
     */
 
     const base = {
 
         C1:15,
-        C2:22,
-        C3:30,
-        C4:34,
-        C5:46,
-        C6:52
+        C2:20,
+        C3:28,
+        C4:32,
+        C5:45,
+        C6:50
 
     };
 
@@ -1701,14 +1959,14 @@ function analisisKesukaran(soal){
     let skor =
         base[
             kognitif.level
-        ] || 25;
+        ] || 20;
 
 
     let alasan = [];
 
 
     /*
-       PENALARAN SOAL
+       PENALARAN ADALAH FAKTOR UTAMA
     */
 
     skor +=
@@ -1727,11 +1985,14 @@ function analisisKesukaran(soal){
 
 
     /*
-       PILIHAN JAWABAN
+       PILIHAN JAWABAN HANYA BONUS KECIL
     */
 
     skor +=
-        pilihan.skor;
+        Math.min(
+            pilihan.skor,
+            10
+        );
 
 
     if(
@@ -1742,14 +2003,74 @@ function analisisKesukaran(soal){
             `${pilihan.jumlah} pilihan jawaban dianalisis`
         );
 
+    }
+
+
+    /*
+       PANJANG TEKS TIDAK LAGI MENENTUKAN LEVEL.
+
+       Hanya jika sangat panjang sekali,
+       beri bonus maksimal 2 poin.
+    */
+
+    const jumlahKata =
+        hitungKata(
+            text
+        );
+
+
+    if(
+        jumlahKata >= 100
+    ){
+
+        skor += 2;
+
+        alasan.push(
+            "stimulus sangat panjang, tetapi panjang teks hanya menjadi faktor kecil"
+        );
+
+    }
+
+
+    /*
+       =====================================================
+       KHUSUS C4
+       =====================================================
+
+       C4 + penalaran sedikit
+       -> Mudah
+
+       C4 + penalaran sedang
+       -> Sedang
+
+       C4 + penalaran banyak
+       -> Sukar
+    */
+
+    if(
+        kognitif.level === "C4"
+    ){
+
         if(
-            pilihan.alasan !==
-            "Pilihan jawaban relatif sederhana."
+            penalaran.skor <= 10
         ){
 
             alasan.push(
-                pilihan.alasan
-                    .replace(/\.$/,"")
+                "analisis C4 masih sederhana"
+            );
+
+        }else if(
+            penalaran.skor <= 25
+        ){
+
+            alasan.push(
+                "analisis C4 melibatkan beberapa hubungan informasi"
+            );
+
+        }else{
+
+            alasan.push(
+                "analisis C4 melibatkan beberapa proses penalaran"
             );
 
         }
@@ -1758,75 +2079,9 @@ function analisisKesukaran(soal){
 
 
     /*
-       PANJANG TEKS HANYA BONUS KECIL.
-
-       Tidak boleh lagi:
-       35 kata = Sedang
-       55 kata = Sukar
-    */
-
-    const jumlahKata =
-        text
-            .split(/\s+/)
-            .filter(Boolean)
-            .length;
-
-
-    if(
-        jumlahKata >= 80
-    ){
-
-        skor += 2;
-
-        alasan.push(
-            "stimulus cukup panjang"
-        );
-
-    }
-
-
-    /*
-       KHUSUS C4
-
-       C4 tanpa banyak beban penalaran:
-       tetap dapat MUDAH.
-
-       C4 dengan beberapa hubungan:
-       SEDANG.
-
-       C4 dengan banyak proses penalaran:
-       SUKAR.
-    */
-
-    if(
-        kognitif.level === "C4"
-    ){
-
-        if(
-            penalaran.skor >= 20
-        ){
-
-            skor += 4;
-
-        }
-
-        if(
-            penalaran.skor >= 30
-        ){
-
-            skor += 7;
-
-        }
-
-    }
-
-
-    /*
+       =====================================================
        KHUSUS C5
-
-       Evaluasi sederhana bisa Sedang.
-       Evaluasi dengan beberapa alternatif
-       dan alasan dapat Sukar.
+       =====================================================
     */
 
     if(
@@ -1849,7 +2104,9 @@ function analisisKesukaran(soal){
 
 
     /*
+       =====================================================
        KHUSUS C6
+       =====================================================
     */
 
     if(
@@ -1871,6 +2128,10 @@ function analisisKesukaran(soal){
     }
 
 
+    /*
+       BATAS NILAI
+    */
+
     skor =
         Math.max(
             0,
@@ -1887,8 +2148,6 @@ function analisisKesukaran(soal){
 
 
     /*
-       BATAS:
-
        0–39   MUDAH
        40–64  SEDANG
        65–100 SUKAR
@@ -1917,7 +2176,7 @@ function analisisKesukaran(soal){
 
 
     /*
-       Keterangan khusus HOTS.
+       KETERANGAN KHUSUS HOTS
     */
 
     if(
@@ -1931,7 +2190,7 @@ function analisisKesukaran(soal){
         ){
 
             alasan.push(
-                "tuntutan HOTS masih sederhana sehingga tidak otomatis menjadi Sukar"
+                "soal HOTS memiliki tuntutan penalaran sederhana sehingga tetap dapat dikategorikan Mudah"
             );
 
         }else if(
@@ -1940,13 +2199,13 @@ function analisisKesukaran(soal){
         ){
 
             alasan.push(
-                "tuntutan HOTS memerlukan lebih dari satu proses berpikir tetapi belum sangat kompleks"
+                "soal HOTS memerlukan beberapa langkah penalaran tetapi belum sangat kompleks"
             );
 
         }else{
 
             alasan.push(
-                "tuntutan HOTS memerlukan beberapa proses penalaran dan pertimbangan"
+                "soal HOTS memerlukan beberapa hubungan informasi, pertimbangan, atau proses penalaran yang kompleks"
             );
 
         }
@@ -3426,12 +3685,6 @@ function renderQuestions(data){
                     "(Soal tidak tersedia)"
                 );
 
-
-            /*
-               Tampilkan pilihan jawaban jika ada.
-               Ini membantu guru melihat apa yang sebenarnya
-               dianalisis oleh sistem.
-            */
 
             const pilihan =
                 ambilPilihan(
