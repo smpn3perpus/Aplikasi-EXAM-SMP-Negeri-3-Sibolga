@@ -1,0 +1,3157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Analisis Soal - Admin | RUANG EXAM</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f5f9;
+    color:#1e293b;
+}
+
+header{
+    background:linear-gradient(135deg,#0f172a,#1e3a8a);
+    color:white;
+    padding:22px 25px;
+    box-shadow:0 3px 12px rgba(0,0,0,.15);
+}
+
+.header-inner{
+    max-width:1400px;
+    margin:auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+}
+
+.header-title h1{
+    font-size:25px;
+    margin-bottom:6px;
+}
+
+.header-title p{
+    font-size:14px;
+    opacity:.85;
+}
+
+.admin-badge{
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.25);
+    padding:10px 15px;
+    border-radius:12px;
+    font-size:13px;
+}
+
+.container{
+    max-width:1400px;
+    margin:25px auto;
+    padding:0 18px 40px;
+}
+
+.panel{
+    background:white;
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 3px 14px rgba(15,23,42,.07);
+}
+
+.panel-title{
+    font-size:18px;
+    font-weight:700;
+    margin-bottom:16px;
+}
+
+.filter-row{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr auto;
+    gap:12px;
+    align-items:end;
+}
+
+.form-group label{
+    display:block;
+    font-size:13px;
+    font-weight:700;
+    margin-bottom:7px;
+    color:#475569;
+}
+
+select,
+button{
+    width:100%;
+    min-height:43px;
+    border-radius:10px;
+    border:1px solid #cbd5e1;
+    padding:0 13px;
+    font-size:14px;
+}
+
+select{
+    background:white;
+}
+
+button{
+    cursor:pointer;
+    border:none;
+    font-weight:700;
+}
+
+.btn-primary{
+    background:#2563eb;
+    color:white;
+}
+
+.btn-primary:hover{
+    background:#1d4ed8;
+}
+
+.btn-secondary{
+    background:#64748b;
+    color:white;
+}
+
+.info-admin{
+    margin-top:15px;
+    padding:14px 16px;
+    background:#eff6ff;
+    border-left:5px solid #2563eb;
+    border-radius:9px;
+    font-size:14px;
+    line-height:1.6;
+}
+
+.info-admin strong{
+    color:#1d4ed8;
+}
+
+.standard-box{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:13px;
+    padding:15px;
+    margin-top:15px;
+}
+
+.standard-box h3{
+    font-size:15px;
+    margin-bottom:10px;
+}
+
+.standard-list{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:9px;
+}
+
+.standard-item{
+    padding:10px;
+    border-radius:9px;
+    background:white;
+    border:1px solid #e2e8f0;
+    font-size:13px;
+}
+
+.standard-item b{
+    display:block;
+    margin-bottom:4px;
+}
+
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:13px;
+}
+
+.summary-card{
+    background:white;
+    border-radius:14px;
+    padding:17px;
+    box-shadow:0 3px 12px rgba(15,23,42,.06);
+    border:1px solid #e2e8f0;
+}
+
+.summary-card .label{
+    font-size:12px;
+    color:#64748b;
+    margin-bottom:8px;
+}
+
+.summary-card .value{
+    font-size:27px;
+    font-weight:800;
+    color:#0f172a;
+}
+
+.summary-card .sub{
+    margin-top:5px;
+    font-size:12px;
+    color:#64748b;
+}
+
+.section-title{
+    font-size:19px;
+    font-weight:800;
+    margin-bottom:15px;
+}
+
+.bar-row{
+    margin-bottom:17px;
+}
+
+.bar-header{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:7px;
+    font-size:14px;
+    font-weight:700;
+}
+
+.bar-track{
+    height:13px;
+    background:#e2e8f0;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.bar-fill{
+    height:100%;
+    border-radius:20px;
+    transition:.4s;
+}
+
+.bar-normal{
+    background:#2563eb;
+}
+
+.bar-good{
+    background:#16a34a;
+}
+
+.bar-warning{
+    background:#f59e0b;
+}
+
+.bar-danger{
+    background:#dc2626;
+}
+
+.indicator-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:13px;
+}
+
+.indicator{
+    border:1px solid #e2e8f0;
+    border-radius:14px;
+    padding:17px;
+    background:#fff;
+    position:relative;
+    overflow:hidden;
+}
+
+.indicator.ok{
+    border-color:#86efac;
+    background:#f0fdf4;
+}
+
+.indicator.no{
+    border-color:#fecaca;
+    background:#fef2f2;
+}
+
+.indicator .icon{
+    font-size:25px;
+    margin-bottom:9px;
+}
+
+.indicator h3{
+    font-size:14px;
+    margin-bottom:7px;
+}
+
+.indicator .percentage{
+    font-size:25px;
+    font-weight:800;
+    margin-bottom:5px;
+}
+
+.indicator .target{
+    font-size:12px;
+    color:#64748b;
+}
+
+.matrix{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+.matrix th,
+.matrix td{
+    border:1px solid #e2e8f0;
+    padding:12px 10px;
+    text-align:center;
+    font-size:13px;
+}
+
+.matrix th{
+    background:#f8fafc;
+    font-weight:800;
+}
+
+.matrix td:first-child,
+.matrix th:first-child{
+    text-align:left;
+}
+
+.matrix .good{
+    background:#dcfce7;
+    color:#166534;
+    font-weight:800;
+}
+
+.matrix .bad{
+    background:#fee2e2;
+    color:#991b1b;
+    font-weight:800;
+}
+
+.status-box{
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:18px;
+}
+
+.status-box.layak{
+    background:#dcfce7;
+    border:1px solid #86efac;
+    color:#166534;
+}
+
+.status-box.tidak{
+    background:#fee2e2;
+    border:1px solid #fecaca;
+    color:#991b1b;
+}
+
+.status-box h2{
+    font-size:22px;
+    margin-bottom:8px;
+}
+
+.status-box p{
+    line-height:1.6;
+    font-size:14px;
+}
+
+.rekomendasi{
+    background:#fffbeb;
+    border:1px solid #fde68a;
+    border-radius:13px;
+    padding:16px;
+    margin-top:15px;
+}
+
+.rekomendasi h3{
+    color:#92400e;
+    margin-bottom:10px;
+}
+
+.rekomendasi ul{
+    padding-left:20px;
+}
+
+.rekomendasi li{
+    margin-bottom:6px;
+    font-size:14px;
+}
+
+.question-card{
+    border:1px solid #e2e8f0;
+    border-radius:14px;
+    margin-bottom:14px;
+    overflow:hidden;
+    background:white;
+}
+
+.question-header{
+    background:#f8fafc;
+    padding:13px 16px;
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    align-items:center;
+    border-bottom:1px solid #e2e8f0;
+}
+
+.question-number{
+    font-weight:800;
+}
+
+.question-meta{
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+}
+
+.badge{
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:800;
+}
+
+.badge-lots{
+    background:#dbeafe;
+    color:#1e40af;
+}
+
+.badge-mots{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.badge-hots{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.badge-mudah{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.badge-sedang{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.badge-sukar{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.badge-literasi{
+    background:#ede9fe;
+    color:#6d28d9;
+}
+
+.badge-non{
+    background:#e2e8f0;
+    color:#475569;
+}
+
+.question-body{
+    padding:16px;
+}
+
+.question-text{
+    font-size:15px;
+    line-height:1.7;
+    margin-bottom:13px;
+}
+
+.question-analysis{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+.analysis-mini{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    padding:11px;
+    border-radius:9px;
+}
+
+.analysis-mini span{
+    display:block;
+    color:#64748b;
+    font-size:11px;
+    margin-bottom:5px;
+}
+
+.analysis-mini b{
+    font-size:13px;
+}
+
+.literasi-box{
+    margin-top:13px;
+    padding:13px;
+    background:#faf5ff;
+    border-left:4px solid #8b5cf6;
+    border-radius:8px;
+}
+
+.literasi-box strong{
+    display:block;
+    color:#6d28d9;
+    margin-bottom:6px;
+}
+
+.literasi-box p{
+    font-size:13px;
+    line-height:1.6;
+    white-space:pre-wrap;
+}
+
+.empty{
+    text-align:center;
+    padding:45px 20px;
+    color:#64748b;
+}
+
+.empty .icon{
+    font-size:45px;
+    margin-bottom:12px;
+}
+
+.loading{
+    text-align:center;
+    padding:40px;
+    color:#64748b;
+}
+
+.error{
+    padding:16px;
+    background:#fee2e2;
+    color:#991b1b;
+    border-radius:10px;
+    margin-bottom:15px;
+}
+
+.hidden{
+    display:none!important;
+}
+
+.teacher-tag{
+    color:#2563eb;
+    font-weight:700;
+}
+
+@media(max-width:1100px){
+    .summary-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .indicator-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .standard-list{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .filter-row{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:700px){
+    .header-inner{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .summary-grid,
+    .indicator-grid,
+    .standard-list,
+    .question-analysis{
+        grid-template-columns:1fr;
+    }
+
+    .filter-row{
+        grid-template-columns:1fr;
+    }
+
+    .matrix{
+        display:block;
+        overflow-x:auto;
+        white-space:nowrap;
+    }
+
+    .question-header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-inner">
+        <div class="header-title">
+            <h1>📊 Analisis Soal</h1>
+            <p>RUANG EXAM — Panel Administrator</p>
+        </div>
+
+        <div class="admin-badge">
+            👑 ADMIN — Semua Soal
+        </div>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- FILTER -->
+    <div class="panel">
+        <div class="panel-title">🔎 Pilih Data Analisis</div>
+
+        <div class="filter-row">
+
+            <div class="form-group">
+                <label>Ujian</label>
+                <select id="filterUjian">
+                    <option value="semua">📚 Semua Ujian</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Guru</label>
+                <select id="filterGuru">
+                    <option value="semua">👨‍🏫 Semua Guru</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Filter Soal</label>
+                <select id="filterLiterasi">
+                    <option value="semua">Semua Soal</option>
+                    <option value="literasi">Literasi</option>
+                    <option value="nonliterasi">Non-Literasi</option>
+                    <option value="literasihots">Literasi HOTS</option>
+                </select>
+            </div>
+
+            <div>
+                <button class="btn-secondary" id="btnReset">
+                    🔄 Reset
+                </button>
+            </div>
+
+        </div>
+
+        <div class="info-admin">
+            <strong>👑 Mode Administrator:</strong>
+            seluruh soal yang tersimpan di database akan dianalisis.
+            Soal dari guru yang berbeda tidak dibatasi oleh kepemilikan.
+            Admin dapat melihat analisis gabungan seluruh ujian maupun memilih ujian tertentu.
+        </div>
+
+        <div class="standard-box">
+            <h3>📐 Standar Kelayakan Analisis</h3>
+
+            <div class="standard-list">
+
+                <div class="standard-item">
+                    <b>🔵 LOTS + MOTS</b>
+                    30–40%
+                </div>
+
+                <div class="standard-item">
+                    <b>🔴 HOTS</b>
+                    Minimal 50%
+                </div>
+
+                <div class="standard-item">
+                    <b>🟣 Literasi</b>
+                    Minimal 50%
+                </div>
+
+                <div class="standard-item">
+                    <b>🟣 Literasi HOTS</b>
+                    Minimal 50%
+                </div>
+
+                <div class="standard-item">
+                    <b>🟢 Mudah</b>
+                    30%
+                </div>
+
+                <div class="standard-item">
+                    <b>🟡 Sedang</b>
+                    50%
+                </div>
+
+                <div class="standard-item">
+                    <b>🔴 Sukar</b>
+                    20%
+                </div>
+
+                <div class="standard-item">
+                    <b>✅ Kelayakan</b>
+                    Minimal 6/7 indikator
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div id="loading" class="panel loading">
+        ⏳ Memuat data analisis...
+    </div>
+
+    <div id="errorBox" class="error hidden"></div>
+
+    <div id="hasilAnalisis" class="hidden">
+
+        <!-- SUMMARY -->
+        <div class="summary-grid">
+
+            <div class="summary-card">
+                <div class="label">Total Ujian</div>
+                <div class="value" id="totalUjian">0</div>
+                <div class="sub">ujian terpilih</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="label">Total Soal</div>
+                <div class="value" id="totalSoal">0</div>
+                <div class="sub">soal dianalisis</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="label">LOTS</div>
+                <div class="value" id="jumlahLOTS">0</div>
+                <div class="sub" id="persenLOTS">0%</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="label">MOTS</div>
+                <div class="value" id="jumlahMOTS">0</div>
+                <div class="sub" id="persenMOTS">0%</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="label">HOTS</div>
+                <div class="value" id="jumlahHOTS">0</div>
+                <div class="sub" id="persenHOTS">0%</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="label">Literasi</div>
+                <div class="value" id="jumlahLiterasi">0</div>
+                <div class="sub" id="persenLiterasi">0%</div>
+            </div>
+
+        </div>
+
+        <!-- DISTRIBUSI KOGNITIF -->
+        <div class="panel" style="margin-top:20px;">
+            <div class="section-title">
+                🧠 Distribusi Tingkat Kognitif
+            </div>
+
+            <div class="bar-row">
+                <div class="bar-header">
+                    <span>LOTS</span>
+                    <span id="barTextLOTS">0%</span>
+                </div>
+                <div class="bar-track">
+                    <div id="barLOTS" class="bar-fill bar-normal" style="width:0%"></div>
+                </div>
+            </div>
+
+            <div class="bar-row">
+                <div class="bar-header">
+                    <span>MOTS</span>
+                    <span id="barTextMOTS">0%</span>
+                </div>
+                <div class="bar-track">
+                    <div id="barMOTS" class="bar-fill bar-normal" style="width:0%"></div>
+                </div>
+            </div>
+
+            <div class="bar-row">
+                <div class="bar-header">
+                    <span>LOTS + MOTS</span>
+                    <span id="barTextLOTSMOTS">0%</span>
+                </div>
+                <div class="bar-track">
+                    <div id="barLOTSMOTS" class="bar-fill bar-good" style="width:0%"></div>
+                </div>
+            </div>
+
+            <div class="bar-row">
+                <div class="bar-header">
+                    <span>HOTS</span>
+                    <span id="barTextHOTS">0%</span>
+                </div>
+                <div class="bar-track">
+                    <div id="barHOTS" class="bar-fill bar-danger" style="width:0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KESUKARAN -->
+        <div class="panel">
+            <div class="section-title">
+                📊 Distribusi Tingkat Kesukaran
+            </div>
+
+            <div class="bar-row">
+                <div class="bar-header">
+                    <span>Mudah</span>
+                    <span id="barTextMudah">0%</span>
+                </div>
+                <div class="bar-track">
+                    <div id="barMudah" class="bar-fill bar-good" style="width:0%"></div>
+                </div>
+            </div>
+
+            <div class="bar-row">
+                <div class="bar-header">
+                    <span>Sedang</span>
+                    <span id="barTextSedang">0%</span>
+                </div>
+                <div class="bar-track">
+                    <div id="barSedang" class="bar-fill bar-warning" style="width:0%"></div>
+                </div>
+            </div>
+
+            <div class="bar-row">
+                <div class="bar-header">
+                    <span>Sukar</span>
+                    <span id="barTextSukar">0%</span>
+                </div>
+                <div class="bar-track">
+                    <div id="barSukar" class="bar-fill bar-danger" style="width:0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LITERASI -->
+        <div class="panel">
+            <div class="section-title">
+                📖 Analisis Literasi
+            </div>
+
+            <div class="bar-row">
+                <div class="bar-header">
+                    <span>Literasi</span>
+                    <span id="barTextLiterasi">0%</span>
+                </div>
+                <div class="bar-track">
+                    <div id="barLiterasi" class="bar-fill bar-normal" style="width:0%"></div>
+                </div>
+            </div>
+
+            <div class="bar-row">
+                <div class="bar-header">
+                    <span>Literasi HOTS</span>
+                    <span id="barTextLiterasiHOTS">0%</span>
+                </div>
+                <div class="bar-track">
+                    <div id="barLiterasiHOTS" class="bar-fill bar-danger" style="width:0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATUS KELAYAKAN -->
+        <div class="panel">
+            <div class="section-title">
+                ✅ Kelayakan Komposisi Soal
+            </div>
+
+            <div id="statusKelayakan"></div>
+
+            <div id="indikatorGrid" class="indicator-grid"></div>
+
+            <div id="rekomendasi" class="rekomendasi hidden"></div>
+        </div>
+
+        <!-- MATRIX -->
+        <div class="panel">
+            <div class="section-title">
+                📋 Matriks Komposisi Soal
+            </div>
+
+            <div style="overflow-x:auto;">
+                <table class="matrix">
+                    <thead>
+                        <tr>
+                            <th>Tingkat</th>
+                            <th>Mudah</th>
+                            <th>Sedang</th>
+                            <th>Sukar</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td><b>LOTS</b></td>
+                            <td id="lotsMudah">0</td>
+                            <td id="lotsSedang">0</td>
+                            <td id="lotsSukar">0</td>
+                            <td id="lotsTotal">0</td>
+                        </tr>
+
+                        <tr>
+                            <td><b>MOTS</b></td>
+                            <td id="motsMudah">0</td>
+                            <td id="motsSedang">0</td>
+                            <td id="motsSukar">0</td>
+                            <td id="motsTotal">0</td>
+                        </tr>
+
+                        <tr>
+                            <td><b>HOTS</b></td>
+                            <td id="hotsMudah">0</td>
+                            <td id="hotsSedang">0</td>
+                            <td id="hotsSukar">0</td>
+                            <td id="hotsTotal">0</td>
+                        </tr>
+
+                        <tr>
+                            <td><b>Total</b></td>
+                            <td id="totalMudah">0</td>
+                            <td id="totalSedang">0</td>
+                            <td id="totalSukar">0</td>
+                            <td id="matrixTotal">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- DAFTAR SOAL -->
+        <div class="panel">
+            <div class="section-title">
+                📝 Analisis Per Soal
+            </div>
+
+            <div id="daftarSoalAnalisis"></div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+const SUPABASE_URL = "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+const SUPABASE_KEY = "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+let currentUser = null;
+
+let daftarUjian = [];
+let daftarSoal = [];
+let daftarLiterasiSoal = [];
+let daftarLiterasiLegacy = [];
+let daftarGuru = [];
+
+let hasilSemua = [];
+
+
+/* =========================================================
+   LOGIN ADMIN
+========================================================= */
+
+function cekLogin(){
+
+    currentUser =
+        JSON.parse(
+            localStorage.getItem("exam_user") || "null"
+        );
+
+    if(!currentUser){
+
+        alert("Silakan login terlebih dahulu.");
+
+        window.location.href = "login.html";
+
+        return false;
+    }
+
+    if(
+        currentUser.role !== "admin" &&
+        currentUser.role !== "administrator"
+    ){
+
+        alert(
+            "🔒 Halaman Analisis Soal Admin hanya dapat diakses oleh Admin."
+        );
+
+        if(currentUser.role === "guru"){
+            window.location.href = "dashboard-guru.html";
+        }else{
+            window.location.href = "login.html";
+        }
+
+        return false;
+    }
+
+    return true;
+}
+
+
+/* =========================================================
+   NORMALISASI
+========================================================= */
+
+function normalisasi(value){
+
+    if(
+        value === null ||
+        value === undefined
+    ){
+        return "";
+    }
+
+    return String(value)
+        .trim()
+        .toLowerCase();
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value){
+
+    if(
+        value === null ||
+        value === undefined
+    ){
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
+/* =========================================================
+   CARI GURU
+========================================================= */
+
+function namaGuruUjian(ujian){
+
+    const guruId =
+        normalisasi(
+            ujian.guru_id ??
+            ujian.guruId
+        );
+
+    if(guruId){
+
+        const guru =
+            daftarGuru.find(g =>
+                [
+                    g.id,
+                    g.guru_id,
+                    g.profile_id,
+                    g.user_id
+                ]
+                .map(normalisasi)
+                .includes(guruId)
+            );
+
+        if(guru){
+
+            return (
+                guru.nama ??
+                guru.nama_guru ??
+                guru.name ??
+                guru.username ??
+                "Guru"
+            );
+        }
+    }
+
+    return (
+        ujian.guru_nama ??
+        ujian.guruNama ??
+        ujian.nama_guru ??
+        ujian.namaGuru ??
+        "Guru"
+    );
+}
+
+
+/* =========================================================
+   AMBIL DATA
+========================================================= */
+
+async function loadData(){
+
+    try{
+
+        const [
+            ujianRes,
+            soalRes,
+            literasiRes,
+            legacyRes,
+            guruRes
+        ] = await Promise.all([
+
+            supabaseClient
+                .from("ujian")
+                .select("*")
+                .order(
+                    "created_at",
+                    {ascending:false}
+                ),
+
+            supabaseClient
+                .from("soal")
+                .select("*")
+                .order(
+                    "nomor",
+                    {ascending:true}
+                ),
+
+            supabaseClient
+                .from("literasi_soal")
+                .select("*"),
+
+            supabaseClient
+                .from("literasi")
+                .select("*"),
+
+            supabaseClient
+                .from("guru")
+                .select("*")
+
+        ]);
+
+
+        if(ujianRes.error)
+            throw ujianRes.error;
+
+        if(soalRes.error)
+            throw soalRes.error;
+
+
+        daftarUjian =
+            ujianRes.data || [];
+
+        daftarSoal =
+            soalRes.data || [];
+
+        daftarLiterasiSoal =
+            literasiRes.error
+                ? []
+                : (literasiRes.data || []);
+
+        daftarLiterasiLegacy =
+            legacyRes.error
+                ? []
+                : (legacyRes.data || []);
+
+        daftarGuru =
+            guruRes.error
+                ? []
+                : (guruRes.data || []);
+
+
+        isiFilterUjian();
+
+        isiFilterGuru();
+
+        prosesFilter();
+
+
+        document
+            .getElementById("loading")
+            .classList.add("hidden");
+
+        document
+            .getElementById("hasilAnalisis")
+            .classList.remove("hidden");
+
+    }catch(error){
+
+        console.error(error);
+
+        document
+            .getElementById("loading")
+            .classList.add("hidden");
+
+        const box =
+            document.getElementById("errorBox");
+
+        box.classList.remove("hidden");
+
+        box.innerHTML =
+            "❌ Gagal memuat data: " +
+            escapeHTML(error.message || error);
+
+    }
+}
+
+
+/* =========================================================
+   FILTER UJIAN
+========================================================= */
+
+function isiFilterUjian(){
+
+    const select =
+        document.getElementById("filterUjian");
+
+    select.innerHTML =
+        `<option value="semua">
+            📚 Semua Ujian
+        </option>`;
+
+
+    daftarUjian.forEach(ujian => {
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            String(ujian.id);
+
+        option.textContent =
+            (
+                ujian.judul ??
+                ujian.nama_ujian ??
+                ujian.nama ??
+                "Ujian"
+            );
+
+        select.appendChild(option);
+
+    });
+
+}
+
+
+/* =========================================================
+   FILTER GURU
+========================================================= */
+
+function isiFilterGuru(){
+
+    const select =
+        document.getElementById("filterGuru");
+
+    select.innerHTML =
+        `<option value="semua">
+            👨‍🏫 Semua Guru
+        </option>`;
+
+
+    const guruMap =
+        new Map();
+
+
+    daftarUjian.forEach(ujian => {
+
+        const id =
+            normalisasi(
+                ujian.guru_id ??
+                ujian.guruId
+            );
+
+        const nama =
+            namaGuruUjian(ujian);
+
+        const key =
+            id || normalisasi(nama);
+
+        if(key && !guruMap.has(key)){
+
+            guruMap.set(
+                key,
+                {
+                    id:key,
+                    nama:nama
+                }
+            );
+
+        }
+
+    });
+
+
+    [...guruMap.values()]
+        .sort(
+            (a,b) =>
+                a.nama.localeCompare(
+                    b.nama,
+                    "id"
+                )
+        )
+        .forEach(guru => {
+
+            const option =
+                document.createElement("option");
+
+            option.value =
+                guru.id;
+
+            option.textContent =
+                "👨‍🏫 " + guru.nama;
+
+            select.appendChild(option);
+
+        });
+
+}
+
+
+/* =========================================================
+   CARI LITERASI
+========================================================= */
+
+function cariLiterasi(soal){
+
+    const ujianId =
+        normalisasi(soal.ujian_id);
+
+    const nomor =
+        Number(soal.nomor);
+
+
+    /* PRIORITAS 1
+       literasi_id langsung
+    */
+
+    if(soal.literasi_id){
+
+        const langsung =
+            daftarLiterasiSoal.find(
+                lit =>
+                    normalisasi(lit.id) ===
+                    normalisasi(soal.literasi_id)
+            );
+
+        if(langsung){
+
+            return langsung;
+        }
+
+    }
+
+
+    /* PRIORITAS 2
+       literasi_soal berdasarkan rentang nomor
+    */
+
+    const rentang =
+        daftarLiterasiSoal.find(lit => {
+
+            if(
+                normalisasi(lit.ujian_id) !==
+                ujianId
+            ){
+                return false;
+            }
+
+            const mulai =
+                Number(lit.nomor_mulai);
+
+            const sampai =
+                Number(lit.nomor_selesai);
+
+            if(
+                Number.isNaN(mulai) ||
+                Number.isNaN(sampai) ||
+                Number.isNaN(nomor)
+            ){
+                return false;
+            }
+
+            return (
+                nomor >= mulai &&
+                nomor <= sampai
+            );
+
+        });
+
+
+    if(rentang){
+
+        return rentang;
+    }
+
+
+    /* PRIORITAS 3
+       legacy literasi
+    */
+
+    const legacy =
+        daftarLiterasiLegacy.find(lit => {
+
+            if(
+                normalisasi(lit.ujian_id) !==
+                ujianId
+            ){
+                return false;
+            }
+
+            const mulai =
+                Number(lit.nomor_mulai);
+
+            const sampai =
+                Number(lit.nomor_selesai);
+
+            if(
+                Number.isNaN(mulai) ||
+                Number.isNaN(sampai)
+            ){
+                return false;
+            }
+
+            return (
+                nomor >= mulai &&
+                nomor <= sampai
+            );
+
+        });
+
+
+    return legacy || null;
+}
+
+
+/* =========================================================
+   DETEKSI KOGNITIF
+========================================================= */
+
+function mengandung(text, daftar){
+
+    const t =
+        normalisasi(text);
+
+    return daftar.some(
+        kata => t.includes(kata)
+    );
+}
+
+
+function analisisKognitif(soal){
+
+    const teks =
+        [
+            soal.pertanyaan,
+            soal.teks_tertaut,
+            soal.teks_mulai,
+            soal.teks_sampai
+        ]
+        .filter(Boolean)
+        .join(" ");
+
+
+    /*
+       C6
+    */
+
+    if(
+        mengandung(teks,[
+            "rancang",
+            "merancang",
+            "ciptakan",
+            "menciptakan",
+            "buatlah",
+            "susunlah",
+            "kembangkan",
+            "mengembangkan",
+            "desain",
+            "merancang solusi",
+            "menghasilkan"
+        ])
+    ){
+        return {
+            level:"C6",
+            kategori:"HOTS"
+        };
+    }
+
+
+    /*
+       C5
+    */
+
+    if(
+        mengandung(teks,[
+            "evaluasi",
+            "mengevaluasi",
+            "nilai",
+            "menilai",
+            "kritik",
+            "mengkritisi",
+            "setujukah",
+            "tepatkah",
+            "mana yang lebih tepat",
+            "alasan paling kuat",
+            "kelemahan",
+            "keunggulan"
+        ])
+    ){
+        return {
+            level:"C5",
+            kategori:"HOTS"
+        };
+    }
+
+
+    /*
+       C4
+    */
+
+    if(
+        mengandung(teks,[
+            "analisis",
+            "menganalisis",
+            "bandingkan",
+            "membandingkan",
+            "hubungan",
+            "mengapa",
+            "sebab",
+            "akibat",
+            "simpulkan",
+            "kesimpulan",
+            "berdasarkan data",
+            "berdasarkan tabel",
+            "berdasarkan grafik",
+            "prediksi",
+            "memprediksi"
+        ])
+    ){
+        return {
+            level:"C4",
+            kategori:"HOTS"
+        };
+    }
+
+
+    /*
+       C3
+    */
+
+    if(
+        mengandung(teks,[
+            "hitunglah",
+            "tentukan hasil",
+            "gunakan rumus",
+            "menggunakan",
+            "terapkan",
+            "menerapkan",
+            "praktikkan",
+            "praktikan",
+            "gunakan konsep"
+        ])
+    ){
+        return {
+            level:"C3",
+            kategori:"MOTS"
+        };
+    }
+
+
+    /*
+       C2
+    */
+
+    if(
+        mengandung(teks,[
+            "jelaskan",
+            "jelaskanlah",
+            "mengapa",
+            "uraikan",
+            "identifikasi",
+            "bedakan",
+            "apa perbedaan",
+            "hubungkan"
+        ])
+    ){
+        return {
+            level:"C2",
+            kategori:"LOTS"
+        };
+    }
+
+
+    /*
+       Default C1
+    */
+
+    return {
+        level:"C1",
+        kategori:"LOTS"
+    };
+
+}
+
+
+/* =========================================================
+   ANALISIS KESUKARAN
+========================================================= */
+
+function analisisKesukaran(soal){
+
+    const teks =
+        normalisasi(
+            [
+                soal.pertanyaan,
+                soal.teks_tertaut,
+                soal.teks_mulai,
+                soal.teks_sampai
+            ]
+            .filter(Boolean)
+            .join(" ")
+        );
+
+
+    let skor = 0;
+
+
+    /*
+       Panjang teks
+    */
+
+    if(teks.length > 350){
+        skor += 2;
+    }else if(teks.length > 180){
+        skor += 1;
+    }
+
+
+    /*
+       Konjungsi / penalaran
+    */
+
+    const jumlahKataHubung =
+        [
+            "karena",
+            "sehingga",
+            "sedangkan",
+            "namun",
+            "jika",
+            "apabila",
+            "berdasarkan",
+            "dengan demikian"
+        ]
+        .filter(k =>
+            teks.includes(k)
+        )
+        .length;
+
+
+    if(jumlahKataHubung >= 3){
+        skor += 2;
+    }else if(jumlahKataHubung >= 1){
+        skor += 1;
+    }
+
+
+    /*
+       Angka / data
+    */
+
+    const jumlahAngka =
+        (
+            teks.match(/\d+/g) || []
+        ).length;
+
+
+    if(jumlahAngka >= 4){
+        skor += 2;
+    }else if(jumlahAngka >= 1){
+        skor += 1;
+    }
+
+
+    /*
+       Perhitungan
+    */
+
+    if(
+        mengandung(teks,[
+            "hitung",
+            "perhitungan",
+            "rumus",
+            "persentase",
+            "selisih",
+            "volume",
+            "luas",
+            "massa",
+            "kecepatan"
+        ])
+    ){
+        skor += 2;
+    }
+
+
+    /*
+       Stimulus
+    */
+
+    if(
+        mengandung(teks,[
+            "tabel",
+            "grafik",
+            "diagram",
+            "gambar",
+            "data",
+            "hasil pengamatan",
+            "percobaan"
+        ])
+    ){
+        skor += 1;
+    }
+
+
+    if(skor >= 5){
+        return "Sukar";
+    }
+
+    if(skor >= 2){
+        return "Sedang";
+    }
+
+    return "Mudah";
+
+}
+
+
+/* =========================================================
+   BUAT ANALISIS
+========================================================= */
+
+function buatAnalisis(soal){
+
+    const kognitif =
+        analisisKognitif(soal);
+
+    const kesukaran =
+        analisisKesukaran(soal);
+
+    const literasi =
+        cariLiterasi(soal);
+
+
+    return {
+
+        ...soal,
+
+        level:kognitif.level,
+
+        kategori:kognitif.kategori,
+
+        kesukaran,
+
+        literasi,
+
+        isLiterasi:!!literasi,
+
+        isLiterasiHOTS:
+            !!literasi &&
+            kognitif.kategori === "HOTS"
+
+    };
+
+}
+
+
+/* =========================================================
+   PERSENTASE
+========================================================= */
+
+function persen(jumlah,total){
+
+    if(!total){
+        return 0;
+    }
+
+    return Math.round(
+        (jumlah / total) * 1000
+    ) / 10;
+
+}
+
+
+/* =========================================================
+   FILTER DATA
+========================================================= */
+
+function prosesFilter(){
+
+    const ujianValue =
+        document.getElementById(
+            "filterUjian"
+        ).value;
+
+    const guruValue =
+        document.getElementById(
+            "filterGuru"
+        ).value;
+
+    const literasiValue =
+        document.getElementById(
+            "filterLiterasi"
+        ).value;
+
+
+    let ujianTerpilih =
+        [...daftarUjian];
+
+
+    /*
+       Filter ujian
+    */
+
+    if(ujianValue !== "semua"){
+
+        ujianTerpilih =
+            ujianTerpilih.filter(
+                ujian =>
+                    String(ujian.id) ===
+                    String(ujianValue)
+            );
+
+    }
+
+
+    /*
+       Filter guru
+    */
+
+    if(guruValue !== "semua"){
+
+        ujianTerpilih =
+            ujianTerpilih.filter(ujian => {
+
+                const id =
+                    normalisasi(
+                        ujian.guru_id ??
+                        ujian.guruId
+                    );
+
+                const nama =
+                    normalisasi(
+                        namaGuruUjian(ujian)
+                    );
+
+                return (
+                    id ===
+                    normalisasi(guruValue)
+                ) || (
+                    !id &&
+                    nama ===
+                    normalisasi(guruValue)
+                );
+
+            });
+
+    }
+
+
+    const idUjian =
+        new Set(
+            ujianTerpilih.map(
+                u => String(u.id)
+            )
+        );
+
+
+    let soalTerpilih =
+        daftarSoal.filter(
+            soal =>
+                idUjian.has(
+                    String(soal.ujian_id)
+                )
+        );
+
+
+    /*
+       Buat analisis
+    */
+
+    hasilSemua =
+        soalTerpilih.map(
+            buatAnalisis
+        );
+
+
+    /*
+       Filter jenis literasi
+    */
+
+    if(literasiValue === "literasi"){
+
+        hasilSemua =
+            hasilSemua.filter(
+                x => x.isLiterasi
+            );
+
+    }
+
+    if(literasiValue === "nonliterasi"){
+
+        hasilSemua =
+            hasilSemua.filter(
+                x => !x.isLiterasi
+            );
+
+    }
+
+    if(literasiValue === "literasihots"){
+
+        hasilSemua =
+            hasilSemua.filter(
+                x => x.isLiterasiHOTS
+            );
+
+    }
+
+
+    renderSemua(
+        ujianTerpilih,
+        hasilSemua
+    );
+
+}
+
+
+/* =========================================================
+   RENDER SEMUA
+========================================================= */
+
+function renderSemua(
+    ujianTerpilih,
+    data
+){
+
+    renderSummary(
+        ujianTerpilih,
+        data
+    );
+
+    renderDistribusi(
+        data
+    );
+
+    renderKelayakan(
+        data
+    );
+
+    renderMatrix(
+        data
+    );
+
+    renderDaftarSoal(
+        data
+    );
+
+}
+
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+function renderSummary(
+    ujianTerpilih,
+    data
+){
+
+    const total =
+        data.length;
+
+
+    const lots =
+        data.filter(
+            x => x.kategori === "LOTS"
+        ).length;
+
+    const mots =
+        data.filter(
+            x => x.kategori === "MOTS"
+        ).length;
+
+    const hots =
+        data.filter(
+            x => x.kategori === "HOTS"
+        ).length;
+
+    const literasi =
+        data.filter(
+            x => x.isLiterasi
+        ).length;
+
+
+    document.getElementById(
+        "totalUjian"
+    ).textContent =
+        ujianTerpilih.length;
+
+
+    document.getElementById(
+        "totalSoal"
+    ).textContent =
+        total;
+
+
+    document.getElementById(
+        "jumlahLOTS"
+    ).textContent =
+        lots;
+
+
+    document.getElementById(
+        "persenLOTS"
+    ).textContent =
+        persen(lots,total) + "%";
+
+
+    document.getElementById(
+        "jumlahMOTS"
+    ).textContent =
+        mots;
+
+
+    document.getElementById(
+        "persenMOTS"
+    ).textContent =
+        persen(mots,total) + "%";
+
+
+    document.getElementById(
+        "jumlahHOTS"
+    ).textContent =
+        hots;
+
+
+    document.getElementById(
+        "persenHOTS"
+    ).textContent =
+        persen(hots,total) + "%";
+
+
+    document.getElementById(
+        "jumlahLiterasi"
+    ).textContent =
+        literasi;
+
+
+    document.getElementById(
+        "persenLiterasi"
+    ).textContent =
+        persen(literasi,total) + "%";
+
+}
+
+
+/* =========================================================
+   BAR
+========================================================= */
+
+function setBar(
+    id,
+    textId,
+    value
+){
+
+    const safe =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                value
+            )
+        );
+
+
+    document.getElementById(
+        id
+    ).style.width =
+        safe + "%";
+
+
+    document.getElementById(
+        textId
+    ).textContent =
+        value + "%";
+
+}
+
+
+/* =========================================================
+   DISTRIBUSI
+========================================================= */
+
+function renderDistribusi(data){
+
+    const total =
+        data.length;
+
+
+    const lots =
+        data.filter(
+            x => x.kategori === "LOTS"
+        ).length;
+
+    const mots =
+        data.filter(
+            x => x.kategori === "MOTS"
+        ).length;
+
+    const hots =
+        data.filter(
+            x => x.kategori === "HOTS"
+        ).length;
+
+
+    const pLots =
+        persen(lots,total);
+
+    const pMots =
+        persen(mots,total);
+
+    const pLotsMots =
+        persen(
+            lots + mots,
+            total
+        );
+
+    const pHots =
+        persen(hots,total);
+
+
+    setBar(
+        "barLOTS",
+        "barTextLOTS",
+        pLots
+    );
+
+    setBar(
+        "barMOTS",
+        "barTextMOTS",
+        pMots
+    );
+
+    setBar(
+        "barLOTSMOTS",
+        "barTextLOTSMOTS",
+        pLotsMots
+    );
+
+    setBar(
+        "barHOTS",
+        "barTextHOTS",
+        pHots
+    );
+
+
+    const mudah =
+        data.filter(
+            x => x.kesukaran === "Mudah"
+        ).length;
+
+    const sedang =
+        data.filter(
+            x => x.kesukaran === "Sedang"
+        ).length;
+
+    const sukar =
+        data.filter(
+            x => x.kesukaran === "Sukar"
+        ).length;
+
+
+    const pMudah =
+        persen(mudah,total);
+
+    const pSedang =
+        persen(sedang,total);
+
+    const pSukar =
+        persen(sukar,total);
+
+
+    setBar(
+        "barMudah",
+        "barTextMudah",
+        pMudah
+    );
+
+    setBar(
+        "barSedang",
+        "barTextSedang",
+        pSedang
+    );
+
+    setBar(
+        "barSukar",
+        "barTextSukar",
+        pSukar
+    );
+
+
+    const literasi =
+        data.filter(
+            x => x.isLiterasi
+        ).length;
+
+    const literasiHOTS =
+        data.filter(
+            x => x.isLiterasiHOTS
+        ).length;
+
+
+    const pLiterasi =
+        persen(
+            literasi,
+            total
+        );
+
+    const pLiterasiHOTS =
+        persen(
+            literasiHOTS,
+            total
+        );
+
+
+    setBar(
+        "barLiterasi",
+        "barTextLiterasi",
+        pLiterasi
+    );
+
+    setBar(
+        "barLiterasiHOTS",
+        "barTextLiterasiHOTS",
+        pLiterasiHOTS
+    );
+
+}
+
+
+/* =========================================================
+   KELAYAKAN
+========================================================= */
+
+function renderKelayakan(data){
+
+    const total =
+        data.length;
+
+
+    if(!total){
+
+        document.getElementById(
+            "statusKelayakan"
+        ).innerHTML = `
+            <div class="status-box tidak">
+                <h2>⚠️ BELUM ADA DATA</h2>
+                <p>
+                    Tidak ada soal yang sesuai dengan filter yang dipilih.
+                </p>
+            </div>
+        `;
+
+        document.getElementById(
+            "indikatorGrid"
+        ).innerHTML = "";
+
+        document.getElementById(
+            "rekomendasi"
+        ).classList.add("hidden");
+
+        return;
+    }
+
+
+    const lots =
+        data.filter(
+            x => x.kategori === "LOTS"
+        ).length;
+
+    const mots =
+        data.filter(
+            x => x.kategori === "MOTS"
+        ).length;
+
+    const hots =
+        data.filter(
+            x => x.kategori === "HOTS"
+        ).length;
+
+
+    const mudah =
+        data.filter(
+            x => x.kesukaran === "Mudah"
+        ).length;
+
+    const sedang =
+        data.filter(
+            x => x.kesukaran === "Sedang"
+        ).length;
+
+    const sukar =
+        data.filter(
+            x => x.kesukaran === "Sukar"
+        ).length;
+
+
+    const literasi =
+        data.filter(
+            x => x.isLiterasi
+        ).length;
+
+    const literasiHOTS =
+        data.filter(
+            x => x.isLiterasiHOTS
+        ).length;
+
+
+    const pLOTSMOTS =
+        persen(
+            lots + mots,
+            total
+        );
+
+    const pHOTS =
+        persen(
+            hots,
+            total
+        );
+
+    const pLiterasi =
+        persen(
+            literasi,
+            total
+        );
+
+    const pLiterasiHOTS =
+        persen(
+            literasiHOTS,
+            total
+        );
+
+    const pMudah =
+        persen(
+            mudah,
+            total
+        );
+
+    const pSedang =
+        persen(
+            sedang,
+            total
+        );
+
+    const pSukar =
+        persen(
+            sukar,
+            total
+        );
+
+
+    /*
+       7 INDIKATOR
+    */
+
+    const okLOTSMOTS =
+        pLOTSMOTS >= 30 &&
+        pLOTSMOTS <= 40;
+
+    const okHOTS =
+        pHOTS >= 50;
+
+    const okLiterasi =
+        pLiterasi >= 50;
+
+    const okLiterasiHOTS =
+        pLiterasiHOTS >= 50;
+
+    const okMudah =
+        pMudah === 30;
+
+    const okSedang =
+        pSedang === 50;
+
+    const okSukar =
+        pSukar === 20;
+
+
+    const indikator = [
+
+        {
+            nama:"LOTS + MOTS",
+            nilai:pLOTSMOTS,
+            target:"30–40%",
+            ok:okLOTSMOTS
+        },
+
+        {
+            nama:"HOTS",
+            nilai:pHOTS,
+            target:"≥ 50%",
+            ok:okHOTS
+        },
+
+        {
+            nama:"Literasi",
+            nilai:pLiterasi,
+            target:"≥ 50%",
+            ok:okLiterasi
+        },
+
+        {
+            nama:"Literasi HOTS",
+            nilai:pLiterasiHOTS,
+            target:"≥ 50%",
+            ok:okLiterasiHOTS
+        },
+
+        {
+            nama:"Mudah",
+            nilai:pMudah,
+            target:"30%",
+            ok:okMudah
+        },
+
+        {
+            nama:"Sedang",
+            nilai:pSedang,
+            target:"50%",
+            ok:okSedang
+        },
+
+        {
+            nama:"Sukar",
+            nilai:pSukar,
+            target:"20%",
+            ok:okSukar
+        }
+
+    ];
+
+
+    const memenuhi =
+        indikator.filter(
+            x => x.ok
+        ).length;
+
+
+    const layak =
+        memenuhi >= 6;
+
+
+    const status =
+        document.getElementById(
+            "statusKelayakan"
+        );
+
+
+    if(layak){
+
+        status.innerHTML = `
+            <div class="status-box layak">
+
+                <h2>
+                    🟢 LAYAK
+                </h2>
+
+                <p>
+                    Komposisi soal memenuhi
+                    <strong>${memenuhi}/7 indikator</strong>.
+                    Minimal 6 dari 7 indikator harus terpenuhi.
+                    ${
+                        memenuhi === 7
+                        ? "Semua indikator telah terpenuhi."
+                        : "Komposisi masih dapat disempurnakan agar mencapai 7/7."
+                    }
+                </p>
+
+            </div>
+        `;
+
+    }else{
+
+        status.innerHTML = `
+            <div class="status-box tidak">
+
+                <h2>
+                    🔴 TIDAK LAYAK
+                </h2>
+
+                <p>
+                    Komposisi soal baru memenuhi
+                    <strong>${memenuhi}/7 indikator</strong>.
+                    Minimal 6 dari 7 indikator harus terpenuhi.
+                </p>
+
+            </div>
+        `;
+
+    }
+
+
+    /*
+       RENDER INDIKATOR
+    */
+
+    document.getElementById(
+        "indikatorGrid"
+    ).innerHTML =
+        indikator.map(item => `
+
+            <div class="indicator ${
+                item.ok
+                ? "ok"
+                : "no"
+            }">
+
+                <div class="icon">
+                    ${
+                        item.ok
+                        ? "✅"
+                        : "❌"
+                    }
+                </div>
+
+                <h3>
+                    ${escapeHTML(item.nama)}
+                </h3>
+
+                <div class="percentage">
+                    ${item.nilai}%
+                </div>
+
+                <div class="target">
+                    Target: ${escapeHTML(item.target)}
+                </div>
+
+            </div>
+
+        `).join("");
+
+
+    /*
+       REKOMENDASI
+    */
+
+    const masalah = [];
+
+
+    if(!okLOTSMOTS){
+
+        masalah.push(
+            `LOTS + MOTS = ${pLOTSMOTS}%.
+             Target 30–40%.`
+        );
+
+    }
+
+
+    if(!okHOTS){
+
+        masalah.push(
+            `HOTS = ${pHOTS}%.
+             Minimal HOTS 50%.`
+        );
+
+    }
+
+
+    if(!okLiterasi){
+
+        masalah.push(
+            `Literasi = ${pLiterasi}%.
+             Minimal Literasi 50%.`
+        );
+
+    }
+
+
+    if(!okLiterasiHOTS){
+
+        masalah.push(
+            `Literasi HOTS = ${pLiterasiHOTS}%.
+             Minimal 50%.`
+        );
+
+    }
+
+
+    if(!okMudah){
+
+        masalah.push(
+            `Soal Mudah = ${pMudah}%.
+             Target 30%.`
+        );
+
+    }
+
+
+    if(!okSedang){
+
+        masalah.push(
+            `Soal Sedang = ${pSedang}%.
+             Target 50%.`
+        );
+
+    }
+
+
+    if(!okSukar){
+
+        masalah.push(
+            `Soal Sukar = ${pSukar}%.
+             Target 20%.`
+        );
+
+    }
+
+
+    const rekomendasi =
+        document.getElementById(
+            "rekomendasi"
+        );
+
+
+    if(masalah.length){
+
+        rekomendasi.classList.remove(
+            "hidden"
+        );
+
+        rekomendasi.innerHTML = `
+
+            <h3>
+                💡 Bagian yang Perlu Diperhatikan
+            </h3>
+
+            <ul>
+                ${
+                    masalah.map(
+                        x =>
+                        `<li>${x}</li>`
+                    ).join("")
+                }
+            </ul>
+
+        `;
+
+    }else{
+
+        rekomendasi.classList.remove(
+            "hidden"
+        );
+
+        rekomendasi.innerHTML = `
+
+            <h3>
+                🎉 Komposisi Sangat Sesuai
+            </h3>
+
+            <p>
+                Seluruh 7 indikator telah terpenuhi.
+                Komposisi soal sudah sesuai dengan standar analisis yang ditetapkan.
+            </p>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   MATRIX
+========================================================= */
+
+function renderMatrix(data){
+
+    const kategori =
+        ["LOTS","MOTS","HOTS"];
+
+    const tingkat =
+        ["Mudah","Sedang","Sukar"];
+
+
+    kategori.forEach(kat => {
+
+        tingkat.forEach(t => {
+
+            const jumlah =
+                data.filter(
+                    x =>
+                        x.kategori === kat &&
+                        x.kesukaran === t
+                ).length;
+
+
+            const id =
+                kat.toLowerCase() +
+                t;
+
+
+            const cell =
+                document.getElementById(id);
+
+
+            if(cell){
+
+                cell.textContent =
+                    jumlah;
+
+                cell.className =
+                    jumlah > 0
+                    ? "good"
+                    : "";
+
+            }
+
+        });
+
+
+        const total =
+            data.filter(
+                x =>
+                    x.kategori === kat
+            ).length;
+
+
+        document.getElementById(
+            kat.toLowerCase() + "Total"
+        ).textContent =
+            total;
+
+    });
+
+
+    tingkat.forEach(t => {
+
+        const total =
+            data.filter(
+                x =>
+                    x.kesukaran === t
+            ).length;
+
+
+        const id =
+            "total" + t;
+
+
+        document.getElementById(
+            id
+        ).textContent =
+            total;
+
+    });
+
+
+    document.getElementById(
+        "matrixTotal"
+    ).textContent =
+        data.length;
+
+}
+
+
+/* =========================================================
+   DAFTAR SOAL
+========================================================= */
+
+function renderDaftarSoal(data){
+
+    const container =
+        document.getElementById(
+            "daftarSoalAnalisis"
+        );
+
+
+    if(!data.length){
+
+        container.innerHTML = `
+
+            <div class="empty">
+
+                <div class="icon">
+                    📝
+                </div>
+
+                <p>
+                    Tidak ada soal yang sesuai dengan filter.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    /*
+       Urutkan berdasarkan ujian
+       lalu nomor soal
+    */
+
+    const sorted =
+        [...data].sort(
+            (a,b) => {
+
+                const ujianA =
+                    normalisasi(
+                        a.ujian_id
+                    );
+
+                const ujianB =
+                    normalisasi(
+                        b.ujian_id
+                    );
+
+                if(ujianA !== ujianB){
+
+                    return ujianA.localeCompare(
+                        ujianB
+                    );
+
+                }
+
+                return (
+                    Number(a.nomor || 0) -
+                    Number(b.nomor || 0)
+                );
+
+            }
+        );
+
+
+    container.innerHTML =
+        sorted.map(
+            (soal,index) => {
+
+                const ujian =
+                    daftarUjian.find(
+                        u =>
+                            String(u.id) ===
+                            String(soal.ujian_id)
+                    );
+
+
+                const namaUjian =
+                    ujian
+                    ? (
+                        ujian.judul ??
+                        ujian.nama_ujian ??
+                        ujian.nama ??
+                        "Ujian"
+                    )
+                    : "Ujian";
+
+
+                const namaGuru =
+                    ujian
+                    ? namaGuruUjian(ujian)
+                    : "Guru";
+
+
+                const teksSoal =
+                    soal.pertanyaan ??
+                    "";
+
+
+                let literasiHTML = "";
+
+
+                if(soal.isLiterasi){
+
+                    const lit =
+                        soal.literasi;
+
+
+                    const judul =
+                        lit
+                        ? (
+                            lit.judul ??
+                            "Literasi"
+                        )
+                        : "Literasi";
+
+
+                    const isi =
+                        lit
+                        ? (
+                            lit.isi_literasi ??
+                            lit.isi ??
+                            ""
+                        )
+                        : "";
+
+
+                    literasiHTML = `
+
+                        <div class="literasi-box">
+
+                            <strong>
+                                📖 ${escapeHTML(judul)}
+                            </strong>
+
+                            ${
+                                isi
+                                ? `<p>${escapeHTML(isi)}</p>`
+                                : `<p>Naskah literasi terdeteksi.</p>`
+                            }
+
+                        </div>
+
+                    `;
+
+                }
+
+
+                const badgeKognitif =
+                    soal.kategori === "HOTS"
+                    ? "badge-hots"
+                    : soal.kategori === "MOTS"
+                    ? "badge-mots"
+                    : "badge-lots";
+
+
+                const badgeKesukaran =
+                    soal.kesukaran === "Sukar"
+                    ? "badge-sukar"
+                    : soal.kesukaran === "Sedang"
+                    ? "badge-sedang"
+                    : "badge-mudah";
+
+
+                return `
+
+                    <div class="question-card">
+
+                        <div class="question-header">
+
+                            <div>
+
+                                <div class="question-number">
+                                    Soal ${escapeHTML(
+                                        soal.nomor ??
+                                        (index + 1)
+                                    )}
+                                </div>
+
+                                <div style="
+                                    font-size:12px;
+                                    color:#64748b;
+                                    margin-top:4px;
+                                ">
+                                    ${escapeHTML(namaUjian)}
+                                    —
+                                    <span class="teacher-tag">
+                                        ${escapeHTML(namaGuru)}
+                                    </span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="question-meta">
+
+                                <span class="badge ${badgeKognitif}">
+                                    ${escapeHTML(soal.level)}
+                                    —
+                                    ${escapeHTML(soal.kategori)}
+                                </span>
+
+                                <span class="badge ${badgeKesukaran}">
+                                    ${escapeHTML(soal.kesukaran)}
+                                </span>
+
+                                ${
+                                    soal.isLiterasi
+                                    ? `
+                                        <span class="badge badge-literasi">
+                                            📖 Literasi
+                                        </span>
+                                    `
+                                    : `
+                                        <span class="badge badge-non">
+                                            Non-Literasi
+                                        </span>
+                                    `
+                                }
+
+                                ${
+                                    soal.isLiterasiHOTS
+                                    ? `
+                                        <span class="badge badge-hots">
+                                            🔥 Literasi HOTS
+                                        </span>
+                                    `
+                                    : ""
+                                }
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="question-body">
+
+                            <div class="question-text">
+                                ${escapeHTML(teksSoal)}
+                            </div>
+
+
+                            <div class="question-analysis">
+
+                                <div class="analysis-mini">
+                                    <span>
+                                        Tingkat Kognitif
+                                    </span>
+
+                                    <b>
+                                        ${escapeHTML(soal.level)}
+                                        —
+                                        ${escapeHTML(soal.kategori)}
+                                    </b>
+                                </div>
+
+
+                                <div class="analysis-mini">
+                                    <span>
+                                        Kesukaran
+                                    </span>
+
+                                    <b>
+                                        ${escapeHTML(soal.kesukaran)}
+                                    </b>
+                                </div>
+
+
+                                <div class="analysis-mini">
+                                    <span>
+                                        Literasi
+                                    </span>
+
+                                    <b>
+                                        ${
+                                            soal.isLiterasi
+                                            ? "YA"
+                                            : "TIDAK"
+                                        }
+                                    </b>
+                                </div>
+
+                            </div>
+
+
+                            ${literasiHTML}
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+/* =========================================================
+   EVENT
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function(){
+
+        if(!cekLogin()){
+            return;
+        }
+
+
+        document
+            .getElementById("filterUjian")
+            .addEventListener(
+                "change",
+                prosesFilter
+            );
+
+
+        document
+            .getElementById("filterGuru")
+            .addEventListener(
+                "change",
+                prosesFilter
+            );
+
+
+        document
+            .getElementById("filterLiterasi")
+            .addEventListener(
+                "change",
+                prosesFilter
+            );
+
+
+        document
+            .getElementById("btnReset")
+            .addEventListener(
+                "click",
+                function(){
+
+                    document.getElementById(
+                        "filterUjian"
+                    ).value =
+                        "semua";
+
+                    document.getElementById(
+                        "filterGuru"
+                    ).value =
+                        "semua";
+
+                    document.getElementById(
+                        "filterLiterasi"
+                    ).value =
+                        "semua";
+
+                    prosesFilter();
+
+                }
+            );
+
+
+        await loadData();
+
+    }
+);
+
+</script>
+
+</body>
+</html>
