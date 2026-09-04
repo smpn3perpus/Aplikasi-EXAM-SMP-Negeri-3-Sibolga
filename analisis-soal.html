@@ -21,10 +21,6 @@ body{
     color:#1f2937;
 }
 
-/* =========================================================
-HEADER
-========================================================= */
-
 .header{
     background:linear-gradient(135deg,#1e3a8a,#2563eb);
     color:white;
@@ -71,19 +67,11 @@ HEADER
     color:white;
 }
 
-/* =========================================================
-CONTAINER
-========================================================= */
-
 .container{
     max-width:1500px;
     margin:25px auto;
     padding:0 20px;
 }
-
-/* =========================================================
-FILTER
-========================================================= */
 
 .filter-box{
     background:white;
@@ -122,23 +110,25 @@ FILTER
     outline:none;
 }
 
-/* =========================================================
-NOTE
-========================================================= */
-
 .note{
     background:#eff6ff;
     border-left:5px solid #2563eb;
     padding:14px;
     border-radius:7px;
     font-size:13px;
-    line-height:1.6;
+    line-height:1.7;
     margin-bottom:20px;
 }
 
-/* =========================================================
-SUMMARY
-========================================================= */
+.owner-note{
+    background:#f0fdf4;
+    border-left:5px solid #16a34a;
+    padding:14px;
+    border-radius:7px;
+    font-size:13px;
+    line-height:1.7;
+    margin-bottom:20px;
+}
 
 .summary-grid{
     display:grid;
@@ -191,10 +181,6 @@ SUMMARY
     border-left-color:#9333ea;
 }
 
-/* =========================================================
-SECTION
-========================================================= */
-
 .section{
     background:white;
     border-radius:12px;
@@ -213,10 +199,6 @@ SECTION
     gap:10px;
     flex-wrap:wrap;
 }
-
-/* =========================================================
-BAR
-========================================================= */
 
 .bar-row{
     margin-bottom:14px;
@@ -257,10 +239,6 @@ BAR
 .bar-cognitive{
     background:#2563eb;
 }
-
-/* =========================================================
-MATRIX
-========================================================= */
 
 .matrix-wrap{
     overflow-x:auto;
@@ -303,10 +281,6 @@ MATRIX
 .matrix .total{
     background:#f3f4f6;
 }
-
-/* =========================================================
-BADGES
-========================================================= */
 
 .legend{
     display:flex;
@@ -369,9 +343,15 @@ BADGES
     color:#166534;
 }
 
-/* =========================================================
-KELAYAKAN
-========================================================= */
+.badge-ok{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.badge-warning{
+    background:#fee2e2;
+    color:#991b1b;
+}
 
 .kelayakan-box{
     border-radius:12px;
@@ -479,10 +459,6 @@ KELAYAKAN
     font-size:13px;
 }
 
-/* =========================================================
-QUESTION
-========================================================= */
-
 .question-list{
     display:flex;
     flex-direction:column;
@@ -581,10 +557,6 @@ QUESTION
     line-height:1.7;
 }
 
-/* =========================================================
-STATUS
-========================================================= */
-
 .loading{
     text-align:center;
     padding:40px;
@@ -604,10 +576,6 @@ STATUS
     border-radius:8px;
     margin-bottom:15px;
 }
-
-/* =========================================================
-RESPONSIVE
-========================================================= */
 
 @media(max-width:1200px){
 
@@ -672,15 +640,10 @@ RESPONSIVE
     }
 
 }
-
 </style>
 </head>
 
 <body>
-
-<!-- =========================================================
-HEADER
-========================================================= -->
 
 <header class="header">
 
@@ -700,7 +663,7 @@ HEADER
 
         <button
             class="btn btn-light"
-            onclick="window.location.href='bank-soal.html'">
+            onclick="window.location.href='bank-soal-guru.html'">
 
             📚 Bank Soal
 
@@ -721,9 +684,17 @@ HEADER
 
 <div class="container">
 
-<!-- =========================================================
-FILTER
-========================================================= -->
+<div class="owner-note">
+
+    <b>🔐 Keamanan Analisis Guru:</b><br>
+
+    Halaman ini hanya menampilkan ujian dan soal
+    yang dibuat oleh <b>guru yang sedang login</b>.
+    Soal milik guru lain tidak akan ditampilkan
+    dan tidak akan ikut dalam perhitungan analisis.
+
+</div>
+
 
 <div class="filter-box">
 
@@ -742,7 +713,7 @@ FILTER
                 onchange="renderAll()">
 
                 <option value="">
-                    Semua Ujian
+                    Semua Ujian Saya
                 </option>
 
             </select>
@@ -895,29 +866,30 @@ FILTER
 </div>
 
 
-<!-- =========================================================
-NOTE
-========================================================= -->
-
 <div class="note">
 
-    <b>ℹ️ Catatan:</b>
+    <b>ℹ️ Standar Komposisi:</b><br>
 
-    Tingkat kesukaran merupakan prediksi berdasarkan
-    karakteristik soal.
+    🟢 LOTS = <b>20–25%</b><br>
 
-    <b>HOTS tidak otomatis Sukar</b> dan
-    <b>LOTS tidak otomatis Mudah</b>.
+    🟡 MOTS = <b>25%</b><br>
 
-    Level kognitif dan tingkat kesukaran dianalisis
-    secara terpisah.
+    🔴 HOTS = <b>50%</b><br>
+
+    🟢 Mudah = <b>30%</b><br>
+
+    🟡 Sedang = <b>50%</b><br>
+
+    🔴 Sukar = <b>20%</b><br>
+
+    🟣 Literasi HOTS = <b>minimal 50%</b><br><br>
+
+    <b>Catatan penting:</b>
+    HOTS tidak otomatis Sukar dan LOTS tidak otomatis Mudah.
+    Level kognitif dan tingkat kesukaran dianalisis secara terpisah.
 
 </div>
 
-
-<!-- =========================================================
-SUMMARY
-========================================================= -->
 
 <div class="summary-grid">
 
@@ -1028,10 +1000,6 @@ SUMMARY
 </div>
 
 
-<!-- =========================================================
-KESUKARAN
-========================================================= -->
-
 <div class="section">
 
     <div class="section-title">
@@ -1116,10 +1084,6 @@ KESUKARAN
 </div>
 
 
-<!-- =========================================================
-KOGNITIF
-========================================================= -->
-
 <div class="section">
 
     <div class="section-title">
@@ -1131,16 +1095,11 @@ KOGNITIF
 </div>
 
 
-<!-- =========================================================
-MATRIX
-========================================================= -->
-
 <div class="section">
 
     <div class="section-title">
         📊 Matriks Kognitif × Kesukaran
     </div>
-
 
     <div class="matrix-wrap">
 
@@ -1179,9 +1138,7 @@ MATRIX
 
                 <tr class="lots">
 
-                    <td>
-                        LOTS
-                    </td>
+                    <td>LOTS</td>
 
                     <td id="lotsMudah">0</td>
 
@@ -1196,9 +1153,7 @@ MATRIX
 
                 <tr class="mots">
 
-                    <td>
-                        MOTS
-                    </td>
+                    <td>MOTS</td>
 
                     <td id="motsMudah">0</td>
 
@@ -1213,9 +1168,7 @@ MATRIX
 
                 <tr class="hots">
 
-                    <td>
-                        HOTS
-                    </td>
+                    <td>HOTS</td>
 
                     <td id="hotsMudah">0</td>
 
@@ -1230,9 +1183,7 @@ MATRIX
 
                 <tr class="total">
 
-                    <td>
-                        TOTAL
-                    </td>
+                    <td>TOTAL</td>
 
                     <td id="totalMudahMatrix">0</td>
 
@@ -1253,10 +1204,6 @@ MATRIX
 </div>
 
 
-<!-- =========================================================
-KELAYAKAN NASKAH
-========================================================= -->
-
 <div class="section">
 
     <div class="section-title">
@@ -1273,10 +1220,6 @@ KELAYAKAN NASKAH
 
 </div>
 
-
-<!-- =========================================================
-ANALISIS PER SOAL
-========================================================= -->
 
 <div class="section">
 
@@ -1375,6 +1318,8 @@ let daftarLiterasiLegacy = [];
 
 let dataAnalisis = [];
 
+let currentUser = null;
+
 
 /* =========================================================
 LOGIN
@@ -1384,7 +1329,7 @@ function cekLogin(){
 
     try{
 
-        const user =
+        currentUser =
             JSON.parse(
                 localStorage.getItem(
                     "exam_user"
@@ -1392,7 +1337,7 @@ function cekLogin(){
             );
 
 
-        if(!user){
+        if(!currentUser){
 
             window.location.href =
                 "login.html";
@@ -1403,8 +1348,8 @@ function cekLogin(){
 
 
         if(
-            user.role !== "admin" &&
-            user.role !== "guru"
+            currentUser.role !== "admin" &&
+            currentUser.role !== "guru"
         ){
 
             alert(
@@ -1436,6 +1381,260 @@ function cekLogin(){
 
 
 /* =========================================================
+NORMALISASI NILAI
+========================================================= */
+
+function normalisasi(value){
+
+    return String(
+        value ?? ""
+    )
+    .trim()
+    .toLowerCase();
+
+}
+
+
+/* =========================================================
+CEK KEPEMILIKAN UJIAN GURU
+========================================================= */
+
+function ujianMilikGuru(ujian){
+
+    /*
+     * ADMIN BOLEH MELIHAT SEMUA.
+     */
+
+    if(
+        currentUser &&
+        currentUser.role === "admin"
+    ){
+
+        return true;
+
+    }
+
+
+    /*
+     * HANYA GURU YANG LOGIN
+     */
+
+    if(
+        !currentUser ||
+        currentUser.role !== "guru"
+    ){
+
+        return false;
+
+    }
+
+
+    const idGuru = [
+
+        currentUser.id,
+        currentUser.guru_id,
+        currentUser.profile_id,
+        currentUser.user_id
+
+    ]
+    .filter(
+        x =>
+            x !== undefined &&
+            x !== null &&
+            String(x).trim() !== ""
+    )
+    .map(
+        normalisasi
+    );
+
+
+    const usernameGuru = [
+
+        currentUser.username,
+        currentUser.nip,
+        currentUser.nik
+
+    ]
+    .filter(
+        x =>
+            x !== undefined &&
+            x !== null &&
+            String(x).trim() !== ""
+    )
+    .map(
+        normalisasi
+    );
+
+
+    /*
+     * FIELD YANG UMUM DIGUNAKAN
+     * UNTUK MENYIMPAN PEMBUAT UJIAN.
+     */
+
+    const fieldId = [
+
+        ujian.guru_id,
+        ujian.guruId,
+        ujian.created_by,
+        ujian.createdBy,
+        ujian.pembuat_id,
+        ujian.pembuatId,
+        ujian.user_id,
+        ujian.userId
+
+    ]
+    .filter(
+        x =>
+            x !== undefined &&
+            x !== null &&
+            String(x).trim() !== ""
+    )
+    .map(
+        normalisasi
+    );
+
+
+    const fieldUsername = [
+
+        ujian.guru_username,
+        ujian.username_guru,
+        ujian.nip_guru,
+        ujian.nik_guru,
+        ujian.created_by_username,
+        ujian.created_by_nip,
+        ujian.pembuat_username,
+        ujian.pembuat_nip
+
+    ]
+    .filter(
+        x =>
+            x !== undefined &&
+            x !== null &&
+            String(x).trim() !== ""
+    )
+    .map(
+        normalisasi
+    );
+
+
+    /*
+     * COCOKKAN ID GURU
+     */
+
+    if(
+        idGuru.length &&
+        fieldId.some(
+            x =>
+                idGuru.includes(x)
+        )
+    ){
+
+        return true;
+
+    }
+
+
+    /*
+     * COCOKKAN USERNAME / NIP / NIK
+     */
+
+    if(
+        usernameGuru.length &&
+        fieldUsername.some(
+            x =>
+                usernameGuru.includes(x)
+        )
+    ){
+
+        return true;
+
+    }
+
+
+    /*
+     * Beberapa struktur menyimpan
+     * creator langsung dalam field guru.
+     */
+
+    if(
+        ujian.guru &&
+        typeof ujian.guru === "object"
+    ){
+
+        const guruObjectValues = [
+
+            ujian.guru.id,
+            ujian.guru.guru_id,
+            ujian.guru.username,
+            ujian.guru.nip,
+            ujian.guru.nik
+
+        ]
+        .filter(
+            x =>
+                x !== undefined &&
+                x !== null
+        )
+        .map(
+            normalisasi
+        );
+
+
+        if(
+            guruObjectValues.some(
+                x =>
+                    idGuru.includes(x) ||
+                    usernameGuru.includes(x)
+            )
+        ){
+
+            return true;
+
+        }
+
+    }
+
+
+    return false;
+
+}
+
+
+/* =========================================================
+FILTER UJIAN MILIK GURU
+========================================================= */
+
+function filterUjianPemilik(){
+
+    /*
+     * ADMIN
+     */
+
+    if(
+        currentUser &&
+        currentUser.role === "admin"
+    ){
+
+        return daftarUjian;
+
+    }
+
+
+    /*
+     * GURU
+     */
+
+    return daftarUjian.filter(
+        ujian =>
+            ujianMilikGuru(
+                ujian
+            )
+    );
+
+}
+
+
+/* =========================================================
 LOAD DATA
 ========================================================= */
 
@@ -1451,7 +1650,7 @@ async function loadData(){
 
         <div class="loading">
 
-            ⏳ Mengambil data soal dari Bank Soal...
+            ⏳ Mengambil data soal...
 
         </div>
 
@@ -1530,29 +1729,86 @@ async function loadData(){
                 : literasiLegacyRes.data || [];
 
 
+        /*
+         * PENTING:
+         * FILTER UJIAN BERDASARKAN PEMBUAT.
+         */
+
+        const ujianMilik =
+            filterUjianPemilik();
+
+
+        /*
+         * HANYA SOAL DARI UJIAN MILIK GURU
+         */
+
+        const idUjianMilik =
+            new Set(
+                ujianMilik.map(
+                    x =>
+                        String(x.id)
+                )
+            );
+
+
+        daftarUjian =
+            ujianMilik;
+
+
+        daftarSoal =
+            daftarSoal.filter(
+                soal =>
+                    idUjianMilik.has(
+                        String(
+                            soal.ujian_id
+                        )
+                    )
+            );
+
+
+        /*
+         * LITERASI JUGA DIBATASI
+         * KE UJIAN MILIK GURU.
+         */
+
+        daftarLiterasiSoal =
+            daftarLiterasiSoal.filter(
+                literasi =>
+                    idUjianMilik.has(
+                        String(
+                            literasi.ujian_id
+                        )
+                    )
+            );
+
+
+        daftarLiterasiLegacy =
+            daftarLiterasiLegacy.filter(
+                literasi =>
+                    !literasi.ujian_id ||
+                    idUjianMilik.has(
+                        String(
+                            literasi.ujian_id
+                        )
+                    )
+            );
+
+
         console.log(
-            "UJIAN:",
+            "Ujian milik guru:",
             daftarUjian
         );
 
 
         console.log(
-            "SOAL:",
+            "Soal milik guru:",
             daftarSoal
-        );
-
-
-        console.log(
-            "LITERASI:",
-            daftarLiterasiSoal
         );
 
 
         isiFilterUjian();
 
-
         buatAnalisis();
-
 
         renderAll();
 
@@ -1602,7 +1858,7 @@ function isiFilterUjian(){
     select.innerHTML = `
 
         <option value="">
-            Semua Ujian
+            Semua Ujian Saya
         </option>
 
     `;
@@ -1644,10 +1900,6 @@ CARI LITERASI
 
 function cariLiterasi(soal){
 
-    /*
-     * 1. literasi_id
-     */
-
     if(soal.literasi_id){
 
         const found =
@@ -1672,11 +1924,6 @@ function cariLiterasi(soal){
 
     }
 
-
-    /*
-     * 2. Nomor soal berada dalam
-     * nomor_mulai sampai nomor_selesai
-     */
 
     const nomor =
         Number(
@@ -1740,6 +1987,76 @@ function cariLiterasi(soal){
                 isLiterasi:true,
 
                 data:found
+
+            };
+
+        }
+
+    }
+
+
+    /*
+     * LEGACY LITERASI
+     * HANYA JIKA ADA RANGE.
+     */
+
+    if(
+        Number.isFinite(nomor)
+    ){
+
+        const foundLegacy =
+            daftarLiterasiLegacy.find(
+                x=>{
+
+                    if(
+                        x.ujian_id &&
+                        String(x.ujian_id) !==
+                        String(soal.ujian_id)
+                    ){
+
+                        return false;
+
+                    }
+
+
+                    const mulai =
+                        Number(
+                            x.nomor_mulai
+                        );
+
+
+                    const selesai =
+                        Number(
+                            x.nomor_selesai
+                        );
+
+
+                    if(
+                        !Number.isFinite(mulai) ||
+                        !Number.isFinite(selesai)
+                    ){
+
+                        return false;
+
+                    }
+
+
+                    return (
+                        nomor >= mulai &&
+                        nomor <= selesai
+                    );
+
+                }
+            );
+
+
+        if(foundLegacy){
+
+            return {
+
+                isLiterasi:true,
+
+                data:foundLegacy
 
             };
 
@@ -2823,13 +3140,11 @@ function renderCognitive(data){
 
                     </div>
 
-
                     <div class="bar-container">
 
                         <div
                             class="bar bar-cognitive"
                             style="width:${persen}%">
-
                         </div>
 
                     </div>
@@ -2979,7 +3294,7 @@ function renderMatrix(data){
 
 
 /* =========================================================
-KELAYAKAN NASKAH
+KELAYAKAN
 ========================================================= */
 
 function renderKelayakan(data){
@@ -2991,7 +3306,9 @@ function renderKelayakan(data){
 
 
     if(!container){
+
         return;
+
     }
 
 
@@ -3013,7 +3330,8 @@ function renderKelayakan(data){
 
                 <div class="kelayakan-deskripsi">
 
-                    Belum terdapat soal yang dapat dianalisis.
+                    Belum terdapat soal milik guru
+                    yang dapat dianalisis.
 
                 </div>
 
@@ -3025,10 +3343,6 @@ function renderKelayakan(data){
 
     }
 
-
-    /* =====================================================
-       HITUNG
-    ===================================================== */
 
     const jumlah =
         kategori =>
@@ -3090,10 +3404,6 @@ function renderKelayakan(data){
         ).length;
 
 
-    /* =====================================================
-       PERSENTASE
-    ===================================================== */
-
     const persen =
         nilai =>
             Math.round(
@@ -3136,41 +3446,53 @@ function renderKelayakan(data){
 
 
     /* =====================================================
-       STANDAR
+       STANDAR BARU
     ===================================================== */
 
     /*
-     * LOTS 30%
-     * toleransi 25-35%
+     * LOTS 20-25%
      */
 
     const okLOTS =
-        pLOTS >= 25 &&
-        pLOTS <= 35;
+        pLOTS >= 20 &&
+        pLOTS <= 25;
 
 
     /*
-     * MOTS 50%
-     * toleransi 45-55%
+     * MOTS 25%
+     *
+     * Untuk menghindari masalah pembulatan,
+     * dihitung berdasarkan jumlah ideal.
      */
+
+    const targetMOTS =
+        total * 0.25;
+
 
     const okMOTS =
-        pMOTS >= 45 &&
-        pMOTS <= 55;
+        Math.abs(
+            mots - targetMOTS
+        ) < 0.001;
 
 
     /*
-     * HOTS 20-30%
+     * HOTS 50%
      */
 
+    const targetHOTS =
+        total * 0.50;
+
+
     const okHOTS =
-        pHOTS >= 20 &&
-        pHOTS <= 30;
+        Math.abs(
+            hots - targetHOTS
+        ) < 0.001;
 
 
     /*
-     * Literasi 50%
-     * toleransi 45-55%
+     * LITERASI
+     *
+     * Tetap 50% dengan toleransi 45-55%.
      */
 
     const okLiterasi =
@@ -3179,40 +3501,59 @@ function renderKelayakan(data){
 
 
     /*
-     * Mudah 25%
-     * toleransi 20-30%
+     * MUDAH 30%
      */
+
+    const targetMudah =
+        total * 0.30;
+
 
     const okMudah =
-        pMudah >= 20 &&
-        pMudah <= 30;
+        Math.abs(
+            mudah - targetMudah
+        ) < 0.001;
 
 
     /*
-     * Sedang 50%
-     * toleransi 45-55%
+     * SEDANG 50%
      */
+
+    const targetSedang =
+        total * 0.50;
+
 
     const okSedang =
-        pSedang >= 45 &&
-        pSedang <= 55;
+        Math.abs(
+            sedang - targetSedang
+        ) < 0.001;
 
 
     /*
-     * Sukar 25%
-     * toleransi 20-30%
+     * SUKAR 20%
      */
 
+    const targetSukar =
+        total * 0.20;
+
+
     const okSukar =
-        pSukar >= 20 &&
-        pSukar <= 30;
+        Math.abs(
+            sukar - targetSukar
+        ) < 0.001;
 
 
     /*
-     * Literasi HOTS adalah indikator tambahan.
+     * LITERASI HOTS MINIMAL 50%
      *
-     * Tidak dijadikan syarat wajib utama,
-     * karena HOTS sudah dihitung pada indikator HOTS.
+     * INDIKATOR TAMBAHAN.
+     */
+
+    const okLiterasiHOTS =
+        pLiterasiHOTS >= 50;
+
+
+    /*
+     * 7 INDIKATOR UTAMA
      */
 
     const indikatorUtama = [
@@ -3234,9 +3575,12 @@ function renderKelayakan(data){
         ).length;
 
 
+    /*
+     * 6/7 ATAU 7/7 = LAYAK
+     */
+
     const layak =
-        memenuhi ===
-        indikatorUtama.length;
+        memenuhi >= 6;
 
 
     /* =====================================================
@@ -3248,140 +3592,75 @@ function renderKelayakan(data){
 
     if(!okLOTS){
 
-        if(pLOTS < 25){
-
-            rekomendasi.push(
-                `LOTS baru ${pLOTS}%. Tambahkan soal C1-C2 agar mendekati 30%.`
-            );
-
-        }else{
-
-            rekomendasi.push(
-                `LOTS mencapai ${pLOTS}%. Kurangi soal C1-C2 agar mendekati 30%.`
-            );
-
-        }
+        rekomendasi.push(
+            `LOTS ${pLOTS}%. Target LOTS adalah 20-25%.`
+        );
 
     }
 
 
     if(!okMOTS){
 
-        if(pMOTS < 45){
-
-            rekomendasi.push(
-                `MOTS baru ${pMOTS}%. Tambahkan soal C3 agar mendekati 50%.`
-            );
-
-        }else{
-
-            rekomendasi.push(
-                `MOTS mencapai ${pMOTS}%. Kurangi soal C3 agar mendekati 50%.`
-            );
-
-        }
+        rekomendasi.push(
+            `MOTS ${pMOTS}%. Target MOTS adalah 25%.`
+        );
 
     }
 
 
     if(!okHOTS){
 
-        if(pHOTS < 20){
-
-            rekomendasi.push(
-                `HOTS baru ${pHOTS}%. Tambahkan soal C4-C6 hingga minimal 20%.`
-            );
-
-        }else{
-
-            rekomendasi.push(
-                `HOTS mencapai ${pHOTS}%. Kurangi agar berada pada kisaran 20-30%.`
-            );
-
-        }
+        rekomendasi.push(
+            `HOTS ${pHOTS}%. Target HOTS adalah 50%.`
+        );
 
     }
 
 
     if(!okLiterasi){
 
-        if(pLiterasi < 45){
-
-            rekomendasi.push(
-                `Literasi baru ${pLiterasi}%. Tambahkan soal berbasis stimulus literasi hingga sekitar 50%.`
-            );
-
-        }else{
-
-            rekomendasi.push(
-                `Literasi mencapai ${pLiterasi}%. Kurangi agar mendekati 50%.`
-            );
-
-        }
+        rekomendasi.push(
+            `Literasi ${pLiterasi}%. Target literasi adalah sekitar 50% (45-55%).`
+        );
 
     }
 
 
     if(!okMudah){
 
-        if(pMudah < 20){
-
-            rekomendasi.push(
-                `Soal mudah baru ${pMudah}%. Tambahkan soal mudah hingga mendekati 25%.`
-            );
-
-        }else{
-
-            rekomendasi.push(
-                `Soal mudah mencapai ${pMudah}%. Kurangi agar mendekati 25%.`
-            );
-
-        }
+        rekomendasi.push(
+            `Soal Mudah ${pMudah}%. Target Mudah adalah 30%.`
+        );
 
     }
 
 
     if(!okSedang){
 
-        if(pSedang < 45){
-
-            rekomendasi.push(
-                `Soal sedang baru ${pSedang}%. Tambahkan soal sedang hingga mendekati 50%.`
-            );
-
-        }else{
-
-            rekomendasi.push(
-                `Soal sedang mencapai ${pSedang}%. Kurangi agar mendekati 50%.`
-            );
-
-        }
+        rekomendasi.push(
+            `Soal Sedang ${pSedang}%. Target Sedang adalah 50%.`
+        );
 
     }
 
 
     if(!okSukar){
 
-        if(pSukar < 20){
-
-            rekomendasi.push(
-                `Soal sukar baru ${pSukar}%. Tambahkan soal sukar hingga mendekati 25%.`
-            );
-
-        }else{
-
-            rekomendasi.push(
-                `Soal sukar mencapai ${pSukar}%. Kurangi agar mendekati 25%.`
-            );
-
-        }
+        rekomendasi.push(
+            `Soal Sukar ${pSukar}%. Target Sukar adalah 20%.`
+        );
 
     }
 
 
-    /* =====================================================
-       INDIKATOR
-    ===================================================== */
+    if(!okLiterasiHOTS){
+
+        rekomendasi.push(
+            `Literasi HOTS ${pLiterasiHOTS}%. Minimal Literasi HOTS adalah 50%.`
+        );
+
+    }
+
 
     function indikator(
         nama,
@@ -3440,10 +3719,6 @@ function renderKelayakan(data){
     }
 
 
-    /* =====================================================
-       STATUS
-    ===================================================== */
-
     const statusClass =
         layak
             ? "kelayakan-layak"
@@ -3456,32 +3731,41 @@ function renderKelayakan(data){
             : "🔴 TIDAK LAYAK DIUJIKAN";
 
 
-    const deskripsi =
-        layak
+    let deskripsi;
 
-            ?
 
-            `
+    if(layak){
+
+        deskripsi = `
+
             Komposisi naskah telah memenuhi
-            standar yang ditetapkan untuk
-            level kognitif, literasi dan
-            tingkat kesukaran.
-            `
+            <b>${memenuhi} dari 7 indikator utama</b>.
 
-            :
+            <br><br>
 
-            `
-            Komposisi naskah belum memenuhi
-            seluruh standar yang ditetapkan.
-            Perbaiki indikator yang masih
-            berstatus <b>Belum Sesuai</b>
-            sebelum naskah digunakan.
-            `;
+            Karena minimal <b>6 dari 7 indikator</b>
+            sudah terpenuhi, naskah dinyatakan
+            <b>LAYAK DIUJIKAN</b>.
 
+        `;
 
-    /* =====================================================
-       RENDER
-    ===================================================== */
+    }else{
+
+        deskripsi = `
+
+            Komposisi naskah baru memenuhi
+            <b>${memenuhi} dari 7 indikator utama</b>.
+
+            <br><br>
+
+            Naskah membutuhkan perbaikan
+            sebelum digunakan karena minimal
+            <b>6 dari 7 indikator</b> harus terpenuhi.
+
+        `;
+
+    }
+
 
     container.innerHTML = `
 
@@ -3498,25 +3782,15 @@ function renderKelayakan(data){
 
                 ${deskripsi}
 
-                <br><br>
-
-                <b>
-                    ${memenuhi}
-                    dari
-                    ${indikatorUtama.length}
-                    indikator utama terpenuhi.
-                </b>
-
             </div>
 
 
             <div class="standar-grid">
 
-
                 ${indikator(
                     "LOTS",
                     pLOTS,
-                    "30% (25-35%)",
+                    "20-25%",
                     okLOTS
                 )}
 
@@ -3524,7 +3798,7 @@ function renderKelayakan(data){
                 ${indikator(
                     "MOTS",
                     pMOTS,
-                    "50% (45-55%)",
+                    "25%",
                     okMOTS
                 )}
 
@@ -3532,7 +3806,7 @@ function renderKelayakan(data){
                 ${indikator(
                     "HOTS",
                     pHOTS,
-                    "20-30%",
+                    "50%",
                     okHOTS
                 )}
 
@@ -3548,15 +3822,15 @@ function renderKelayakan(data){
                 ${indikator(
                     "Literasi HOTS",
                     pLiterasiHOTS,
-                    "Indikator tambahan",
-                    pLiterasiHOTS >= 20
+                    "Minimal 50%",
+                    okLiterasiHOTS
                 )}
 
 
                 ${indikator(
                     "Mudah",
                     pMudah,
-                    "25% (20-30%)",
+                    "30%",
                     okMudah
                 )}
 
@@ -3564,7 +3838,7 @@ function renderKelayakan(data){
                 ${indikator(
                     "Sedang",
                     pSedang,
-                    "50% (45-55%)",
+                    "50%",
                     okSedang
                 )}
 
@@ -3572,15 +3846,15 @@ function renderKelayakan(data){
                 ${indikator(
                     "Sukar",
                     pSukar,
-                    "25% (20-30%)",
+                    "20%",
                     okSukar
                 )}
-
 
             </div>
 
 
-            <div class="rekomendasi-box">
+            <div
+                class="rekomendasi-box">
 
                 <h4>
                     📋 Kesimpulan & Rekomendasi
@@ -3588,11 +3862,12 @@ function renderKelayakan(data){
 
 
                 ${
-                    rekomendasi.length > 0
+                    rekomendasi.length
 
                         ?
 
                         `
+
                         <ul>
 
                             ${
@@ -3605,21 +3880,43 @@ function renderKelayakan(data){
                             }
 
                         </ul>
+
                         `
 
                         :
 
                         `
+
                         <p>
 
-                            ✅ Tidak ada rekomendasi
-                            perbaikan. Komposisi naskah
+                            ✅ Semua komposisi
                             sudah sesuai standar.
 
                         </p>
+
                         `
 
                 }
+
+                <br>
+
+                <div>
+
+                    <span class="badge ${
+                        okLiterasiHOTS
+                            ? "badge-ok"
+                            : "badge-warning"
+                    }">
+
+                        ${
+                            okLiterasiHOTS
+                                ? "✅ Literasi HOTS ≥50%"
+                                : "❌ Literasi HOTS <50%"
+                        }
+
+                    </span>
+
+                </div>
 
             </div>
 
@@ -3654,7 +3951,7 @@ function renderQuestions(data){
 
             <div class="empty">
 
-                📭 Tidak ada soal
+                📭 Tidak ada soal milik Anda
                 yang sesuai dengan filter.
 
             </div>
