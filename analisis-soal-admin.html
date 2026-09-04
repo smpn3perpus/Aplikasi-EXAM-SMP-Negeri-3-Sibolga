@@ -428,6 +428,7 @@ input{
     .eligibility{
         grid-template-columns:repeat(4,1fr);
     }
+
 }
 
 @media(max-width:800px){
@@ -455,6 +456,7 @@ input{
     .header{
         padding:18px;
     }
+
 }
 
 @media(max-width:520px){
@@ -466,6 +468,7 @@ input{
     .summary{
         grid-template-columns:1fr 1fr;
     }
+
 }
 </style>
 </head>
@@ -521,6 +524,11 @@ input{
 
         Gunakan filter <b>Guru Pembuat Soal</b>
         untuk melihat analisis guru tertentu.
+
+        <div class="small-note">
+            Mesin analisis Admin disinkronkan dengan Dashboard Guru.
+            Soal yang sama akan menghasilkan klasifikasi yang sama.
+        </div>
 
     </div>
 
@@ -658,80 +666,38 @@ input{
     <section class="summary">
 
         <div class="card">
-            <div class="stat-label">
-                TOTAL SOAL
-            </div>
-            <div
-                class="stat-value"
-                id="totalSoal">
-                0
-            </div>
+            <div class="stat-label">TOTAL SOAL</div>
+            <div class="stat-value" id="totalSoal">0</div>
         </div>
 
         <div class="card">
-            <div class="stat-label">
-                LITERASI
-            </div>
-            <div
-                class="stat-value"
-                id="totalLiterasi">
-                0
-            </div>
+            <div class="stat-label">LITERASI</div>
+            <div class="stat-value" id="totalLiterasi">0</div>
         </div>
 
         <div class="card">
-            <div class="stat-label">
-                NON-LITERASI
-            </div>
-            <div
-                class="stat-value"
-                id="totalNonLiterasi">
-                0
-            </div>
+            <div class="stat-label">NON-LITERASI</div>
+            <div class="stat-value" id="totalNonLiterasi">0</div>
         </div>
 
         <div class="card">
-            <div class="stat-label">
-                LOTS
-            </div>
-            <div
-                class="stat-value"
-                id="totalLOTS">
-                0
-            </div>
+            <div class="stat-label">LOTS</div>
+            <div class="stat-value" id="totalLOTS">0</div>
         </div>
 
         <div class="card">
-            <div class="stat-label">
-                MOTS
-            </div>
-            <div
-                class="stat-value"
-                id="totalMOTS">
-                0
-            </div>
+            <div class="stat-label">MOTS</div>
+            <div class="stat-value" id="totalMOTS">0</div>
         </div>
 
         <div class="card">
-            <div class="stat-label">
-                HOTS
-            </div>
-            <div
-                class="stat-value"
-                id="totalHOTS">
-                0
-            </div>
+            <div class="stat-label">HOTS</div>
+            <div class="stat-value" id="totalHOTS">0</div>
         </div>
 
         <div class="card">
-            <div class="stat-label">
-                LITERASI HOTS
-            </div>
-            <div
-                class="stat-value"
-                id="totalLiterasiHOTS">
-                0
-            </div>
+            <div class="stat-label">LITERASI HOTS</div>
+            <div class="stat-value" id="totalLiterasiHOTS">0</div>
         </div>
 
     </section>
@@ -820,7 +786,7 @@ input{
 
     </div>
 
-    <!-- KELOLA NASKAH -->
+    <!-- KELAYAKAN -->
 
     <section class="panel">
 
@@ -831,6 +797,7 @@ input{
         <div class="small-note">
 
             Standar analisis:
+
             Mudah + Sedang sekitar 75%,
             Sukar sekitar 25%,
             LOTS + MOTS 40–50%,
@@ -866,7 +833,6 @@ input{
             id="questions"
             class="questions"
             style="margin-top:12px">
-
         </div>
 
     </section>
@@ -909,6 +875,7 @@ let dataAnalisis = [];
 
 /* =========================================================
    HELPER
+   SAMA DENGAN DASHBOARD GURU
 ========================================================= */
 
 function escapeHTML(value){
@@ -970,9 +937,11 @@ function showError(message){
     const box =
         document.getElementById("errorBox");
 
-    box.textContent = message;
+    box.textContent =
+        message;
 
-    box.style.display = "block";
+    box.style.display =
+        "block";
 
 }
 
@@ -981,7 +950,8 @@ function hideError(){
 
     document.getElementById(
         "errorBox"
-    ).style.display = "none";
+    ).style.display =
+        "none";
 
 }
 
@@ -998,10 +968,13 @@ function cekLoginAdmin(){
 
         currentUser =
             JSON.parse(
-                localStorage.getItem("exam_user") || "null"
+                localStorage.getItem(
+                    "exam_user"
+                ) || "null"
             );
 
-    }catch(error){
+    }
+    catch(error){
 
         currentUser = null;
 
@@ -1010,7 +983,8 @@ function cekLoginAdmin(){
 
     if(!currentUser){
 
-        window.location.href = "login.html";
+        window.location.href =
+            "login.html";
 
         return false;
 
@@ -1088,13 +1062,14 @@ function getGuruName(guru){
             "nip",
             "nik"
         ]
-    ) || "Guru Tidak Diketahui";
+    ) ||
+    "Guru Tidak Diketahui";
 
 }
 
 
 /* =========================================================
-   GURU DARI UJIAN
+   UJIAN → GURU
 ========================================================= */
 
 function getUjianGuruValue(ujian){
@@ -1142,7 +1117,9 @@ function getUjianGuruName(ujian){
 function findGuruForUjian(ujian){
 
     const value =
-        getUjianGuruValue(ujian);
+        getUjianGuruValue(
+            ujian
+        );
 
 
     if(value !== null){
@@ -1156,7 +1133,8 @@ function findGuruForUjian(ujian){
 
                     return (
                         id !== null &&
-                        norm(id) === norm(value)
+                        norm(id) ===
+                        norm(value)
                     );
 
                 }
@@ -1206,7 +1184,9 @@ function findGuruForUjian(ujian){
 
 
     const name =
-        getUjianGuruName(ujian);
+        getUjianGuruName(
+            ujian
+        );
 
 
     if(name){
@@ -1282,7 +1262,8 @@ function getUjianName(ujian){
             "nama",
             "title"
         ]
-    ) || "Ujian Tanpa Judul";
+    ) ||
+    "Ujian Tanpa Judul";
 
 }
 
@@ -1339,6 +1320,7 @@ function getQuestionText(soal){
 
 /* =========================================================
    LITERASI
+   SAMA DENGAN DASHBOARD GURU
 ========================================================= */
 
 function cariLiterasi(soal){
@@ -1371,6 +1353,7 @@ function cariLiterasi(soal){
                             ]
                         );
 
+
                     return (
                         norm(id) ===
                         norm(literasiId)
@@ -1391,6 +1374,7 @@ function cariLiterasi(soal){
 
     const ujianId =
         getSoalUjianId(soal);
+
 
     const nomor =
         Number(
@@ -1471,10 +1455,6 @@ function cariLiterasi(soal){
 }
 
 
-/* =========================================================
-   CEK LITERASI
-========================================================= */
-
 function isLiterasi(soal){
 
     const literasi =
@@ -1519,10 +1499,6 @@ function isLiterasi(soal){
 
 }
 
-
-/* =========================================================
-   LITERASI HOTS
-========================================================= */
 
 function isLiterasiHOTS(
     soal,
@@ -1602,14 +1578,17 @@ function isLiterasiHOTS(
             "C4",
             "C5",
             "C6"
-        ].includes(cognitive)
+        ].includes(
+            cognitive
+        )
     );
 
 }
 
 
 /* =========================================================
-   LEVEL KOGNITIF
+   KOGNITIF
+   100% SAMA DENGAN DASHBOARD GURU
 ========================================================= */
 
 function klasifikasiKognitif(text){
@@ -1621,7 +1600,7 @@ function klasifikasiKognitif(text){
     /* C6 */
 
     if(
-        /rancang|merancang|desain|buatlah|membuat|kembangkan|ciptakan|susunlah|prototipe|modelkan|menghasilkan/
+        /rancang|rancanglah|merancang|desain|desainkan|buatlah|membuat|kembangkan|kembangkanlah|ciptakan|ciptakanlah|susunlah|prototipe|modelkan|menghasilkan/
         .test(t)
     ){
 
@@ -1633,7 +1612,7 @@ function klasifikasiKognitif(text){
     /* C5 */
 
     if(
-        /evaluasi|mengevaluasi|nilai|menilai|kritisi|setujukah|tepatkah|layakkah|paling tepat|paling efektif|kelebihan|kekurangan|alasan|justifikasi|pendapat|benar atau salah/
+        /evaluasi|mengevaluasi|nilai|nilailah|menilai|kritisi|kritislah|kritikilah|setujukah|sejauh mana|tepatkah|layakkah|manakah .*paling tepat|manakah .*paling efektif|kelebihan dan kekurangan|berikan alasan|jelaskan alasan|berikan justifikasi|berdasarkan .*pendapat|benar atau salah/
         .test(t)
     ){
 
@@ -1645,7 +1624,7 @@ function klasifikasiKognitif(text){
     /* C4 */
 
     if(
-        /analisis|menganalisis|bandingkan|membandingkan|perbandingan|hubungkan|menghubungkan|identifikasi kesalahan|hubungan|sebab-akibat|berdasarkan data|berdasarkan informasi|berdasarkan tabel|berdasarkan grafik|berdasarkan stimulus/
+        /analisis|menganalisis|bandingkan|membandingkan|perbandingan|hubungkan|menghubungkan|identifikasi .*kesalahan|kesalahan .*terjadi|tentukan hubungan|berdasarkan data|berdasarkan informasi|berdasarkan tabel|berdasarkan grafik|berdasarkan stimulus|sebab dan akibat|hubungan antara/
         .test(t)
     ){
 
@@ -1657,7 +1636,7 @@ function klasifikasiKognitif(text){
     /* C3 */
 
     if(
-        /hitung|rumus|terapkan|menerapkan|tentukan dengan rumus|berapakah .* jika|jika .* maka|gunakan prinsip/
+        /hitunglah|hitung|gunakan rumus|gunakan konsep|terapkan|menerapkan|tentukan dengan rumus|berapakah .*jika|jika .*maka|gunakan prinsip/
         .test(t)
     ){
 
@@ -1699,19 +1678,36 @@ function klasifikasiKognitif(text){
    KATEGORI
 ========================================================= */
 
-function kategoriKognitif(cognitive){
+function kategoriKognitif(
+    cognitive
+){
 
-    if(cognitive === "C1"){
+    if(
+        cognitive === "C1"
+    ){
+
         return "LOTS";
+
     }
 
-    if(cognitive === "C2"){
+
+    if(
+        cognitive === "C2"
+    ){
+
         return "LOTS";
+
     }
 
-    if(cognitive === "C3"){
+
+    if(
+        cognitive === "C3"
+    ){
+
         return "MOTS";
+
     }
+
 
     return "HOTS";
 
@@ -1720,87 +1716,67 @@ function kategoriKognitif(cognitive){
 
 /* =========================================================
    KESUKARAN
+   100% SAMA DENGAN DASHBOARD GURU
 ========================================================= */
 
 function klasifikasiKesukaran(text){
 
-    const t =
-        String(text ?? "");
+    const words =
+        String(text ?? "")
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean);
 
-    const lower =
-        t.toLowerCase();
 
     let score = 45;
 
 
-    if(t.length < 100){
+    /* Panjang soal berdasarkan JUMLAH KATA */
 
-        score -= 15;
-
-    }
-    else if(t.length < 180){
-
-        score -= 7;
-
-    }
-    else if(t.length > 400){
-
-        score += 12;
-
-    }
-    else if(t.length > 650){
+    if(
+        words.length >= 55
+    ){
 
         score += 20;
 
     }
-
-
-    if(
-        /karena|sehingga|sedangkan|namun|jika|apabila|berdasarkan|hubungan|sebab|akibat/
-        .test(lower)
+    else if(
+        words.length >= 35
     ){
 
-        score += 8;
+        score += 10;
+
+    }
+    else if(
+        words.length <= 12
+    ){
+
+        score -= 10;
 
     }
 
 
-    if(
-        /data|tabel|grafik|diagram|informasi|hasil pengamatan|percobaan|stimulus/
-        .test(lower)
-    ){
+    /* Hubungan / kompleksitas */
 
-        score += 8;
-
-    }
-
-
-    const digits =
+    const relationMatches =
         (
-            t.match(/\d+/g) || []
+            String(text ?? "")
+                .toLowerCase()
+                .match(
+                    /\bdan\b|\bserta\b|\bkemudian\b|\bselanjutnya\b|\bberdasarkan\b|\bjika\b|\bkarena\b|\bsehingga\b|\bsementara\b/g
+                ) || []
         ).length;
 
 
-    score +=
-        Math.min(
-            digits * 3,
-            12
-        );
-
-
     if(
-        /hitung|perhitungan|rumus|persentase|rasio|volume|massa|kecepatan|suhu|waktu/
-        .test(lower)
+        relationMatches >= 4
     ){
 
-        score += 8;
+        score += 15;
 
     }
-
-
-    if(
-        /paling tepat|paling efektif|evaluasi|analisis|bandingkan|alasan|justifikasi/
-        .test(lower)
+    else if(
+        relationMatches >= 2
     ){
 
         score += 7;
@@ -1808,14 +1784,76 @@ function klasifikasiKesukaran(text){
     }
 
 
-    if(score < 40){
+    /* Angka */
+
+    const numbers =
+        (
+            String(text ?? "")
+                .match(/\d+/g) || []
+        ).length;
+
+
+    if(
+        numbers >= 4
+    ){
+
+        score += 8;
+
+    }
+
+
+    /* Perhitungan */
+
+    if(
+        /hitung|hitunglah|rumus|perbandingan|persentase/
+        .test(
+            String(text ?? "")
+                .toLowerCase()
+        )
+    ){
+
+        score += 8;
+
+    }
+
+
+    /* Data */
+
+    if(
+        /berdasarkan data|berdasarkan tabel|berdasarkan grafik|berdasarkan informasi/
+        .test(
+            String(text ?? "")
+                .toLowerCase()
+        )
+    ){
+
+        score += 3;
+
+    }
+
+
+    score =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                score
+            )
+        );
+
+
+    if(
+        score < 40
+    ){
 
         return "Mudah";
 
     }
 
 
-    if(score < 65){
+    if(
+        score < 65
+    ){
 
         return "Sedang";
 
@@ -1829,28 +1867,39 @@ function klasifikasiKesukaran(text){
 
 /* =========================================================
    BUAT ANALISIS
+   SAMA DENGAN DASHBOARD GURU
 ========================================================= */
 
 function buatAnalisis(soal){
 
     const text =
-        getQuestionText(soal);
+        getQuestionText(
+            soal
+        );
 
 
     const cognitive =
-        klasifikasiKognitif(text);
+        klasifikasiKognitif(
+            text
+        );
 
 
     const category =
-        kategoriKognitif(cognitive);
+        kategoriKognitif(
+            cognitive
+        );
 
 
     const difficulty =
-        klasifikasiKesukaran(text);
+        klasifikasiKesukaran(
+            text
+        );
 
 
     const literacy =
-        isLiterasi(soal);
+        isLiterasi(
+            soal
+        );
 
 
     const literacyHots =
@@ -1861,7 +1910,9 @@ function buatAnalisis(soal){
 
 
     const ujianId =
-        getSoalUjianId(soal);
+        getSoalUjianId(
+            soal
+        );
 
 
     const ujian =
@@ -1869,22 +1920,30 @@ function buatAnalisis(soal){
             item =>
                 norm(
                     getUjianId(item)
-                ) === norm(ujianId)
+                ) ===
+                norm(
+                    ujianId
+                )
         );
 
 
     const guru =
         ujian
-            ? findGuruForUjian(ujian)
+            ? findGuruForUjian(
+                ujian
+            )
             : null;
 
 
     const teacherName =
         guru
             ? getGuruName(guru)
-            : (
+            :
+            (
                 ujian
-                    ? getUjianGuruName(ujian)
+                    ? getUjianGuruName(
+                        ujian
+                    )
                     : null
             ) ||
             "Guru Tidak Diketahui";
@@ -1893,7 +1952,8 @@ function buatAnalisis(soal){
     const guruId =
         guru
             ? getGuruId(guru)
-            : getUjianGuruValue(
+            :
+            getUjianGuruValue(
                 ujian || {}
             );
 
@@ -1901,82 +1961,137 @@ function buatAnalisis(soal){
     let score = 50;
 
 
-    if(cognitive === "C1"){
+    if(
+        cognitive === "C1"
+    ){
+
         score = 35;
+
     }
 
-    if(cognitive === "C2"){
+    if(
+        cognitive === "C2"
+    ){
+
         score = 42;
+
     }
 
-    if(cognitive === "C3"){
+    if(
+        cognitive === "C3"
+    ){
+
         score = 55;
+
     }
 
-    if(cognitive === "C4"){
+    if(
+        cognitive === "C4"
+    ){
+
         score = 70;
+
     }
 
-    if(cognitive === "C5"){
+    if(
+        cognitive === "C5"
+    ){
+
         score = 80;
+
     }
 
-    if(cognitive === "C6"){
+    if(
+        cognitive === "C6"
+    ){
+
         score = 90;
+
     }
 
 
-    if(difficulty === "Mudah"){
+    if(
+        difficulty === "Mudah"
+    ){
+
         score -= 5;
+
     }
 
-    if(difficulty === "Sukar"){
+
+    if(
+        difficulty === "Sukar"
+    ){
+
         score += 5;
+
     }
 
-    if(literacy){
+
+    if(
+        literacy
+    ){
+
         score += 5;
+
     }
 
-    if(literacyHots){
+
+    if(
+        literacyHots
+    ){
+
         score += 5;
+
     }
 
 
     let reason = "";
 
 
-    if(cognitive === "C1"){
+    if(
+        cognitive === "C1"
+    ){
 
         reason =
             "Menuntut peserta didik mengingat atau mengenali informasi.";
 
     }
-    else if(cognitive === "C2"){
+    else if(
+        cognitive === "C2"
+    ){
 
         reason =
             "Menuntut pemahaman, penjelasan, atau penguraian konsep.";
 
     }
-    else if(cognitive === "C3"){
+    else if(
+        cognitive === "C3"
+    ){
 
         reason =
             "Menuntut penerapan konsep atau prosedur.";
 
     }
-    else if(cognitive === "C4"){
+    else if(
+        cognitive === "C4"
+    ){
 
         reason =
             "Menuntut analisis hubungan, data, informasi, atau sebab-akibat.";
 
     }
-    else if(cognitive === "C5"){
+    else if(
+        cognitive === "C5"
+    ){
 
         reason =
             "Menuntut evaluasi, penilaian, pertimbangan, atau justifikasi.";
 
     }
-    else if(cognitive === "C6"){
+    else if(
+        cognitive === "C6"
+    ){
 
         reason =
             "Menuntut perancangan, penciptaan, atau pengembangan suatu produk/solusi.";
@@ -1999,7 +2114,9 @@ function buatAnalisis(soal){
 
         examName:
             ujian
-                ? getUjianName(ujian)
+                ? getUjianName(
+                    ujian
+                )
                 : "Ujian Tidak Diketahui",
 
         guruName:
@@ -2054,13 +2171,9 @@ async function loadData(){
         const [
 
             guruRes,
-
             ujianRes,
-
             soalRes,
-
             literasiSoalRes,
-
             literasiRes
 
         ] = await Promise.all([
@@ -2103,19 +2216,17 @@ async function loadData(){
         const errors = [
 
             guruRes.error,
-
             ujianRes.error,
-
             soalRes.error,
-
             literasiSoalRes.error,
-
             literasiRes.error
 
         ].filter(Boolean);
 
 
-        if(errors.length){
+        if(
+            errors.length
+        ){
 
             throw new Error(
                 errors
@@ -2165,7 +2276,9 @@ async function loadData(){
     }
     catch(error){
 
-        console.error(error);
+        console.error(
+            error
+        );
 
 
         showError(
@@ -2233,10 +2346,14 @@ function populateGuruFilter(){
         guru => {
 
             const id =
-                getGuruId(guru);
+                getGuruId(
+                    guru
+                );
 
 
-            if(id === null){
+            if(
+                id === null
+            ){
 
                 return;
 
@@ -2254,7 +2371,9 @@ function populateGuruFilter(){
 
 
             option.textContent =
-                getGuruName(guru);
+                getGuruName(
+                    guru
+                );
 
 
             select.appendChild(
@@ -2270,7 +2389,8 @@ function populateGuruFilter(){
             ...select.options
         ].some(
             option =>
-                option.value === oldValue
+                option.value ===
+                oldValue
         )
     ){
 
@@ -2310,10 +2430,14 @@ function populateUjianFilter(){
         ujian => {
 
             const id =
-                getUjianId(ujian);
+                getUjianId(
+                    ujian
+                );
 
 
-            if(id === null){
+            if(
+                id === null
+            ){
 
                 return;
 
@@ -2328,8 +2452,11 @@ function populateUjianFilter(){
 
             const guruName =
                 guru
-                    ? getGuruName(guru)
-                    : (
+                    ? getGuruName(
+                        guru
+                    )
+                    :
+                    (
                         getUjianGuruName(
                             ujian
                         ) ||
@@ -2364,7 +2491,8 @@ function populateUjianFilter(){
             ...select.options
         ].some(
             option =>
-                option.value === oldValue
+                option.value ===
+                oldValue
         )
     ){
 
@@ -2443,7 +2571,8 @@ function getFilteredData(){
 
             if(
                 guru &&
-                norm(item.guruId) !== guru
+                norm(item.guruId) !==
+                guru
             ){
 
                 return false;
@@ -2453,7 +2582,8 @@ function getFilteredData(){
 
             if(
                 ujian &&
-                norm(item.ujianId) !== ujian
+                norm(item.ujianId) !==
+                ujian
             ){
 
                 return false;
@@ -2463,7 +2593,8 @@ function getFilteredData(){
 
             if(
                 cognitive &&
-                norm(item.cognitive) !== cognitive
+                norm(item.cognitive) !==
+                cognitive
             ){
 
                 return false;
@@ -2473,7 +2604,8 @@ function getFilteredData(){
 
             if(
                 category &&
-                norm(item.category) !== category
+                norm(item.category) !==
+                category
             ){
 
                 return false;
@@ -2483,7 +2615,8 @@ function getFilteredData(){
 
             if(
                 difficulty &&
-                norm(item.difficulty) !== difficulty
+                norm(item.difficulty) !==
+                difficulty
             ){
 
                 return false;
@@ -2494,10 +2627,13 @@ function getFilteredData(){
             if(literacy){
 
                 if(
-                    literacy === "literasi hots"
+                    literacy ===
+                    "literasi hots"
                 ){
 
-                    if(!item.literacyHots){
+                    if(
+                        !item.literacyHots
+                    ){
 
                         return false;
 
@@ -2521,15 +2657,10 @@ function getFilteredData(){
                 const haystack = [
 
                     item.text,
-
                     item.examName,
-
                     item.guruName,
-
                     item.nomor,
-
                     item.cognitive,
-
                     item.category
 
                 ]
@@ -2559,7 +2690,7 @@ function getFilteredData(){
 
 
 /* =========================================================
-   RENDER
+   RENDER ALL
 ========================================================= */
 
 function renderAll(){
@@ -2608,7 +2739,8 @@ function renderSummary(data){
     ).textContent =
         data.filter(
             item =>
-                item.literacy === "Literasi"
+                item.literacy ===
+                "Literasi"
         ).length;
 
 
@@ -2627,7 +2759,8 @@ function renderSummary(data){
     ).textContent =
         data.filter(
             item =>
-                item.category === "LOTS"
+                item.category ===
+                "LOTS"
         ).length;
 
 
@@ -2636,7 +2769,8 @@ function renderSummary(data){
     ).textContent =
         data.filter(
             item =>
-                item.category === "MOTS"
+                item.category ===
+                "MOTS"
         ).length;
 
 
@@ -2645,7 +2779,8 @@ function renderSummary(data){
     ).textContent =
         data.filter(
             item =>
-                item.category === "HOTS"
+                item.category ===
+                "HOTS"
         ).length;
 
 
@@ -2870,7 +3005,9 @@ function renderTeachers(data){
         );
 
 
-    if(!data.length){
+    if(
+        !data.length
+    ){
 
         box.innerHTML =
             `
@@ -2896,7 +3033,9 @@ function renderTeachers(data){
                 "unknown";
 
 
-            if(!map[key]){
+            if(
+                !map[key]
+            ){
 
                 map[key] = {
 
@@ -2919,10 +3058,11 @@ function renderTeachers(data){
 
     const arr =
         Object.values(map)
-        .sort(
-            (a,b) =>
-                b.count - a.count
-        );
+            .sort(
+                (a,b) =>
+                    b.count -
+                    a.count
+            );
 
 
     const total =
@@ -2971,24 +3111,30 @@ function renderMatrix(data){
             const mudah =
                 data.filter(
                     item =>
-                        item.cognitive === cognitive &&
-                        item.difficulty === "Mudah"
+                        item.cognitive ===
+                            cognitive &&
+                        item.difficulty ===
+                            "Mudah"
                 ).length;
 
 
             const sedang =
                 data.filter(
                     item =>
-                        item.cognitive === cognitive &&
-                        item.difficulty === "Sedang"
+                        item.cognitive ===
+                            cognitive &&
+                        item.difficulty ===
+                            "Sedang"
                 ).length;
 
 
             const sukar =
                 data.filter(
                     item =>
-                        item.cognitive === cognitive &&
-                        item.difficulty === "Sukar"
+                        item.cognitive ===
+                            cognitive &&
+                        item.difficulty ===
+                            "Sukar"
                 ).length;
 
 
@@ -3036,6 +3182,7 @@ function renderMatrix(data){
 
 /* =========================================================
    KELAYAKAN
+   DISESUAIKAN DENGAN DASHBOARD GURU
 ========================================================= */
 
 function renderEligibility(data){
@@ -3044,11 +3191,14 @@ function renderEligibility(data){
         data.length;
 
 
-    if(!total){
+    if(
+        !total
+    ){
 
         document.getElementById(
             "eligibility"
-        ).innerHTML = "";
+        ).innerHTML =
+            "";
 
 
         document.getElementById(
@@ -3122,9 +3272,17 @@ function renderEligibility(data){
         ).length;
 
 
+    const mudahSedang =
+        mudah + sedang;
+
+
+    const lowMid =
+        lots + mots;
+
+
     const mudahSedangPct =
         percentage(
-            mudah + sedang,
+            mudahSedang,
             total
         );
 
@@ -3138,7 +3296,7 @@ function renderEligibility(data){
 
     const lowMidPct =
         percentage(
-            lots + mots,
+            lowMid,
             total
         );
 
@@ -3157,52 +3315,113 @@ function renderEligibility(data){
         );
 
 
+    /* =====================================================
+       TOLERANSI 5% JUMLAH SOAL
+       SAMA DENGAN DASHBOARD GURU
+    ===================================================== */
+
+    const targetMudahSedang =
+        total * 0.75;
+
+
+    const targetSukar =
+        total * 0.25;
+
+
+    const tolerance =
+        Math.max(
+            1,
+            Math.round(
+                total * 0.05
+            )
+        );
+
+
+    const okMudahSedang =
+        Math.abs(
+            mudahSedang -
+            targetMudahSedang
+        ) <= tolerance;
+
+
+    const okSukar =
+        Math.abs(
+            sukar -
+            targetSukar
+        ) <= tolerance;
+
+
+    const okLOTSMOTS =
+        lowMidPct >= 40 &&
+        lowMidPct <= 50;
+
+
+    const okHOTS =
+        hotsPct >= 50 &&
+        hotsPct <= 60;
+
+
+    const okLiterasi =
+        literasiPct >= 50;
+
+
+    const okJumlah =
+        (
+            mudahSedang +
+            sukar
+        ) === total;
+
+
+    const okKognitif =
+        (
+            lots +
+            mots +
+            hots
+        ) === total;
+
+
     const checks = [
 
         [
             "Mudah + Sedang",
-            `${mudahSedangPct}% (target 70–80%)`,
-            mudahSedangPct >= 70 &&
-            mudahSedangPct <= 80
+            `${mudahSedangPct}% (target sekitar 75%)`,
+            okMudahSedang
         ],
 
         [
             "Sukar",
-            `${sukarPct}% (target 20–30%)`,
-            sukarPct >= 20 &&
-            sukarPct <= 30
+            `${sukarPct}% (target sekitar 25%)`,
+            okSukar
         ],
 
         [
             "LOTS + MOTS",
             `${lowMidPct}% (target 40–50%)`,
-            lowMidPct >= 40 &&
-            lowMidPct <= 50
+            okLOTSMOTS
         ],
 
         [
             "HOTS",
             `${hotsPct}% (target 50–60%)`,
-            hotsPct >= 50 &&
-            hotsPct <= 60
+            okHOTS
         ],
 
         [
             "Literasi",
             `${literasiPct}% (target ≥50%)`,
-            literasiPct >= 50
+            okLiterasi
         ],
 
         [
             "Jumlah Soal",
             `${total} soal`,
-            total > 0
+            okJumlah
         ],
 
         [
-            "Keseimbangan",
-            "Indikator utama dianalisis",
-            true
+            "Klasifikasi",
+            `${lots + mots + hots} soal terklasifikasi`,
+            okKognitif
         ]
 
     ];
@@ -3226,6 +3445,7 @@ function renderEligibility(data){
                         ${item[2] ? "ok" : "no"}">
 
                         ${item[2] ? "✓" : "✗"}
+
                         ${escapeHTML(item[1])}
 
                     </div>
@@ -3293,7 +3513,9 @@ function badgeClass(
     value
 ){
 
-    if(type === "cognitive"){
+    if(
+        type === "cognitive"
+    ){
 
         if(
             [
@@ -3308,7 +3530,9 @@ function badgeClass(
         }
 
 
-        if(value === "C3"){
+        if(
+            value === "C3"
+        ){
 
             return "badge-orange";
 
@@ -3320,16 +3544,22 @@ function badgeClass(
     }
 
 
-    if(type === "category"){
+    if(
+        type === "category"
+    ){
 
-        if(value === "HOTS"){
+        if(
+            value === "HOTS"
+        ){
 
             return "badge-red";
 
         }
 
 
-        if(value === "MOTS"){
+        if(
+            value === "MOTS"
+        ){
 
             return "badge-orange";
 
@@ -3341,16 +3571,22 @@ function badgeClass(
     }
 
 
-    if(type === "difficulty"){
+    if(
+        type === "difficulty"
+    ){
 
-        if(value === "Sukar"){
+        if(
+            value === "Sukar"
+        ){
 
             return "badge-red";
 
         }
 
 
-        if(value === "Sedang"){
+        if(
+            value === "Sedang"
+        ){
 
             return "badge-orange";
 
@@ -3362,9 +3598,12 @@ function badgeClass(
     }
 
 
-    if(type === "literacy"){
+    if(
+        type === "literacy"
+    ){
 
-        return value === "Literasi"
+        return value ===
+            "Literasi"
             ? "badge-purple"
             : "badge-gray";
 
@@ -3395,7 +3634,9 @@ function renderQuestions(data){
         `Menampilkan ${data.length} soal dari ${dataAnalisis.length} soal yang tersedia.`;
 
 
-    if(!data.length){
+    if(
+        !data.length
+    ){
 
         box.innerHTML =
 
@@ -3423,13 +3664,18 @@ function renderQuestions(data){
                             <span class="q-number">
 
                                 Soal Nomor
-                                ${escapeHTML(item.nomor)}
+                                ${escapeHTML(
+                                    item.nomor
+                                )}
 
                             </span>
 
-                            <span class="badge badge-blue">
+                            <span
+                                class="badge badge-blue">
 
-                                ${escapeHTML(item.examName)}
+                                ${escapeHTML(
+                                    item.examName
+                                )}
 
                             </span>
 
@@ -3439,7 +3685,9 @@ function renderQuestions(data){
                         <div class="teacher">
 
                             👨‍🏫
-                            ${escapeHTML(item.guruName)}
+                            ${escapeHTML(
+                                item.guruName
+                            )}
 
                         </div>
 
@@ -3514,7 +3762,9 @@ function renderQuestions(data){
 
                     <div class="q-text">
 
-                        ${escapeHTML(item.text)}
+                        ${escapeHTML(
+                            item.text
+                        )}
 
                     </div>
 
@@ -3525,7 +3775,9 @@ function renderQuestions(data){
                             Analisis:
                         </strong>
 
-                        ${escapeHTML(item.reason)}
+                        ${escapeHTML(
+                            item.reason
+                        )}
 
                         <br>
 
@@ -3577,7 +3829,9 @@ document.addEventListener(
     "DOMContentLoaded",
     () => {
 
-        if(cekLoginAdmin()){
+        if(
+            cekLoginAdmin()
+        ){
 
             loadData();
 
