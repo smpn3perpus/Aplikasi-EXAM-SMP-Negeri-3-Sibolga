@@ -1,22 +1,37 @@
+```html
 <script>
 /* =========================================================
    RUANG EXAM
    ANALISIS SOAL GURU
    ATURAN FINAL
-   =========================================================
 
+   TARGET FINAL HANYA:
    1. Maksimal 25 soal
-   2. Jumlah = 100% hanya jika tepat 25
-   3. Literasi hanya membaca HTML/isi kolom SOAL
-   4. Tidak membaca row.literasi
-   5. Tidak menggunakan stimulus database sebagai penentu literasi
-   6. Tidak ada HOTS minimal 30%
-   7. Tidak ada Mudah+Sedang minimal 60%
-   8. Tidak ada Sukar 20-30%
-   9. LOTS/MOTS harus ada
-   10. HOTS harus ada
-   11. Mudah + Sedang + Sukar harus ada
-   12. Guru lain tidak boleh masuk
+   2. Jumlah = 100% hanya jika tepat 25 soal
+   3. Ada LOTS/MOTS (C1-C3)
+   4. Ada HOTS (C4-C6)
+   5. Ada Literasi
+   6. Ada soal Mudah
+   7. Ada soal Sedang
+
+   TIDAK ADA LAGI:
+   - Target persentase HOTS
+   - Target persentase LOTS/MOTS
+   - Target persentase Literasi
+   - Target persentase Mudah/Sedang
+   - Target Sukar
+   - Sukar sebagai syarat kelayakan
+   - Keseimbangan persentase
+   - Target 60%, 30%, 20%-30%, dan sebagainya
+
+   ANALISIS:
+   - Hanya soal yang benar-benar tersedia
+   - Maksimal 25 soal
+   - Tidak membuat soal tambahan
+   - Hanya soal ujian milik guru yang sedang login
+   - Literasi hanya membaca HTML/isi kolom SOAL
+   - Tidak membaca row.literasi
+   - Tidak menggunakan stimulus database sebagai penentu literasi
    ========================================================= */
 
 const SUPABASE_URL =
@@ -38,7 +53,8 @@ const MAX_SOAL = 25;
    SESSION GURU
    ========================================================= */
 
-const sessionRaw = localStorage.getItem("exam_user");
+const sessionRaw =
+    localStorage.getItem("exam_user");
 
 if (!sessionRaw) {
     location.href = "login.html";
@@ -94,7 +110,8 @@ let hasilAnalisis = null;
 
 function showMessage(text, type) {
 
-    const el = document.getElementById("message");
+    const el =
+        document.getElementById("message");
 
     if (!el) return;
 
@@ -105,7 +122,8 @@ function showMessage(text, type) {
 
 function hideMessage() {
 
-    const el = document.getElementById("message");
+    const el =
+        document.getElementById("message");
 
     if (!el) return;
 
@@ -141,11 +159,17 @@ function escAttr(value) {
 
 function stripHTML(html) {
 
-    const div = document.createElement("div");
+    const div =
+        document.createElement("div");
 
-    div.innerHTML = String(html ?? "");
+    div.innerHTML =
+        String(html ?? "");
 
-    return (div.textContent || div.innerText || "")
+    return (
+        div.textContent ||
+        div.innerText ||
+        ""
+    )
         .replace(/\s+/g, " ")
         .trim();
 }
@@ -168,7 +192,12 @@ function countAny(text, words) {
 
     return words.reduce(
         (total, word) =>
-            total + (text.includes(word) ? 1 : 0),
+            total +
+            (
+                text.includes(word)
+                    ? 1
+                    : 0
+            ),
         0
     );
 }
@@ -193,7 +222,9 @@ async function loadData() {
     }
 
     const select =
-        document.getElementById("ujianSelect");
+        document.getElementById(
+            "ujianSelect"
+        );
 
     if (!select) return;
 
@@ -203,7 +234,6 @@ async function loadData() {
     try {
 
         /*
-           PENTING:
            HANYA ujian milik guru login.
         */
 
@@ -237,12 +267,13 @@ async function loadData() {
 
         /*
            Filter tambahan di JavaScript.
-           Ini memastikan hanya guru login.
         */
 
         semuaUjian =
             (data || []).filter(
-                u => String(u.guru_id) === String(guruId)
+                u =>
+                    String(u.guru_id) ===
+                    String(guruId)
             );
 
         select.innerHTML =
@@ -251,7 +282,9 @@ async function loadData() {
         semuaUjian.forEach(u => {
 
             const option =
-                document.createElement("option");
+                document.createElement(
+                    "option"
+                );
 
             option.value = u.id;
 
@@ -269,9 +302,11 @@ async function loadData() {
             document.getElementById(
                 "questionList"
             ).innerHTML =
-                `<div class="empty">
+                `
+                <div class="empty">
                     📝 Belum ada ujian milik akun guru ini.
-                </div>`;
+                </div>
+                `;
 
             return;
         }
@@ -279,11 +314,14 @@ async function loadData() {
         if (
             ujianTerpilih &&
             semuaUjian.some(
-                u => String(u.id) === String(ujianTerpilih.id)
+                u =>
+                    String(u.id) ===
+                    String(ujianTerpilih.id)
             )
         ) {
 
-            select.value = ujianTerpilih.id;
+            select.value =
+                ujianTerpilih.id;
 
             await pilihUjian();
 
@@ -294,7 +332,10 @@ async function loadData() {
 
     } catch (error) {
 
-        console.error("LOAD DATA ERROR:", error);
+        console.error(
+            "LOAD DATA ERROR:",
+            error
+        );
 
         showMessage(
             "Gagal memuat ujian: " +
@@ -315,9 +356,14 @@ function resetView() {
     semuaSoal = [];
     hasilAnalisis = null;
 
-    document.getElementById(
-        "examInfo"
-    ).classList.add("hidden");
+    const examInfo =
+        document.getElementById(
+            "examInfo"
+        );
+
+    if (examInfo) {
+        examInfo.classList.add("hidden");
+    }
 
     [
         "totalSoal",
@@ -337,7 +383,9 @@ function resetView() {
     });
 
     const badge =
-        document.getElementById("hasilBadge");
+        document.getElementById(
+            "hasilBadge"
+        );
 
     if (badge) {
 
@@ -348,19 +396,35 @@ function resetView() {
             "BELUM DIUJI";
     }
 
-    document.getElementById(
-        "analysisContent"
-    ).innerHTML =
-        `<div class="empty">
-            Pilih ujian untuk memulai analisis.
-        </div>`;
+    const analysisContent =
+        document.getElementById(
+            "analysisContent"
+        );
 
-    document.getElementById(
-        "questionList"
-    ).innerHTML =
-        `<div class="empty">
-            👆 Pilih ujian terlebih dahulu.
-        </div>`;
+    if (analysisContent) {
+
+        analysisContent.innerHTML =
+            `
+            <div class="empty">
+                Pilih ujian untuk memulai analisis.
+            </div>
+            `;
+    }
+
+    const questionList =
+        document.getElementById(
+            "questionList"
+        );
+
+    if (questionList) {
+
+        questionList.innerHTML =
+            `
+            <div class="empty">
+                👆 Pilih ujian terlebih dahulu.
+            </div>
+            `;
+    }
 }
 
 
@@ -383,12 +447,15 @@ async function pilihUjian() {
     }
 
     /*
-       Cari hanya dari daftar ujian milik guru login.
+       Cari hanya dari daftar ujian
+       milik guru login.
     */
 
     ujianTerpilih =
         semuaUjian.find(
-            u => String(u.id) === String(id)
+            u =>
+                String(u.id) ===
+                String(id)
         );
 
     if (!ujianTerpilih) {
@@ -423,30 +490,46 @@ async function pilihUjian() {
     }
 
     const examInfo =
-        document.getElementById("examInfo");
+        document.getElementById(
+            "examInfo"
+        );
 
-    examInfo.classList.remove("hidden");
+    examInfo.classList.remove(
+        "hidden"
+    );
 
     examInfo.innerHTML =
 
         `<b>Ujian:</b>
-            ${esc(ujianTerpilih.judul || "-")}
+            ${esc(
+                ujianTerpilih.judul ||
+                "-"
+            )}
         <br>
 
         <b>Mata Pelajaran:</b>
             ${esc(
-                ujianTerpilih.mata_pelajaran?.nama || "-"
+                ujianTerpilih
+                    .mata_pelajaran
+                    ?.nama ||
+                "-"
             )}
         <br>
 
         <b>Kelas:</b>
             ${esc(
-                ujianTerpilih.kelas?.nama_kelas || "-"
+                ujianTerpilih
+                    .kelas
+                    ?.nama_kelas ||
+                "-"
             )}
         <br>
 
         <b>Status:</b>
-            ${esc(ujianTerpilih.status || "-")}
+            ${esc(
+                ujianTerpilih.status ||
+                "-"
+            )}
         <br>
 
         <b>Analisis:</b>
@@ -472,10 +555,7 @@ async function loadSoal() {
     if (!ujianTerpilih) return;
 
     /*
-       PENTING:
        Soal dibatasi berdasarkan ujian_id.
-       Karena ujian sudah diverifikasi sebagai milik guru,
-       maka soal guru lain tidak akan masuk.
     */
 
     const {
@@ -517,8 +597,7 @@ async function loadSoal() {
     }
 
     /*
-       Filter pengaman:
-       hanya soal dengan ujian_id yang sedang dianalisis.
+       Filter pengaman.
     */
 
     semuaSoal =
@@ -536,21 +615,22 @@ async function loadSoal() {
 
    C1-C2 = LOTS
    C3    = MOTS
-   C4-C5 = HOTS
-   C6    = HOTS
+   C4-C6 = HOTS
+
+   TARGET:
+   LOTS/MOTS = ADA
+   HOTS      = ADA
    ========================================================= */
 
 function detectLevel(q) {
 
     /*
        HANYA kolom pertanyaan/soal.
-
-       Tidak memakai stimulus database.
-       Tidak memakai literasi database.
     */
 
     const t =
         cleanText(q.pertanyaan);
+
 
     /*
        C6 - Mencipta
@@ -587,6 +667,7 @@ function detectLevel(q) {
         "write a dialogue"
     ];
 
+
     /*
        C5 - Mengevaluasi
     */
@@ -618,12 +699,9 @@ function detectLevel(q) {
         "is it effective"
     ];
 
+
     /*
        C4 - Menganalisis
-
-       PERHATIAN:
-       "mengapa" saja tidak otomatis C4.
-       Harus ada konteks analisis/relasi/bukti.
     */
 
     const c4 = [
@@ -672,6 +750,7 @@ function detectLevel(q) {
         "relationship between"
     ];
 
+
     /*
        C3 - Menerapkan
     */
@@ -696,6 +775,7 @@ function detectLevel(q) {
         "use the formula",
         "use the method"
     ];
+
 
     /*
        C2 - Memahami
@@ -724,6 +804,7 @@ function detectLevel(q) {
         "what does",
         "what is the purpose"
     ];
+
 
     /*
        C1 - Mengingat
@@ -800,27 +881,19 @@ function detectLevel(q) {
    DETEKSI LITERASI
    =========================================================
 
-   SANGAT PENTING:
-
-   Literasi HANYA dibaca dari:
+   Literasi HANYA dari:
        q.pertanyaan
 
    Tidak membaca:
        row.literasi
-       literasi_soal
+       literasi database
        stimulus database
        gambar stimulus database
 
-   Jika HTML soal berisi teks bacaan, tabel, gambar,
-   dialog, data, grafik, artikel, wacana, dll,
-   maka dapat dianggap literasi.
+   HTML di dalam kolom soal tetap dibaca.
    ========================================================= */
 
 function detectLiterasi(q) {
-
-    /*
-       HANYA INI YANG DIBACA.
-    */
 
     const html =
         String(q.pertanyaan || "");
@@ -830,8 +903,8 @@ function detectLiterasi(q) {
 
 
     /*
-       1. HTML memiliki elemen visual/data
-       di DALAM KOLOM SOAL.
+       1. Elemen HTML visual/data
+       yang terdapat langsung di kolom SOAL.
     */
 
     const hasHTMLLiteracyElement =
@@ -853,7 +926,7 @@ function detectLiterasi(q) {
 
 
     /*
-       2. Frasa literasi pada isi SOAL.
+       2. Frasa literasi.
     */
 
     const literacyWords = [
@@ -922,20 +995,14 @@ function detectLiterasi(q) {
             literacyWords
         ) > 0
     ) {
+
         return true;
     }
 
 
     /*
-       3. Deteksi pola bacaan langsung.
-
-       Contoh:
-       "Rina pergi ke sekolah..."
-       kemudian pertanyaan meminta informasi
-       dari bacaan tersebut.
-
-       Panjang saja tidak otomatis selalu literasi.
-       Digunakan bersama indikator struktur teks.
+       3. Struktur bacaan.
+       Panjang teks + kata "berdasarkan".
     */
 
     const hasReadingStructure =
@@ -950,7 +1017,7 @@ function detectLiterasi(q) {
 
 
     /*
-       4. Dialog / percakapan dalam kolom soal.
+       4. Dialog.
     */
 
     const hasDialogue =
@@ -971,10 +1038,6 @@ function detectLiterasi(q) {
     }
 
 
-    /*
-       Tidak ada indikator literasi.
-    */
-
     return false;
 }
 
@@ -984,11 +1047,12 @@ function detectLiterasi(q) {
    =========================================================
 
    C1-C2 = Mudah
-   C3    = Sedang
-   C4-C5 = Sedang
+   C3-C5 = Sedang
    C6    = Sukar
 
-   Tidak ada lagi persentase minimum.
+   CATATAN:
+   Sukar tetap dihitung sebagai HASIL ANALISIS,
+   tetapi TIDAK menjadi target wajib.
    ========================================================= */
 
 function detectDifficulty(levelData) {
@@ -1001,6 +1065,7 @@ function detectDifficulty(levelData) {
         levelData.c === "C1" ||
         levelData.c === "C2"
     ) {
+
         return "Mudah";
     }
 
@@ -1009,6 +1074,7 @@ function detectDifficulty(levelData) {
         levelData.c === "C4" ||
         levelData.c === "C5"
     ) {
+
         return "Sedang";
     }
 
@@ -1027,9 +1093,7 @@ function detectDifficulty(levelData) {
 function enrichQuestions() {
 
     /*
-       Maksimal 25 soal.
-
-       Sortir nomor terlebih dahulu.
+       Sortir berdasarkan nomor.
     */
 
     const sorted =
@@ -1041,7 +1105,10 @@ function enrichQuestions() {
 
 
     /*
-       HANYA 25 SOAL PERTAMA.
+       Maksimal 25 soal.
+
+       Jika hanya tersedia 10,
+       maka hanya 10 yang dianalisis.
     */
 
     const limited =
@@ -1056,20 +1123,11 @@ function enrichQuestions() {
         const level =
             detectLevel(q);
 
-        /*
-           Literasi HANYA dari q.pertanyaan.
-        */
-
         const literasi =
             detectLiterasi(q);
 
-        /*
-           Kesukaran berdasarkan C-level.
-        */
-
         const difficulty =
             detectDifficulty(level);
-
 
         return {
 
@@ -1093,6 +1151,17 @@ function enrichQuestions() {
 
 /* =========================================================
    ANALISIS
+   =========================================================
+
+   TARGET HANYA 6:
+   1. LOTS/MOTS
+   2. HOTS
+   3. Literasi
+   4. Mudah
+   5. Sedang
+   6. Jumlah 25 soal
+
+   TIDAK ADA TARGET SUKAR.
    ========================================================= */
 
 function buatAnalisis() {
@@ -1104,47 +1173,73 @@ function buatAnalisis() {
         qs.length;
 
 
+    /*
+       LOTS + MOTS DIGABUNG.
+    */
+
     const lots =
         qs.filter(
             q =>
-                q.analisisLevel === "LOTS"
+                q.analisisLevel ===
+                "LOTS"
         ).length;
-
 
     const mots =
         qs.filter(
             q =>
-                q.analisisLevel === "MOTS"
+                q.analisisLevel ===
+                "MOTS"
         ).length;
 
+
+    const lotsMots =
+        lots + mots;
+
+
+    /*
+       HOTS = C4-C6.
+    */
 
     const hots =
         qs.filter(
             q =>
-                q.analisisLevel === "HOTS"
+                q.analisisLevel ===
+                "HOTS"
         ).length;
 
+
+    /*
+       Kesukaran tetap dihitung
+       sebagai informasi analisis.
+    */
 
     const mudah =
         qs.filter(
             q =>
-                q.analisisDifficulty === "Mudah"
+                q.analisisDifficulty ===
+                "Mudah"
         ).length;
 
 
     const sedang =
         qs.filter(
             q =>
-                q.analisisDifficulty === "Sedang"
+                q.analisisDifficulty ===
+                "Sedang"
         ).length;
 
 
     const sukar =
         qs.filter(
             q =>
-                q.analisisDifficulty === "Sukar"
+                q.analisisDifficulty ===
+                "Sukar"
         ).length;
 
+
+    /*
+       Literasi hanya dari isi soal.
+    */
 
     const literasi =
         qs.filter(
@@ -1155,32 +1250,22 @@ function buatAnalisis() {
 
     /*
        ======================================================
-       TUJUH INDIKATOR FINAL
-       ======================================================
-    */
+       TARGET FINAL
+       ====================================================== */
 
     const checks = [
-
-        /*
-           1. LOTS/MOTS
-        */
 
         {
             name:
                 "Ada soal LOTS/MOTS",
 
             ok:
-                lots > 0 ||
-                mots > 0,
+                lotsMots > 0,
 
             detail:
-                `${lots + mots} soal LOTS/MOTS`
+                `${lotsMots} soal LOTS/MOTS`
         },
 
-
-        /*
-           2. HOTS
-        */
 
         {
             name:
@@ -1194,43 +1279,41 @@ function buatAnalisis() {
         },
 
 
-        /*
-           3. Mudah + Sedang
-        */
+        {
+            name:
+                "Ada soal Literasi",
+
+            ok:
+                literasi > 0,
+
+            detail:
+                `${literasi} soal literasi`
+        },
+
 
         {
             name:
-                "Ada soal Mudah/Sedang",
+                "Ada soal Mudah",
 
             ok:
-                mudah > 0 &&
+                mudah > 0,
+
+            detail:
+                `${mudah} soal Mudah`
+        },
+
+
+        {
+            name:
+                "Ada soal Sedang",
+
+            ok:
                 sedang > 0,
 
             detail:
-                `${mudah} Mudah + ${sedang} Sedang`
+                `${sedang} soal Sedang`
         },
 
-
-        /*
-           4. Sukar
-        */
-
-        {
-            name:
-                "Ada soal Sukar",
-
-            ok:
-                sukar > 0,
-
-            detail:
-                `${sukar} soal Sukar`
-        },
-
-
-        /*
-           5. JUMLAH
-           100% HANYA TEPAT 25
-        */
 
         {
             name:
@@ -1241,51 +1324,14 @@ function buatAnalisis() {
 
             detail:
                 `${total} / 25 soal`
-        },
-
-
-        /*
-           6. LITERASI
-           HANYA dari kolom soal.
-        */
-
-        {
-            name:
-                "Ada soal Literasi",
-
-            ok:
-                literasi > 0,
-
-            detail:
-                `${literasi} soal literasi dari isi kolom soal`
-        },
-
-
-        /*
-           7. KESEIMBANGAN
-           Bukan persentase.
-           Hanya keberadaan ketiga kategori.
-        */
-
-        {
-            name:
-                "Keseimbangan Kesukaran",
-
-            ok:
-                mudah > 0 &&
-                sedang > 0 &&
-                sukar > 0,
-
-            detail:
-                `Mudah ${mudah} • Sedang ${sedang} • Sukar ${sukar}`
         }
 
     ];
 
 
     /*
-       Semua indikator harus terpenuhi
-       agar status LAYAK.
+       Semua 6 target harus ada
+       untuk status LAYAK.
     */
 
     const semuaTerpenuhi =
@@ -1307,7 +1353,7 @@ function buatAnalisis() {
 
         status = "LAYAK";
 
-    } else if (jumlahTerpenuhi >= 5) {
+    } else if (jumlahTerpenuhi >= 4) {
 
         status = "PERLU PERBAIKAN";
 
@@ -1326,6 +1372,8 @@ function buatAnalisis() {
         lots,
 
         mots,
+
+        lotsMots,
 
         hots,
 
@@ -1383,59 +1431,76 @@ function renderAnalysis() {
        SUMMARY
     */
 
-    document.getElementById(
-        "totalSoal"
-    ).textContent =
-        a.total;
+    const totalSoal =
+        document.getElementById(
+            "totalSoal"
+        );
+
+    if (totalSoal) {
+        totalSoal.textContent =
+            a.total;
+    }
 
 
-    document.getElementById(
-        "lots"
-    ).textContent =
-        a.lots;
+    const lotsEl =
+        document.getElementById(
+            "lots"
+        );
+
+    if (lotsEl) {
+        lotsEl.textContent =
+            a.lots;
+    }
 
 
-    document.getElementById(
-        "mots"
-    ).textContent =
-        a.mots;
+    const motsEl =
+        document.getElementById(
+            "mots"
+        );
+
+    if (motsEl) {
+        motsEl.textContent =
+            a.mots;
+    }
 
 
-    document.getElementById(
-        "hots"
-    ).textContent =
-        a.hots;
+    const hotsEl =
+        document.getElementById(
+            "hots"
+        );
+
+    if (hotsEl) {
+        hotsEl.textContent =
+            a.hots;
+    }
 
 
-    document.getElementById(
-        "sukar"
-    ).textContent =
-        a.sukar;
+    const sukarEl =
+        document.getElementById(
+            "sukar"
+        );
+
+    if (sukarEl) {
+        sukarEl.textContent =
+            a.sukar;
+    }
 
 
-    document.getElementById(
-        "literasi"
-    ).textContent =
-        a.literasi;
+    const literasiEl =
+        document.getElementById(
+            "literasi"
+        );
+
+    if (literasiEl) {
+        literasiEl.textContent =
+            a.literasi;
+    }
 
 
     /*
-       Persentase hanya sebagai INFORMASI visual.
-       BUKAN syarat kelayakan.
-    */
-
-    const pct = value =>
-        a.total
-            ? (
-                value /
-                a.total *
-                100
-            )
-            : 0;
-
-
-    /*
-       Keterangan indikator.
+       ======================================================
+       TIDAK ADA LAGI PERSENTASE.
+       ======================================================
     */
 
     const alasan = [];
@@ -1444,16 +1509,12 @@ function renderAnalysis() {
     if (a.total !== 25) {
 
         alasan.push(
-            `Jumlah soal ${a.total}; ` +
-            `indikator 25 soal belum terpenuhi.`
+            `Jumlah soal saat ini ${a.total} dari 25.`
         );
     }
 
 
-    if (
-        a.lots === 0 &&
-        a.mots === 0
-    ) {
+    if (a.lotsMots === 0) {
 
         alasan.push(
             "Belum ada soal LOTS/MOTS."
@@ -1469,57 +1530,48 @@ function renderAnalysis() {
     }
 
 
-    if (
-        a.mudah === 0 ||
-        a.sedang === 0
-    ) {
-
-        alasan.push(
-            "Harus ada soal Mudah dan Sedang."
-        );
-    }
-
-
-    if (a.sukar === 0) {
-
-        alasan.push(
-            "Belum ada soal Sukar."
-        );
-    }
-
-
     if (a.literasi === 0) {
 
         alasan.push(
-            "Belum ada literasi yang terdeteksi dari isi kolom soal."
+            "Belum ada soal literasi dari isi kolom soal."
         );
     }
 
 
-    if (
-        a.mudah === 0 ||
-        a.sedang === 0 ||
-        a.sukar === 0
-    ) {
+    if (a.mudah === 0) {
 
         alasan.push(
-            "Keseimbangan belum lengkap: harus ada Mudah + Sedang + Sukar."
+            "Belum ada soal Mudah."
         );
     }
 
 
-    const message =
-        a.status === "LAYAK"
+    if (a.sedang === 0) {
 
-            ? "Naskah memenuhi 7 indikator analisis."
+        alasan.push(
+            "Belum ada soal Sedang."
+        );
+    }
 
-            : "Indikator yang belum terpenuhi: " +
-              alasan.join(" ");
+
+    let message;
+
+
+    if (a.status === "LAYAK") {
+
+        message =
+            "Naskah memenuhi seluruh target analisis.";
+
+    } else {
+
+        message =
+            "Target yang belum terpenuhi: " +
+            alasan.join(" ");
+    }
 
 
     /*
-       Progress bar
-       HANYA tampilan informasi.
+       TAMPILAN ANALISIS TANPA PERSENTASE.
     */
 
     document.getElementById(
@@ -1539,122 +1591,12 @@ function renderAnalysis() {
                 color:#64748b;
             ">
 
-                Indikator terpenuhi:
+                Target terpenuhi:
                 <b>
-                    ${a.jumlahTerpenuhi}/7
+                    ${a.jumlahTerpenuhi}/6
                 </b>
 
             </div>
-
-        </div>
-
-
-        <div class="progress-row">
-
-            <span>LOTS + MOTS</span>
-
-            <div class="progress">
-
-                <i style="
-                    width:${Math.min(
-                        100,
-                        pct(a.lots + a.mots)
-                    )}%;
-                "></i>
-
-            </div>
-
-            <b>
-                ${pct(a.lots + a.mots).toFixed(1)}%
-            </b>
-
-        </div>
-
-
-        <div class="progress-row">
-
-            <span>HOTS</span>
-
-            <div class="progress hot">
-
-                <i style="
-                    width:${Math.min(
-                        100,
-                        pct(a.hots)
-                    )}%;
-                "></i>
-
-            </div>
-
-            <b>
-                ${pct(a.hots).toFixed(1)}%
-            </b>
-
-        </div>
-
-
-        <div class="progress-row">
-
-            <span>Mudah + Sedang</span>
-
-            <div class="progress">
-
-                <i style="
-                    width:${Math.min(
-                        100,
-                        pct(a.mudah + a.sedang)
-                    )}%;
-                "></i>
-
-            </div>
-
-            <b>
-                ${pct(a.mudah + a.sedang).toFixed(1)}%
-            </b>
-
-        </div>
-
-
-        <div class="progress-row">
-
-            <span>Sukar</span>
-
-            <div class="progress sukar">
-
-                <i style="
-                    width:${Math.min(
-                        100,
-                        pct(a.sukar)
-                    )}%;
-                "></i>
-
-            </div>
-
-            <b>
-                ${pct(a.sukar).toFixed(1)}%
-            </b>
-
-        </div>
-
-
-        <div class="progress-row">
-
-            <span>Literasi</span>
-
-            <div class="progress literasi">
-
-                <i style="
-                    width:${Math.min(
-                        100,
-                        pct(a.literasi)
-                    )}%;
-                "></i>
-
-            </div>
-
-            <b>
-                ${pct(a.literasi).toFixed(1)}%
-            </b>
 
         </div>
 
@@ -1674,9 +1616,12 @@ function renderAnalysis() {
                             ${esc(item.name)}
                         </b>
 
-                        ${esc(item.detail)}
+                        <div>
+                            ${esc(item.detail)}
+                        </div>
 
                     </div>
+
                 `
             ).join("")}
 
@@ -1685,18 +1630,32 @@ function renderAnalysis() {
 
         <div class="note">
 
-            <b>Aturan analisis:</b>
+            <b>Target analisis:</b>
 
-            Maksimal 25 soal.
-            Jumlah dianggap 100% hanya jika tepat 25 soal.
+            maksimal 25 soal,
+            ada LOTS/MOTS,
+            ada HOTS,
+            ada literasi,
+            ada soal Mudah,
+            dan ada soal Sedang.
+
+            <br><br>
+
+            <b>Catatan:</b>
+            Soal Sukar tetap dianalisis dan ditampilkan
+            sebagai hasil klasifikasi, tetapi tidak menjadi
+            target wajib.
+
+            <br><br>
+
             Literasi hanya dibaca dari isi HTML kolom
-            <b>soal</b>.
-            Sistem tidak membaca
+            <b>soal</b>. Sistem tidak membaca
             <b>row.literasi</b> dan tidak menggunakan
             stimulus database sebagai penentu literasi.
-            Tidak ada batas persentase HOTS,
-            Mudah+Sedang, maupun Sukar.
 
+            <br><br>
+
+            Tidak ada target persentase.
         </div>
     `;
 }
@@ -1720,9 +1679,11 @@ function renderQuestions() {
     ) {
 
         list.innerHTML =
-            `<div class="empty">
+            `
+            <div class="empty">
                 📝 Belum ada soal.
-            </div>`;
+            </div>
+            `;
 
         return;
     }
@@ -1773,7 +1734,9 @@ function renderQuestions() {
 
                 (
                     !keyword ||
-                    searchText.includes(keyword)
+                    searchText.includes(
+                        keyword
+                    )
                 )
 
                 &&
@@ -1796,9 +1759,11 @@ function renderQuestions() {
     if (!data.length) {
 
         list.innerHTML =
-            `<div class="empty">
+            `
+            <div class="empty">
                 Tidak ada soal yang sesuai filter.
-            </div>`;
+            </div>
+            `;
 
         return;
     }
@@ -1822,16 +1787,6 @@ function renderQuestions() {
                         ? "diff-mid"
                         : "diff-easy";
 
-
-            /*
-               PENTING:
-
-               Jangan mengambil stimulus database
-               untuk menentukan literasi.
-
-               Badge literasi berasal dari:
-                   q.pertanyaan
-            */
 
             return `
 
@@ -1937,10 +1892,6 @@ function renderQuestions() {
 
 /* =========================================================
    RENDER HTML SOAL
-   =========================================================
-
-   Pertanyaan dapat berupa HTML.
-   Script/iframe/object/embed dibuang.
    ========================================================= */
 
 function renderQuestionHTML(value) {
@@ -1957,7 +1908,10 @@ function renderQuestionHTML(value) {
     if (!/<[a-z][\s\S]*>/i.test(html)) {
 
         return esc(html)
-            .replace(/\n/g, "<br>");
+            .replace(
+                /\n/g,
+                "<br>"
+            );
     }
 
 
@@ -1985,7 +1939,7 @@ function renderQuestionHTML(value) {
 
 
     /*
-       Hapus event handler seperti onclick.
+       Hapus event handler.
     */
 
     template.content
@@ -2038,7 +1992,9 @@ function renderQuestionHTML(value) {
 
 
     div.appendChild(
-        template.content.cloneNode(true)
+        template.content.cloneNode(
+            true
+        )
     );
 
 
@@ -2118,9 +2074,9 @@ function bukaUji() {
                 font-size:13px;
             ">
 
-                Indikator terpenuhi:
+                Target terpenuhi:
                 <b>
-                    ${a.jumlahTerpenuhi}/7
+                    ${a.jumlahTerpenuhi}/6
                 </b>
 
             </div>
@@ -2162,18 +2118,27 @@ function bukaUji() {
 
         <p class="note">
 
-            <b>Aturan:</b>
-            maksimal 25 soal;
-            tepat 25 soal untuk indikator jumlah;
-            LOTS/MOTS harus ada;
-            HOTS harus ada;
-            Mudah, Sedang, dan Sukar harus ada;
-            serta literasi harus terdeteksi dari
-            isi HTML kolom soal.
+            <b>Target final:</b>
 
-            Tidak ada lagi aturan HOTS 30%,
-            Mudah+Sedang 60%,
-            atau Sukar 20–30%.
+            25 soal,
+            LOTS/MOTS,
+            HOTS,
+            Literasi,
+            Mudah,
+            dan Sedang.
+
+            <br><br>
+
+            Soal Sukar tetap dapat muncul
+            dalam hasil analisis, tetapi
+            <b>bukan target wajib</b>.
+
+            <br><br>
+
+            Tidak ada target persentase.
+            Tidak ada target HOTS 30%.
+            Tidak ada target Mudah+Sedang 60%.
+            Tidak ada target Sukar 20–30%.
 
         </p>
     `;
@@ -2206,21 +2171,27 @@ function kembaliDashboard() {
    EVENT
    ========================================================= */
 
-document.getElementById(
-    "testModal"
-).addEventListener(
-    "click",
-    e => {
+const testModal =
+    document.getElementById(
+        "testModal"
+    );
 
-        if (
-            e.target ===
-            e.currentTarget
-        ) {
+if (testModal) {
 
-            closeTest();
+    testModal.addEventListener(
+        "click",
+        e => {
+
+            if (
+                e.target ===
+                e.currentTarget
+            ) {
+
+                closeTest();
+            }
         }
-    }
-);
+    );
+}
 
 
 /* =========================================================
@@ -2230,3 +2201,4 @@ document.getElementById(
 loadData();
 
 </script>
+```
