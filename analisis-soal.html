@@ -340,6 +340,7 @@ th{
 }
 
 @media(max-width:1000px){
+
     .grid{
         grid-template-columns:repeat(2,1fr);
     }
@@ -347,9 +348,11 @@ th{
     .matrix{
         grid-template-columns:repeat(2,1fr);
     }
+
 }
 
 @media(max-width:600px){
+
     .container{
         padding:12px;
     }
@@ -376,6 +379,7 @@ th{
         width:100%;
         min-width:0;
     }
+
 }
 </style>
 </head>
@@ -385,9 +389,17 @@ th{
 <div class="container">
 
     <div class="header">
-        <h1>📊 Analisis Soal</h1>
-        <p>RUANG EXAM — Analisis soal milik guru yang sedang login</p>
+
+        <h1>
+            📊 Analisis Soal
+        </h1>
+
+        <p>
+            RUANG EXAM — Analisis soal milik guru yang sedang login
+        </p>
+
     </div>
+
 
     <button
         class="btn btn-secondary"
@@ -397,49 +409,125 @@ th{
         ← Dashboard Guru
     </button>
 
+
     <div id="loading" class="loading">
         Memuat data soal...
     </div>
 
-    <div id="errorBox" style="display:none;"></div>
 
-    <div id="mainContent" style="display:none;">
+    <div
+        id="errorBox"
+        style="display:none;"
+    ></div>
+
+
+    <div
+        id="mainContent"
+        style="display:none;"
+    >
 
         <div class="toolbar">
 
             <select id="ujianFilter">
-                <option value="">Semua Bank Soal</option>
+
+                <option value="">
+                    Semua Bank Soal
+                </option>
+
             </select>
+
 
             <select id="kognitifFilter">
-                <option value="">Semua Kognitif</option>
-                <option value="C1">C1</option>
-                <option value="C2">C2</option>
-                <option value="C3">C3</option>
-                <option value="C4">C4</option>
-                <option value="C5">C5</option>
-                <option value="C6">C6</option>
+
+                <option value="">
+                    Semua Kognitif
+                </option>
+
+                <option value="C1">
+                    C1
+                </option>
+
+                <option value="C2">
+                    C2
+                </option>
+
+                <option value="C3">
+                    C3
+                </option>
+
+                <option value="C4">
+                    C4
+                </option>
+
+                <option value="C5">
+                    C5
+                </option>
+
+                <option value="C6">
+                    C6
+                </option>
+
             </select>
+
 
             <select id="kategoriFilter">
-                <option value="">Semua Kategori</option>
-                <option value="LOTS">LOTS</option>
-                <option value="MOTS">MOTS</option>
-                <option value="HOTS">HOTS</option>
+
+                <option value="">
+                    Semua Kategori
+                </option>
+
+                <option value="LOTS">
+                    LOTS
+                </option>
+
+                <option value="MOTS">
+                    MOTS
+                </option>
+
+                <option value="HOTS">
+                    HOTS
+                </option>
+
             </select>
+
 
             <select id="kesukaranFilter">
-                <option value="">Semua Kesukaran</option>
-                <option value="Mudah">Mudah</option>
-                <option value="Sedang">Sedang</option>
-                <option value="Sukar">Sukar</option>
+
+                <option value="">
+                    Semua Kesukaran
+                </option>
+
+                <option value="Mudah">
+                    Mudah
+                </option>
+
+                <option value="Sedang">
+                    Sedang
+                </option>
+
+                <option value="Sukar">
+                    Sukar
+                </option>
+
             </select>
 
+
             <select id="literasiFilter">
-                <option value="">Semua</option>
-                <option value="Literasi">Literasi</option>
-                <option value="Non-Literasi">Non-Literasi</option>
+
+                <option value="">
+                    Semua
+                </option>
+
+                <option value="Literasi">
+                    Literasi
+                </option>
+
+                <option value="Non-Literasi">
+                    Non-Literasi
+                </option>
+
             </select>
+
 
             <input
                 type="text"
@@ -449,20 +537,30 @@ th{
 
         </div>
 
+
         <div id="summary"></div>
+
         <div id="eligibility"></div>
+
         <div id="difficulty"></div>
+
         <div id="cognitive"></div>
+
         <div id="matrix"></div>
+
         <div id="questionList"></div>
 
     </div>
 
+
     <div class="footer">
+
         Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
     </div>
 
 </div>
+
 
 <script>
 
@@ -478,14 +576,18 @@ const supabaseClient =
         SUPABASE_KEY
     );
 
+
 let daftarUjian = [];
+
 let daftarSoal = [];
+
 let dataAnalisis = [];
+
 let ujianAktif = "";
 
 
 /* =====================================================
-   1. KEMBALI KE DASHBOARD GURU
+   1. KEMBALI KE GURU.HTML
    ===================================================== */
 
 function kembaliDashboard(){
@@ -502,8 +604,13 @@ function kembaliDashboard(){
 
 function escapeHtml(value){
 
-    if(value === null || value === undefined){
+    if(
+        value === null ||
+        value === undefined
+    ){
+
         return "";
+
     }
 
     return String(value)
@@ -512,6 +619,7 @@ function escapeHtml(value){
         .replace(/>/g,"&gt;")
         .replace(/"/g,"&quot;")
         .replace(/'/g,"&#039;");
+
 }
 
 
@@ -524,10 +632,14 @@ function getExamUser(){
     try{
 
         const raw =
-            localStorage.getItem("exam_user");
+            localStorage.getItem(
+                "exam_user"
+            );
 
         if(!raw){
+
             return null;
+
         }
 
         return JSON.parse(raw);
@@ -535,6 +647,7 @@ function getExamUser(){
     }catch(error){
 
         console.error(error);
+
         return null;
 
     }
@@ -551,6 +664,7 @@ function getPossibleGuruIds(user){
     const result = [];
 
     const fields = [
+
         "id",
         "guru_id",
         "guruId",
@@ -559,26 +673,37 @@ function getPossibleGuruIds(user){
         "username",
         "nip",
         "nik"
+
     ];
 
-    fields.forEach(field => {
 
-        if(
-            user &&
-            user[field] !== undefined &&
-            user[field] !== null &&
-            String(user[field]).trim() !== ""
-        ){
+    fields.forEach(
+        field => {
 
-            result.push(
-                String(user[field]).trim()
-            );
+            if(
+                user &&
+                user[field] !== undefined &&
+                user[field] !== null &&
+                String(
+                    user[field]
+                ).trim() !== ""
+            ){
+
+                result.push(
+                    String(
+                        user[field]
+                    ).trim()
+                );
+
+            }
 
         }
+    );
 
-    });
 
-    return [...new Set(result)];
+    return [
+        ...new Set(result)
+    ];
 
 }
 
@@ -591,18 +716,28 @@ function cariLiterasi(soal){
 
     const html =
         String(
+
             soal.pertanyaan ||
             soal.question ||
             soal.text ||
             ""
+
         );
+
 
     const text =
         html
-            .replace(/<[^>]*>/g," ")
-            .replace(/\s+/g," ")
+            .replace(
+                /<[^>]*>/g,
+                " "
+            )
+            .replace(
+                /\s+/g,
+                " "
+            )
             .trim()
             .toLowerCase();
+
 
     const markers = [
 
@@ -627,8 +762,10 @@ function cariLiterasi(soal){
 
     ];
 
-    return markers.some(marker =>
-        text.includes(marker)
+
+    return markers.some(
+        marker =>
+            text.includes(marker)
     );
 
 }
@@ -638,7 +775,10 @@ function cariLiterasi(soal){
    6. DETEKSI BAHASA INGGRIS
    ===================================================== */
 
-function isBahasaInggris(ujian, soal){
+function isBahasaInggris(
+    ujian,
+    soal
+){
 
     const source = [
 
@@ -647,6 +787,7 @@ function isBahasaInggris(ujian, soal){
         ujian?.mata_pelajaran,
         ujian?.mataPelajaran,
         ujian?.mapel,
+
         soal?.mata_pelajaran,
         soal?.mataPelajaran,
         soal?.mapel
@@ -656,22 +797,34 @@ function isBahasaInggris(ujian, soal){
     .join(" ")
     .toLowerCase();
 
+
     return (
-        source.includes("bahasa inggris") ||
-        source.includes("english")
+
+        source.includes(
+            "bahasa inggris"
+        ) ||
+
+        source.includes(
+            "english"
+        )
+
     );
 
 }
 
 
 /* =====================================================
-   7. SKOR KKO BAHASA INGGRIS
+   7. KKO BAHASA INGGRIS
    ===================================================== */
 
-function skorKKOBahasaInggris(text){
+function skorKKOBahasaInggris(
+    text
+){
 
     const t =
-        String(text || "").toLowerCase();
+        String(
+            text || ""
+        ).toLowerCase();
 
 
     if(
@@ -725,13 +878,15 @@ function skorKKOBahasaInggris(text){
 
 
 /* =====================================================
-   8. SKOR KKO UMUM
+   8. KKO UMUM
    ===================================================== */
 
 function skorKKO(text){
 
     const t =
-        String(text || "").toLowerCase();
+        String(
+            text || ""
+        ).toLowerCase();
 
 
     if(
@@ -794,18 +949,27 @@ function skorKKO(text){
 
 
 /* =====================================================
-   9. KATEGORI
+   9. KATEGORI KOGNITIF
    ===================================================== */
 
 function kategoriKognitif(c){
 
-    if(c === "C1" || c === "C2"){
+    if(
+        c === "C1" ||
+        c === "C2"
+    ){
+
         return "LOTS";
+
     }
 
+
     if(c === "C3"){
+
         return "MOTS";
+
     }
+
 
     return "HOTS";
 
@@ -818,9 +982,15 @@ function kategoriKognitif(c){
 
 function tingkatKesukaran(c){
 
-    if(c === "C1" || c === "C2"){
+    if(
+        c === "C1" ||
+        c === "C2"
+    ){
+
         return "Mudah";
+
     }
+
 
     if(
         c === "C3" ||
@@ -832,9 +1002,13 @@ function tingkatKesukaran(c){
 
     }
 
+
     if(c === "C6"){
+
         return "Sukar";
+
     }
+
 
     return "Mudah";
 
@@ -851,17 +1025,23 @@ function analisisSoal(soal){
         daftarUjian.find(
             u =>
                 String(u.id) ===
-                String(soal.ujian_id)
+                String(
+                    soal.ujian_id
+                )
         ) || {};
 
+
     const pertanyaan =
+
         soal.pertanyaan ||
         soal.question ||
         soal.text ||
         soal.soal ||
         "";
 
+
     let kognitif;
+
 
     if(
         isBahasaInggris(
@@ -884,18 +1064,24 @@ function analisisSoal(soal){
 
     }
 
+
     const kategori =
         kategoriKognitif(
             kognitif
         );
+
 
     const kesukaran =
         tingkatKesukaran(
             kognitif
         );
 
+
     const literasi =
-        cariLiterasi(soal);
+        cariLiterasi(
+            soal
+        );
+
 
     return {
 
@@ -908,7 +1094,9 @@ function analisisSoal(soal){
             "Bank Soal",
 
         kognitif,
+
         kategori,
+
         kesukaran,
 
         literasi:
@@ -930,6 +1118,7 @@ async function loadData(){
     const user =
         getExamUser();
 
+
     if(!user){
 
         showError(
@@ -940,9 +1129,12 @@ async function loadData(){
 
     }
 
+
     if(
         user.role &&
-        String(user.role).toLowerCase() !== "guru"
+        String(
+            user.role
+        ).toLowerCase() !== "guru"
     ){
 
         showError(
@@ -957,80 +1149,97 @@ async function loadData(){
     try{
 
         /* =============================================
-           AMBIL DATA GURU
+           DATA ID GURU
            ============================================= */
 
         let guruIds =
-            getPossibleGuruIds(user);
+            getPossibleGuruIds(
+                user
+            );
 
 
         try{
 
-            const {data:guruData,error:guruError} =
+            const {
+                data:guruData,
+                error:guruError
+            } =
                 await supabaseClient
                     .from("guru")
                     .select("*");
 
 
-            if(!guruError && guruData){
+            if(
+                !guruError &&
+                guruData
+            ){
 
                 const cocok =
-                    guruData.filter(g => {
+                    guruData.filter(
+                        g => {
 
-                        return guruIds.some(id => {
+                            return guruIds.some(
+                                id => {
 
-                            return [
+                                    return [
 
-                                g.id,
-                                g.guru_id,
-                                g.username,
-                                g.nip,
-                                g.nik
+                                        g.id,
+                                        g.guru_id,
+                                        g.username,
+                                        g.nip,
+                                        g.nik
 
-                            ]
-                            .filter(
-                                value =>
-                                    value !== null &&
-                                    value !== undefined
-                            )
-                            .map(
-                                value =>
-                                    String(value)
-                            )
-                            .includes(
-                                String(id)
-                            );
+                                    ]
+                                    .filter(
+                                        value =>
+                                            value !== null &&
+                                            value !== undefined
+                                    )
+                                    .map(
+                                        value =>
+                                            String(value)
+                                    )
+                                    .includes(
+                                        String(id)
+                                    );
 
-                        });
-
-                    });
-
-
-                cocok.forEach(g => {
-
-                    [
-                        g.id,
-                        g.guru_id,
-                        g.username,
-                        g.nip,
-                        g.nik
-
-                    ].forEach(value => {
-
-                        if(
-                            value !== null &&
-                            value !== undefined
-                        ){
-
-                            guruIds.push(
-                                String(value)
+                                }
                             );
 
                         }
+                    );
 
-                    });
 
-                });
+                cocok.forEach(
+                    g => {
+
+                        [
+
+                            g.id,
+                            g.guru_id,
+                            g.username,
+                            g.nip,
+                            g.nik
+
+                        ].forEach(
+                            value => {
+
+                                if(
+                                    value !== null &&
+                                    value !== undefined
+                                ){
+
+                                    guruIds.push(
+                                        String(value)
+                                    );
+
+                                }
+
+                            }
+                        );
+
+                    }
+                );
 
             }
 
@@ -1045,7 +1254,11 @@ async function loadData(){
 
 
         guruIds =
-            [...new Set(guruIds)];
+            [
+                ...new Set(
+                    guruIds
+                )
+            ];
 
 
         /* =============================================
@@ -1068,7 +1281,9 @@ async function loadData(){
 
 
         if(ujianError){
-            throw ujiannError;
+
+            throw ujianError;
+
         }
 
 
@@ -1102,36 +1317,39 @@ async function loadData(){
 
         daftarUjian =
             (ujianData || [])
-            .filter(u => {
+            .filter(
+                u => {
 
-                return ownerFields.some(
-                    field => {
+                    return ownerFields.some(
+                        field => {
 
-                        const value =
-                            u[field];
+                            const value =
+                                u[field];
 
-                        if(
-                            value === null ||
-                            value === undefined
-                        ){
 
-                            return false;
+                            if(
+                                value === null ||
+                                value === undefined
+                            ){
+
+                                return false;
+
+                            }
+
+
+                            return guruIds.includes(
+                                String(value)
+                            );
 
                         }
+                    );
 
-                        return guruIds.includes(
-                            String(value)
-                        );
-
-                    }
-                );
-
-            });
+                }
+            );
 
 
         /* =============================================
-           JIKA STRUKTUR UJIAN MENGGUNAKAN PEMILIK
-           OBJECT / UUID STRING
+           JIKA MENGGUNAKAN USERNAME
            ============================================= */
 
         if(
@@ -1141,29 +1359,34 @@ async function loadData(){
 
             daftarUjian =
                 (ujianData || [])
-                .filter(u => {
+                .filter(
+                    u => {
 
-                    const values =
-                        ownerFields
-                        .map(
-                            field =>
-                                u[field]
-                        )
-                        .filter(
-                            value =>
-                                value !== null &&
-                                value !== undefined
-                        )
-                        .map(
-                            value =>
-                                String(value)
+                        const values =
+                            ownerFields
+                            .map(
+                                field =>
+                                    u[field]
+                            )
+                            .filter(
+                                value =>
+                                    value !== null &&
+                                    value !== undefined
+                            )
+                            .map(
+                                value =>
+                                    String(value)
+                            );
+
+
+                        return values.includes(
+                            String(
+                                user.username
+                            )
                         );
 
-                    return values.includes(
-                        String(user.username)
-                    );
-
-                });
+                    }
+                );
 
         }
 
@@ -1174,7 +1397,8 @@ async function loadData(){
 
         const semuaUjianId =
             daftarUjian.map(
-                u => String(u.id)
+                u =>
+                    String(u.id)
             );
 
 
@@ -1196,70 +1420,81 @@ async function loadData(){
 
 
             if(soalError){
+
                 throw soalError;
+
             }
 
 
             daftarSoal =
                 (soalData || [])
-                .filter(soal => {
+                .filter(
+                    soal => {
 
-                    return semuaUjianId.includes(
-                        String(soal.ujian_id)
-                    );
+                        return semuaUjianId.includes(
+                            String(
+                                soal.ujian_id
+                            )
+                        );
 
-                });
+                    }
+                );
 
         }
 
 
         /* =================================================
-           MAKSIMAL 25 PER BANK SOAL / UJIAN
+           MAKSIMAL 25 SOAL UNTUK SETIAP BANK SOAL
            ================================================= */
 
         const soalPerUjian =
             new Map();
 
 
-        daftarSoal.forEach(soal => {
+        daftarSoal.forEach(
+            soal => {
 
-            const key =
-                String(soal.ujian_id);
+                const key =
+                    String(
+                        soal.ujian_id
+                    );
 
 
-            if(
-                !soalPerUjian.has(key)
-            ){
+                if(
+                    !soalPerUjian.has(
+                        key
+                    )
+                ){
 
-                soalPerUjian.set(
-                    key,
-                    []
-                );
+                    soalPerUjian.set(
+                        key,
+                        []
+                    );
+
+                }
+
+
+                soalPerUjian
+                    .get(key)
+                    .push(
+                        soal
+                    );
 
             }
-
-
-            soalPerUjian
-                .get(key)
-                .push(soal);
-
-        });
+        );
 
 
         daftarSoal = [];
 
 
         soalPerUjian.forEach(
-            (soalList) => {
-
-                const maksimal25 =
-                    soalList.slice(
-                        0,
-                        25
-                    );
+            soalList => {
 
                 daftarSoal.push(
-                    ...maksimal25
+                    ...soalList.slice(
+                        0,
+                        25
+                    )
                 );
 
             }
@@ -1273,11 +1508,14 @@ async function loadData(){
         dataAnalisis =
             daftarSoal.map(
                 soal =>
-                    analisisSoal(soal)
+                    analisisSoal(
+                        soal
+                    )
             );
 
 
         renderUjianFilter();
+
         renderSemua();
 
 
@@ -1297,9 +1535,13 @@ async function loadData(){
 
         console.error(error);
 
+
         showError(
             "Gagal mengambil data Bank Soal: " +
-            (error.message || error)
+            (
+                error.message ||
+                error
+            )
         );
 
     }
@@ -1325,10 +1567,16 @@ function showError(message){
         );
 
 
-    box.innerHTML =
-        `<div class="error">
-            ❌ ${escapeHtml(message)}
-        </div>`;
+    box.innerHTML = `
+
+        <div class="error">
+
+            ❌
+            ${escapeHtml(message)}
+
+        </div>
+
+    `;
 
 
     box.style.display =
@@ -1338,7 +1586,7 @@ function showError(message){
 
 
 /* =====================================================
-   14. FILTER UJIAN
+   14. FILTER BANK SOAL
    ===================================================== */
 
 function renderUjianFilter(){
@@ -1349,10 +1597,13 @@ function renderUjianFilter(){
         );
 
 
-    select.innerHTML =
-        `<option value="">
+    select.innerHTML = `
+
+        <option value="">
             Semua Bank Soal
-        </option>`;
+        </option>
+
+    `;
 
 
     daftarUjian.forEach(
@@ -1365,7 +1616,9 @@ function renderUjianFilter(){
 
 
             option.value =
-                String(ujian.id);
+                String(
+                    ujian.id
+                );
 
 
             option.textContent =
@@ -1392,7 +1645,9 @@ function renderUjianFilter(){
 function getFilteredData(){
 
     let data =
-        [...dataAnalisis];
+        [
+            ...dataAnalisis
+        ];
 
 
     if(ujianAktif){
@@ -1494,25 +1749,27 @@ function getFilteredData(){
     if(search){
 
         data =
-            data.filter(item => {
+            data.filter(
+                item => {
 
-                const text =
-                    String(
-                        item.pertanyaan ||
-                        ""
-                    )
-                    .replace(
-                        /<[^>]*>/g,
-                        " "
-                    )
-                    .toLowerCase();
+                    const text =
+                        String(
+                            item.pertanyaan ||
+                            ""
+                        )
+                        .replace(
+                            /<[^>]*>/g,
+                            " "
+                        )
+                        .toLowerCase();
 
 
-                return text.includes(
-                    search
-                );
+                    return text.includes(
+                        search
+                    );
 
-            });
+                }
+            );
 
     }
 
@@ -1538,27 +1795,25 @@ function renderSummary(){
 
     const lots =
         data.filter(
-            x => x.kategori === "LOTS"
+            x =>
+                x.kategori ===
+                "LOTS"
         ).length;
 
 
     const mots =
         data.filter(
-            x => x.kategori === "MOTS"
+            x =>
+                x.kategori ===
+                "MOTS"
         ).length;
 
 
     const hots =
         data.filter(
-            x => x.kategori === "HOTS"
-        ).length;
-
-
-    const literasi =
-        data.filter(
             x =>
-                x.literasi ===
-                "Literasi"
+                x.kategori ===
+                "HOTS"
         ).length;
 
 
@@ -1569,39 +1824,54 @@ function renderSummary(){
         <div class="grid">
 
             <div class="card">
+
                 <div class="stat-title">
                     Total Soal
                 </div>
+
                 <div class="stat-value blue">
                     ${total}
                 </div>
+
             </div>
 
+
             <div class="card">
+
                 <div class="stat-title">
                     LOTS
                 </div>
+
                 <div class="stat-value green">
                     ${lots}
                 </div>
+
             </div>
 
+
             <div class="card">
+
                 <div class="stat-title">
                     MOTS
                 </div>
+
                 <div class="stat-value orange">
                     ${mots}
                 </div>
+
             </div>
 
+
             <div class="card">
+
                 <div class="stat-title">
                     HOTS
                 </div>
+
                 <div class="stat-value red">
                     ${hots}
                 </div>
+
             </div>
 
         </div>
@@ -1667,41 +1937,60 @@ function renderEligibility(){
         ).length;
 
 
+    const sukar =
+        data.filter(
+            x =>
+                x.kesukaran ===
+                "Sukar"
+        ).length;
+
+
+    /* =================================================
+       SEMUA SYARAT WAJIB TERPENUHI
+       ================================================= */
+
     const syarat = [
 
         {
             nama:
-                "LOTS/MOTS (C1-C3)",
+                "LOTS/MOTS (C1-C3) minimal 1",
             nilai:
                 lotsMots > 0
         },
 
         {
             nama:
-                "HOTS (C4-C6)",
+                "HOTS (C4-C6) minimal 1",
             nilai:
                 hots > 0
         },
 
         {
             nama:
-                "Literasi",
+                "Literasi minimal 1",
             nilai:
                 literasi > 0
         },
 
         {
             nama:
-                "Soal Mudah",
+                "Soal Mudah minimal 1",
             nilai:
                 mudah > 0
         },
 
         {
             nama:
-                "Soal Sedang",
+                "Soal Sedang minimal 1",
             nilai:
                 sedang > 0
+        },
+
+        {
+            nama:
+                "Soal Sukar minimal 1",
+            nilai:
+                sukar > 0
         },
 
         {
@@ -1716,7 +2005,8 @@ function renderEligibility(){
 
     const layak =
         syarat.every(
-            x => x.nilai
+            x =>
+                x.nilai
         );
 
 
@@ -1738,9 +2028,15 @@ function renderEligibility(){
 
             </div>
 
-            <p class="muted" style="margin-bottom:10px;">
+
+            <p
+                class="muted"
+                style="margin-bottom:10px;"
+            >
+
                 Kelayakan dihitung berdasarkan
                 bank soal yang sedang dipilih.
+
             </p>
 
     `;
@@ -1754,10 +2050,13 @@ function renderEligibility(){
                 <div class="indicator">
 
                     <span>
+
                         ${escapeHtml(
                             item.nama
                         )}
+
                     </span>
+
 
                     <span class="check ${
                         item.nilai
@@ -1782,7 +2081,9 @@ function renderEligibility(){
 
 
     html += `
+
         </div>
+
     `;
 
 
@@ -1842,6 +2143,7 @@ function renderDifficulty(){
                 Tingkat Kesukaran
             </div>
 
+
             ${progressHTML(
                 "Mudah",
                 mudah,
@@ -1849,12 +2151,14 @@ function renderDifficulty(){
                 "bar-green"
             )}
 
+
             ${progressHTML(
                 "Sedang",
                 sedang,
                 total,
                 "bar-orange"
             )}
+
 
             ${progressHTML(
                 "Sukar",
@@ -1917,15 +2221,26 @@ function renderCognitive(){
 
 
         if(i <= 2){
-            bar = "bar-green";
+
+            bar =
+                "bar-green";
+
         }
+
 
         if(i === 3){
-            bar = "bar-orange";
+
+            bar =
+                "bar-orange";
+
         }
 
+
         if(i >= 4){
-            bar = "bar-red";
+
+            bar =
+                "bar-red";
+
         }
 
 
@@ -1941,7 +2256,9 @@ function renderCognitive(){
 
 
     html += `
+
         </div>
+
     `;
 
 
@@ -1966,7 +2283,11 @@ function progressHTML(
 
     const percent =
         total > 0
-            ? (count / total * 100)
+            ? (
+                count /
+                total *
+                100
+            )
             : 0;
 
 
@@ -1980,13 +2301,18 @@ function progressHTML(
                     ${label}
                 </span>
 
+
                 <strong>
+
                     ${count}
                     soal
+
                     (${percent.toFixed(1)}%)
+
                 </strong>
 
             </div>
+
 
             <div class="progress">
 
@@ -2034,6 +2360,7 @@ function renderMatrix(){
                 Matriks Kategori & Kesukaran
             </div>
 
+
             <div class="matrix">
 
     `;
@@ -2064,6 +2391,7 @@ function renderMatrix(){
                         ${kesukaran}
                     </div>
 
+
                     <div
                         style="
                             font-size:26px;
@@ -2071,7 +2399,9 @@ function renderMatrix(){
                             margin-top:8px;
                         "
                     >
+
                         ${count}
+
                     </div>
 
                 </div>
@@ -2083,8 +2413,11 @@ function renderMatrix(){
 
 
     html += `
+
             </div>
+
         </div>
+
     `;
 
 
@@ -2111,9 +2444,12 @@ function renderQuestionList(){
         <div class="card section">
 
             <div class="section-title">
+
                 Daftar Soal
                 (${data.length})
+
             </div>
+
 
             <div class="table-wrap">
 
@@ -2155,12 +2491,15 @@ function renderQuestionList(){
 
                     </thead>
 
+
                     <tbody>
 
     `;
 
 
-    if(data.length === 0){
+    if(
+        data.length === 0
+    ){
 
         html += `
 
@@ -2196,13 +2535,16 @@ function renderQuestionList(){
                             ${index + 1}
                         </td>
 
+
                         <td>
                             ${escapeHtml(
                                 item.namaUjian
                             )}
                         </td>
 
+
                         <td class="question-text">
+
                             ${escapeHtml(
                                 item.pertanyaan ||
                                 item.question ||
@@ -2210,16 +2552,22 @@ function renderQuestionList(){
                                 item.soal ||
                                 ""
                             )}
+
                         </td>
+
 
                         <td>
 
                             <span class="badge ${
                                 item.kognitif === "C1" ||
                                 item.kognitif === "C2"
+
                                     ? "badge-lots"
+
                                     : item.kognitif === "C3"
+
                                         ? "badge-mots"
+
                                         : "badge-hots"
                             }">
 
@@ -2229,13 +2577,18 @@ function renderQuestionList(){
 
                         </td>
 
+
                         <td>
 
                             <span class="badge ${
                                 item.kategori === "LOTS"
+
                                     ? "badge-lots"
+
                                     : item.kategori === "MOTS"
+
                                         ? "badge-mots"
+
                                         : "badge-hots"
                             }">
 
@@ -2245,13 +2598,18 @@ function renderQuestionList(){
 
                         </td>
 
+
                         <td>
 
                             <span class="badge ${
                                 item.kesukaran === "Mudah"
+
                                     ? "badge-easy"
+
                                     : item.kesukaran === "Sedang"
+
                                         ? "badge-medium"
+
                                         : "badge-hard"
                             }">
 
@@ -2261,11 +2619,14 @@ function renderQuestionList(){
 
                         </td>
 
+
                         <td>
 
                             <span class="badge ${
                                 item.literasi === "Literasi"
+
                                     ? "badge-literasi"
+
                                     : "badge-nonliterasi"
                             }">
 
@@ -2332,7 +2693,9 @@ function renderSemua(){
    ===================================================== */
 
 document
-    .getElementById("ujianFilter")
+    .getElementById(
+        "ujianFilter"
+    )
     .addEventListener(
         "change",
         function(){
@@ -2347,7 +2710,9 @@ document
 
 
 document
-    .getElementById("kognitifFilter")
+    .getElementById(
+        "kognitifFilter"
+    )
     .addEventListener(
         "change",
         renderSemua
@@ -2355,7 +2720,9 @@ document
 
 
 document
-    .getElementById("kategoriFilter")
+    .getElementById(
+        "kategoriFilter"
+    )
     .addEventListener(
         "change",
         renderSemua
@@ -2363,7 +2730,9 @@ document
 
 
 document
-    .getElementById("kesukaranFilter")
+    .getElementById(
+        "kesukaranFilter"
+    )
     .addEventListener(
         "change",
         renderSemua
@@ -2371,7 +2740,9 @@ document
 
 
 document
-    .getElementById("literasiFilter")
+    .getElementById(
+        "literasiFilter"
+    )
     .addEventListener(
         "change",
         renderSemua
@@ -2379,7 +2750,9 @@ document
 
 
 document
-    .getElementById("searchInput")
+    .getElementById(
+        "searchInput"
+    )
     .addEventListener(
         "input",
         renderSemua
