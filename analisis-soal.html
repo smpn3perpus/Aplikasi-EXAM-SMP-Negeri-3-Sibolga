@@ -1800,57 +1800,74 @@ function soalMilikGuruLangsung(soal){
 
 
 /* =========================================================
-LOAD DATA
+/* =========================================================
+LOAD DATA — SUMBER UTAMA BANK SOAL
 ========================================================= */
 
 async function loadData(){
 
     const questionList =
-        document.getElementById(
-            "questionList"
-        );
-
+        document.getElementById("questionList");
 
     questionList.innerHTML = `
-
         <div class="loading">
-            ⏳ Mengambil seluruh data soal guru...
+            ⏳ Mengambil soal langsung dari Bank Soal...
         </div>
-
     `;
-
 
     try{
 
         await cariGuruLogin();
 
+        /* =====================================================
+         * IDENTITAS GURU LOGIN
+         * ===================================================== */
 
-        /*
-         * Ambil ujian.
-         */
+        const identitasUser = new Set(
+            daftarNilaiUser()
+        );
 
-        const ujianRes =
-            await supabaseClient
-                .from("ujian")
-                .select("*")
-                .order(
-                    "created_at",
-                    {
-                        ascending:false
-                    }
-                );
+        const identitasGuru = new Set([
+            guruLogin?.id,
+            guruLogin?.guru_id,
+            guruLogin?.username,
+            guruLogin?.nip,
+            guruLogin?.nik,
+            guruLogin?.email,
+            guruLogin?.profile_id,
+            guruLogin?.user_id
+        ]
+        .filter(
+            x =>
+                x !== undefined &&
+                x !== null &&
+                String(x).trim() !== ""
+        )
+        .map(
+            normalisasi
+        )
+        );
+
+        const semuaIdentitas = new Set([
+            ...identitasUser,
+            ...identitasGuru
+        ]);
 
 
-        if(ujianRes.error){
+        console.log(
+            "IDENTITAS USER:",
+            [...identitasUser]
+        );
 
-            throw ujianRes.error;
+        console.log(
+            "IDENTITAS GURU:",
+            [...identitasGuru]
+        );
 
-        }
 
-
-        /*
-         * Ambil seluruh soal.
-         */
+        /* =====================================================
+         * AMBIL BANK SOAL LANGSUNG
+         * ===================================================== */
 
         const soalRes =
             await supabaseClient
@@ -1871,177 +1888,389 @@ async function loadData(){
         }
 
 
-        const semuaUjian =
-            ujianRes.data || [];
-
-
         const semuaSoal =
             soalRes.data || [];
 
 
-        /*
-         * =====================================================
-         * 1. CARI UJIAN YANG SECARA LANGSUNG DIMILIKI GURU
-         * =====================================================
-         */
+        /* =====================================================
+         * AMBIL UJIAN HANYA UNTUK INFORMASI/FILTER
+         * BUKAN SEBAGAI SUMBER UTAMA SOAL
+         * ===================================================== */
 
-        const ujianLangsung =
-            semuaUjian.filter(
-                ujian =>
-                    ujianMilikGuru(
-                        ujian
-                    )
-            );
+        const ujianRes =
+            await supabaseClient
+                .from("ujian")
+                .select("*");
 
 
-        const idUjianLangsung =
-            new Set(
-                ujianLangsung.map(
-                    x =>
-                        String(x.id)
-                )
-            );
+        const semuaUjian =
+            ujianRes.error
+                ? []
+                : (
+                    ujianRes.data || []
+                );
 
 
-        /*
-         * =====================================================
-         * 2. CARI SOAL YANG SECARA LANGSUNG DIMILIKI GURU
-         *
-         * Ini penting jika ujian memiliki masalah relasi
-         * guru_id / created_by tetapi record soal sendiri
-         * mempunyai identitas guru pembuat.
-         * =====================================================
-         */
+        /* =====================================================
+         * MAP UJIAN
+         * ===================================================== */
 
-        const soalLangsung =
+        const mapUjian =
+            new Map();
+
+        semuaUjian.forEach(
+            ujian => {
+
+                mapUjian.set(
+                    String(ujian.id),
+                    ujian
+                );
+
+            }
+        );
+
+
+        /* =====================================================
+         * FIELD YANG BOLEH MENUNJUKKAN PEMILIK SOAL
+         * ===================================================== */
+
+        const fieldGuruSoal = [
+
+            "guru_id",
+            "guruId",
+
+            "teacher_id",
+            "teacherId",
+
+            "pemilik_id",
+            "pemilikId",
+
+            "pembuat_id",
+            "pembuatId",
+
+            "created_by",
+            "createdBy",
+
+            "user_id",
+            "userId",
+
+            "profile_id",
+            "profileId",
+
+            "owner_id",
+            "ownerId",
+
+            "guru_username",
+            "guruUsername",
+
+            "username_guru",
+
+            "guru_nip",
+            "guruNip",
+
+            "nip_guru",
+
+            "guru_nik",
+            "guruNik",
+
+            "nik_guru",
+
+            "guru_email",
+            "guruEmail",
+
+            "email_guru"
+
+        ];
+
+
+        /* =====================================================
+         * CEK KEPEMILIKAN SOAL LANGSUNG
+         * ===================================================== */
+
+        function soalMilikGuruBankSoal(soal){
+
+            if(
+                !soal ||
+                !semuaIdentitas.size
+            ){
+
+                return false;
+
+            }
+
+
+            for(
+                const field of fieldGuruSoal
+            ){
+
+                const value =
+                    soal[field];
+
+
+                if(
+                    value !== undefined &&
+                    value !== null &&
+                    String(value).trim() !== ""
+                ){
+
+                    if(
+                        semuaIdentitas.has(
+                            normalisasi(value)
+                        )
+                    ){
+
+                        return true;
+
+                    }
+
+                }
+
+            }
+
+
+            return false;
+
+        }
+
+
+        /* =====================================================
+         * CARI SOAL LANGSUNG MILIK GURU
+         * ===================================================== */
+
+        let soalGuru =
             semuaSoal.filter(
                 soal =>
-                    soalMilikGuruLangsung(
+                    soalMilikGuruBankSoal(
                         soal
                     )
             );
 
 
-        /*
-         * =====================================================
-         * 3. ID UJIAN DARI SOAL MILIK GURU
-         * =====================================================
-         */
-
-        const idUjianDariSoal =
-            new Set(
-                soalLangsung
-                    .map(
-                        soal =>
-                            soal.ujian_id
-                    )
-                    .filter(
-                        x =>
-                            x !== undefined &&
-                            x !== null &&
-                            String(x).trim() !== ""
-                    )
-                    .map(
-                        String
-                    )
-            );
-
-
-        /*
-         * =====================================================
-         * 4. GABUNGKAN ID UJIAN
-         * =====================================================
-         */
-
-        const idUjianMilik =
-            new Set([
-                ...idUjianLangsung,
-                ...idUjianDariSoal
-            ]);
-
-
-        /*
-         * =====================================================
-         * 5. UJIAN YANG BOLEH DITAMPILKAN
+        /* =====================================================
+         * JIKA BANK SOAL TIDAK MENYIMPAN guru_id LANGSUNG,
+         * BARU GUNAKAN ujian_id SEBAGAI FALLBACK.
          *
-         * Jika soal secara langsung terbukti milik guru,
-         * ujian terkait juga boleh ditampilkan walaupun
-         * field kepemilikan ujian tidak konsisten.
-         * =====================================================
-         */
+         * TETAPI HANYA UNTUK SOAL YANG BERADA PADA UJIAN
+         * MILIK GURU.
+         * ===================================================== */
 
-        daftarUjian =
-            semuaUjian.filter(
-                ujian =>
-                    idUjianMilik.has(
-                        String(
-                            ujian.id
+        if(
+            soalGuru.length === 0
+        ){
+
+            const fieldGuruUjian = [
+
+                "guru_id",
+                "guruId",
+
+                "teacher_id",
+                "teacherId",
+
+                "pemilik_id",
+                "pemilikId",
+
+                "pembuat_id",
+                "pembuatId",
+
+                "created_by",
+                "createdBy",
+
+                "user_id",
+                "userId",
+
+                "profile_id",
+                "profileId",
+
+                "owner_id",
+                "ownerId"
+
+            ];
+
+
+            function ujianMilikGuruBankSoal(ujian){
+
+                if(
+                    !ujian ||
+                    !semuaIdentitas.size
+                ){
+
+                    return false;
+
+                }
+
+
+                for(
+                    const field of fieldGuruUjian
+                ){
+
+                    const value =
+                        ujian[field];
+
+
+                    if(
+                        value !== undefined &&
+                        value !== null &&
+                        String(value).trim() !== ""
+                    ){
+
+                        if(
+                            semuaIdentitas.has(
+                                normalisasi(value)
+                            )
+                        ){
+
+                            return true;
+
+                        }
+
+                    }
+
+                }
+
+
+                /*
+                 * Coba juga username/NIP/email
+                 * pada tabel ujian.
+                 */
+
+                const fieldIdentitas = [
+
+                    "username",
+                    "nip",
+                    "nik",
+                    "email",
+
+                    "guru_username",
+                    "guruUsername",
+
+                    "guru_nip",
+                    "guruNip",
+
+                    "guru_nik",
+                    "guruNik",
+
+                    "guru_email",
+                    "guruEmail"
+
+                ];
+
+
+                for(
+                    const field of fieldIdentitas
+                ){
+
+                    const value =
+                        ujian[field];
+
+
+                    if(
+                        value !== undefined &&
+                        value !== null &&
+                        String(value).trim() !== ""
+                    ){
+
+                        if(
+                            semuaIdentitas.has(
+                                normalisasi(value)
+                            )
+                        ){
+
+                            return true;
+
+                        }
+
+                    }
+
+                }
+
+
+                return false;
+
+            }
+
+
+            const ujianGuru =
+                semuaUjian.filter(
+                    ujian =>
+                        ujianMilikGuruBankSoal(
+                            ujian
                         )
-                    )
-            );
+                );
 
 
-        /*
-         * =====================================================
-         * 6. SOAL YANG BOLEH DIANALISIS
-         *
-         * Metode A:
-         * Soal berada di ujian milik guru.
-         *
-         * Metode B:
-         * Soal sendiri memiliki kepemilikan langsung
-         * kepada guru login.
-         * =====================================================
-         */
-
-        const soalDariUjian =
-            semuaSoal.filter(
-                soal =>
-                    idUjianMilik.has(
-                        String(
-                            soal.ujian_id
+            const idUjianGuru =
+                new Set(
+                    ujianGuru
+                        .map(
+                            ujian =>
+                                ujian.id
                         )
-                    )
+                        .filter(
+                            x =>
+                                x !== undefined &&
+                                x !== null
+                        )
+                        .map(
+                            x =>
+                                String(x)
+                        )
+                );
+
+
+            soalGuru =
+                semuaSoal.filter(
+                    soal => {
+
+                        if(
+                            soal.ujian_id === undefined ||
+                            soal.ujian_id === null
+                        ){
+
+                            return false;
+
+                        }
+
+
+                        return idUjianGuru.has(
+                            String(
+                                soal.ujian_id
+                            )
+                        );
+
+                    }
+                );
+
+
+            console.log(
+                "SOAL DITEMUKAN MELALUI UJIAN:",
+                soalGuru.length
             );
 
+        }
 
-        /*
-         * =====================================================
-         * 7. GABUNGKAN DAN HILANGKAN DUPLIKAT
-         * =====================================================
-         */
 
-        const gabunganSoal = [
-            ...soalDariUjian,
-            ...soalLangsung
-        ];
-
+        /* =====================================================
+         * HILANGKAN DUPLIKAT
+         * ===================================================== */
 
         const mapSoal =
             new Map();
 
 
-        gabunganSoal.forEach(
-            soal=>{
-
-                /*
-                 * Gunakan ID sebagai identitas utama.
-                 */
+        soalGuru.forEach(
+            soal => {
 
                 const key =
                     soal.id
                         ? String(soal.id)
                         : [
                             soal.ujian_id,
-                            soal.nomor
+                            soal.nomor,
+                            teksAman(
+                                soal.pertanyaan
+                            )
                         ].join("|");
 
-
-                /*
-                 * Jika soal ditemukan melalui
-                 * kepemilikan langsung, record tersebut
-                 * tetap dipertahankan.
-                 */
 
                 if(
                     !mapSoal.has(key)
@@ -2058,16 +2287,14 @@ async function loadData(){
         );
 
 
-        /*
-         * =====================================================
-         * 8. SORTIR BERDASARKAN UJIAN DAN NOMOR
-         * =====================================================
-         */
+        /* =====================================================
+         * SORTIR
+         * ===================================================== */
 
         daftarSoal =
             [...mapSoal.values()]
                 .sort(
-                    (a,b)=>{
+                    (a,b) => {
 
                         const ujianA =
                             String(
@@ -2104,14 +2331,9 @@ async function loadData(){
                 );
 
 
-        /*
-         * =====================================================
-         * 9. MAKSIMAL 25 SOAL
-         *
-         * Slicing dilakukan SETELAH seluruh soal guru
-         * dikumpulkan dan diduplikasi dihilangkan.
-         * =====================================================
-         */
+        /* =====================================================
+         * MAKSIMAL 25 SOAL
+         * ===================================================== */
 
         daftarSoal =
             daftarSoal.slice(
@@ -2120,14 +2342,48 @@ async function loadData(){
             );
 
 
-        /*
-         * =====================================================
-         * DEBUG
-         * =====================================================
-         */
+        /* =====================================================
+         * BUAT DAFTAR UJIAN DARI SOAL YANG TERPANGGIL
+         *
+         * Jadi filter ujian tetap bekerja.
+         * ===================================================== */
+
+        const idUjianSoal =
+            new Set(
+                daftarSoal
+                    .map(
+                        soal =>
+                            soal.ujian_id
+                    )
+                    .filter(
+                        x =>
+                            x !== undefined &&
+                            x !== null
+                    )
+                    .map(
+                        x =>
+                            String(x)
+                    )
+            );
+
+
+        daftarUjian =
+            semuaUjian.filter(
+                ujian =>
+                    idUjianSoal.has(
+                        String(
+                            ujian.id
+                        )
+                    )
+            );
+
+
+        /* =====================================================
+         * DEBUG UTAMA
+         * ===================================================== */
 
         console.group(
-            "📊 DEBUG ANALISIS SOAL GURU"
+            "📚 BANK SOAL → ANALISIS SOAL"
         );
 
         console.log(
@@ -2136,56 +2392,52 @@ async function loadData(){
         );
 
         console.log(
-            "TOTAL SEMUA UJIAN:",
-            semuaUjian.length
+            "Identitas yang dicocokkan:",
+            [...semuaIdentitas]
         );
 
         console.log(
-            "UJIAN MILIK GURU:",
-            daftarUjian.length
-        );
-
-        console.log(
-            "TOTAL SEMUA SOAL:",
+            "TOTAL SOAL BANK SOAL:",
             semuaSoal.length
         );
 
         console.log(
-            "SOAL DARI UJIAN GURU:",
-            soalDariUjian.length
+            "SOAL MILIK GURU:",
+            soalGuru.length
         );
 
         console.log(
-            "SOAL DENGAN KEPEMILIKAN LANGSUNG:",
-            soalLangsung.length
-        );
-
-        console.log(
-            "TOTAL SOAL UNIK GURU:",
+            "SOAL UNIK:",
             mapSoal.size
         );
 
         console.log(
-            "TOTAL SOAL YANG DIANALISIS:",
+            "SOAL YANG DIANALISIS:",
             daftarSoal.length
         );
 
         console.log(
             "NOMOR SOAL:",
             daftarSoal.map(
-                x =>
-                    x.nomor
+                soal =>
+                    soal.nomor
+            )
+        );
+
+        console.log(
+            "ID UJIAN:",
+            daftarSoal.map(
+                soal =>
+                    soal.ujian_id
             )
         );
 
         console.groupEnd();
 
 
-        /*
-         * =====================================================
-         * INFO DI UI
-         * =====================================================
-         */
+        /* =====================================================
+         * JIKA KOSONG
+         * ===================================================== */
 
         if(
             daftarSoal.length === 0
@@ -2195,17 +2447,21 @@ async function loadData(){
 
                 <div class="empty">
 
-                    📭 <b>Belum ada soal yang dapat dianalisis.</b>
+                    📭 <b>Soal Bank Soal belum ditemukan.</b>
 
                     <br><br>
 
-                    Sistem tidak menemukan soal
-                    yang terhubung dengan guru yang sedang login.
+                    Sistem sudah membaca tabel
+                    <b>soal</b>, tetapi tidak menemukan
+                    record yang teridentifikasi sebagai
+                    milik guru yang sedang login.
 
                     <br><br>
 
-                    Soal milik guru lain
-                    tidak ditampilkan.
+                    Buka Console Browser
+                    <b>(F12 → Console)</b>
+                    untuk melihat detail identitas
+                    dan data soal.
 
                 </div>
 
@@ -2213,6 +2469,10 @@ async function loadData(){
 
         }
 
+
+        /* =====================================================
+         * LANJUTKAN ANALISIS
+         * ===================================================== */
 
         isiFilterUjian();
 
@@ -2224,7 +2484,7 @@ async function loadData(){
     }catch(error){
 
         console.error(
-            "ERROR LOAD DATA:",
+            "ERROR LOAD DATA BANK SOAL:",
             error
         );
 
@@ -2233,13 +2493,13 @@ async function loadData(){
 
             <div class="error">
 
-                <b>❌ Gagal membaca data soal.</b>
+                <b>❌ Gagal membaca Bank Soal.</b>
 
                 <br><br>
 
                 ${escapeHTML(
                     error.message ||
-                    "Terjadi kesalahan."
+                    "Terjadi kesalahan saat membaca tabel soal."
                 )}
 
             </div>
@@ -2248,6 +2508,7 @@ async function loadData(){
 
     }
 
+}
 }
 
 
