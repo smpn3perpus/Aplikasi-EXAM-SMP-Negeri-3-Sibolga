@@ -1,3 +1,26 @@
+```html
+<!--
+ATURAN FINAL ANALISIS ADMIN:
+
+1. Semua guru diambil.
+2. Semua mata pelajaran diambil.
+3. Maksimal 25 soal PER BANK SOAL.
+4. Total tepat 25 soal.
+5. Ada 6 indikator:
+   - LOTS/MOTS minimal 1
+   - HOTS minimal 1
+   - Literasi minimal 1
+   - Mudah minimal 1
+   - Sedang minimal 1
+   - Sukar minimal 1
+6. Minimal 4 dari 6 indikator terpenuhi = LAYAK.
+7. Tidak ada aturan khusus Matematika.
+8. Tidak ada aturan khusus Bahasa Inggris.
+9. Sukar boleh 0 selama minimal 4/6 indikator terpenuhi.
+10. KKO menentukan C1-C6.
+11. Tingkat kesukaran TIDAK otomatis mengikuti C1-C6.
+-->
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -17,13 +40,10 @@
 
 :root{
     --primary:#2563eb;
-    --primary-dark:#1d4ed8;
     --success:#16a34a;
     --warning:#d97706;
     --danger:#dc2626;
     --purple:#7c3aed;
-    --gray:#64748b;
-    --light:#f8fafc;
     --border:#e2e8f0;
     --dark:#0f172a;
 }
@@ -161,32 +181,6 @@ body{
     margin-bottom:15px;
 }
 
-.eligibility{
-    display:grid;
-    grid-template-columns:repeat(6,1fr);
-    gap:10px;
-}
-
-.status{
-    padding:14px;
-    border-radius:9px;
-    font-weight:bold;
-    text-align:center;
-    border:1px solid;
-}
-
-.status.ok{
-    background:#f0fdf4;
-    border-color:#86efac;
-    color:#166534;
-}
-
-.status.no{
-    background:#fef2f2;
-    border-color:#fca5a5;
-    color:#991b1b;
-}
-
 .bank-block{
     border:1px solid var(--border);
     border-radius:10px;
@@ -201,7 +195,6 @@ body{
     justify-content:space-between;
     align-items:center;
     gap:15px;
-    border-bottom:1px solid var(--border);
 }
 
 .bank-title{
@@ -260,7 +253,7 @@ table{
 
 th,td{
     padding:11px;
-    border-bottom:1px solid #e2e8f0;
+    border-bottom:1px solid var(--border);
     text-align:left;
     vertical-align:top;
     font-size:13px;
@@ -274,7 +267,7 @@ th{
 
 .matrix{
     display:grid;
-    grid-template-columns:repeat(6,1fr);
+    grid-template-columns:repeat(9,1fr);
     gap:10px;
 }
 
@@ -292,7 +285,7 @@ th{
 }
 
 .question-text{
-    max-width:500px;
+    max-width:550px;
     line-height:1.5;
 }
 
@@ -322,16 +315,20 @@ th{
     color:#1d4ed8;
 }
 
+.eligibility-summary{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    align-items:center;
+}
+
 @media(max-width:1100px){
+
     .toolbar-grid{
         grid-template-columns:repeat(3,1fr);
     }
 
     .summary{
-        grid-template-columns:repeat(3,1fr);
-    }
-
-    .eligibility{
         grid-template-columns:repeat(3,1fr);
     }
 
@@ -341,6 +338,7 @@ th{
 }
 
 @media(max-width:700px){
+
     .header-inner{
         flex-direction:column;
         align-items:flex-start;
@@ -354,10 +352,6 @@ th{
         grid-template-columns:repeat(2,1fr);
     }
 
-    .eligibility{
-        grid-template-columns:1fr 1fr;
-    }
-
     .matrix{
         grid-template-columns:1fr 1fr;
     }
@@ -369,141 +363,247 @@ th{
 
 <header class="header">
     <div class="header-inner">
+
         <div>
             <h1>📊 Analisis Soal Admin</h1>
-            <p>Analisis seluruh bank soal dari seluruh guru - RUANG EXAM</p>
+            <p>Analisis seluruh bank soal dari seluruh guru</p>
         </div>
 
-        <button class="back-btn" onclick="window.location.href='admin.html'">
+        <button
+            class="back-btn"
+            onclick="window.location.href='admin.html'"
+        >
             ← Kembali
         </button>
+
     </div>
 </header>
 
 <main class="container">
 
-    <div id="errorBox"></div>
+<div id="errorBox"></div>
 
-    <div class="toolbar">
-        <div class="toolbar-grid">
+<div class="toolbar">
 
-            <div class="form-group">
-                <label>Bank Soal / Ujian</label>
-                <select id="ujianFilter">
-                    <option value="">Semua Bank Soal</option>
-                </select>
-            </div>
+    <div class="toolbar-grid">
 
-            <div class="form-group">
-                <label>Guru</label>
-                <select id="guruFilter">
-                    <option value="">Semua Guru</option>
-                </select>
-            </div>
+        <div class="form-group">
+            <label>Bank Soal / Ujian</label>
 
-            <div class="form-group">
-                <label>Kognitif</label>
-                <select id="kognitifFilter">
-                    <option value="">Semua</option>
-                    <option value="C1">C1</option>
-                    <option value="C2">C2</option>
-                    <option value="C3">C3</option>
-                    <option value="C4">C4</option>
-                    <option value="C5">C5</option>
-                    <option value="C6">C6</option>
-                </select>
-            </div>
+            <select id="ujianFilter">
+                <option value="">
+                    Semua Bank Soal
+                </option>
+            </select>
+        </div>
 
-            <div class="form-group">
-                <label>Kategori</label>
-                <select id="kategoriFilter">
-                    <option value="">Semua</option>
-                    <option value="LOTS">LOTS</option>
-                    <option value="MOTS">MOTS</option>
-                    <option value="HOTS">HOTS</option>
-                </select>
-            </div>
+        <div class="form-group">
+            <label>Guru</label>
 
-            <div class="form-group">
-                <label>Kesukaran</label>
-                <select id="kesukaranFilter">
-                    <option value="">Semua</option>
-                    <option value="Mudah">Mudah</option>
-                    <option value="Sedang">Sedang</option>
-                    <option value="Sukar">Sukar</option>
-                </select>
-            </div>
+            <select id="guruFilter">
+                <option value="">
+                    Semua Guru
+                </option>
+            </select>
+        </div>
 
-            <div class="form-group">
-                <label>Literasi</label>
-                <select id="literasiFilter">
-                    <option value="">Semua</option>
-                    <option value="Literasi">Literasi</option>
-                    <option value="Non-Literasi">Non-Literasi</option>
-                </select>
-            </div>
+        <div class="form-group">
+            <label>Kognitif</label>
 
-            <div class="form-group" style="grid-column:1/-1">
-                <label>Cari Soal</label>
-                <input
-                    type="text"
-                    id="searchInput"
-                    placeholder="Cari berdasarkan soal, guru, atau nama bank soal..."
-                >
-            </div>
+            <select id="kognitifFilter">
+
+                <option value="">
+                    Semua
+                </option>
+
+                <option value="C1">C1</option>
+                <option value="C2">C2</option>
+                <option value="C3">C3</option>
+                <option value="C4">C4</option>
+                <option value="C5">C5</option>
+                <option value="C6">C6</option>
+
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Kategori</label>
+
+            <select id="kategoriFilter">
+
+                <option value="">
+                    Semua
+                </option>
+
+                <option value="LOTS">LOTS</option>
+                <option value="MOTS">MOTS</option>
+                <option value="HOTS">HOTS</option>
+
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Kesukaran</label>
+
+            <select id="kesukaranFilter">
+
+                <option value="">
+                    Semua
+                </option>
+
+                <option value="Mudah">
+                    Mudah
+                </option>
+
+                <option value="Sedang">
+                    Sedang
+                </option>
+
+                <option value="Sukar">
+                    Sukar
+                </option>
+
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Literasi</label>
+
+            <select id="literasiFilter">
+
+                <option value="">
+                    Semua
+                </option>
+
+                <option value="Literasi">
+                    Literasi
+                </option>
+
+                <option value="Non-Literasi">
+                    Non-Literasi
+                </option>
+
+            </select>
+        </div>
+
+        <div
+            class="form-group"
+            style="grid-column:1/-1"
+        >
+
+            <label>
+                Cari Soal
+            </label>
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Cari soal, guru, mata pelajaran, atau bank soal..."
+            >
 
         </div>
+
     </div>
 
-    <div id="summary" class="summary"></div>
+</div>
 
-    <div class="section">
-        <h2>✅ Kelayakan Bank Soal</h2>
-        <div id="eligibility"></div>
-    </div>
 
-    <div class="section">
-        <h2>📈 Distribusi Tingkat Kesukaran</h2>
-        <div id="difficulty"></div>
-    </div>
+<div id="summary" class="summary"></div>
 
-    <div class="section">
-        <h2>🧠 Distribusi Kognitif</h2>
-        <div id="cognitive"></div>
-    </div>
 
-    <div class="section">
-        <h2>📊 Matriks Kognitif × Kesukaran</h2>
-        <div id="matrix"></div>
-    </div>
+<div class="section">
 
-    <div class="section">
-        <h2>📝 Analisis Detail Soal</h2>
-        <div id="questionList"></div>
-    </div>
+    <h2>
+        ✅ Kelayakan Bank Soal
+    </h2>
+
+    <div id="eligibility"></div>
+
+</div>
+
+
+<div class="section">
+
+    <h2>
+        📈 Distribusi Tingkat Kesukaran
+    </h2>
+
+    <div id="difficulty"></div>
+
+</div>
+
+
+<div class="section">
+
+    <h2>
+        🧠 Distribusi Kognitif
+    </h2>
+
+    <div id="cognitive"></div>
+
+</div>
+
+
+<div class="section">
+
+    <h2>
+        📊 Matriks Kognitif × Kesukaran
+    </h2>
+
+    <div id="matrix"></div>
+
+</div>
+
+
+<div class="section">
+
+    <h2>
+        📝 Analisis Detail Soal
+    </h2>
+
+    <div id="questionList"></div>
+
+</div>
 
 </main>
 
+
 <script>
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
 const SUPABASE_URL =
     "https://sztfucrmjexoalyiwwnq.supabase.co";
 
 const SUPABASE_KEY =
     "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
 
-const supabaseClient =
-    supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const db =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
 
 let semuaData = [];
 let semuaGuru = [];
 let semuaUjian = [];
+
 
 /* =========================================================
    UTILITAS
 ========================================================= */
 
 function escapeHTML(value){
-    if(value === null || value === undefined) return "";
+
+    if(
+        value === null ||
+        value === undefined
+    ){
+        return "";
+    }
 
     return String(value)
         .replace(/&/g,"&amp;")
@@ -513,38 +613,58 @@ function escapeHTML(value){
         .replace(/'/g,"&#039;");
 }
 
+
 function stripHTML(value){
-    if(!value) return "";
 
-    const div = document.createElement("div");
-    div.innerHTML = String(value);
+    if(!value){
+        return "";
+    }
 
-    return div.textContent || div.innerText || "";
+    const div =
+        document.createElement("div");
+
+    div.innerHTML =
+        String(value);
+
+    return (
+        div.textContent ||
+        div.innerText ||
+        ""
+    );
 }
 
+
 function normalizeText(value){
+
     return stripHTML(value)
         .toLowerCase()
         .replace(/\s+/g," ")
         .trim();
 }
 
+
 /* =========================================================
    LITERASI
-   HANYA DARI HTML PADA KOLOM PERTANYAAN
+   HANYA DARI HTML KOLOM PERTANYAAN
 ========================================================= */
 
 function cariLiterasi(soal){
 
-    const html = soal?.pertanyaan || "";
+    const html =
+        soal?.pertanyaan || "";
 
-    if(!html || typeof html !== "string"){
+    if(
+        !html ||
+        typeof html !== "string"
+    ){
         return false;
     }
 
-    const teks = normalizeText(html);
+    const teks =
+        normalizeText(html);
 
     const marker = [
+
         "stimulus",
         "literasi",
         "bacaan",
@@ -554,18 +674,25 @@ function cariLiterasi(soal){
         "perhatikan teks",
         "bacalah teks",
         "berdasarkan teks",
+
         "read the text",
         "read the following text",
         "according to the text",
         "based on the text",
         "read the passage",
         "the following passage",
+
         "article",
         "passage"
+
     ];
 
-    return marker.some(item => teks.includes(item));
+    return marker.some(
+        item =>
+            teks.includes(item)
+    );
 }
+
 
 /* =========================================================
    KKO C1-C6
@@ -574,6 +701,7 @@ function cariLiterasi(soal){
 const KKO = {
 
     C6:[
+
         "mencipta",
         "merancang",
         "merancang ulang",
@@ -590,6 +718,7 @@ const KKO = {
         "mengembangkan solusi",
         "menghasilkan rancangan",
         "membuat rancangan",
+
         "create",
         "design",
         "develop",
@@ -597,9 +726,11 @@ const KKO = {
         "produce",
         "formulate",
         "generate"
+
     ],
 
     C5:[
+
         "mengevaluasi",
         "menilai",
         "mengkritisi",
@@ -612,15 +743,18 @@ const KKO = {
         "memberikan penilaian",
         "menentukan kelayakan",
         "menentukan keputusan",
+
         "evaluate",
         "assess",
         "judge",
         "critique",
         "justify",
         "defend"
+
     ],
 
     C4:[
+
         "menganalisis",
         "analisis",
         "membandingkan",
@@ -635,6 +769,7 @@ const KKO = {
         "menginterpretasi",
         "mengkaji",
         "menganalisa",
+
         "analyze",
         "analyse",
         "compare",
@@ -642,9 +777,11 @@ const KKO = {
         "examine",
         "investigate",
         "interpret"
+
     ],
 
     C3:[
+
         "menerapkan",
         "menggunakan",
         "menghitung",
@@ -655,14 +792,17 @@ const KKO = {
         "menunjukkan cara",
         "mengoperasikan",
         "mengaplikasikan",
+
         "apply",
         "calculate",
         "use",
         "implement",
         "demonstrate"
+
     ],
 
     C2:[
+
         "menjelaskan",
         "menguraikan pengertian",
         "menginterpretasikan",
@@ -674,14 +814,17 @@ const KKO = {
         "merangkum",
         "memberi contoh",
         "menjelaskan kembali",
+
         "explain",
         "describe",
         "classify",
         "summarize",
         "interpret"
+
     ],
 
     C1:[
+
         "menyebutkan",
         "mengetahui",
         "mengingat",
@@ -693,6 +836,7 @@ const KKO = {
         "menuliskan",
         "mendefinisikan",
         "menyatakan kembali",
+
         "what is",
         "who is",
         "when",
@@ -702,40 +846,64 @@ const KKO = {
         "define",
         "recall",
         "remember"
+
     ]
+
 };
+
 
 function skorKKO(teks){
 
-    const t = normalizeText(teks);
+    const t =
+        normalizeText(teks);
 
-    for(const level of ["C6","C5","C4","C3","C2","C1"]){
+    for(
+        const level of
+        ["C6","C5","C4","C3","C2","C1"]
+    ){
 
-        const daftar = KKO[level];
+        for(
+            const kko of KKO[level]
+        ){
 
-        for(const kko of daftar){
+            if(
+                t.includes(
+                    kko.toLowerCase()
+                )
+            ){
 
-            if(t.includes(kko.toLowerCase())){
                 return level;
+
             }
+
         }
+
     }
 
     return "C1";
 }
 
+
 function kategoriKognitif(level){
 
-    if(level === "C1" || level === "C2"){
+    if(
+        level === "C1" ||
+        level === "C2"
+    ){
+
         return "LOTS";
+
     }
 
     if(level === "C3"){
+
         return "MOTS";
+
     }
 
     return "HOTS";
 }
+
 
 /* =========================================================
    KUNCI JAWABAN
@@ -744,6 +912,7 @@ function kategoriKognitif(level){
 function getKunciJawaban(soal){
 
     const fields = [
+
         "kunci_jawaban",
         "kunciJawaban",
         "jawaban_benar",
@@ -754,114 +923,193 @@ function getKunciJawaban(soal){
         "answerKey",
         "kunci",
         "answer"
+
     ];
 
-    for(const field of fields){
+    for(
+        const field of fields
+    ){
 
         if(
             soal &&
             soal[field] !== undefined &&
             soal[field] !== null &&
-            String(soal[field]).trim() !== ""
+            String(
+                soal[field]
+            ).trim() !== ""
         ){
-            return String(soal[field]).trim();
+
+            return String(
+                soal[field]
+            ).trim();
+
         }
+
     }
 
     return "";
 }
 
+
 function normalisasiKunci(kunci){
 
-    if(!kunci) return "";
-
-    let x = normalizeText(kunci);
-
-    x = x.replace(/^jawaban\s*/,"");
-    x = x.replace(/^opsi\s*/,"");
-
-    if(/^[abcd]$/.test(x)){
-        return x.toUpperCase();
+    if(!kunci){
+        return "";
     }
 
-    if(x.startsWith("a.")) return "A";
-    if(x.startsWith("b.")) return "B";
-    if(x.startsWith("c.")) return "C";
-    if(x.startsWith("d.")) return "D";
+    let x =
+        normalizeText(kunci);
+
+    x =
+        x.replace(
+            /^jawaban\s*/,
+            ""
+        );
+
+    x =
+        x.replace(
+            /^opsi\s*/,
+            ""
+        );
+
+    if(
+        /^[abcd]$/.test(x)
+    ){
+
+        return x.toUpperCase();
+
+    }
+
+    if(
+        x.startsWith("a.")
+    ){
+
+        return "A";
+
+    }
+
+    if(
+        x.startsWith("b.")
+    ){
+
+        return "B";
+
+    }
+
+    if(
+        x.startsWith("c.")
+    ){
+
+        return "C";
+
+    }
+
+    if(
+        x.startsWith("d.")
+    ){
+
+        return "D";
+
+    }
 
     return x;
 }
 
+
 function getPilihan(soal){
 
     return {
-        A: soal?.pilihan_a ??
-           soal?.pilihanA ??
-           "",
 
-        B: soal?.pilihan_b ??
-           soal?.pilihanB ??
-           "",
+        A:
+            soal?.pilihan_a ??
+            soal?.pilihanA ??
+            "",
 
-        C: soal?.pilihan_c ??
-           soal?.pilihanC ??
-           "",
+        B:
+            soal?.pilihan_b ??
+            soal?.pilihanB ??
+            "",
 
-        D: soal?.pilihan_d ??
-           soal?.pilihanD ??
-           ""
+        C:
+            soal?.pilihan_c ??
+            soal?.pilihanC ??
+            "",
+
+        D:
+            soal?.pilihan_d ??
+            soal?.pilihanD ??
+            ""
+
     };
 }
 
+
 /* =========================================================
-   KESUKARAN
-   TIDAK TERGANTUNG LANGSUNG PADA C1-C6
+   TINGKAT KESUKARAN
+   INDEPENDEN DARI C1-C6
 ========================================================= */
 
-function tingkatKesukaran(soal,kognitif,literasi){
+function tingkatKesukaran(
+    soal,
+    kognitif,
+    literasi
+){
 
-    const html = soal?.pertanyaan || "";
-    const teks = normalizeText(html);
+    const html =
+        soal?.pertanyaan || "";
 
-    const pilihan = getPilihan(soal);
+    const teks =
+        normalizeText(html);
+
+    const pilihan =
+        getPilihan(soal);
 
     let score = 0;
 
-    /*
-       KKO hanya menjadi salah satu indikator.
-       Tidak ada ketentuan:
-       C1-C2 = mudah
-       C3 = sedang
-       C4-C5 = sedang
-       C6 = sukar
-    */
 
     const bobotKKO = {
+
         C1:0,
         C2:1,
         C3:1,
         C4:2,
         C5:2,
         C6:2
+
     };
 
-    score += bobotKKO[kognitif] || 0;
+
+    score +=
+        bobotKKO[kognitif] || 0;
+
 
     if(literasi){
+
         score += 1;
+
     }
 
-    const panjangSoal = teks.length;
 
-    if(panjangSoal > 250){
+    if(
+        teks.length > 250
+    ){
+
         score += 1;
+
     }
 
-    if(panjangSoal > 500){
+
+    if(
+        teks.length > 500
+    ){
+
         score += 1;
+
     }
+
 
     const kontekstual = [
+
         "situasi",
         "kasus",
         "permasalahan",
@@ -877,72 +1125,135 @@ function tingkatKesukaran(soal,kognitif,literasi){
         "jika",
         "apabila",
         "apakah solusi",
-        "what would",
         "why",
-        "how"
+        "how",
+        "what would"
+
     ];
 
-    if(kontekstual.some(x => teks.includes(x))){
+
+    if(
+        kontekstual.some(
+            x =>
+                teks.includes(x)
+        )
+    ){
+
         score += 1;
+
     }
 
-    const kunci = normalisasiKunci(getKunciJawaban(soal));
+
+    const kunci =
+        normalisasiKunci(
+            getKunciJawaban(soal)
+        );
+
 
     let jawabanBenar = "";
 
-    if(["A","B","C","D"].includes(kunci)){
-        jawabanBenar = normalizeText(pilihan[kunci]);
-    }else if(kunci){
-        jawabanBenar = normalizeText(kunci);
+
+    if(
+        ["A","B","C","D"].includes(kunci)
+    ){
+
+        jawabanBenar =
+            normalizeText(
+                pilihan[kunci]
+            );
+
     }
+    else if(kunci){
+
+        jawabanBenar =
+            normalizeText(kunci);
+
+    }
+
 
     if(jawabanBenar){
 
         /*
-           Bila jawaban langsung ditemukan di pertanyaan,
-           tingkat kesukaran diturunkan.
+           Jika jawaban benar dapat ditemukan
+           langsung pada pertanyaan/stimulus,
+           maka soal cenderung lebih mudah.
         */
+
         if(
             jawabanBenar.length > 3 &&
             teks.includes(jawabanBenar)
         ){
+
             score -= 3;
+
         }
 
-        /*
-           Jawaban sangat pendek biasanya lebih mudah.
-        */
-        if(jawabanBenar.length > 0 && jawabanBenar.length < 20){
+
+        if(
+            jawabanBenar.length < 20
+        ){
+
             score -= 1;
+
         }
 
-        const semuaPilihan = Object.values(pilihan)
-            .map(x => normalizeText(x))
-            .filter(Boolean);
 
-        const panjang = semuaPilihan.map(x => x.length);
+        const semuaPilihan =
+            Object.values(pilihan)
+                .map(
+                    x =>
+                        normalizeText(x)
+                )
+                .filter(Boolean);
 
-        if(panjang.length >= 2){
 
-            const min = Math.min(...panjang);
-            const max = Math.max(...panjang);
+        const panjang =
+            semuaPilihan.map(
+                x =>
+                    x.length
+            );
 
-            if(max - min <= 25){
+
+        if(
+            panjang.length >= 2
+        ){
+
+            const min =
+                Math.min(...panjang);
+
+            const max =
+                Math.max(...panjang);
+
+
+            if(
+                max - min <= 25
+            ){
+
                 score += 1;
+
             }
 
-            /*
-               Distraktor yang panjang dan mirip membuat
-               jawaban lebih sulit dibedakan.
-            */
-            const jumlahPanjang = panjang.filter(x => x >= 50).length;
 
-            if(jumlahPanjang >= 3){
+            const jumlahPanjang =
+                panjang.filter(
+                    x =>
+                        x >= 50
+                ).length;
+
+
+            if(
+                jumlahPanjang >= 3
+            ){
+
                 score += 1;
+
             }
+
         }
+
 
         const kataPenalaran = [
+
             "alasan",
             "mengapa",
             "bagaimana",
@@ -953,40 +1264,72 @@ function tingkatKesukaran(soal,kognitif,literasi){
             "pertimbangan",
             "paling tepat",
             "paling efektif",
+
             "most appropriate",
             "best solution",
             "reason",
             "strategy",
             "impact"
+
         ];
 
-        if(kataPenalaran.some(x => teks.includes(x))){
+
+        if(
+            kataPenalaran.some(
+                x =>
+                    teks.includes(x)
+            )
+        ){
+
             score += 2;
+
         }
 
-    }else{
+    }
+    else{
 
-        /*
-           Bila kunci tidak tersedia, gunakan karakteristik
-           pilihan sebagai indikator tambahan.
-        */
-        const semuaPilihan = Object.values(pilihan)
-            .map(x => normalizeText(x))
-            .filter(Boolean);
+        const semuaPilihan =
+            Object.values(pilihan)
+                .map(
+                    x =>
+                        normalizeText(x)
+                )
+                .filter(Boolean);
 
-        if(semuaPilihan.length >= 2){
 
-            const panjang = semuaPilihan.map(x => x.length);
-            const min = Math.min(...panjang);
-            const max = Math.max(...panjang);
+        if(
+            semuaPilihan.length >= 2
+        ){
 
-            if(max - min <= 25){
+            const panjang =
+                semuaPilihan.map(
+                    x =>
+                        x.length
+                );
+
+
+            const min =
+                Math.min(...panjang);
+
+            const max =
+                Math.max(...panjang);
+
+
+            if(
+                max - min <= 25
+            ){
+
                 score += 1;
+
             }
+
         }
+
     }
 
+
     const hafalanLangsung = [
+
         "apa pengertian",
         "siapa",
         "kapan",
@@ -995,47 +1338,71 @@ function tingkatKesukaran(soal,kognitif,literasi){
         "sebutkan",
         "istilah",
         "nama dari",
+
         "what is",
         "who is",
         "when",
         "where"
+
     ];
 
+
     if(
-        hafalanLangsung.some(x => teks.includes(x)) &&
+        hafalanLangsung.some(
+            x =>
+                teks.includes(x)
+        ) &&
         !literasi
     ){
+
         score -= 2;
+
     }
+
 
     if(score <= 2){
+
         return "Mudah";
+
     }
 
+
     if(score <= 5){
+
         return "Sedang";
+
     }
+
 
     return "Sukar";
 }
 
+
 /* =========================================================
-   ANALISIS SATU SOAL
+   ANALISIS SOAL
 ========================================================= */
 
-function analisisSoal(soal){
+function analisisSoal(soal,ujian){
 
     const pertanyaan =
         soal?.pertanyaan || "";
 
+
     const literasi =
         cariLiterasi(soal);
 
+
     const kognitif =
-        skorKKO(pertanyaan);
+        skorKKO(
+            pertanyaan
+        );
+
 
     const kategori =
-        kategoriKognitif(kognitif);
+        kategoriKognitif(
+            kognitif
+        );
+
 
     const kesukaran =
         tingkatKesukaran(
@@ -1044,126 +1411,189 @@ function analisisSoal(soal){
             literasi
         );
 
+
     return {
+
         ...soal,
+
         kognitif,
+
         kategori,
+
         kesukaran,
-        literasi: literasi
-            ? "Literasi"
-            : "Non-Literasi"
+
+        literasi:
+            literasi
+                ? "Literasi"
+                : "Non-Literasi",
+
+        namaUjian:
+            ujian?.judul ??
+            ujian?.nama ??
+            ujian?.nama_ujian ??
+            ujian?.title ??
+            "Bank Soal",
+
+        mataPelajaran:
+            ujian?.mata_pelajaran ??
+            ujian?.mataPelajaran ??
+            ujian?.mapel ??
+            ujian?.subject ??
+            "-",
+
+        namaGuru:
+            ujian?.namaGuru ??
+            "-"
+
     };
 }
 
+
 /* =========================================================
    LOAD DATA ADMIN
-   ADMIN MENGAMBIL SEMUA GURU
+   SEMUA GURU
+   SEMUA MATA PELAJARAN
 ========================================================= */
 
 async function loadData(){
 
     try{
 
-        document.getElementById("summary").innerHTML =
-            `<div class="card" style="grid-column:1/-1">
-                <div class="loading">Memuat seluruh data soal...</div>
-             </div>`;
+        document.getElementById(
+            "summary"
+        ).innerHTML = `
 
-        /*
-           ==================================================
-           1. AMBIL SEMUA GURU
-           ==================================================
-        */
+            <div
+                class="card"
+                style="grid-column:1/-1"
+            >
 
-        const {data:guruData,error:guruError} =
-            await supabaseClient
+                <div class="loading">
+
+                    Memuat seluruh data
+                    bank soal...
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        /* ================================================
+           SEMUA GURU
+        ================================================= */
+
+        const {
+            data:guruData,
+            error:guruError
+        } =
+            await db
                 .from("guru")
                 .select("*");
 
+
         if(guruError){
+
             throw guruError;
+
         }
 
-        semuaGuru = guruData || [];
 
-        /*
-           ==================================================
-           2. AMBIL SEMUA UJIAN
-           TIDAK ADA FILTER guru_id
-           ==================================================
-        */
+        semuaGuru =
+            guruData || [];
 
-        const {data:ujianData,error:ujianError} =
-            await supabaseClient
+
+        /* ================================================
+           SEMUA UJIAN
+           TIDAK FILTER GURU
+           TIDAK FILTER MATA PELAJARAN
+        ================================================= */
+
+        const {
+            data:ujianData,
+            error:ujianError
+        } =
+            await db
                 .from("ujian")
                 .select("*")
-                .order("created_at",{ascending:false});
+                .order(
+                    "created_at",
+                    {
+                        ascending:false
+                    }
+                );
+
 
         if(ujianError){
+
             throw ujianError;
+
         }
 
-        semuaUjian = ujianData || [];
 
-        /*
-           ==================================================
-           3. AMBIL SEMUA SOAL
-           TIDAK ADA FILTER GURU
-           ==================================================
-        */
+        semuaUjian =
+            ujianData || [];
 
-        const {data:soalData,error:soalError} =
-            await supabaseClient
-                .from("soal")
-                .select("*")
-                .order("ujian_id",{ascending:true})
-                .order("nomor",{ascending:true});
 
-        if(soalError){
-            throw soalError;
-        }
-
-        /*
-           ==================================================
-           4. BUAT MAP GURU
-           ==================================================
-        */
+        /* ================================================
+           MAP GURU
+        ================================================= */
 
         const guruMap = {};
 
-        semuaGuru.forEach(guru => {
 
-            const id =
-                guru.id ??
-                guru.guru_id;
+        semuaGuru.forEach(
+            guru => {
 
-            if(id){
-                guruMap[String(id)] =
-                    guru.nama ??
-                    guru.nama_guru ??
-                    guru.name ??
-                    guru.username ??
-                    guru.nip ??
-                    "-";
+                const id =
+                    guru.id ??
+                    guru.guru_id;
+
+
+                if(id){
+
+                    guruMap[
+                        String(id)
+                    ] =
+
+                        guru.nama ??
+                        guru.nama_guru ??
+                        guru.name ??
+                        guru.username ??
+                        guru.nip ??
+                        guru.nik ??
+                        "-";
+
+                }
+
             }
-        });
+        );
 
-        /*
-           ==================================================
-           5. MAP UJIAN
-           ==================================================
-        */
+
+        /* ================================================
+           MAP UJIAN + GURU
+        ================================================= */
 
         const ujianMap = {};
 
-        semuaUjian.forEach(ujian => {
 
-            const id =
-                ujian.id;
+        semuaUjian.forEach(
+            ujian => {
 
-            if(id){
+                const id =
+                    ujian.id;
+
+
+                if(!id){
+
+                    return;
+
+                }
+
 
                 const guruId =
+
                     ujian.guru_id ??
                     ujian.guruId ??
                     ujian.teacher_id ??
@@ -1175,96 +1605,199 @@ async function loadData(){
                     ujian.user_id ??
                     ujian.userId;
 
-                let namaGuru = "-";
 
-                if(guruId && guruMap[String(guruId)]){
+                let namaGuru =
+                    "-";
+
+
+                if(
+                    guruId &&
+                    guruMap[
+                        String(guruId)
+                    ]
+                ){
+
                     namaGuru =
-                        guruMap[String(guruId)];
+                        guruMap[
+                            String(guruId)
+                        ];
+
                 }
 
-                ujianMap[String(id)] = {
-                    ...ujian,
-                    namaGuru
-                };
-            }
-        });
 
-        /*
-           ==================================================
-           6. MAKSIMAL 25 SOAL PER BANK SOAL
-           ==================================================
-        */
+                /*
+                   Bila ujian menyimpan nama guru
+                   langsung, gunakan juga.
+                */
+
+                namaGuru =
+
+                    ujian.namaGuru ??
+                    ujian.nama_guru ??
+                    ujian.guru_nama ??
+                    namaGuru;
+
+
+                ujianMap[
+                    String(id)
+                ] = {
+
+                    ...ujian,
+
+                    namaGuru
+
+                };
+
+            }
+        );
+
+
+        /* ================================================
+           AMBIL SEMUA SOAL
+        ================================================= */
+
+        const {
+            data:soalData,
+            error:soalError
+        } =
+            await db
+                .from("soal")
+                .select("*")
+                .order(
+                    "ujian_id",
+                    {
+                        ascending:true
+                    }
+                )
+                .order(
+                    "nomor",
+                    {
+                        ascending:true
+                    }
+                );
+
+
+        if(soalError){
+
+            throw soalError;
+
+        }
+
+
+        /* ================================================
+           MAKSIMAL 25 SOAL PER BANK
+        ================================================= */
 
         const jumlahPerBank = {};
 
         const hasil = [];
 
-        (soalData || []).forEach(soal => {
 
-            const ujianId =
-                soal.ujian_id;
+        (soalData || [])
+            .forEach(
+                soal => {
 
-            if(!ujianId){
-                return;
-            }
+                    const ujianId =
+                        soal.ujian_id;
 
-            const key =
-                String(ujianId);
 
-            if(!jumlahPerBank[key]){
-                jumlahPerBank[key] = 0;
-            }
+                    if(!ujianId){
 
-            /*
-               MAKSIMAL 25 SOAL PER BANK.
-               BUKAN 25 SOAL GABUNGAN.
-            */
-            if(jumlahPerBank[key] >= 25){
-                return;
-            }
+                        return;
 
-            jumlahPerBank[key]++;
+                    }
 
-            const ujian =
-                ujianMap[key] || {};
 
-            hasil.push(
-                analisisSoal({
-                    ...soal,
-                    namaGuru:
-                        ujian.namaGuru || "-",
-                    namaUjian:
-                        ujian.judul ??
-                        ujian.nama ??
-                        ujian.nama_ujian ??
-                        ujian.title ??
-                        "Bank Soal",
-                    mataPelajaran:
-                        ujian.mata_pelajaran ??
-                        ujian.mataPelajaran ??
-                        ujian.mapel ??
-                        ujian.subject ??
-                        "-"
-                })
+                    const key =
+                        String(ujianId);
+
+
+                    /*
+                       Soal hanya diproses jika
+                       bank ujiannya ada.
+                    */
+
+                    const ujian =
+                        ujianMap[key];
+
+
+                    if(!ujian){
+
+                        return;
+
+                    }
+
+
+                    if(
+                        !jumlahPerBank[key]
+                    ){
+
+                        jumlahPerBank[key] =
+                            0;
+
+                    }
+
+
+                    /*
+                       MAKSIMAL 25
+                       UNTUK SETIAP BANK SOAL
+                    */
+
+                    if(
+                        jumlahPerBank[key] >= 25
+                    ){
+
+                        return;
+
+                    }
+
+
+                    jumlahPerBank[key]++;
+
+
+                    hasil.push(
+                        analisisSoal(
+                            soal,
+                            ujian
+                        )
+                    );
+
+                }
             );
-        });
 
-        semuaData = hasil;
+
+        semuaData =
+            hasil;
+
 
         renderGuruFilter();
+
         renderUjianFilter();
+
         renderAll();
 
-    }catch(error){
 
-        console.error(error);
+    }
+    catch(error){
+
+        console.error(
+            "ERROR ANALISIS ADMIN:",
+            error
+        );
+
 
         showError(
             "Gagal memuat data: " +
-            (error.message || error)
+            (
+                error.message ||
+                error
+            )
         );
+
     }
+
 }
+
 
 /* =========================================================
    ERROR
@@ -1272,14 +1805,31 @@ async function loadData(){
 
 function showError(message){
 
-    document.getElementById("errorBox").innerHTML =
-        `<div class="error">
-            <strong>Terjadi kesalahan:</strong><br>
-            ${escapeHTML(message)}
-        </div>`;
+    document.getElementById(
+        "errorBox"
+    ).innerHTML = `
 
-    document.getElementById("summary").innerHTML = "";
+        <div class="error">
+
+            <strong>
+                Terjadi kesalahan:
+            </strong>
+
+            <br>
+
+            ${escapeHTML(message)}
+
+        </div>
+
+    `;
+
+
+    document.getElementById(
+        "summary"
+    ).innerHTML = "";
+
 }
+
 
 /* =========================================================
    FILTER GURU
@@ -1288,89 +1838,169 @@ function showError(message){
 function renderGuruFilter(){
 
     const select =
-        document.getElementById("guruFilter");
-
-    const namaGuru =
-        [...new Set(
-            semuaData
-                .map(x => x.namaGuru)
-                .filter(Boolean)
-        )]
-        .sort((a,b) =>
-            String(a).localeCompare(
-                String(b),
-                "id"
-            )
+        document.getElementById(
+            "guruFilter"
         );
 
-    select.innerHTML =
-        `<option value="">Semua Guru</option>`;
 
-    namaGuru.forEach(nama => {
+    const namaGuru =
 
-        const option =
-            document.createElement("option");
+        [
+            ...new Set(
 
-        option.value = nama;
-        option.textContent = nama;
+                semuaData
+                    .map(
+                        x =>
+                            x.namaGuru
+                    )
+                    .filter(Boolean)
 
-        select.appendChild(option);
-    });
+            )
+        ]
+
+        .sort(
+            (a,b) =>
+                String(a)
+                    .localeCompare(
+                        String(b),
+                        "id"
+                    )
+        );
+
+
+    select.innerHTML = `
+
+        <option value="">
+            Semua Guru
+        </option>
+
+    `;
+
+
+    namaGuru.forEach(
+        nama => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                nama;
+
+
+            option.textContent =
+                nama;
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
 }
 
+
 /* =========================================================
-   FILTER BANK SOAL
+   FILTER BANK
 ========================================================= */
 
 function renderUjianFilter(){
 
     const select =
-        document.getElementById("ujianFilter");
+        document.getElementById(
+            "ujianFilter"
+        );
+
 
     const map = {};
 
-    semuaData.forEach(soal => {
 
-        const id =
-            soal.ujian_id;
+    semuaData.forEach(
+        soal => {
 
-        if(id && !map[String(id)]){
+            const id =
+                soal.ujian_id;
 
-            map[String(id)] = {
-                id,
-                namaUjian:
-                    soal.namaUjian,
-                namaGuru:
-                    soal.namaGuru
-            };
+
+            if(
+                id &&
+                !map[String(id)]
+            ){
+
+                map[String(id)] = {
+
+                    id,
+
+                    namaUjian:
+                        soal.namaUjian,
+
+                    namaGuru:
+                        soal.namaGuru,
+
+                    mataPelajaran:
+                        soal.mataPelajaran
+
+                };
+
+            }
+
         }
-    });
+    );
 
-    select.innerHTML =
-        `<option value="">Semua Bank Soal</option>`;
+
+    select.innerHTML = `
+
+        <option value="">
+            Semua Bank Soal
+        </option>
+
+    `;
+
 
     Object.values(map)
-        .sort((a,b) =>
-            String(a.namaUjian)
-                .localeCompare(
-                    String(b.namaUjian),
-                    "id"
-                )
+
+        .sort(
+            (a,b) =>
+                String(a.namaUjian)
+                    .localeCompare(
+                        String(b.namaUjian),
+                        "id"
+                    )
         )
-        .forEach(item => {
 
-            const option =
-                document.createElement("option");
+        .forEach(
+            item => {
 
-            option.value =
-                String(item.id);
+                const option =
+                    document.createElement(
+                        "option"
+                    );
 
-            option.textContent =
-                `${item.namaUjian} — ${item.namaGuru}`;
 
-            select.appendChild(option);
-        });
+                option.value =
+                    String(item.id);
+
+
+                option.textContent =
+
+                    `${item.namaUjian} — ` +
+                    `${item.namaGuru} — ` +
+                    `${item.mataPelajaran}`;
+
+
+                select.appendChild(
+                    option
+                );
+
+            }
+        );
+
 }
+
 
 /* =========================================================
    FILTER DATA
@@ -1379,90 +2009,151 @@ function renderUjianFilter(){
 function getFilteredData(){
 
     const ujian =
-        document.getElementById("ujianFilter").value;
+        document.getElementById(
+            "ujianFilter"
+        ).value;
+
 
     const guru =
-        document.getElementById("guruFilter").value;
+        document.getElementById(
+            "guruFilter"
+        ).value;
+
 
     const kognitif =
-        document.getElementById("kognitifFilter").value;
+        document.getElementById(
+            "kognitifFilter"
+        ).value;
+
 
     const kategori =
-        document.getElementById("kategoriFilter").value;
+        document.getElementById(
+            "kategoriFilter"
+        ).value;
+
 
     const kesukaran =
-        document.getElementById("kesukaranFilter").value;
+        document.getElementById(
+            "kesukaranFilter"
+        ).value;
+
 
     const literasi =
-        document.getElementById("literasiFilter").value;
+        document.getElementById(
+            "literasiFilter"
+        ).value;
+
 
     const search =
         normalizeText(
-            document.getElementById("searchInput").value
+
+            document.getElementById(
+                "searchInput"
+            ).value
+
         );
 
-    return semuaData.filter(soal => {
 
-        if(
-            ujian &&
-            String(soal.ujian_id) !== String(ujian)
-        ){
-            return false;
-        }
+    return semuaData.filter(
+        soal => {
 
-        if(
-            guru &&
-            String(soal.namaGuru) !== String(guru)
-        ){
-            return false;
-        }
+            if(
+                ujian &&
+                String(
+                    soal.ujian_id
+                ) !== String(ujian)
+            ){
 
-        if(
-            kognitif &&
-            soal.kognitif !== kognitif
-        ){
-            return false;
-        }
-
-        if(
-            kategori &&
-            soal.kategori !== kategori
-        ){
-            return false;
-        }
-
-        if(
-            kesukaran &&
-            soal.kesukaran !== kesukaran
-        ){
-            return false;
-        }
-
-        if(
-            literasi &&
-            soal.literasi !== literasi
-        ){
-            return false;
-        }
-
-        if(search){
-
-            const gabungan =
-                normalizeText(
-                    `${soal.pertanyaan || ""}
-                     ${soal.namaGuru || ""}
-                     ${soal.namaUjian || ""}
-                     ${soal.mataPelajaran || ""}`
-                );
-
-            if(!gabungan.includes(search)){
                 return false;
-            }
-        }
 
-        return true;
-    });
+            }
+
+
+            if(
+                guru &&
+                String(
+                    soal.namaGuru
+                ) !== String(guru)
+            ){
+
+                return false;
+
+            }
+
+
+            if(
+                kognitif &&
+                soal.kognitif !== kognitif
+            ){
+
+                return false;
+
+            }
+
+
+            if(
+                kategori &&
+                soal.kategori !== kategori
+            ){
+
+                return false;
+
+            }
+
+
+            if(
+                kesukaran &&
+                soal.kesukaran !== kesukaran
+            ){
+
+                return false;
+
+            }
+
+
+            if(
+                literasi &&
+                soal.literasi !== literasi
+            ){
+
+                return false;
+
+            }
+
+
+            if(search){
+
+                const gabungan =
+                    normalizeText(
+
+                        `${soal.pertanyaan || ""}
+                         ${soal.namaGuru || ""}
+                         ${soal.namaUjian || ""}
+                         ${soal.mataPelajaran || ""}`
+
+                    );
+
+
+                if(
+                    !gabungan.includes(
+                        search
+                    )
+                ){
+
+                    return false;
+
+                }
+
+            }
+
+
+            return true;
+
+        }
+    );
+
 }
+
 
 /* =========================================================
    RENDER SEMUA
@@ -1473,13 +2164,21 @@ function renderAll(){
     const data =
         getFilteredData();
 
+
     renderSummary(data);
+
     renderEligibility(data);
+
     renderDifficulty(data);
+
     renderCognitive(data);
+
     renderMatrix(data);
+
     renderQuestionList(data);
+
 }
+
 
 /* =========================================================
    SUMMARY
@@ -1490,92 +2189,171 @@ function renderSummary(data){
     const total =
         data.length;
 
+
     const lots =
-        data.filter(x =>
-            x.kategori === "LOTS"
+        data.filter(
+            x =>
+                x.kategori === "LOTS"
         ).length;
+
 
     const mots =
-        data.filter(x =>
-            x.kategori === "MOTS"
+        data.filter(
+            x =>
+                x.kategori === "MOTS"
         ).length;
+
 
     const hots =
-        data.filter(x =>
-            x.kategori === "HOTS"
+        data.filter(
+            x =>
+                x.kategori === "HOTS"
         ).length;
+
 
     const literasi =
-        data.filter(x =>
-            x.literasi === "Literasi"
+        data.filter(
+            x =>
+                x.literasi === "Literasi"
         ).length;
+
 
     const sukar =
-        data.filter(x =>
-            x.kesukaran === "Sukar"
+        data.filter(
+            x =>
+                x.kesukaran === "Sukar"
         ).length;
 
-    document.getElementById("summary").innerHTML = `
+
+    document.getElementById(
+        "summary"
+    ).innerHTML = `
 
         <div class="card">
-            <div class="card-title">TOTAL SOAL</div>
-            <div class="card-value blue">${total}</div>
+
+            <div class="card-title">
+                TOTAL SOAL
+            </div>
+
+            <div class="card-value blue">
+                ${total}
+            </div>
+
         </div>
 
-        <div class="card">
-            <div class="card-title">LOTS</div>
-            <div class="card-value">${lots}</div>
-        </div>
 
         <div class="card">
-            <div class="card-title">MOTS</div>
-            <div class="card-value orange">${mots}</div>
+
+            <div class="card-title">
+                LOTS
+            </div>
+
+            <div class="card-value">
+                ${lots}
+            </div>
+
         </div>
 
-        <div class="card">
-            <div class="card-title">HOTS</div>
-            <div class="card-value purple">${hots}</div>
-        </div>
 
         <div class="card">
-            <div class="card-title">LITERASI</div>
-            <div class="card-value green">${literasi}</div>
+
+            <div class="card-title">
+                MOTS
+            </div>
+
+            <div class="card-value orange">
+                ${mots}
+            </div>
+
         </div>
 
+
         <div class="card">
-            <div class="card-title">SUKAR</div>
-            <div class="card-value red">${sukar}</div>
+
+            <div class="card-title">
+                HOTS
+            </div>
+
+            <div class="card-value purple">
+                ${hots}
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                LITERASI
+            </div>
+
+            <div class="card-value green">
+                ${literasi}
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="card-title">
+                SUKAR
+            </div>
+
+            <div class="card-value red">
+                ${sukar}
+            </div>
+
         </div>
 
     `;
+
 }
 
+
 /* =========================================================
-   KELOMPOK BANK SOAL
+   GROUP BANK
 ========================================================= */
 
 function groupByBank(data){
 
     const groups = {};
 
-    data.forEach(soal => {
 
-        const key =
-            String(soal.ujian_id);
+    data.forEach(
+        soal => {
 
-        if(!groups[key]){
-            groups[key] = [];
+            const key =
+                String(
+                    soal.ujian_id
+                );
+
+
+            if(
+                !groups[key]
+            ){
+
+                groups[key] = [];
+
+            }
+
+
+            groups[key].push(
+                soal
+            );
+
         }
+    );
 
-        groups[key].push(soal);
-    });
 
     return groups;
+
 }
 
+
 /* =========================================================
-   ELIGIBILITY
-   TOTAL HARUS TEPAT 25
+   KELAYAKAN
+   4 DARI 6 = LAYAK
 ========================================================= */
 
 function renderEligibility(data){
@@ -1583,173 +2361,334 @@ function renderEligibility(data){
     const groups =
         groupByBank(data);
 
+
     const entries =
         Object.values(groups);
 
-    if(entries.length === 0){
 
-        document.getElementById("eligibility").innerHTML =
-            `<div class="empty">
-                Tidak ada bank soal yang sesuai filter.
-             </div>`;
+    if(
+        entries.length === 0
+    ){
+
+        document.getElementById(
+            "eligibility"
+        ).innerHTML = `
+
+            <div class="empty">
+
+                Tidak ada bank soal
+                yang sesuai filter.
+
+            </div>
+
+        `;
 
         return;
+
     }
 
-    let html =
-        `<div class="eligibility">`;
 
-    entries.forEach(bank => {
+    let html = "";
 
-        const total =
-            bank.length;
 
-        const lots =
-            bank.filter(x =>
-                x.kategori === "LOTS"
-            ).length;
+    entries.forEach(
+        bank => {
 
-        const hots =
-            bank.filter(x =>
-                x.kategori === "HOTS"
-            ).length;
+            const total =
+                bank.length;
 
-        const literasi =
-            bank.filter(x =>
-                x.literasi === "Literasi"
-            ).length;
 
-        const mudah =
-            bank.filter(x =>
-                x.kesukaran === "Mudah"
-            ).length;
+            const lots =
+                bank.filter(
+                    x =>
+                        x.kategori === "LOTS"
+                ).length;
 
-        const sedang =
-            bank.filter(x =>
-                x.kesukaran === "Sedang"
-            ).length;
 
-        const sukar =
-            bank.filter(x =>
-                x.kesukaran === "Sukar"
-            ).length;
+            const mots =
+                bank.filter(
+                    x =>
+                        x.kategori === "MOTS"
+                ).length;
 
-        const layak =
-            total === 25 &&
-            (lots + bank.filter(x =>
-                x.kategori === "MOTS"
-            ).length) >= 1 &&
-            hots >= 1 &&
-            literasi >= 1 &&
-            mudah >= 1 &&
-            sedang >= 1 &&
-            sukar >= 1;
 
-        html += `
-            <div
-                class="bank-block"
-                style="grid-column:1/-1"
-            >
+            const hots =
+                bank.filter(
+                    x =>
+                        x.kategori === "HOTS"
+                ).length;
 
-                <div class="bank-header">
 
-                    <div>
-                        <div class="bank-title">
-                            ${escapeHTML(
-                                bank[0].namaUjian
-                            )}
+            const literasi =
+                bank.filter(
+                    x =>
+                        x.literasi === "Literasi"
+                ).length;
+
+
+            const mudah =
+                bank.filter(
+                    x =>
+                        x.kesukaran === "Mudah"
+                ).length;
+
+
+            const sedang =
+                bank.filter(
+                    x =>
+                        x.kesukaran === "Sedang"
+                ).length;
+
+
+            const sukar =
+                bank.filter(
+                    x =>
+                        x.kesukaran === "Sukar"
+                ).length;
+
+
+            /*
+               ============================================
+               ENAM INDIKATOR
+               ============================================
+
+               1. LOTS/MOTS
+               2. HOTS
+               3. Literasi
+               4. Mudah
+               5. Sedang
+               6. Sukar
+            */
+
+            const indikator = [
+
+                (lots + mots) >= 1,
+
+                hots >= 1,
+
+                literasi >= 1,
+
+                mudah >= 1,
+
+                sedang >= 1,
+
+                sukar >= 1
+
+            ];
+
+
+            const syaratTerpenuhi =
+                indikator.filter(
+                    Boolean
+                ).length;
+
+
+            /*
+               TOTAL HARUS TEPAT 25
+               DAN MINIMAL 4/6.
+            */
+
+            const layak =
+
+                total === 25 &&
+                syaratTerpenuhi >= 4;
+
+
+            html += `
+
+                <div class="bank-block">
+
+                    <div class="bank-header">
+
+                        <div>
+
+                            <div class="bank-title">
+
+                                ${escapeHTML(
+                                    bank[0].namaUjian
+                                )}
+
+                            </div>
+
+
+                            <div
+                                class="teacher-name"
+                                style="margin-top:5px"
+                            >
+
+                                Guru:
+                                ${escapeHTML(
+                                    bank[0].namaGuru
+                                )}
+
+                            </div>
+
+
+                            <div
+                                style="
+                                    margin-top:4px;
+                                    font-size:12px;
+                                    color:#64748b;
+                                "
+                            >
+
+                                Mata Pelajaran:
+                                ${escapeHTML(
+                                    bank[0].mataPelajaran
+                                )}
+
+                            </div>
+
                         </div>
 
-                        <div
-                            class="teacher-name"
-                            style="margin-top:4px"
+
+                        <span
+                            class="badge ${
+                                layak
+                                    ? "green-bg"
+                                    : "red-bg"
+                            }"
+                            style="
+                                font-size:12px;
+                                padding:7px 12px;
+                            "
                         >
-                            Guru:
-                            ${escapeHTML(
-                                bank[0].namaGuru
-                            )}
-                        </div>
-                    </div>
 
-                    <div>
-                        <span class="badge ${
-                            layak
-                            ? "green-bg"
-                            : "red-bg"
-                        }">
-                            ${layak
-                                ? "LAYAK"
-                                : "BELUM LAYAK"}
-                        </span>
-                    </div>
+                            ${
+                                layak
+                                    ? "LAYAK"
+                                    : "BELUM LAYAK"
+                            }
 
-                </div>
-
-                <div style="padding:15px">
-
-                    <div class="bank-info">
-
-                        <span class="badge blue-bg">
-                            Total: ${total}/25
-                        </span>
-
-                        <span class="badge">
-                            LOTS/MOTS: ${lots + bank.filter(x =>
-                                x.kategori === "MOTS"
-                            ).length}
-                        </span>
-
-                        <span class="badge purple-bg">
-                            HOTS: ${hots}
-                        </span>
-
-                        <span class="badge green-bg">
-                            Literasi: ${literasi}
-                        </span>
-
-                        <span class="badge">
-                            Mudah: ${mudah}
-                        </span>
-
-                        <span class="badge orange-bg">
-                            Sedang: ${sedang}
-                        </span>
-
-                        <span class="badge red-bg">
-                            Sukar: ${sukar}
                         </span>
 
                     </div>
+
 
                     <div
                         style="
-                            margin-top:12px;
-                            font-size:13px;
-                            color:#475569;
+                            padding:15px;
                         "
                     >
-                        Syarat:
-                        maksimal 25 soal,
-                        total tepat 25,
-                        LOTS/MOTS minimal 1,
-                        HOTS minimal 1,
-                        Literasi minimal 1,
-                        Mudah minimal 1,
-                        Sedang minimal 1,
-                        Sukar minimal 1.
+
+                        <div
+                            class="eligibility-summary"
+                        >
+
+                            <span class="badge blue-bg">
+
+                                Total:
+                                ${total}/25
+
+                            </span>
+
+
+                            <span class="badge">
+
+                                LOTS/MOTS:
+                                ${lots + mots}
+
+                            </span>
+
+
+                            <span class="badge purple-bg">
+
+                                HOTS:
+                                ${hots}
+
+                            </span>
+
+
+                            <span class="badge green-bg">
+
+                                Literasi:
+                                ${literasi}
+
+                            </span>
+
+
+                            <span class="badge">
+
+                                Mudah:
+                                ${mudah}
+
+                            </span>
+
+
+                            <span class="badge orange-bg">
+
+                                Sedang:
+                                ${sedang}
+
+                            </span>
+
+
+                            <span class="badge red-bg">
+
+                                Sukar:
+                                ${sukar}
+
+                            </span>
+
+
+                            <span
+                                class="badge ${
+                                    syaratTerpenuhi >= 4
+                                        ? "green-bg"
+                                        : "red-bg"
+                                }"
+                            >
+
+                                Indikator:
+                                ${syaratTerpenuhi}/6
+
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            style="
+                                margin-top:12px;
+                                font-size:13px;
+                                color:#475569;
+                            "
+                        >
+
+                            <strong>
+                                Aturan:
+                            </strong>
+
+                            total harus tepat
+                            25 soal dan minimal
+                            <strong>
+                                4 dari 6 indikator
+                            </strong>
+                            terpenuhi.
+
+                            <strong>
+                                Sukar tidak wajib.
+                            </strong>
+
+                        </div>
+
                     </div>
 
                 </div>
 
-            </div>
-        `;
-    });
+            `;
 
-    html += `</div>`;
+        }
+    );
 
-    document.getElementById("eligibility").innerHTML =
+
+    document.getElementById(
+        "eligibility"
+    ).innerHTML =
         html;
+
 }
+
 
 /* =========================================================
    DIFFICULTY
@@ -1760,64 +2699,129 @@ function renderDifficulty(data){
     const total =
         data.length || 1;
 
+
     const mudah =
-        data.filter(x =>
-            x.kesukaran === "Mudah"
+        data.filter(
+            x =>
+                x.kesukaran === "Mudah"
         ).length;
+
 
     const sedang =
-        data.filter(x =>
-            x.kesukaran === "Sedang"
+        data.filter(
+            x =>
+                x.kesukaran === "Sedang"
         ).length;
+
 
     const sukar =
-        data.filter(x =>
-            x.kesukaran === "Sukar"
+        data.filter(
+            x =>
+                x.kesukaran === "Sukar"
         ).length;
 
-    document.getElementById("difficulty").innerHTML = `
+
+    document.getElementById(
+        "difficulty"
+    ).innerHTML = `
 
         <div class="summary">
 
             <div class="card">
+
                 <div class="card-title">
                     MUDAH
                 </div>
+
                 <div class="card-value green">
                     ${mudah}
                 </div>
-                <div style="font-size:12px;color:#64748b">
-                    ${(mudah / total * 100).toFixed(1)}%
+
+                <div
+                    style="
+                        font-size:12px;
+                        color:#64748b;
+                    "
+                >
+
+                    ${
+                        (
+                            mudah /
+                            total *
+                            100
+                        ).toFixed(1)
+                    }%
+
                 </div>
+
             </div>
 
+
             <div class="card">
+
                 <div class="card-title">
                     SEDANG
                 </div>
+
                 <div class="card-value orange">
                     ${sedang}
                 </div>
-                <div style="font-size:12px;color:#64748b">
-                    ${(sedang / total * 100).toFixed(1)}%
+
+                <div
+                    style="
+                        font-size:12px;
+                        color:#64748b;
+                    "
+                >
+
+                    ${
+                        (
+                            sedang /
+                            total *
+                            100
+                        ).toFixed(1)
+                    }%
+
                 </div>
+
             </div>
 
+
             <div class="card">
+
                 <div class="card-title">
                     SUKAR
                 </div>
+
                 <div class="card-value red">
                     ${sukar}
                 </div>
-                <div style="font-size:12px;color:#64748b">
-                    ${(sukar / total * 100).toFixed(1)}%
+
+                <div
+                    style="
+                        font-size:12px;
+                        color:#64748b;
+                    "
+                >
+
+                    ${
+                        (
+                            sukar /
+                            total *
+                            100
+                        ).toFixed(1)
+                    }%
+
                 </div>
+
             </div>
 
         </div>
+
     `;
+
 }
+
 
 /* =========================================================
    COGNITIVE
@@ -1828,44 +2832,83 @@ function renderCognitive(data){
     const total =
         data.length || 1;
 
-    const levels =
-        ["C1","C2","C3","C4","C5","C6"];
+
+    const levels = [
+
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "C6"
+
+    ];
+
 
     let html =
         `<div class="summary">`;
 
-    levels.forEach(level => {
 
-        const jumlah =
-            data.filter(x =>
-                x.kognitif === level
-            ).length;
+    levels.forEach(
+        level => {
 
-        html += `
-            <div class="card">
-                <div class="card-title">
-                    ${level}
+            const jumlah =
+                data.filter(
+                    x =>
+                        x.kognitif === level
+                ).length;
+
+
+            html += `
+
+                <div class="card">
+
+                    <div class="card-title">
+                        ${level}
+                    </div>
+
+                    <div
+                        class="card-value purple"
+                    >
+                        ${jumlah}
+                    </div>
+
+                    <div
+                        style="
+                            font-size:12px;
+                            color:#64748b;
+                        "
+                    >
+
+                        ${
+                            (
+                                jumlah /
+                                total *
+                                100
+                            ).toFixed(1)
+                        }%
+
+                    </div>
+
                 </div>
 
-                <div class="card-value purple">
-                    ${jumlah}
-                </div>
+            `;
 
-                <div style="
-                    font-size:12px;
-                    color:#64748b;
-                ">
-                    ${(jumlah / total * 100).toFixed(1)}%
-                </div>
-            </div>
-        `;
-    });
+        }
+    );
 
-    html += `</div>`;
 
-    document.getElementById("cognitive").innerHTML =
+    html +=
+        `</div>`;
+
+
+    document.getElementById(
+        "cognitive"
+    ).innerHTML =
         html;
+
 }
+
 
 /* =========================================================
    MATRIX
@@ -1874,59 +2917,89 @@ function renderCognitive(data){
 function renderMatrix(data){
 
     const combinations = [
+
         ["LOTS","Mudah"],
         ["MOTS","Mudah"],
         ["HOTS","Mudah"],
+
         ["LOTS","Sedang"],
         ["MOTS","Sedang"],
         ["HOTS","Sedang"],
+
         ["LOTS","Sukar"],
         ["MOTS","Sukar"],
         ["HOTS","Sukar"]
+
     ];
+
 
     let html =
         `<div class="matrix">`;
 
-    combinations.forEach(([kategori,kesukaran]) => {
 
-        const jumlah =
-            data.filter(x =>
-                x.kategori === kategori &&
-                x.kesukaran === kesukaran
-            ).length;
+    combinations.forEach(
+        ([kategori,kesukaran]) => {
 
-        html += `
-            <div class="matrix-card">
+            const jumlah =
+                data.filter(
+                    x =>
+                        x.kategori === kategori &&
+                        x.kesukaran === kesukaran
+                ).length;
 
-                <div>
-                    <strong style="font-size:16px">
-                        ${kategori}
+
+            html += `
+
+                <div class="matrix-card">
+
+                    <div>
+
+                        <strong
+                            style="font-size:16px"
+                        >
+
+                            ${kategori}
+
+                        </strong>
+
+                    </div>
+
+
+                    <div
+                        style="
+                            color:#64748b;
+                            margin-top:4px;
+                        "
+                    >
+
+                        ${kesukaran}
+
+                    </div>
+
+
+                    <strong>
+                        ${jumlah}
                     </strong>
+
                 </div>
 
-                <div
-                    style="
-                        color:#64748b;
-                        margin-top:4px;
-                    "
-                >
-                    ${kesukaran}
-                </div>
+            `;
 
-                <strong>
-                    ${jumlah}
-                </strong>
+        }
+    );
 
-            </div>
-        `;
-    });
 
-    html += `</div>`;
+    html +=
+        `</div>`;
 
-    document.getElementById("matrix").innerHTML =
+
+    document.getElementById(
+        "matrix"
+    ).innerHTML =
         html;
+
 }
+
 
 /* =========================================================
    DETAIL SOAL
@@ -1934,170 +3007,300 @@ function renderMatrix(data){
 
 function renderQuestionList(data){
 
-    if(data.length === 0){
+    if(
+        data.length === 0
+    ){
 
-        document.getElementById("questionList").innerHTML =
-            `<div class="empty">
-                Tidak ada soal yang sesuai dengan filter.
-             </div>`;
+        document.getElementById(
+            "questionList"
+        ).innerHTML = `
+
+            <div class="empty">
+
+                Tidak ada soal
+                yang sesuai dengan filter.
+
+            </div>
+
+        `;
 
         return;
+
     }
+
 
     const groups =
         groupByBank(data);
 
+
     let html = "";
 
-    Object.values(groups).forEach(bank => {
 
-        html += `
-            <div class="bank-block">
+    Object.values(groups)
+        .forEach(
+            bank => {
 
-                <div class="bank-header">
+                html += `
 
-                    <div>
-                        <div class="bank-title">
-                            ${escapeHTML(
-                                bank[0].namaUjian
-                            )}
+                    <div class="bank-block">
+
+                        <div class="bank-header">
+
+                            <div>
+
+                                <div
+                                    class="bank-title"
+                                >
+
+                                    ${escapeHTML(
+                                        bank[0].namaUjian
+                                    )}
+
+                                </div>
+
+
+                                <div
+                                    class="teacher-name"
+                                    style="margin-top:4px"
+                                >
+
+                                    Guru:
+                                    ${escapeHTML(
+                                        bank[0].namaGuru
+                                    )}
+
+                                </div>
+
+
+                                <div
+                                    style="
+                                        margin-top:3px;
+                                        font-size:12px;
+                                        color:#64748b;
+                                    "
+                                >
+
+                                    Mata Pelajaran:
+                                    ${escapeHTML(
+                                        bank[0].mataPelajaran
+                                    )}
+
+                                </div>
+
+                            </div>
+
+
+                            <div
+                                class="bank-info"
+                            >
+
+                                <span
+                                    class="badge blue-bg"
+                                >
+
+                                    ${bank.length}/25 soal
+
+                                </span>
+
+                            </div>
+
                         </div>
 
-                        <div
-                            class="teacher-name"
-                            style="margin-top:4px"
-                        >
-                            Guru:
-                            ${escapeHTML(
-                                bank[0].namaGuru
-                            )}
-                        </div>
 
-                        <div
-                            style="
-                                margin-top:3px;
-                                font-size:12px;
-                                color:#64748b;
-                            "
-                        >
-                            Mata Pelajaran:
-                            ${escapeHTML(
-                                bank[0].mataPelajaran
-                            )}
-                        </div>
-                    </div>
+                        <div class="table-wrap">
 
-                    <div class="bank-info">
-                        <span class="badge blue-bg">
-                            ${bank.length}/25 soal
-                        </span>
-                    </div>
+                            <table>
 
-                </div>
+                                <thead>
 
-                <div class="table-wrap">
+                                    <tr>
 
-                    <table>
+                                        <th>
+                                            No
+                                        </th>
 
-                        <thead>
+                                        <th>
+                                            Pertanyaan
+                                        </th>
+
+                                        <th>
+                                            Kognitif
+                                        </th>
+
+                                        <th>
+                                            Kategori
+                                        </th>
+
+                                        <th>
+                                            Kesukaran
+                                        </th>
+
+                                        <th>
+                                            Literasi
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+                `;
+
+
+                bank.forEach(
+                    (soal,index) => {
+
+                        const kelasKognitif =
+
+                            soal.kategori === "HOTS"
+
+                                ? "purple-bg"
+
+                                : soal.kategori === "MOTS"
+
+                                    ? "orange-bg"
+
+                                    : "blue-bg";
+
+
+                        const kelasKesukaran =
+
+                            soal.kesukaran === "Sukar"
+
+                                ? "red-bg"
+
+                                : soal.kesukaran === "Sedang"
+
+                                    ? "orange-bg"
+
+                                    : "green-bg";
+
+
+                        const teksPertanyaan =
+                            stripHTML(
+                                soal.pertanyaan ||
+                                ""
+                            );
+
+
+                        html += `
+
                             <tr>
-                                <th>No</th>
-                                <th>Pertanyaan</th>
-                                <th>Kognitif</th>
-                                <th>Kategori</th>
-                                <th>Kesukaran</th>
-                                <th>Literasi</th>
+
+                                <td>
+
+                                    ${escapeHTML(
+                                        soal.nomor ??
+                                        index + 1
+                                    )}
+
+                                </td>
+
+
+                                <td>
+
+                                    <div
+                                        class="question-text"
+                                    >
+
+                                        ${escapeHTML(
+                                            teksPertanyaan
+                                        )}
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span
+                                        class="badge purple-bg"
+                                    >
+
+                                        ${soal.kognitif}
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span
+                                        class="badge ${kelasKognitif}"
+                                    >
+
+                                        ${soal.kategori}
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span
+                                        class="badge ${kelasKesukaran}"
+                                    >
+
+                                        ${soal.kesukaran}
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    <span
+                                        class="badge ${
+                                            soal.literasi ===
+                                            "Literasi"
+                                                ? "green-bg"
+                                                : ""
+                                        }"
+                                    >
+
+                                        ${soal.literasi}
+
+                                    </span>
+
+                                </td>
+
                             </tr>
-                        </thead>
 
-                        <tbody>
-        `;
+                        `;
 
-        bank.forEach((soal,index) => {
-
-            const kelasKognitif =
-                soal.kategori === "HOTS"
-                    ? "purple-bg"
-                    : soal.kategori === "MOTS"
-                        ? "orange-bg"
-                        : "blue-bg";
-
-            const kelasKesukaran =
-                soal.kesukaran === "Sukar"
-                    ? "red-bg"
-                    : soal.kesukaran === "Sedang"
-                        ? "orange-bg"
-                        : "green-bg";
-
-            const teksPertanyaan =
-                stripHTML(
-                    soal.pertanyaan || ""
+                    }
                 );
 
-            html += `
-                <tr>
 
-                    <td>
-                        ${escapeHTML(
-                            soal.nomor ??
-                            index + 1
-                        )}
-                    </td>
+                html += `
 
-                    <td>
-                        <div class="question-text">
-                            ${escapeHTML(
-                                teksPertanyaan
-                            )}
+                                </tbody>
+
+                            </table>
+
                         </div>
-                    </td>
 
-                    <td>
-                        <span class="badge purple-bg">
-                            ${soal.kognitif}
-                        </span>
-                    </td>
+                    </div>
 
-                    <td>
-                        <span class="badge ${kelasKognitif}">
-                            ${soal.kategori}
-                        </span>
-                    </td>
+                `;
 
-                    <td>
-                        <span class="badge ${kelasKesukaran}">
-                            ${soal.kesukaran}
-                        </span>
-                    </td>
+            }
+        );
 
-                    <td>
-                        <span class="badge ${
-                            soal.literasi === "Literasi"
-                            ? "green-bg"
-                            : ""
-                        }">
-                            ${soal.literasi}
-                        </span>
-                    </td>
 
-                </tr>
-            `;
-        });
-
-        html += `
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
-        `;
-    });
-
-    document.getElementById("questionList").innerHTML =
+    document.getElementById(
+        "questionList"
+    ).innerHTML =
         html;
+
 }
+
 
 /* =========================================================
    EVENT FILTER
@@ -2110,20 +3313,27 @@ function renderQuestionList(data){
     "kategoriFilter",
     "kesukaranFilter",
     "literasiFilter"
-].forEach(id => {
 
-    document.getElementById(id)
-        .addEventListener(
-            "change",
-            renderAll
-        );
-});
+].forEach(
+    id => {
 
-document.getElementById("searchInput")
-    .addEventListener(
-        "input",
-        renderAll
-    );
+        document.getElementById(id)
+            .addEventListener(
+                "change",
+                renderAll
+            );
+
+    }
+);
+
+
+document.getElementById(
+    "searchInput"
+).addEventListener(
+    "input",
+    renderAll
+);
+
 
 /* =========================================================
    MULAI
@@ -2135,3 +3345,4 @@ loadData();
 
 </body>
 </html>
+```
