@@ -1033,7 +1033,6 @@ body{
             repeat(2,minmax(0,1fr));
     }
 
-    .standar-grid,
     .standar-grid{
         grid-template-columns:
             repeat(2,minmax(0,1fr));
@@ -1249,10 +1248,6 @@ body{
 
 <div class="container">
 
-<!-- =================================================
-     KEAMANAN
-================================================= -->
-
 <div class="owner-note">
 
     <div class="owner-title">
@@ -1274,10 +1269,6 @@ body{
     </b>
 
 </div>
-
-<!-- =================================================
-     FILTER
-================================================= -->
 
 <div class="filter-box">
 
@@ -1427,17 +1418,13 @@ body{
                 type="text"
                 id="search"
                 placeholder="Cari soal..."
-                oninput="renderAll()">
+                oninput="renderAll">
 
         </div>
 
     </div>
 
 </div>
-
-<!-- =================================================
-     STANDAR
-================================================= -->
 
 <div class="standard-highlight">
 
@@ -1491,10 +1478,6 @@ body{
 
 </div>
 
-<!-- =================================================
-     PENJELASAN STANDAR
-================================================= -->
-
 <div class="note">
 
     <b>ℹ️ STANDAR KOMPOSISI NASKAH</b>
@@ -1519,7 +1502,7 @@ body{
 
     <b>Pembagian Mudah dan Sedang tidak dipatok secara terpisah.</b>
 
-    Yang menjadi standar adalah jumlah
+    Yang menjadi standar umum adalah jumlah
     <b>Mudah + Sedang = 75%</b>,
     sedangkan <b>Sukar = 25%</b>.
 
@@ -1583,16 +1566,26 @@ body{
         <br><br>
 
         <b>
+            Mudah + Sedang minimal 70% sudah dianggap memenuhi
+            indikator kesukaran.
+        </b>
+
+        <br>
+
+        <b>
+            Persentase Sukar tidak diwajibkan tepat 25%
+            untuk Bahasa Inggris.
+        </b>
+
+        <br><br>
+
+        <b>
             Aturan ini hanya diterapkan pada mata pelajaran Bahasa Inggris.
         </b>
 
     </div>
 
 </div>
-
-<!-- =================================================
-     SUMMARY
-===================================================== -->
 
 <div class="summary-grid">
 
@@ -1682,10 +1675,6 @@ body{
 
 </div>
 
-<!-- =================================================
-     KESUKARAN
-===================================================== -->
-
 <div class="section">
 
     <div class="section-title">
@@ -1766,10 +1755,6 @@ body{
 
 </div>
 
-<!-- =================================================
-     KOGNITIF
-===================================================== -->
-
 <div class="section">
 
     <div class="section-title">
@@ -1779,10 +1764,6 @@ body{
     <div id="cognitiveBars"></div>
 
 </div>
-
-<!-- =================================================
-     MATRIX
-===================================================== -->
 
 <div class="section">
 
@@ -1878,10 +1859,6 @@ body{
 
 </div>
 
-<!-- =================================================
-     LITERASI
-===================================================== -->
-
 <div class="section">
 
     <div class="section-title">
@@ -1914,10 +1891,6 @@ body{
 
 </div>
 
-<!-- =================================================
-     KELAYAKAN
-===================================================== -->
-
 <div class="section">
 
     <div class="section-title">
@@ -1933,10 +1906,6 @@ body{
     </div>
 
 </div>
-
-<!-- =================================================
-     SOAL
-===================================================== -->
 
 <div class="section">
 
@@ -2945,7 +2914,6 @@ function deteksiC6(text){
         /\bmodelkan\b/i,
         /\bmenghasilkan\b/i,
 
-        /* Bahasa Inggris */
         /\bdesign\b/i,
         /\bdesign a\b/i,
         /\bcreate\b/i,
@@ -3001,7 +2969,6 @@ function deteksiC5(text){
         /\bberdasarkan .*pendapat\b/i,
         /\bbenar atau salah\b/i,
 
-        /* Bahasa Inggris */
         /\bevaluate\b/i,
         /\bevaluate the\b/i,
         /\bassess\b/i,
@@ -3051,7 +3018,6 @@ function deteksiC4(text){
         /\bsebab dan akibat\b/i,
         /\bhubungan antara\b/i,
 
-        /* Bahasa Inggris */
         /\banalyze\b/i,
         /\banalyse\b/i,
         /\bcompare\b/i,
@@ -3097,7 +3063,6 @@ function deteksiC3(text){
         /\bjika .*maka\b/i,
         /\bgunakan prinsip\b/i,
 
-        /* Bahasa Inggris */
         /\bapply\b/i,
         /\buse the\b/i,
         /\busing the\b/i,
@@ -3140,7 +3105,6 @@ function deteksiC2(text){
         /\bcontoh\b/i,
         /\bdapat menjelaskan\b/i,
 
-        /* Bahasa Inggris */
         /\bexplain\b/i,
         /\bdescribe\b/i,
         /\bwhat does .* mean\b/i,
@@ -3182,7 +3146,6 @@ function deteksiC1(text){
         /\bistilah\b/i,
         /\btermasuk\b/i,
 
-        /* Bahasa Inggris */
         /\bwho\b/i,
         /\bwhen\b/i,
         /\bwhere\b/i,
@@ -3439,7 +3402,6 @@ function analisisKesukaranBahasaInggris(soal,kognitif){
 
 /* =========================================================
    ANALISIS KESUKARAN UMUM
-   DIGUNAKAN UNTUK MAPEL SELAIN BAHASA INGGRIS
 ========================================================= */
 
 function analisisKesukaranUmum(soal){
@@ -3636,7 +3598,6 @@ function analisisKesukaranUmum(soal){
 
 /* =========================================================
    ANALISIS KESUKARAN
-   KHUSUS BAHASA INGGRIS MENGGUNAKAN LEVEL C1-C6
 ========================================================= */
 
 function analisisKesukaran(soal,kognitif){
@@ -3723,7 +3684,6 @@ function buatAnalisis(){
                     isLiterasi,
                     literasiHOTS,
 
-                    /* informasi tambahan */
                     ujianData:ujian,
                     bahasaInggris
 
@@ -4316,6 +4276,28 @@ function renderLiterasi(data){
 
 
 /* =========================================================
+   CEK APAKAH DATA ADALAH BAHASA INGGRIS
+   Hanya aktif jika seluruh data yang sedang dianalisis
+   merupakan soal Bahasa Inggris.
+========================================================= */
+
+function dataKhususBahasaInggris(data){
+
+    if(!data || !data.length){
+
+        return false;
+
+    }
+
+    return data.every(
+        item =>
+            item.bahasaInggris === true
+    );
+
+}
+
+
+/* =========================================================
    KELAYAKAN NASKAH
 ========================================================= */
 
@@ -4359,6 +4341,20 @@ function renderKelayakan(data){
         return;
 
     }
+
+    /* =====================================================
+       DETEKSI KHUSUS BAHASA INGGRIS
+    ===================================================== */
+
+    const khususBahasaInggris =
+        dataKhususBahasaInggris(
+            data
+        );
+
+
+    /* =====================================================
+       HITUNG KATEGORI
+    ===================================================== */
 
     const jumlah =
         categoria =>
@@ -4434,42 +4430,119 @@ function renderKelayakan(data){
     const pSukar =
         persen(sukar);
 
+
+    /* =====================================================
+       INDIKATOR LOTS + MOTS
+       TETAP SAMA UNTUK SEMUA MAPEL
+    ===================================================== */
+
     const okLOTSMOTS =
         pLOTSMOTS >= 40 &&
         pLOTSMOTS <= 50;
+
+
+    /* =====================================================
+       INDIKATOR HOTS
+       TETAP SAMA
+    ===================================================== */
 
     const okHOTS =
         pHOTS >= 50 &&
         pHOTS <= 60;
 
+
+    /* =====================================================
+       INDIKATOR LITERASI
+       TETAP SAMA
+    ===================================================== */
+
     const okLiterasi =
         pLiterasi >= 50;
 
-    const targetMudahSedang =
-        total * 0.75;
 
-    const toleransi =
-        Math.max(
-            1,
-            Math.round(
-                total * 0.05
-            )
-        );
+    /* =====================================================
+       INDIKATOR MUDAH + SEDANG
 
-    const okMudahSedang =
-        Math.abs(
-            mudahSedang -
-            targetMudahSedang
-        ) <= toleransi;
+       KHUSUS BAHASA INGGRIS:
+       minimal 70%
 
-    const targetSukar =
-        total * 0.25;
+       MAPEL LAIN:
+       tetap sekitar 75% dengan toleransi 5%
+    ===================================================== */
 
-    const okSukar =
-        Math.abs(
-            sukar -
-            targetSukar
-        ) <= toleransi;
+    let okMudahSedang;
+    let targetMudahSedang;
+    let toleransi;
+
+    if(khususBahasaInggris){
+
+        okMudahSedang =
+            pMudahSedang >= 70;
+
+        targetMudahSedang =
+            "Minimal 70%";
+
+        toleransi = 0;
+
+    }else{
+
+        targetMudahSedang =
+            total * 0.75;
+
+        toleransi =
+            Math.max(
+                1,
+                Math.round(
+                    total * 0.05
+                )
+            );
+
+        okMudahSedang =
+            Math.abs(
+                mudahSedang -
+                targetMudahSedang
+            ) <= toleransi;
+
+    }
+
+
+    /* =====================================================
+       INDIKATOR SUKAR
+
+       KHUSUS BAHASA INGGRIS:
+       TIDAK DIWAJIBKAN 25%
+
+       MAPEL LAIN:
+       tetap sekitar 25%
+    ===================================================== */
+
+    let okSukar;
+    let targetSukar;
+
+    if(khususBahasaInggris){
+
+        okSukar = true;
+
+        targetSukar =
+            "Tidak diwajibkan 25%";
+
+    }else{
+
+        targetSukar =
+            total * 0.25;
+
+        okSukar =
+            Math.abs(
+                sukar -
+                targetSukar
+            ) <= toleransi;
+
+    }
+
+
+    /* =====================================================
+       KESEIMBANGAN KOGNITIF
+    ===================================================== */
 
     const totalKognitif =
         lotsMots +
@@ -4479,6 +4552,11 @@ function renderKelayakan(data){
         totalKognitif ===
         total;
 
+
+    /* =====================================================
+       KESEIMBANGAN KESUKARAN
+    ===================================================== */
+
     const totalKesukaran =
         mudah +
         sedang +
@@ -4487,6 +4565,11 @@ function renderKelayakan(data){
     const okKesukaran =
         totalKesukaran ===
         total;
+
+
+    /* =====================================================
+       7 INDIKATOR
+    ===================================================== */
 
     const indikatorUtama = [
 
@@ -4505,10 +4588,21 @@ function renderKelayakan(data){
             x => x
         ).length;
 
+
+    /* =====================================================
+       MINIMAL 6 DARI 7
+    ===================================================== */
+
     const layak =
         memenuhi >= 6;
 
+
+    /* =====================================================
+       REKOMENDASI
+    ===================================================== */
+
     const rekomendasi = [];
+
 
     if(!okLOTSMOTS){
 
@@ -4517,6 +4611,7 @@ function renderKelayakan(data){
         );
 
     }
+
 
     if(!okHOTS){
 
@@ -4536,6 +4631,7 @@ function renderKelayakan(data){
 
     }
 
+
     if(!okLiterasi){
 
         rekomendasi.push(
@@ -4544,13 +4640,31 @@ function renderKelayakan(data){
 
     }
 
+
     if(!okMudahSedang){
 
-        rekomendasi.push(
-            `Mudah + Sedang saat ini ${pMudahSedang}%. Target komposisi adalah sekitar 75%.`
-        );
+        if(khususBahasaInggris){
+
+            rekomendasi.push(
+                `Mudah + Sedang pada Bahasa Inggris saat ini ${pMudahSedang}%. Minimal 70% diperlukan agar indikator ini terpenuhi.`
+            );
+
+        }else{
+
+            rekomendasi.push(
+                `Mudah + Sedang saat ini ${pMudahSedang}%. Target komposisi adalah sekitar 75%.`
+            );
+
+        }
 
     }
+
+
+    /*
+       Untuk Bahasa Inggris okSukar selalu true,
+       sehingga bagian ini hanya berlaku untuk
+       mata pelajaran selain Bahasa Inggris.
+    */
 
     if(!okSukar){
 
@@ -4560,6 +4674,7 @@ function renderKelayakan(data){
 
     }
 
+
     if(!okKognitif){
 
         rekomendasi.push(
@@ -4568,6 +4683,7 @@ function renderKelayakan(data){
 
     }
 
+
     if(!okKesukaran){
 
         rekomendasi.push(
@@ -4575,6 +4691,11 @@ function renderKelayakan(data){
         );
 
     }
+
+
+    /* =====================================================
+       FUNGSI INDIKATOR
+    ===================================================== */
 
     function indikator(
         nama,
@@ -4626,6 +4747,11 @@ function renderKelayakan(data){
 
     }
 
+
+    /* =====================================================
+       STATUS
+    ===================================================== */
+
     const statusClass =
         layak
             ? "kelayakan-layak"
@@ -4636,43 +4762,111 @@ function renderKelayakan(data){
             ? "🟢 LAYAK DIUJIKAN"
             : "🔴 BELUM LAYAK DIUJIKAN";
 
+
+    /* =====================================================
+       DESKRIPSI
+    ===================================================== */
+
     let deskripsi;
 
-    if(layak){
+    if(khususBahasaInggris){
 
-        deskripsi = `
+        if(layak){
 
-            Naskah memenuhi
-            <b>${memenuhi} dari 7 indikator</b>.
+            deskripsi = `
 
-            <br><br>
+                Naskah <b>Bahasa Inggris</b> memenuhi
+                <b>${memenuhi} dari 7 indikator</b>.
 
-            Karena minimal
-            <b>6 dari 7 indikator</b>
-            telah terpenuhi,
-            naskah dinyatakan
-            <b>LAYAK DIUJIKAN</b>.
+                <br><br>
 
-        `;
+                Untuk Bahasa Inggris, komposisi
+                <b>Mudah + Sedang minimal 70%</b>
+                sudah dianggap memenuhi indikator kesukaran.
+
+                <br><br>
+
+                Persentase soal <b>Sukar tidak diwajibkan 25%</b>.
+
+                <br><br>
+
+                Karena minimal
+                <b>6 dari 7 indikator</b>
+                telah terpenuhi,
+                naskah dinyatakan
+                <b>LAYAK DIUJIKAN</b>.
+
+            `;
+
+        }else{
+
+            deskripsi = `
+
+                Naskah <b>Bahasa Inggris</b> baru memenuhi
+                <b>${memenuhi} dari 7 indikator</b>.
+
+                <br><br>
+
+                Untuk Bahasa Inggris,
+                <b>Mudah + Sedang harus minimal 70%</b>
+                dan indikator lainnya tetap diperiksa.
+
+                <br><br>
+
+                Naskah dinyatakan
+                <b>BELUM LAYAK</b>
+                karena minimal
+                <b>6 dari 7 indikator</b>
+                harus terpenuhi.
+
+            `;
+
+        }
 
     }else{
 
-        deskripsi = `
+        if(layak){
 
-            Naskah baru memenuhi
-            <b>${memenuhi} dari 7 indikator</b>.
+            deskripsi = `
 
-            <br><br>
+                Naskah memenuhi
+                <b>${memenuhi} dari 7 indikator</b>.
 
-            Naskah dinyatakan
-            <b>BELUM LAYAK</b>
-            karena minimal
-            <b>6 dari 7 indikator</b>
-            harus terpenuhi.
+                <br><br>
 
-        `;
+                Karena minimal
+                <b>6 dari 7 indikator</b>
+                telah terpenuhi,
+                naskah dinyatakan
+                <b>LAYAK DIUJIKAN</b>.
+
+            `;
+
+        }else{
+
+            deskripsi = `
+
+                Naskah baru memenuhi
+                <b>${memenuhi} dari 7 indikator</b>.
+
+                <br><br>
+
+                Naskah dinyatakan
+                <b>BELUM LAYAK</b>
+                karena minimal
+                <b>6 dari 7 indikator</b>
+                harus terpenuhi.
+
+            `;
+
+        }
 
     }
+
+
+    /* =====================================================
+       RENDER
+    ===================================================== */
 
     container.innerHTML = `
 
@@ -4716,14 +4910,18 @@ function renderKelayakan(data){
                 ${indikator(
                     "Mudah + Sedang",
                     pMudahSedang,
-                    "75%",
+                    khususBahasaInggris
+                        ? "Minimal 70% (Bahasa Inggris)"
+                        : "75%",
                     okMudahSedang
                 )}
 
                 ${indikator(
                     "Sukar",
                     pSukar,
-                    "25%",
+                    khususBahasaInggris
+                        ? "Tidak diwajibkan 25% (Bahasa Inggris)"
+                        : "25%",
                     okSukar
                 )}
 
@@ -4742,6 +4940,7 @@ function renderKelayakan(data){
                 )}
 
             </div>
+
 
             <div class="rekomendasi-box">
 
@@ -4803,6 +5002,7 @@ function renderKelayakan(data){
 
                     </span>
 
+
                     <span class="badge ${
                         okLiterasi
                             ? "badge-ok"
@@ -4816,6 +5016,7 @@ function renderKelayakan(data){
                         }
 
                     </span>
+
 
                     <span class="badge ${
                         okLOTSMOTS
@@ -4831,6 +5032,7 @@ function renderKelayakan(data){
 
                     </span>
 
+
                     <span class="badge ${
                         okMudahSedang
                             ? "badge-ok"
@@ -4838,12 +5040,27 @@ function renderKelayakan(data){
                     }">
 
                         ${
-                            okMudahSedang
-                                ? "✅ Mudah + Sedang ≈75%"
-                                : "❌ Mudah + Sedang ≠75%"
+                            khususBahasaInggris
+
+                                ?
+
+                                (
+                                    okMudahSedang
+                                        ? "✅ Bahasa Inggris Mudah + Sedang ≥70%"
+                                        : "❌ Bahasa Inggris Mudah + Sedang <70%"
+                                )
+
+                                :
+
+                                (
+                                    okMudahSedang
+                                        ? "✅ Mudah + Sedang ≈75%"
+                                        : "❌ Mudah + Sedang ≠75%"
+                                )
                         }
 
                     </span>
+
 
                     <span class="badge ${
                         okSukar
@@ -4852,12 +5069,39 @@ function renderKelayakan(data){
                     }">
 
                         ${
-                            okSukar
-                                ? "✅ Sukar ≈25%"
-                                : "❌ Sukar ≠25%"
+                            khususBahasaInggris
+
+                                ?
+
+                                "✅ Sukar tidak diwajibkan 25%"
+
+                                :
+
+                                (
+                                    okSukar
+                                        ? "✅ Sukar ≈25%"
+                                        : "❌ Sukar ≠25%"
+                                )
                         }
 
                     </span>
+
+
+                    ${
+                        khususBahasaInggris
+
+                            ?
+
+                            `
+                            <span class="badge badge-info">
+                                🇬🇧 ATURAN KHUSUS BAHASA INGGRIS
+                            </span>
+                            `
+
+                            :
+
+                            ""
+                    }
 
                 </div>
 
