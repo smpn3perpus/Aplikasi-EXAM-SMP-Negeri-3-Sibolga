@@ -1,3700 +1,2035 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Analisis Soal - RUANG EXAM</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
-:root{
-    --primary:#2563eb;
-    --primary-dark:#1d4ed8;
-    --success:#16a34a;
-    --warning:#d97706;
-    --danger:#dc2626;
-    --bg:#f1f5f9;
-    --card:#ffffff;
-    --text:#0f172a;
-    --muted:#64748b;
-    --border:#e2e8f0;
-}
-
-body{
-    font-family:Arial,Helvetica,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-}
-
-header{
-    background:linear-gradient(135deg,#1d4ed8,#2563eb);
-    color:white;
-    padding:20px;
-    box-shadow:0 4px 15px rgba(0,0,0,.12);
-}
-
-.header-inner{
-    max-width:1400px;
-    margin:auto;
-}
-
-header h1{
-    font-size:25px;
-    margin-bottom:5px;
-}
-
-header p{
-    opacity:.9;
-    font-size:14px;
-}
-
-.container{
-    max-width:1400px;
-    margin:20px auto;
-    padding:0 15px;
-}
-
-.card{
-    background:var(--card);
-    border-radius:14px;
-    padding:20px;
-    margin-bottom:20px;
-    box-shadow:0 3px 12px rgba(15,23,42,.07);
-    border:1px solid var(--border);
-}
-
-.card h2{
-    font-size:18px;
-    margin-bottom:15px;
-}
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:15px;
-}
-
-.form-group{
-    display:flex;
-    flex-direction:column;
-    gap:7px;
-}
-
-.form-group label{
-    font-weight:600;
-    font-size:13px;
-}
-
-select{
-    width:100%;
-    padding:11px 12px;
-    border:1px solid #cbd5e1;
-    border-radius:8px;
-    background:white;
-    font-size:14px;
-    outline:none;
-}
-
-select:focus{
-    border-color:var(--primary);
-    box-shadow:0 0 0 3px rgba(37,99,235,.1);
-}
-
-button{
-    border:0;
-    border-radius:8px;
-    padding:11px 16px;
-    cursor:pointer;
-    font-weight:600;
-}
-
-.btn-primary{
-    background:var(--primary);
-    color:white;
-}
-
-.btn-primary:hover{
-    background:var(--primary-dark);
-}
-
-.status{
-    padding:12px 15px;
-    border-radius:8px;
-    font-size:14px;
-    margin-top:15px;
-}
-
-.status.info{
-    background:#eff6ff;
-    color:#1d4ed8;
-}
-
-.status.success{
-    background:#f0fdf4;
-    color:#15803d;
-}
-
-.status.warning{
-    background:#fffbeb;
-    color:#b45309;
-}
-
-.status.danger{
-    background:#fef2f2;
-    color:#b91c1c;
-}
-
-/* =========================
-   OWNER
-========================= */
-
-.owner{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:15px;
-    flex-wrap:wrap;
-}
-
-.owner-name{
-    font-size:16px;
-    font-weight:700;
-}
-
-.owner-sub{
-    color:var(--muted);
-    font-size:12px;
-    margin-top:4px;
-}
-
-/* =========================
-   SUMMARY
-========================= */
-
-.summary-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
-    gap:12px;
-}
-
-.summary-box{
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:17px;
-    text-align:center;
-    background:#f8fafc;
-}
-
-.summary-box .number{
-    font-size:28px;
-    font-weight:700;
-    margin-bottom:5px;
-}
-
-.summary-box .label{
-    font-size:12px;
-    color:var(--muted);
-}
-
-/* =========================
-   INDICATOR
-========================= */
-
-.indicator-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
-    gap:15px;
-}
-
-.indicator{
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:17px;
-    background:white;
-}
-
-.indicator-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-    margin-bottom:10px;
-}
-
-.indicator-title{
-    font-weight:700;
-    font-size:14px;
-}
-
-.indicator-score{
-    font-size:20px;
-    font-weight:800;
-}
-
-.indicator-detail{
-    color:var(--muted);
-    font-size:12px;
-    line-height:1.5;
-}
-
-.indicator.good{
-    border-left:5px solid var(--success);
-}
-
-.indicator.warning{
-    border-left:5px solid var(--warning);
-}
-
-.indicator.bad{
-    border-left:5px solid var(--danger);
-}
-
-/* =========================
-   BALANCE
-========================= */
-
-.balance-box{
-    border-radius:14px;
-    padding:20px;
-    margin-top:20px;
-}
-
-.balance-perfect{
-    background:#f0fdf4;
-    border:2px solid #86efac;
-}
-
-.balance-warning{
-    background:#fffbeb;
-    border:2px solid #fde68a;
-}
-
-.balance-bad{
-    background:#fef2f2;
-    border:2px solid #fecaca;
-}
-
-.balance-score{
-    font-size:42px;
-    font-weight:800;
-    margin-bottom:5px;
-}
-
-.balance-title{
-    font-size:17px;
-    font-weight:700;
-    margin-bottom:7px;
-}
-
-.balance-text{
-    font-size:13px;
-    line-height:1.6;
-    color:#475569;
-}
-
-.balance-bars{
-    margin-top:15px;
-}
-
-.balance-row{
-    margin-bottom:12px;
-}
-
-.balance-row-head{
-    display:flex;
-    justify-content:space-between;
-    font-size:12px;
-    margin-bottom:5px;
-}
-
-.progress{
-    width:100%;
-    height:10px;
-    background:#e2e8f0;
-    border-radius:20px;
-    overflow:hidden;
-}
-
-.progress-bar{
-    height:100%;
-    border-radius:20px;
-}
-
-.progress-green{
-    background:#16a34a;
-}
-
-.progress-orange{
-    background:#f59e0b;
-}
-
-.progress-red{
-    background:#dc2626;
-}
-
-.progress-blue{
-    background:#2563eb;
-}
-
-/* =========================
-   TABLE
-========================= */
-
-.table-wrapper{
-    overflow-x:auto;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    min-width:1000px;
-}
-
-th,
-td{
-    border-bottom:1px solid var(--border);
-    padding:12px;
-    text-align:left;
-    vertical-align:top;
-    font-size:13px;
-}
-
-th{
-    background:#f8fafc;
-    font-weight:700;
-}
-
-.question-text{
-    line-height:1.65;
-    max-width:650px;
-}
-
-.question-text img,
-.question-text table{
-    max-width:100%;
-}
-
-.question-text img{
-    max-height:230px;
-    object-fit:contain;
-    display:block;
-    margin:8px 0;
-    border-radius:8px;
-    border:1px solid var(--border);
-}
-
-.stimulus{
-    background:#f8fafc;
-    border-left:4px solid var(--primary);
-    padding:10px 12px;
-    margin-bottom:10px;
-    border-radius:5px;
-    line-height:1.6;
-}
-
-.badge{
-    display:inline-flex;
-    align-items:center;
-    padding:5px 9px;
-    border-radius:20px;
-    font-size:11px;
-    font-weight:700;
-    white-space:nowrap;
-}
-
-.badge-lots{
-    background:#e0f2fe;
-    color:#0369a1;
-}
-
-.badge-mots{
-    background:#fef3c7;
-    color:#92400e;
-}
-
-.badge-hots{
-    background:#fee2e2;
-    color:#b91c1c;
-}
-
-.badge-easy{
-    background:#dcfce7;
-    color:#166534;
-}
-
-.badge-medium{
-    background:#fef3c7;
-    color:#92400e;
-}
-
-.badge-hard{
-    background:#fee2e2;
-    color:#991b1b;
-}
-
-.badge-literasi{
-    background:#ede9fe;
-    color:#6d28d9;
-}
-
-/* =========================
-   EMPTY / LOADING
-========================= */
-
-.empty{
-    text-align:center;
-    padding:40px 20px;
-    color:var(--muted);
-}
-
-.spinner{
-    width:25px;
-    height:25px;
-    border:3px solid #dbeafe;
-    border-top-color:var(--primary);
-    border-radius:50%;
-    animation:spin .8s linear infinite;
-    margin:0 auto 10px;
-}
-
-@keyframes spin{
-    to{
-        transform:rotate(360deg);
-    }
-}
-
-footer{
-    text-align:center;
-    padding:25px;
-    color:var(--muted);
-    font-size:12px;
-}
-
-@media(max-width:600px){
-
-    header h1{
-        font-size:20px;
-    }
-
-    .container{
-        margin-top:12px;
-    }
-
-    .card{
-        padding:15px;
-    }
-
-    .balance-score{
-        font-size:34px;
-    }
-}
-</style>
-</head>
-
-<body>
-
-<header>
-    <div class="header-inner">
-
-        <h1>
-            📊 Analisis Soal - RUANG EXAM
-        </h1>
-
-        <p>
-            Analisis 25 soal berdasarkan level kognitif,
-            kesukaran, literasi, dan keseimbangan naskah
-        </p>
-
-    </div>
-</header>
-
-
-<div class="container">
-
-<!-- =====================================================
-     GURU
-===================================================== -->
-
-<div class="card">
-
-    <div class="owner">
-
-        <div>
-
-            <div class="owner-name">
-                👨‍🏫 <span id="guruName">
-                    Memeriksa akun...
-                </span>
-            </div>
-
-            <div class="owner-sub">
-                Analisis hanya menampilkan soal
-                dari guru yang sedang login.
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     PILIH UJIAN
-===================================================== -->
-
-<div class="card">
-
-    <h2>
-        🔎 Pilih Ujian
-    </h2>
-
-    <div class="grid">
-
-        <div class="form-group">
-
-            <label>
-                Ujian
-            </label>
-
-            <select id="ujianSelect">
-
-                <option value="">
-                    -- Pilih Ujian --
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Filter Level
-            </label>
-
-            <select id="levelFilter">
-
-                <option value="">
-                    Semua
-                </option>
-
-                <option value="LOTS">
-                    LOTS
-                </option>
-
-                <option value="MOTS">
-                    MOTS
-                </option>
-
-                <option value="HOTS">
-                    HOTS
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Filter Kesukaran
-            </label>
-
-            <select id="difficultyFilter">
-
-                <option value="">
-                    Semua
-                </option>
-
-                <option value="Mudah">
-                    Mudah
-                </option>
-
-                <option value="Sedang">
-                    Sedang
-                </option>
-
-                <option value="Sukar">
-                    Sukar
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                Filter Literasi
-            </label>
-
-            <select id="literasiFilter">
-
-                <option value="">
-                    Semua
-                </option>
-
-                <option value="ya">
-                    Literasi
-                </option>
-
-                <option value="tidak">
-                    Non-Literasi
-                </option>
-
-            </select>
-
-        </div>
-
-    </div>
-
-
-    <div style="margin-top:15px">
-
-        <button
-            class="btn-primary"
-            onclick="loadAnalysis()">
-
-            🔍 Analisis 25 Soal
-
-        </button>
-
-    </div>
-
-
-    <div id="loadStatus"></div>
-
-</div>
-
-
-<!-- =====================================================
-     RINGKASAN
-===================================================== -->
-
-<div class="card">
-
-    <h2>
-        📈 Ringkasan
-    </h2>
-
-    <div class="summary-grid">
-
-        <div class="summary-box">
-
-            <div
-                class="number"
-                id="totalSoal">
-                0
-            </div>
-
-            <div class="label">
-                Total Soal
-            </div>
-
-        </div>
-
-
-        <div class="summary-box">
-
-            <div
-                class="number"
-                id="totalLOTS">
-                0
-            </div>
-
-            <div class="label">
-                LOTS
-            </div>
-
-        </div>
-
-
-        <div class="summary-box">
-
-            <div
-                class="number"
-                id="totalMOTS">
-                0
-            </div>
-
-            <div class="label">
-                MOTS
-            </div>
-
-        </div>
-
-
-        <div class="summary-box">
-
-            <div
-                class="number"
-                id="totalHOTS">
-                0
-            </div>
-
-            <div class="label">
-                HOTS
-            </div>
-
-        </div>
-
-
-        <div class="summary-box">
-
-            <div
-                class="number"
-                id="totalMudah">
-                0
-            </div>
-
-            <div class="label">
-                Mudah
-            </div>
-
-        </div>
-
-
-        <div class="summary-box">
-
-            <div
-                class="number"
-                id="totalSedang">
-                0
-            </div>
-
-            <div class="label">
-                Sedang
-            </div>
-
-        </div>
-
-
-        <div class="summary-box">
-
-            <div
-                class="number"
-                id="totalSukar">
-                0
-            </div>
-
-            <div class="label">
-                Sukar
-            </div>
-
-        </div>
-
-
-        <div class="summary-box">
-
-            <div
-                class="number"
-                id="totalLiterasi">
-                0
-            </div>
-
-            <div class="label">
-                Literasi
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     7 INDIKATOR
-===================================================== -->
-
-<div class="card">
-
-    <h2>
-        🎯 Indikator Analisis
-    </h2>
-
-
-    <div class="indicator-grid">
-
-
-        <!-- 1 -->
-
-        <div
-            id="indicator1"
-            class="indicator warning">
-
-            <div class="indicator-head">
-
-                <div class="indicator-title">
-                    1. LOTS / MOTS
-                </div>
-
-                <div
-                    id="score1"
-                    class="indicator-score">
-                    —
-                </div>
-
-            </div>
-
-            <div
-                id="detail1"
-                class="indicator-detail">
-
-                Menunggu analisis.
-
-            </div>
-
-        </div>
-
-
-        <!-- 2 -->
-
-        <div
-            id="indicator2"
-            class="indicator warning">
-
-            <div class="indicator-head">
-
-                <div class="indicator-title">
-                    2. HOTS
-                </div>
-
-                <div
-                    id="score2"
-                    class="indicator-score">
-                    —
-                </div>
-
-            </div>
-
-            <div
-                id="detail2"
-                class="indicator-detail">
-
-                Menunggu analisis.
-
-            </div>
-
-        </div>
-
-
-        <!-- 3 -->
-
-        <div
-            id="indicator3"
-            class="indicator warning">
-
-            <div class="indicator-head">
-
-                <div class="indicator-title">
-                    3. Mudah / Sedang
-                </div>
-
-                <div
-                    id="score3"
-                    class="indicator-score">
-                    —
-                </div>
-
-            </div>
-
-            <div
-                id="detail3"
-                class="indicator-detail">
-
-                Menunggu analisis.
-
-            </div>
-
-        </div>
-
-
-        <!-- 4 -->
-
-        <div
-            id="indicator4"
-            class="indicator warning">
-
-            <div class="indicator-head">
-
-                <div class="indicator-title">
-                    4. Sukar
-                </div>
-
-                <div
-                    id="score4"
-                    class="indicator-score">
-                    —
-                </div>
-
-            </div>
-
-            <div
-                id="detail4"
-                class="indicator-detail">
-
-                Menunggu analisis.
-
-            </div>
-
-        </div>
-
-
-        <!-- 5 -->
-
-        <div
-            id="indicator5"
-            class="indicator warning">
-
-            <div class="indicator-head">
-
-                <div class="indicator-title">
-                    5. Jumlah Soal
-                </div>
-
-                <div
-                    id="score5"
-                    class="indicator-score">
-                    —
-                </div>
-
-            </div>
-
-            <div
-                id="detail5"
-                class="indicator-detail">
-
-                Target tepat 25 soal.
-
-            </div>
-
-        </div>
-
-
-        <!-- 6 -->
-
-        <div
-            id="indicator6"
-            class="indicator warning">
-
-            <div class="indicator-head">
-
-                <div class="indicator-title">
-                    6. Literasi
-                </div>
-
-                <div
-                    id="score6"
-                    class="indicator-score">
-                    —
-                </div>
-
-            </div>
-
-            <div
-                id="detail6"
-                class="indicator-detail">
-
-                Literasi dibaca dari isi soal,
-                bukan kolom database literasi.
-
-            </div>
-
-        </div>
-
-
-        <!-- 7 -->
-
-        <div
-            id="indicator7"
-            class="indicator warning">
-
-            <div class="indicator-head">
-
-                <div class="indicator-title">
-                    7. Keseimbangan Kesukaran
-                </div>
-
-                <div
-                    id="score7"
-                    class="indicator-score">
-                    0%
-                </div>
-
-            </div>
-
-            <div
-                id="detail7"
-                class="indicator-detail">
-
-                Indikator utama kelayakan naskah.
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- KESEIMBANGAN -->
-
-    <div
-        id="balanceBox"
-        class="balance-box balance-warning">
-
-        <div
-            id="balanceScore"
-            class="balance-score">
-
-            0%
-
-        </div>
-
-        <div
-            id="balanceTitle"
-            class="balance-title">
-
-            Belum dianalisis
-
-        </div>
-
-        <div
-            id="balanceText"
-            class="balance-text">
-
-            Pilih ujian dan lakukan analisis.
-
-        </div>
-
-
-        <div class="balance-bars">
-
-
-            <div class="balance-row">
-
-                <div class="balance-row-head">
-
-                    <span>
-                        Mudah
-                    </span>
-
-                    <strong id="balanceMudah">
-                        0 soal
-                    </strong>
-
-                </div>
-
-                <div class="progress">
-
-                    <div
-                        id="barBalanceMudah"
-                        class="progress-bar progress-green"
-                        style="width:0%">
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="balance-row">
-
-                <div class="balance-row-head">
-
-                    <span>
-                        Sedang
-                    </span>
-
-                    <strong id="balanceSedang">
-                        0 soal
-                    </strong>
-
-                </div>
-
-                <div class="progress">
-
-                    <div
-                        id="barBalanceSedang"
-                        class="progress-bar progress-orange"
-                        style="width:0%">
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="balance-row">
-
-                <div class="balance-row-head">
-
-                    <span>
-                        Sukar
-                    </span>
-
-                    <strong id="balanceSukar">
-                        0 soal
-                    </strong>
-
-                </div>
-
-                <div class="progress">
-
-                    <div
-                        id="barBalanceSukar"
-                        class="progress-bar progress-red"
-                        style="width:0%">
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     DAFTAR SOAL
-===================================================== -->
-
-<div class="card">
-
-    <h2>
-        📚 Daftar Analisis Soal
-    </h2>
-
-    <div id="questionContainer">
-
-        <div class="empty">
-
-            Belum ada data soal.
-
-        </div>
-
-    </div>
-
-</div>
-
-
-</div>
-
-
-<footer>
-
-    RUANG EXAM &nbsp;•&nbsp; Analisis Soal
-
-    <br>
-
-    Dibuat oleh Mr. Rahmat Batubara, S.T.P
-
-</footer>
-
-
 <script>
-
 /* =========================================================
-   SUPABASE
-========================================================= */
+   RUANG EXAM
+   ANALISIS SOAL GURU
+   ATURAN FINAL
+   =========================================================
+
+   1. Maksimal 25 soal
+   2. Jumlah = 100% hanya jika tepat 25
+   3. Literasi hanya membaca HTML/isi kolom SOAL
+   4. Tidak membaca row.literasi
+   5. Tidak menggunakan stimulus database sebagai penentu literasi
+   6. Tidak ada HOTS minimal 30%
+   7. Tidak ada Mudah+Sedang minimal 60%
+   8. Tidak ada Sukar 20-30%
+   9. LOTS/MOTS harus ada
+   10. HOTS harus ada
+   11. Mudah + Sedang + Sukar harus ada
+   12. Guru lain tidak boleh masuk
+   ========================================================= */
 
 const SUPABASE_URL =
-    "https://YOUR-PROJECT.supabase.co";
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
 
-const SUPABASE_ANON_KEY =
-    "YOUR-ANON-KEY";
-
+const SUPABASE_KEY =
+    "sb_publishable_j724cUM7NNHl8wbxq9ZHKw_FLFJAuGn";
 
 const supabaseClient =
-    supabase.createClient(
+    window.supabase.createClient(
         SUPABASE_URL,
-        SUPABASE_ANON_KEY
+        SUPABASE_KEY
     );
-
-
-/* =========================================================
-   KONFIGURASI
-========================================================= */
 
 const MAX_SOAL = 25;
 
-const TABLE_UJIAN = "ujian";
 
-const TABLE_GURU = "guru";
+/* =========================================================
+   SESSION GURU
+   ========================================================= */
 
-const TABLE_PROFILES = "profiles";
+const sessionRaw = localStorage.getItem("exam_user");
 
-const TABLE_UJIAN_SOAL = "ujian_soal";
+if (!sessionRaw) {
+    location.href = "login.html";
+}
 
-const TABLE_SOAL = "soal";
+let currentUser = null;
+
+try {
+
+    currentUser = JSON.parse(sessionRaw);
+
+    if (
+        !currentUser ||
+        currentUser.role !== "guru"
+    ) {
+        localStorage.removeItem("exam_user");
+        location.href = "login.html";
+    }
+
+} catch (e) {
+
+    localStorage.removeItem("exam_user");
+    location.href = "login.html";
+}
 
 
 /*
- * TARGET KESEIMBANGAN
- *
- * Untuk 25 soal:
- *
- * Mudah  = 25%
- * Sedang = 50%
- * Sukar  = 25%
- *
- * Artinya:
- *
- * Mudah  ≈ 6 soal
- * Sedang ≈ 13 soal
- * Sukar  ≈ 6 soal
- *
- * Total = 25.
- *
- * Karena 25 tidak dapat dibagi persis
- * menjadi 25% / 50% / 25%, maka:
- *
- * 6 / 13 / 6 = 100%
- */
+   ID GURU YANG SEDANG LOGIN.
+   Hanya ID ini yang boleh digunakan.
+*/
 
-const TARGET_BALANCE = {
-
-    mudah:6,
-
-    sedang:13,
-
-    sukar:6
-
-};
+const guruId =
+    currentUser?.guru_id ||
+    currentUser?.guruId ||
+    currentUser?.id ||
+    currentUser?.user_id ||
+    null;
 
 
 /* =========================================================
-   GLOBAL
-========================================================= */
+   STATE
+   ========================================================= */
 
-let allQuestions = [];
-
-let currentTeacher = null;
-
-let currentUjian = null;
+let semuaUjian = [];
+let semuaSoal = [];
+let ujianTerpilih = null;
+let hasilAnalisis = null;
 
 
 /* =========================================================
-   INIT
-========================================================= */
+   UTILITAS
+   ========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    initializePage
-);
+function showMessage(text, type) {
+
+    const el = document.getElementById("message");
+
+    if (!el) return;
+
+    el.textContent = text;
+    el.className = "message " + type;
+}
 
 
-async function initializePage(){
+function hideMessage() {
 
-    try{
+    const el = document.getElementById("message");
+
+    if (!el) return;
+
+    el.className = "message";
+    el.textContent = "";
+}
+
+
+/*
+   Escape teks biasa.
+*/
+
+function esc(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+function escAttr(value) {
+    return esc(value);
+}
+
+
+/*
+   Bersihkan HTML menjadi teks biasa.
+   Digunakan untuk membaca isi kolom soal.
+*/
+
+function stripHTML(html) {
+
+    const div = document.createElement("div");
+
+    div.innerHTML = String(html ?? "");
+
+    return (div.textContent || div.innerText || "")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+
+/*
+   Normalisasi teks untuk analisis.
+*/
+
+function cleanText(value) {
+
+    return stripHTML(value)
+        .toLowerCase()
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+
+function countAny(text, words) {
+
+    return words.reduce(
+        (total, word) =>
+            total + (text.includes(word) ? 1 : 0),
+        0
+    );
+}
+
+
+/* =========================================================
+   LOAD DATA
+   ========================================================= */
+
+async function loadData() {
+
+    hideMessage();
+
+    if (!guruId) {
+
+        showMessage(
+            "ID guru tidak ditemukan pada sesi login.",
+            "error"
+        );
+
+        return;
+    }
+
+    const select =
+        document.getElementById("ujianSelect");
+
+    if (!select) return;
+
+    select.innerHTML =
+        "<option>⏳ Memuat ujian...</option>";
+
+    try {
+
+        /*
+           PENTING:
+           HANYA ujian milik guru login.
+        */
 
         const {
             data,
             error
-        } =
-        await supabaseClient
-            .auth
-            .getSession();
+        } = await supabaseClient
+            .from("ujian")
+            .select(`
+                id,
+                judul,
+                mata_pelajaran_id,
+                kelas_id,
+                guru_id,
+                durasi_menit,
+                tanggal_mulai,
+                tanggal_selesai,
+                status,
+                created_at,
+                mata_pelajaran(id,nama),
+                kelas(id,nama_kelas,tingkat)
+            `)
+            .eq("guru_id", guruId)
+            .order("created_at", {
+                ascending: false
+            });
 
-
-        if(error)
+        if (error) {
             throw error;
-
-
-        const session =
-            data?.session;
-
-
-        if(!session){
-
-            setGuruName(
-                "Belum login sebagai guru"
-            );
-
-            return;
-
         }
 
+        /*
+           Filter tambahan di JavaScript.
+           Ini memastikan hanya guru login.
+        */
 
-        await resolveCurrentTeacher(
-            session
-        );
-
-
-        if(!currentTeacher){
-
-            throw new Error(
-                "Identitas guru tidak ditemukan."
+        semuaUjian =
+            (data || []).filter(
+                u => String(u.guru_id) === String(guruId)
             );
-
-        }
-
-
-        setGuruName(
-            currentTeacher.nama ||
-            currentTeacher.name ||
-            currentTeacher.username ||
-            "Guru"
-        );
-
-
-        await loadTeacherExams();
-
-
-        document
-            .getElementById("levelFilter")
-            .addEventListener(
-                "change",
-                renderQuestions
-            );
-
-
-        document
-            .getElementById("difficultyFilter")
-            .addEventListener(
-                "change",
-                renderQuestions
-            );
-
-
-        document
-            .getElementById("literasiFilter")
-            .addEventListener(
-                "change",
-                renderQuestions
-            );
-
-
-    }catch(error){
-
-        console.error(error);
-
-        setGuruName(
-            "Gagal membaca akun guru"
-        );
-
-        showStatus(
-            error.message ||
-            "Terjadi kesalahan.",
-            "danger"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   CARI GURU LOGIN
-========================================================= */
-
-async function resolveCurrentTeacher(
-    session
-){
-
-    const userId =
-        session.user.id;
-
-
-    let guru = null;
-
-
-    /*
-     * Coba auth_id
-     */
-
-    try{
-
-        const result =
-            await supabaseClient
-                .from(TABLE_GURU)
-                .select("*")
-                .eq(
-                    "auth_id",
-                    userId
-                )
-                .maybeSingle();
-
-
-        if(!result.error &&
-           result.data){
-
-            guru =
-                result.data;
-
-        }
-
-    }catch(e){}
-
-
-    /*
-     * Coba user_id
-     */
-
-    if(!guru){
-
-        try{
-
-            const result =
-                await supabaseClient
-                    .from(TABLE_GURU)
-                    .select("*")
-                    .eq(
-                        "user_id",
-                        userId
-                    )
-                    .maybeSingle();
-
-
-            if(
-                !result.error &&
-                result.data
-            ){
-
-                guru =
-                    result.data;
-
-            }
-
-        }catch(e){}
-
-    }
-
-
-    /*
-     * Coba profile_id
-     */
-
-    if(!guru){
-
-        try{
-
-            const result =
-                await supabaseClient
-                    .from(TABLE_GURU)
-                    .select("*")
-                    .eq(
-                        "profile_id",
-                        userId
-                    )
-                    .maybeSingle();
-
-
-            if(
-                !result.error &&
-                result.data
-            ){
-
-                guru =
-                    result.data;
-
-            }
-
-        }catch(e){}
-
-    }
-
-
-    /*
-     * Cari profile.
-     */
-
-    if(!guru){
-
-        try{
-
-            const result =
-                await supabaseClient
-                    .from(TABLE_PROFILES)
-                    .select("*")
-                    .eq(
-                        "id",
-                        userId
-                    )
-                    .maybeSingle();
-
-
-            if(
-                !result.error &&
-                result.data
-            ){
-
-                const profile =
-                    result.data;
-
-
-                if(
-                    profile.guru_id
-                ){
-
-                    const guruResult =
-                        await supabaseClient
-                            .from(TABLE_GURU)
-                            .select("*")
-                            .eq(
-                                "id",
-                                profile.guru_id
-                            )
-                            .maybeSingle();
-
-
-                    if(
-                        !guruResult.error
-                    ){
-
-                        guru =
-                            guruResult.data;
-
-                    }
-
-                }
-
-            }
-
-        }catch(e){}
-
-    }
-
-
-    if(!guru){
-
-        throw new Error(
-            "Guru login tidak dapat dihubungkan dengan tabel guru."
-        );
-
-    }
-
-
-    currentTeacher =
-        guru;
-
-}
-
-
-/* =========================================================
-   LOAD UJIAN GURU SAJA
-========================================================= */
-
-async function loadTeacherExams(){
-
-    const select =
-        document.getElementById(
-            "ujianSelect"
-        );
-
-
-    select.innerHTML =
-        `<option value="">
-            -- Pilih Ujian --
-        </option>`;
-
-
-    const guruId =
-        currentTeacher.id;
-
-
-    if(!guruId)
-        throw new Error(
-            "ID guru tidak ditemukan."
-        );
-
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-            .from(TABLE_UJIAN)
-            .select("*")
-            .eq(
-                "guru_id",
-                guruId
-            )
-            .order(
-                "created_at",
-                {
-                    ascending:false
-                }
-            );
-
-
-    if(error)
-        throw error;
-
-
-    if(
-        !data ||
-        !data.length
-    ){
 
         select.innerHTML =
-            `<option value="">
-                Tidak ada ujian Anda
-            </option>`;
+            '<option value="">-- Pilih Ujian Anda --</option>';
 
-        return;
-
-    }
-
-
-    data.forEach(
-        ujian => {
+        semuaUjian.forEach(u => {
 
             const option =
-                document.createElement(
-                    "option"
-                );
+                document.createElement("option");
 
-
-            option.value =
-                ujian.id;
-
+            option.value = u.id;
 
             option.textContent =
-                ujian.judul ||
-                ujian.nama_ujian ||
-                ujian.nama ||
-                "Ujian";
+                `${u.judul || "Tanpa Judul"} — ` +
+                `${u.mata_pelajaran?.nama || "Tanpa Mapel"}`;
 
+            select.appendChild(option);
+        });
 
-            select.appendChild(
-                option
-            );
+        if (!semuaUjian.length) {
 
+            resetView();
+
+            document.getElementById(
+                "questionList"
+            ).innerHTML =
+                `<div class="empty">
+                    📝 Belum ada ujian milik akun guru ini.
+                </div>`;
+
+            return;
         }
-    );
 
+        if (
+            ujianTerpilih &&
+            semuaUjian.some(
+                u => String(u.id) === String(ujianTerpilih.id)
+            )
+        ) {
+
+            select.value = ujianTerpilih.id;
+
+            await pilihUjian();
+
+        } else {
+
+            resetView();
+        }
+
+    } catch (error) {
+
+        console.error("LOAD DATA ERROR:", error);
+
+        showMessage(
+            "Gagal memuat ujian: " +
+            (error.message || error),
+            "error"
+        );
+    }
 }
 
 
 /* =========================================================
-   LOAD 25 SOAL
-========================================================= */
+   RESET
+   ========================================================= */
 
-async function loadAnalysis(){
+function resetView() {
 
-    const ujianId =
+    ujianTerpilih = null;
+    semuaSoal = [];
+    hasilAnalisis = null;
+
+    document.getElementById(
+        "examInfo"
+    ).classList.add("hidden");
+
+    [
+        "totalSoal",
+        "lots",
+        "mots",
+        "hots",
+        "sukar",
+        "literasi"
+    ].forEach(id => {
+
+        const el =
+            document.getElementById(id);
+
+        if (el) {
+            el.textContent = "0";
+        }
+    });
+
+    const badge =
+        document.getElementById("hasilBadge");
+
+    if (badge) {
+
+        badge.className =
+            "result belum";
+
+        badge.textContent =
+            "BELUM DIUJI";
+    }
+
+    document.getElementById(
+        "analysisContent"
+    ).innerHTML =
+        `<div class="empty">
+            Pilih ujian untuk memulai analisis.
+        </div>`;
+
+    document.getElementById(
+        "questionList"
+    ).innerHTML =
+        `<div class="empty">
+            👆 Pilih ujian terlebih dahulu.
+        </div>`;
+}
+
+
+/* =========================================================
+   PILIH UJIAN
+   ========================================================= */
+
+async function pilihUjian() {
+
+    const id =
         document.getElementById(
             "ujianSelect"
         ).value;
 
+    if (!id) {
 
-    if(!ujianId){
-
-        showStatus(
-            "Pilih ujian terlebih dahulu.",
-            "warning"
-        );
+        resetView();
 
         return;
-
     }
 
+    /*
+       Cari hanya dari daftar ujian milik guru login.
+    */
 
-    if(!currentTeacher){
-
-        showStatus(
-            "Guru belum teridentifikasi.",
-            "danger"
+    ujianTerpilih =
+        semuaUjian.find(
+            u => String(u.id) === String(id)
         );
+
+    if (!ujianTerpilih) {
+
+        showMessage(
+            "Ujian tidak ditemukan atau bukan milik Anda.",
+            "error"
+        );
+
+        resetView();
 
         return;
-
     }
 
+    /*
+       CEK KEPEMILIKAN LAGI.
+    */
 
-    showStatus(
-        `<div class="spinner"></div>
-         Mengambil soal...`,
-        "info"
-    );
+    if (
+        String(ujianTerpilih.guru_id) !==
+        String(guruId)
+    ) {
 
-
-    try{
-
-        /*
-         * VALIDASI PEMILIK UJIAN
-         */
-
-        const {
-            data: ujian,
-            error: ujianError
-        } =
-        await supabaseClient
-            .from(TABLE_UJIAN)
-            .select("*")
-            .eq(
-                "id",
-                ujianId
-            )
-            .eq(
-                "guru_id",
-                currentTeacher.id
-            )
-            .maybeSingle();
-
-
-        if(ujianError)
-            throw ujianError;
-
-
-        if(!ujian){
-
-            throw new Error(
-                "Ujian bukan milik guru yang sedang login."
-            );
-
-        }
-
-
-        currentUjian =
-            ujian;
-
-
-        /*
-         * AMBIL SOAL
-         */
-
-        let data = null;
-
-        let error = null;
-
-
-        const result =
-            await supabaseClient
-                .from(TABLE_UJIAN_SOAL)
-                .select("*")
-                .eq(
-                    "ujian_id",
-                    ujianId
-                )
-                .order(
-                    "nomor",
-                    {
-                        ascending:true
-                    }
-                );
-
-
-        data =
-            result.data;
-
-        error =
-            result.error;
-
-
-        /*
-         * FALLBACK
-         */
-
-        if(error){
-
-            const fallback =
-                await supabaseClient
-                    .from(TABLE_SOAL)
-                    .select("*")
-                    .eq(
-                        "ujian_id",
-                        ujianId
-                    )
-                    .order(
-                        "nomor",
-                        {
-                            ascending:true
-                        }
-                    );
-
-
-            data =
-                fallback.data;
-
-            error =
-                fallback.error;
-
-        }
-
-
-        if(error)
-            throw error;
-
-
-        if(!data || !data.length){
-
-            allQuestions = [];
-
-            resetAll();
-
-            document.getElementById(
-                "questionContainer"
-            ).innerHTML = `
-                <div class="empty">
-                    Tidak ada soal pada ujian ini.
-                </div>
-            `;
-
-            showStatus(
-                "Ujian belum mempunyai soal.",
-                "warning"
-            );
-
-            return;
-
-        }
-
-
-        /*
-         * NORMALISASI
-         */
-
-        const normalized =
-            data
-                .map(
-                    normalizeQuestion
-                )
-                .sort(
-                    (a,b) =>
-                        Number(a.nomor || 0) -
-                        Number(b.nomor || 0)
-                );
-
-
-        /*
-         * MAKSIMAL 25
-         */
-
-        allQuestions =
-            normalized.slice(
-                0,
-                MAX_SOAL
-            );
-
-
-        /*
-         * ANALISIS
-         */
-
-        calculateSummary();
-
-        calculateIndicators();
-
-        renderQuestions();
-
-        evaluateBalance();
-
-
-        if(normalized.length >= 25){
-
-            showStatus(
-                "Analisis selesai. Tepat 25 soal dianalisis.",
-                "success"
-            );
-
-        }else{
-
-            showStatus(
-                `Soal hanya ${normalized.length}. Sistem tidak mengambil soal guru lain.`,
-                "warning"
-            );
-
-        }
-
-
-    }catch(error){
-
-        console.error(
-            "ERROR:",
-            error
+        showMessage(
+            "Akses ditolak. Ujian bukan milik guru yang login.",
+            "error"
         );
 
+        resetView();
 
-        allQuestions = [];
-
-
-        resetAll();
-
-
-        document.getElementById(
-            "questionContainer"
-        ).innerHTML = `
-            <div class="empty">
-
-                ❌ Gagal memuat soal.
-
-                <br><br>
-
-                <small>
-                    ${escapeHTML(
-                        error.message || ""
-                    )}
-                </small>
-
-            </div>
-        `;
-
-
-        showStatus(
-            error.message ||
-            "Gagal mengambil soal.",
-            "danger"
-        );
-
+        return;
     }
 
+    const examInfo =
+        document.getElementById("examInfo");
+
+    examInfo.classList.remove("hidden");
+
+    examInfo.innerHTML =
+
+        `<b>Ujian:</b>
+            ${esc(ujianTerpilih.judul || "-")}
+        <br>
+
+        <b>Mata Pelajaran:</b>
+            ${esc(
+                ujianTerpilih.mata_pelajaran?.nama || "-"
+            )}
+        <br>
+
+        <b>Kelas:</b>
+            ${esc(
+                ujianTerpilih.kelas?.nama_kelas || "-"
+            )}
+        <br>
+
+        <b>Status:</b>
+            ${esc(ujianTerpilih.status || "-")}
+        <br>
+
+        <b>Analisis:</b>
+            Maksimal 25 soal dan hanya soal ujian Anda.`;
+
+    await loadSoal();
+
+    hasilAnalisis =
+        buatAnalisis();
+
+    renderAnalysis();
+
+    renderQuestions();
 }
 
 
 /* =========================================================
-   NORMALIZE
-========================================================= */
+   LOAD SOAL
+   ========================================================= */
 
-function normalizeQuestion(row){
+async function loadSoal() {
 
-    const question =
-        firstValue(
-            row,
-            [
-                "soal",
-                "pertanyaan",
-                "question",
-                "teks_soal",
-                "question_text",
-                "content",
-                "isi_soal"
-            ]
-        );
-
-
-    const stimulus =
-        firstValue(
-            row,
-            [
-                "stimulus",
-                "teks_stimulus",
-                "passage",
-                "bacaan",
-                "context",
-                "konteks"
-            ]
-        );
-
-
-    const image =
-        firstValue(
-            row,
-            [
-                "gambar",
-                "image_url",
-                "image",
-                "gambar_url"
-            ]
-        );
-
-
-    const level =
-        detectLevel(
-            question,
-            stimulus
-        );
-
-
-    const difficulty =
-        detectDifficulty(
-            level
-        );
-
+    if (!ujianTerpilih) return;
 
     /*
-     * PENTING:
-     *
-     * Tidak ada:
-     *
-     * row.literasi
-     *
-     * di sini.
-     */
+       PENTING:
+       Soal dibatasi berdasarkan ujian_id.
+       Karena ujian sudah diverifikasi sebagai milik guru,
+       maka soal guru lain tidak akan masuk.
+    */
 
-    const literasi =
-        detectLiterasi(
-            question,
-            stimulus,
-            image
+    const {
+        data,
+        error
+    } = await supabaseClient
+        .from("soal")
+        .select(`
+            id,
+            ujian_id,
+            nomor,
+            pertanyaan,
+            tipe,
+            pilihan_a,
+            pilihan_b,
+            pilihan_c,
+            pilihan_d,
+            gambar_soal,
+            gambar_a,
+            gambar_b,
+            gambar_c,
+            gambar_d,
+            bobot,
+            created_at
+        `)
+        .eq(
+            "ujian_id",
+            ujianTerpilih.id
+        )
+        .order(
+            "nomor",
+            {
+                ascending: true
+            }
         );
 
+    if (error) {
+        throw error;
+    }
 
-    return {
+    /*
+       Filter pengaman:
+       hanya soal dengan ujian_id yang sedang dianalisis.
+    */
 
-        id:
-            row.id,
-
-        nomor:
-            firstValue(
-                row,
-                [
-                    "nomor",
-                    "no_soal",
-                    "number",
-                    "urutan",
-                    "no"
-                ]
-            ) || 0,
-
-        question,
-
-        stimulus,
-
-        image,
-
-        level,
-
-        difficulty,
-
-        literasi
-
-    };
-
+    semuaSoal =
+        (data || []).filter(
+            q =>
+                String(q.ujian_id) ===
+                String(ujianTerpilih.id)
+        );
 }
 
 
 /* =========================================================
-   LEVEL
-========================================================= */
+   DETEKSI LEVEL KOGNITIF
+   =========================================================
 
-function detectLevel(
-    question,
-    stimulus
-){
+   C1-C2 = LOTS
+   C3    = MOTS
+   C4-C5 = HOTS
+   C6    = HOTS
+   ========================================================= */
 
-    const text =
-        stripHTML(
-            (
-                String(question || "") +
-                " " +
-                String(stimulus || "")
-            )
-        )
-        .toLowerCase()
-        .replace(
-            /\s+/g,
-            " "
-        )
-        .trim();
-
+function detectLevel(q) {
 
     /*
-     * C6
-     */
+       HANYA kolom pertanyaan/soal.
+
+       Tidak memakai stimulus database.
+       Tidak memakai literasi database.
+    */
+
+    const t =
+        cleanText(q.pertanyaan);
+
+    /*
+       C6 - Mencipta
+    */
 
     const c6 = [
 
+        "rancang",
+        "merancang",
+        "rancanglah",
         "buatlah",
+        "buat sebuah",
         "buatkan",
         "ciptakan",
-        "menciptakan",
-        "rancanglah",
-        "merancang",
-        "rancang",
-        "desainlah",
-        "mendesain",
+        "ciptakanlah",
         "kembangkan",
         "mengembangkan",
-        "susunlah strategi",
-        "susun strategi",
-        "hasilkan solusi",
-        "menghasilkan solusi",
-        "create",
-        "create a",
+        "menciptakan",
+        "desain",
+        "desainlah",
         "design",
-        "design a",
         "develop",
-        "develop a",
         "construct",
-        "propose a",
-        "write a dialogue",
-        "write a text"
+        "susunlah",
+        "susun sebuah",
+        "membuat rancangan",
+        "rancangan",
+        "strategi baru",
+        "solusi baru",
+        "alternatif solusi",
+        "proposal",
+        "tulis sebuah teks",
+        "write a text",
+        "write a dialogue"
     ];
 
-
-    if(
-        containsAny(
-            text,
-            c6
-        )
-    ){
-
-        return "C6";
-
-    }
-
-
     /*
-     * C5
-     */
+       C5 - Mengevaluasi
+    */
 
     const c5 = [
 
         "evaluasi",
-        "mengevaluasi",
         "evaluasilah",
+        "mengevaluasi",
+        "nilai",
         "menilai",
-        "nilai kelayakan",
-        "kritisi",
-        "mengkritisi",
         "berikan penilaian",
-        "beri penilaian",
+        "kritik",
+        "kritisi",
+        "kritislah",
         "tentukan apakah",
-        "sejauh mana",
         "setujukah",
-        "setuju atau tidak",
         "tepatkah",
-        "evaluate",
-        "evaluate whether",
-        "assess",
+        "efektifkah",
+        "mana yang lebih efektif",
+        "mana yang paling efektif",
+        "kelebihan dan kekurangan",
+        "pertimbangkan",
         "justify",
+        "evaluate",
+        "assess",
         "do you agree",
         "is it appropriate",
         "is it effective"
     ];
 
-
-    if(
-        containsAny(
-            text,
-            c5
-        )
-    ){
-
-        return "C5";
-
-    }
-
-
     /*
-     * C4
-     */
+       C4 - Menganalisis
+
+       PERHATIAN:
+       "mengapa" saja tidak otomatis C4.
+       Harus ada konteks analisis/relasi/bukti.
+    */
 
     const c4 = [
 
+        "analisis",
         "analisislah",
         "menganalisis",
-        "analisis data",
-        "analisis informasi",
-        "identifikasi hubungan",
-        "tentukan hubungan",
-        "hubungan antara",
-        "hubungkan dengan",
-        "bandingkan kemudian",
-        "bandingkan dan",
-        "perbedaan berdasarkan",
-        "persamaan berdasarkan",
-        "sebab dan akibat",
-        "sebab-akibat",
-        "akibat berdasarkan",
-        "simpulkan berdasarkan",
-        "simpulkan dari",
-        "bukti yang mendukung",
-        "pola data",
+        "analys",
         "analyze",
         "analyse",
-        "compare the text",
-        "compare the data",
-        "infer",
+
+        "bandingkan",
+        "membandingkan",
+        "compare",
+
+        "hubungkan",
+        "hubungan antara",
+        "hubungan",
+
+        "sebab akibat",
+        "sebab-akibat",
+        "cause and effect",
+
+        "simpulkan berdasarkan",
+        "buat kesimpulan berdasarkan",
+        "kesimpulan berdasarkan",
+
+        "berdasarkan data",
+        "berdasarkan informasi",
+        "berdasarkan bukti",
+        "berdasarkan tabel",
+        "berdasarkan grafik",
+
+        "identifikasi hubungan",
+        "identifikasi masalah",
+
+        "pola",
+        "dampak",
+        "pengaruh",
+
+        "perbedaan dan persamaan",
+        "persamaan dan perbedaan",
+
         "what can be inferred",
         "what can we conclude",
-        "relationship between",
-        "cause and effect"
+        "relationship between"
     ];
 
-
-    if(
-        containsAny(
-            text,
-            c4
-        )
-    ){
-
-        return "C4";
-
-    }
-
-
     /*
-     * C3
-     */
+       C3 - Menerapkan
+    */
 
     const c3 = [
 
-        "terapkan",
-        "menerapkan",
-        "gunakan untuk",
-        "menggunakan untuk",
-        "praktikkan",
-        "hitung",
-        "menghitung",
-        "tentukan berdasarkan",
+        "gunakan",
+        "gunakanlah",
         "gunakan konsep",
         "gunakan rumus",
         "gunakan metode",
+        "hitung",
+        "hitunglah",
+        "terapkan",
+        "terapkanlah",
+        "penerapan",
+        "praktikkan",
+        "selesaikan",
+        "bagaimana cara menggunakan",
         "apply",
         "calculate",
-        "use the method",
-        "use the formula"
+        "use the formula",
+        "use the method"
     ];
 
-
-    if(
-        containsAny(
-            text,
-            c3
-        )
-    ){
-
-        return "C3";
-
-    }
-
-
     /*
-     * C2
-     */
+       C2 - Memahami
+    */
 
     const c2 = [
 
         "jelaskan",
+        "jelaskanlah",
         "menjelaskan",
+        "deskripsikan",
         "uraikan",
         "menguraikan",
-        "deskripsikan",
-        "mendeskripsikan",
         "apa yang dimaksud",
         "maksud dari",
         "makna",
         "arti",
-        "tujuan",
-        "fungsi",
+        "apa fungsi",
+        "apa tujuan",
+        "fungsi dari",
+        "tujuan dari",
         "mengapa",
+        "why",
         "explain",
         "describe",
         "what does",
-        "what is the purpose",
-        "why"
+        "what is the purpose"
+    ];
+
+    /*
+       C1 - Mengingat
+    */
+
+    const c1 = [
+
+        "apa itu",
+        "siapa",
+        "kapan",
+        "di mana",
+        "dimana",
+        "sebutkan",
+        "tuliskan",
+        "definisi",
+        "pengertian",
+        "arti"
     ];
 
 
-    if(
-        containsAny(
-            text,
-            c2
-        )
-    ){
+    /*
+       URUTAN:
+       C6 -> C5 -> C4 -> C3 -> C2 -> C1
+    */
 
-        return "C2";
+    if (countAny(t, c6) > 0) {
 
+        return {
+            level: "HOTS",
+            c: "C6"
+        };
+    }
+
+    if (countAny(t, c5) > 0) {
+
+        return {
+            level: "HOTS",
+            c: "C5"
+        };
+    }
+
+    if (countAny(t, c4) > 0) {
+
+        return {
+            level: "HOTS",
+            c: "C4"
+        };
+    }
+
+    if (countAny(t, c3) > 0) {
+
+        return {
+            level: "MOTS",
+            c: "C3"
+        };
+    }
+
+    if (countAny(t, c2) > 0) {
+
+        return {
+            level: "LOTS",
+            c: "C2"
+        };
+    }
+
+    return {
+        level: "LOTS",
+        c: "C1"
+    };
+}
+
+
+/* =========================================================
+   DETEKSI LITERASI
+   =========================================================
+
+   SANGAT PENTING:
+
+   Literasi HANYA dibaca dari:
+       q.pertanyaan
+
+   Tidak membaca:
+       row.literasi
+       literasi_soal
+       stimulus database
+       gambar stimulus database
+
+   Jika HTML soal berisi teks bacaan, tabel, gambar,
+   dialog, data, grafik, artikel, wacana, dll,
+   maka dapat dianggap literasi.
+   ========================================================= */
+
+function detectLiterasi(q) {
+
+    /*
+       HANYA INI YANG DIBACA.
+    */
+
+    const html =
+        String(q.pertanyaan || "");
+
+    const text =
+        cleanText(html);
+
+
+    /*
+       1. HTML memiliki elemen visual/data
+       di DALAM KOLOM SOAL.
+    */
+
+    const hasHTMLLiteracyElement =
+
+        /<img\b/i.test(html) ||
+
+        /<table\b/i.test(html) ||
+
+        /<figure\b/i.test(html) ||
+
+        /<svg\b/i.test(html) ||
+
+        /<canvas\b/i.test(html);
+
+
+    if (hasHTMLLiteracyElement) {
+        return true;
     }
 
 
     /*
-     * C1
-     */
+       2. Frasa literasi pada isi SOAL.
+    */
 
-    return "C1";
+    const literacyWords = [
 
+        "bacalah",
+        "bacalah teks berikut",
+        "cermati teks",
+        "cermatilah teks",
+        "perhatikan teks",
+        "simak teks",
+
+        "berdasarkan bacaan",
+        "berdasarkan teks",
+        "berdasarkan paragraf",
+        "berdasarkan informasi",
+        "berdasarkan wacana",
+        "berdasarkan artikel",
+
+        "teks berikut",
+        "bacaan berikut",
+        "paragraf berikut",
+        "artikel berikut",
+        "wacana berikut",
+        "kutipan berikut",
+
+        "perhatikan tabel",
+        "berdasarkan tabel",
+        "tabel berikut",
+
+        "perhatikan grafik",
+        "berdasarkan grafik",
+        "grafik berikut",
+
+        "perhatikan diagram",
+        "berdasarkan diagram",
+        "diagram berikut",
+
+        "perhatikan gambar",
+        "berdasarkan gambar",
+        "gambar berikut",
+
+        "ilustrasi berikut",
+        "kasus berikut",
+
+        "dialog berikut",
+        "dialogue berikut",
+        "percakapan berikut",
+        "conversation berikut",
+
+        "read the text",
+        "read the following text",
+        "based on the text",
+        "according to the passage",
+        "according to the text",
+        "based on the information",
+        "look at the table",
+        "look at the picture",
+        "read the dialogue",
+        "following passage"
+    ];
+
+
+    if (
+        countAny(
+            text,
+            literacyWords
+        ) > 0
+    ) {
+        return true;
+    }
+
+
+    /*
+       3. Deteksi pola bacaan langsung.
+
+       Contoh:
+       "Rina pergi ke sekolah..."
+       kemudian pertanyaan meminta informasi
+       dari bacaan tersebut.
+
+       Panjang saja tidak otomatis selalu literasi.
+       Digunakan bersama indikator struktur teks.
+    */
+
+    const hasReadingStructure =
+
+        text.includes("berdasarkan") &&
+        text.length >= 180;
+
+
+    if (hasReadingStructure) {
+        return true;
+    }
+
+
+    /*
+       4. Dialog / percakapan dalam kolom soal.
+    */
+
+    const hasDialogue =
+
+        /(^|\s)[a-z]{2,20}\s*:/i.test(
+            stripHTML(html)
+        ) &&
+
+        (
+            text.includes("dialog") ||
+            text.includes("percakapan") ||
+            text.includes("conversation")
+        );
+
+
+    if (hasDialogue) {
+        return true;
+    }
+
+
+    /*
+       Tidak ada indikator literasi.
+    */
+
+    return false;
 }
 
 
 /* =========================================================
    KESUKARAN
-========================================================= */
+   =========================================================
 
-function detectDifficulty(
-    level
-){
+   C1-C2 = Mudah
+   C3    = Sedang
+   C4-C5 = Sedang
+   C6    = Sukar
 
-    if(
-        level === "C1" ||
-        level === "C2"
-    ){
+   Tidak ada lagi persentase minimum.
+   ========================================================= */
 
+function detectDifficulty(levelData) {
+
+    if (!levelData) {
         return "Mudah";
-
     }
 
+    if (
+        levelData.c === "C1" ||
+        levelData.c === "C2"
+    ) {
+        return "Mudah";
+    }
 
-    if(level === "C3"){
-
+    if (
+        levelData.c === "C3" ||
+        levelData.c === "C4" ||
+        levelData.c === "C5"
+    ) {
         return "Sedang";
-
     }
 
-
-    if(
-        level === "C4" ||
-        level === "C5"
-    ){
-
-        return "Sedang";
-
-    }
-
-
-    if(level === "C6"){
-
+    if (levelData.c === "C6") {
         return "Sukar";
-
     }
 
-
-    return "Sedang";
-
+    return "Mudah";
 }
 
 
 /* =========================================================
-   LITERASI
-========================================================= */
+   PERKAYA DATA SOAL
+   ========================================================= */
 
-function detectLiterasi(
-    question,
-    stimulus,
-    image
-){
+function enrichQuestions() {
 
-    const html =
-        String(question || "") +
-        " " +
-        String(stimulus || "");
+    /*
+       Maksimal 25 soal.
 
+       Sortir nomor terlebih dahulu.
+    */
 
-    const lower =
-        html.toLowerCase();
+    const sorted =
+        [...semuaSoal].sort(
+            (a, b) =>
+                Number(a.nomor || 0) -
+                Number(b.nomor || 0)
+        );
 
 
     /*
-     * GAMBAR
-     */
+       HANYA 25 SOAL PERTAMA.
+    */
 
-    if(
-        image &&
-        String(image).trim()
-    ){
+    const limited =
+        sorted.slice(
+            0,
+            MAX_SOAL
+        );
 
-        return true;
 
-    }
+    return limited.map(q => {
+
+        const level =
+            detectLevel(q);
+
+        /*
+           Literasi HANYA dari q.pertanyaan.
+        */
+
+        const literasi =
+            detectLiterasi(q);
+
+        /*
+           Kesukaran berdasarkan C-level.
+        */
+
+        const difficulty =
+            detectDifficulty(level);
+
+
+        return {
+
+            ...q,
+
+            analisisLevel:
+                level.level,
+
+            analisisC:
+                level.c,
+
+            analisisLiterasi:
+                literasi,
+
+            analisisDifficulty:
+                difficulty
+        };
+    });
+}
+
+
+/* =========================================================
+   ANALISIS
+   ========================================================= */
+
+function buatAnalisis() {
+
+    const qs =
+        enrichQuestions();
+
+    const total =
+        qs.length;
+
+
+    const lots =
+        qs.filter(
+            q =>
+                q.analisisLevel === "LOTS"
+        ).length;
+
+
+    const mots =
+        qs.filter(
+            q =>
+                q.analisisLevel === "MOTS"
+        ).length;
+
+
+    const hots =
+        qs.filter(
+            q =>
+                q.analisisLevel === "HOTS"
+        ).length;
+
+
+    const mudah =
+        qs.filter(
+            q =>
+                q.analisisDifficulty === "Mudah"
+        ).length;
+
+
+    const sedang =
+        qs.filter(
+            q =>
+                q.analisisDifficulty === "Sedang"
+        ).length;
+
+
+    const sukar =
+        qs.filter(
+            q =>
+                q.analisisDifficulty === "Sukar"
+        ).length;
+
+
+    const literasi =
+        qs.filter(
+            q =>
+                q.analisisLiterasi === true
+        ).length;
 
 
     /*
-     * Gambar langsung di HTML
-     */
+       ======================================================
+       TUJUH INDIKATOR FINAL
+       ======================================================
+    */
 
-    if(
-        /<img\b/i.test(html)
-    ){
+    const checks = [
 
-        return true;
+        /*
+           1. LOTS/MOTS
+        */
 
-    }
+        {
+            name:
+                "Ada soal LOTS/MOTS",
 
+            ok:
+                lots > 0 ||
+                mots > 0,
 
-    /*
-     * TABEL
-     */
-
-    if(
-        /<table\b/i.test(html) ||
-        /<tr\b/i.test(html) ||
-        /<td\b/i.test(html)
-    ){
-
-        return true;
-
-    }
+            detail:
+                `${lots + mots} soal LOTS/MOTS`
+        },
 
 
-    /*
-     * STIMULUS
-     */
+        /*
+           2. HOTS
+        */
 
-    if(
-        String(stimulus || "").trim()
-    ){
+        {
+            name:
+                "Ada soal HOTS",
 
-        return true;
+            ok:
+                hots > 0,
 
-    }
+            detail:
+                `${hots} soal HOTS`
+        },
 
 
-    /*
-     * KATA PENANDA LITERASI
-     */
+        /*
+           3. Mudah + Sedang
+        */
 
-    const patterns = [
+        {
+            name:
+                "Ada soal Mudah/Sedang",
 
-        "bacalah",
-        "bacalah teks",
-        "perhatikan teks",
-        "cermati teks",
-        "berdasarkan teks",
-        "berdasarkan bacaan",
-        "berdasarkan informasi",
-        "berdasarkan kasus",
-        "berdasarkan data",
-        "berdasarkan tabel",
-        "berdasarkan grafik",
-        "berdasarkan diagram",
-        "berdasarkan dialog",
-        "simak dialog",
-        "gambar berikut",
-        "tabel berikut",
-        "grafik berikut",
-        "diagram berikut",
-        "read the text",
-        "read the following text",
-        "read the passage",
-        "based on the text",
-        "based on the passage",
-        "according to the text",
-        "according to the passage",
-        "look at the picture",
-        "study the table",
-        "based on the data",
-        "following text",
-        "following dialogue",
-        "following information",
-        "article",
-        "passage",
-        "dialogue",
-        "conversation",
-        "story"
+            ok:
+                mudah > 0 &&
+                sedang > 0,
+
+            detail:
+                `${mudah} Mudah + ${sedang} Sedang`
+        },
+
+
+        /*
+           4. Sukar
+        */
+
+        {
+            name:
+                "Ada soal Sukar",
+
+            ok:
+                sukar > 0,
+
+            detail:
+                `${sukar} soal Sukar`
+        },
+
+
+        /*
+           5. JUMLAH
+           100% HANYA TEPAT 25
+        */
+
+        {
+            name:
+                "Jumlah 25 soal",
+
+            ok:
+                total === 25,
+
+            detail:
+                `${total} / 25 soal`
+        },
+
+
+        /*
+           6. LITERASI
+           HANYA dari kolom soal.
+        */
+
+        {
+            name:
+                "Ada soal Literasi",
+
+            ok:
+                literasi > 0,
+
+            detail:
+                `${literasi} soal literasi dari isi kolom soal`
+        },
+
+
+        /*
+           7. KESEIMBANGAN
+           Bukan persentase.
+           Hanya keberadaan ketiga kategori.
+        */
+
+        {
+            name:
+                "Keseimbangan Kesukaran",
+
+            ok:
+                mudah > 0 &&
+                sedang > 0 &&
+                sukar > 0,
+
+            detail:
+                `Mudah ${mudah} • Sedang ${sedang} • Sukar ${sukar}`
+        }
+
     ];
 
 
-    if(
-        containsAny(
-            lower,
-            patterns
-        )
-    ){
+    /*
+       Semua indikator harus terpenuhi
+       agar status LAYAK.
+    */
 
-        return true;
+    const semuaTerpenuhi =
+        checks.every(
+            item => item.ok
+        );
 
+
+    const jumlahTerpenuhi =
+        checks.filter(
+            item => item.ok
+        ).length;
+
+
+    let status;
+
+
+    if (semuaTerpenuhi) {
+
+        status = "LAYAK";
+
+    } else if (jumlahTerpenuhi >= 5) {
+
+        status = "PERLU PERBAIKAN";
+
+    } else {
+
+        status = "BELUM LAYAK";
     }
 
 
+    return {
+
+        qs,
+
+        total,
+
+        lots,
+
+        mots,
+
+        hots,
+
+        mudah,
+
+        sedang,
+
+        sukar,
+
+        literasi,
+
+        checks,
+
+        jumlahTerpenuhi,
+
+        status
+    };
+}
+
+
+/* =========================================================
+   RENDER ANALISIS
+   ========================================================= */
+
+function renderAnalysis() {
+
+    const a =
+        hasilAnalisis;
+
+    if (!a) return;
+
+
+    const badge =
+        document.getElementById(
+            "hasilBadge"
+        );
+
+
+    badge.className =
+        "result " +
+        (
+            a.status === "LAYAK"
+                ? "layak"
+                : a.status === "PERLU PERBAIKAN"
+                    ? "perbaikan"
+                    : "belum"
+        );
+
+
+    badge.textContent =
+        a.status;
+
+
     /*
-     * TEKS PANJANG
-     */
+       SUMMARY
+    */
 
-    const plain =
-        stripHTML(
-            html
-        )
-        .replace(
-            /\s+/g,
-            " "
-        )
-        .trim();
+    document.getElementById(
+        "totalSoal"
+    ).textContent =
+        a.total;
 
 
-    const words =
-        plain
-            ? plain.split(/\s+/).length
+    document.getElementById(
+        "lots"
+    ).textContent =
+        a.lots;
+
+
+    document.getElementById(
+        "mots"
+    ).textContent =
+        a.mots;
+
+
+    document.getElementById(
+        "hots"
+    ).textContent =
+        a.hots;
+
+
+    document.getElementById(
+        "sukar"
+    ).textContent =
+        a.sukar;
+
+
+    document.getElementById(
+        "literasi"
+    ).textContent =
+        a.literasi;
+
+
+    /*
+       Persentase hanya sebagai INFORMASI visual.
+       BUKAN syarat kelayakan.
+    */
+
+    const pct = value =>
+        a.total
+            ? (
+                value /
+                a.total *
+                100
+            )
             : 0;
 
 
     /*
-     * 45 kata atau lebih dianggap
-     * mempunyai konteks/stimulus.
-     */
+       Keterangan indikator.
+    */
 
-    if(words >= 45){
+    const alasan = [];
 
-        return true;
 
+    if (a.total !== 25) {
+
+        alasan.push(
+            `Jumlah soal ${a.total}; ` +
+            `indikator 25 soal belum terpenuhi.`
+        );
     }
 
 
-    return false;
+    if (
+        a.lots === 0 &&
+        a.mots === 0
+    ) {
 
-}
-
-
-/* =========================================================
-   SUMMARY
-========================================================= */
-
-function calculateSummary(){
-
-    const total =
-        allQuestions.length;
-
-
-    const lots =
-        allQuestions.filter(
-            q =>
-                q.level === "C1" ||
-                q.level === "C2"
-        ).length;
-
-
-    const mots =
-        allQuestions.filter(
-            q =>
-                q.level === "C3"
-        ).length;
-
-
-    const hots =
-        allQuestions.filter(
-            q =>
-                q.level === "C4" ||
-                q.level === "C5" ||
-                q.level === "C6"
-        ).length;
-
-
-    const mudah =
-        countDifficulty(
-            "Mudah"
+        alasan.push(
+            "Belum ada soal LOTS/MOTS."
         );
-
-
-    const sedang =
-        countDifficulty(
-            "Sedang"
-        );
-
-
-    const sukar =
-        countDifficulty(
-            "Sukar"
-        );
-
-
-    const literasi =
-        allQuestions.filter(
-            q =>
-                q.literasi
-        ).length;
-
-
-    setText(
-        "totalSoal",
-        total
-    );
-
-    setText(
-        "totalLOTS",
-        lots
-    );
-
-    setText(
-        "totalMOTS",
-        mots
-    );
-
-    setText(
-        "totalHOTS",
-        hots
-    );
-
-    setText(
-        "totalMudah",
-        mudah
-    );
-
-    setText(
-        "totalSedang",
-        sedang
-    );
-
-    setText(
-        "totalSukar",
-        sukar
-    );
-
-    setText(
-        "totalLiterasi",
-        literasi
-    );
-
-}
-
-
-/* =========================================================
-   7 INDIKATOR
-========================================================= */
-
-function calculateIndicators(){
-
-    const total =
-        allQuestions.length;
-
-
-    if(!total){
-
-        resetIndicators();
-
-        return;
-
     }
 
 
-    const lots =
-        allQuestions.filter(
-            q =>
-                q.level === "C1" ||
-                q.level === "C2"
-        ).length;
+    if (a.hots === 0) {
 
-
-    const mots =
-        allQuestions.filter(
-            q =>
-                q.level === "C3"
-        ).length;
-
-
-    const hots =
-        allQuestions.filter(
-            q =>
-                q.level === "C4" ||
-                q.level === "C5" ||
-                q.level === "C6"
-        ).length;
-
-
-    const mudah =
-        countDifficulty(
-            "Mudah"
+        alasan.push(
+            "Belum ada soal HOTS."
         );
-
-
-    const sedang =
-        countDifficulty(
-            "Sedang"
-        );
-
-
-    const sukar =
-        countDifficulty(
-            "Sukar"
-        );
-
-
-    const literasi =
-        allQuestions.filter(
-            q =>
-                q.literasi
-        ).length;
-
-
-    /*
-     * 1 LOTS/MOTS
-     */
-
-    const hasLotsMots =
-        (
-            lots > 0 ||
-            mots > 0
-        );
-
-
-    setIndicator(
-        1,
-        hasLotsMots,
-        `${lots} LOTS + ${mots} MOTS`
-    );
-
-
-    /*
-     * 2 HOTS
-     */
-
-    setIndicator(
-        2,
-        hots > 0,
-        `${hots} soal HOTS`
-    );
-
-
-    /*
-     * 3 Mudah/Sedang
-     */
-
-    setIndicator(
-        3,
-        mudah > 0 && sedang > 0,
-        `${mudah} Mudah + ${sedang} Sedang`
-    );
-
-
-    /*
-     * 4 Sukar
-     */
-
-    setIndicator(
-        4,
-        sukar > 0,
-        `${sukar} soal Sukar`
-    );
-
-
-    /*
-     * 5 JUMLAH
-     */
-
-    const exact25 =
-        total === 25;
-
-
-    setIndicator(
-        5,
-        exact25,
-        `${total} / 25 soal`
-    );
-
-
-    /*
-     * 6 LITERASI
-     *
-     * Tidak ada target minimal.
-     *
-     * Yang diperiksa adalah apakah
-     * terdapat soal literasi.
-     */
-
-    setIndicator(
-        6,
-        literasi > 0,
-        `${literasi} soal literasi`
-    );
-
-}
-
-
-/* =========================================================
-   BALANCE
-========================================================= */
-
-function evaluateBalance(){
-
-    const total =
-        allQuestions.length;
-
-
-    if(!total){
-
-        setBalance(
-            0,
-            "Belum dianalisis",
-            "Belum ada soal."
-        );
-
-        return;
-
     }
 
 
-    const mudah =
-        countDifficulty(
-            "Mudah"
+    if (
+        a.mudah === 0 ||
+        a.sedang === 0
+    ) {
+
+        alasan.push(
+            "Harus ada soal Mudah dan Sedang."
         );
-
-
-    const sedang =
-        countDifficulty(
-            "Sedang"
-        );
-
-
-    const sukar =
-        countDifficulty(
-            "Sukar"
-        );
-
-
-    /*
-     * Jika bukan 25 soal,
-     * keseimbangan belum dapat dinilai
-     * sebagai 100%.
-     */
-
-    if(total !== 25){
-
-        setBalance(
-            0,
-            "BELUM 100%",
-            `Jumlah soal harus tepat 25. Saat ini ${total} soal.`
-        );
-
-        return;
-
     }
 
 
-    /*
-     * SKOR KESEIMBANGAN
-     *
-     * Target:
-     *
-     * Mudah 6
-     * Sedang 13
-     * Sukar 6
-     *
-     * Skor dihitung berdasarkan kedekatan
-     * masing-masing jumlah terhadap target.
-     */
+    if (a.sukar === 0) {
 
-    const scoreMudah =
-        balanceScore(
-            mudah,
-            TARGET_BALANCE.mudah
+        alasan.push(
+            "Belum ada soal Sukar."
         );
-
-
-    const scoreSedang =
-        balanceScore(
-            sedang,
-            TARGET_BALANCE.sedang
-        );
-
-
-    const scoreSukar =
-        balanceScore(
-            sukar,
-            TARGET_BALANCE.sukar
-        );
-
-
-    const balance =
-        Math.round(
-            (
-                scoreMudah +
-                scoreSedang +
-                scoreSukar
-            ) / 3
-        );
-
-
-    /*
-     * Jika persis:
-     *
-     * 6 - 13 - 6
-     *
-     * maka 100%.
-     */
-
-    const perfect =
-        (
-            mudah === 6 &&
-            sedang === 13 &&
-            sukar === 6
-        );
-
-
-    const finalScore =
-        perfect
-            ? 100
-            : balance;
-
-
-    if(perfect){
-
-        setBalance(
-            100,
-            "SEIMBANG — 100%",
-            "Komposisi 25 soal tepat berada pada distribusi target: 6 Mudah, 13 Sedang, dan 6 Sukar."
-        );
-
-    }else{
-
-        setBalance(
-            finalScore,
-            "BELUM SEIMBANG 100%",
-            `Komposisi saat ini ${mudah} Mudah, ${sedang} Sedang, dan ${sukar} Sukar. Target 100% adalah 6 Mudah, 13 Sedang, dan 6 Sukar.`
-        );
-
     }
 
 
-    /*
-     * UPDATE INDIKATOR 7
-     */
+    if (a.literasi === 0) {
 
-    setIndicator(
-        7,
-        perfect,
-        `${mudah} Mudah • ${sedang} Sedang • ${sukar} Sukar`
-    );
-
-}
-
-
-/* =========================================================
-   BALANCE SCORE
-========================================================= */
-
-function balanceScore(
-    actual,
-    target
-){
-
-    if(
-        actual === target
-    ){
-
-        return 100;
-
+        alasan.push(
+            "Belum ada literasi yang terdeteksi dari isi kolom soal."
+        );
     }
 
 
-    const difference =
-        Math.abs(
-            actual -
-            target
+    if (
+        a.mudah === 0 ||
+        a.sedang === 0 ||
+        a.sukar === 0
+    ) {
+
+        alasan.push(
+            "Keseimbangan belum lengkap: harus ada Mudah + Sedang + Sukar."
         );
+    }
+
+
+    const message =
+        a.status === "LAYAK"
+
+            ? "Naskah memenuhi 7 indikator analisis."
+
+            : "Indikator yang belum terpenuhi: " +
+              alasan.join(" ");
 
 
     /*
-     * Setiap selisih mengurangi
-     * 15 poin.
-     */
-
-    return Math.max(
-        0,
-        100 -
-        (
-            difference *
-            15
-        )
-    );
-
-}
-
-
-/* =========================================================
-   SET BALANCE
-========================================================= */
-
-function setBalance(
-    score,
-    title,
-    text
-){
-
-    const box =
-        document.getElementById(
-            "balanceBox"
-        );
-
+       Progress bar
+       HANYA tampilan informasi.
+    */
 
     document.getElementById(
-        "balanceScore"
-    ).textContent =
-        score + "%";
+        "analysisContent"
+    ).innerHTML = `
+
+        <div style="
+            margin-bottom:15px;
+            font-size:13px;
+            line-height:1.6;
+        ">
+
+            <b>${esc(message)}</b>
+
+            <div style="
+                margin-top:8px;
+                color:#64748b;
+            ">
+
+                Indikator terpenuhi:
+                <b>
+                    ${a.jumlahTerpenuhi}/7
+                </b>
 
-
-    document.getElementById(
-        "balanceTitle"
-    ).textContent =
-        title;
-
-
-    document.getElementById(
-        "balanceText"
-    ).textContent =
-        text;
-
-
-    if(score === 100){
-
-        box.className =
-            "balance-box balance-perfect";
-
-    }else if(score >= 70){
-
-        box.className =
-            "balance-box balance-warning";
-
-    }else{
-
-        box.className =
-            "balance-box balance-bad";
-
-    }
-
-
-    const mudah =
-        countDifficulty(
-            "Mudah"
-        );
-
-
-    const sedang =
-        countDifficulty(
-            "Sedang"
-        );
-
-
-    const sukar =
-        countDifficulty(
-            "Sukar"
-        );
-
-
-    document.getElementById(
-        "balanceMudah"
-    ).textContent =
-        mudah + " soal";
-
-
-    document.getElementById(
-        "balanceSedang"
-    ).textContent =
-        sedang + " soal";
-
-
-    document.getElementById(
-        "balanceSukar"
-    ).textContent =
-        sukar + " soal";
-
-
-    document.getElementById(
-        "barBalanceMudah"
-    ).style.width =
-        percent(
-            mudah,
-            25
-        ) + "%";
-
-
-    document.getElementById(
-        "barBalanceSedang"
-    ).style.width =
-        percent(
-            sedang,
-            25
-        ) + "%";
-
-
-    document.getElementById(
-        "barBalanceSukar"
-    ).style.width =
-        percent(
-            sukar,
-            25
-        ) + "%";
-
-
-    setText(
-        "score7",
-        score + "%"
-    );
-
-}
-
-
-/* =========================================================
-   INDICATOR SET
-========================================================= */
-
-function setIndicator(
-    number,
-    good,
-    detail
-){
-
-    const box =
-        document.getElementById(
-            "indicator" +
-            number
-        );
-
-
-    const score =
-        document.getElementById(
-            "score" +
-            number
-        );
-
-
-    const detailEl =
-        document.getElementById(
-            "detail" +
-            number
-        );
-
-
-    if(good){
-
-        box.className =
-            "indicator good";
-
-
-        score.textContent =
-            "✓";
-
-
-    }else{
-
-        box.className =
-            "indicator bad";
-
-
-        score.textContent =
-            "✕";
-
-    }
-
-
-    detailEl.textContent =
-        detail;
-
-}
-
-
-/* =========================================================
-   RENDER
-========================================================= */
-
-function renderQuestions(){
-
-    const container =
-        document.getElementById(
-            "questionContainer"
-        );
-
-
-    let questions =
-        [...allQuestions];
-
-
-    const level =
-        document.getElementById(
-            "levelFilter"
-        ).value;
-
-
-    const difficulty =
-        document.getElementById(
-            "difficultyFilter"
-        ).value;
-
-
-    const literasi =
-        document.getElementById(
-            "literasiFilter"
-        ).value;
-
-
-    if(level){
-
-        questions =
-            questions.filter(
-                q => {
-
-                    if(level === "LOTS"){
-
-                        return (
-                            q.level === "C1" ||
-                            q.level === "C2"
-                        );
-
-                    }
-
-
-                    if(level === "MOTS"){
-
-                        return (
-                            q.level === "C3"
-                        );
-
-                    }
-
-
-                    if(level === "HOTS"){
-
-                        return (
-                            q.level === "C4" ||
-                            q.level === "C5" ||
-                            q.level === "C6"
-                        );
-
-                    }
-
-
-                    return q.level === level;
-
-                }
-            );
-
-    }
-
-
-    if(difficulty){
-
-        questions =
-            questions.filter(
-                q =>
-                    q.difficulty ===
-                    difficulty
-            );
-
-    }
-
-
-    if(literasi === "ya"){
-
-        questions =
-            questions.filter(
-                q =>
-                    q.literasi
-            );
-
-    }
-
-
-    if(literasi === "tidak"){
-
-        questions =
-            questions.filter(
-                q =>
-                    !q.literasi
-            );
-
-    }
-
-
-    if(!questions.length){
-
-        container.innerHTML = `
-            <div class="empty">
-                Tidak ada soal sesuai filter.
             </div>
-        `;
-
-        return;
-
-    }
-
-
-    let html = `
-
-        <div class="table-wrapper">
-
-        <table>
-
-        <thead>
-
-        <tr>
-
-            <th>No</th>
-
-            <th>Soal</th>
-
-            <th>Level</th>
-
-            <th>Kesukaran</th>
-
-            <th>Literasi</th>
-
-        </tr>
-
-        </thead>
-
-        <tbody>
-
-    `;
-
-
-    questions.forEach(
-        q => {
-
-            let content = "";
-
-
-            if(q.stimulus){
-
-                content += `
-
-                    <div class="stimulus">
-
-                        <strong>
-                            📖 Stimulus
-                        </strong>
-
-                        <br>
-
-                        ${safeHTML(
-                            q.stimulus
-                        )}
-
-                    </div>
-
-                `;
-
-            }
-
-
-            if(q.image){
-
-                content += `
-
-                    <img
-                        src="${escapeAttribute(
-                            q.image
-                        )}"
-                        alt="Gambar soal"
-                        style="
-                        max-width:300px;
-                        max-height:220px;
-                        display:block;
-                        margin:8px 0;
-                        border-radius:8px;
-                        "
-                    >
-
-                `;
-
-            }
-
-
-            content += `
-
-                <div class="question-text">
-
-                    ${safeHTML(
-                        q.question
-                    )}
-
-                </div>
-
-            `;
-
-
-            html += `
-
-                <tr>
-
-                    <td>
-
-                        <strong>
-                            ${escapeHTML(
-                                String(
-                                    q.nomor
-                                )
-                            )}
-                        </strong>
-
-                    </td>
-
-
-                    <td>
-
-                        ${content}
-
-                    </td>
-
-
-                    <td>
-
-                        ${getLevelBadge(
-                            q.level
-                        )}
-
-                        <div style="
-                            margin-top:5px;
-                            font-size:11px;
-                            color:#64748b">
-
-                            ${getLevelDescription(
-                                q.level
-                            )}
-
-                        </div>
-
-                    </td>
-
-
-                    <td>
-
-                        ${getDifficultyBadge(
-                            q.difficulty
-                        )}
-
-                    </td>
-
-
-                    <td>
-
-                        ${
-                            q.literasi
-
-                            ?
-
-                            `<span class="
-                                badge
-                                badge-literasi">
-
-                                📖 Literasi
-
-                            </span>`
-
-                            :
-
-                            `<span
-                                style="
-                                color:#94a3b8">
-
-                                Non-Literasi
-
-                            </span>`
-                        }
-
-                    </td>
-
-                </tr>
-
-            `;
-
-        }
-    );
-
-
-    html += `
-
-        </tbody>
-
-        </table>
 
         </div>
 
+
+        <div class="progress-row">
+
+            <span>LOTS + MOTS</span>
+
+            <div class="progress">
+
+                <i style="
+                    width:${Math.min(
+                        100,
+                        pct(a.lots + a.mots)
+                    )}%;
+                "></i>
+
+            </div>
+
+            <b>
+                ${pct(a.lots + a.mots).toFixed(1)}%
+            </b>
+
+        </div>
+
+
+        <div class="progress-row">
+
+            <span>HOTS</span>
+
+            <div class="progress hot">
+
+                <i style="
+                    width:${Math.min(
+                        100,
+                        pct(a.hots)
+                    )}%;
+                "></i>
+
+            </div>
+
+            <b>
+                ${pct(a.hots).toFixed(1)}%
+            </b>
+
+        </div>
+
+
+        <div class="progress-row">
+
+            <span>Mudah + Sedang</span>
+
+            <div class="progress">
+
+                <i style="
+                    width:${Math.min(
+                        100,
+                        pct(a.mudah + a.sedang)
+                    )}%;
+                "></i>
+
+            </div>
+
+            <b>
+                ${pct(a.mudah + a.sedang).toFixed(1)}%
+            </b>
+
+        </div>
+
+
+        <div class="progress-row">
+
+            <span>Sukar</span>
+
+            <div class="progress sukar">
+
+                <i style="
+                    width:${Math.min(
+                        100,
+                        pct(a.sukar)
+                    )}%;
+                "></i>
+
+            </div>
+
+            <b>
+                ${pct(a.sukar).toFixed(1)}%
+            </b>
+
+        </div>
+
+
+        <div class="progress-row">
+
+            <span>Literasi</span>
+
+            <div class="progress literasi">
+
+                <i style="
+                    width:${Math.min(
+                        100,
+                        pct(a.literasi)
+                    )}%;
+                "></i>
+
+            </div>
+
+            <b>
+                ${pct(a.literasi).toFixed(1)}%
+            </b>
+
+        </div>
+
+
+        <div class="criteria">
+
+            ${a.checks.map(
+                item => `
+
+                    <div class="
+                        criterion
+                        ${item.ok ? "ok" : "bad"}
+                    ">
+
+                        <b>
+                            ${item.ok ? "✅" : "⚠️"}
+                            ${esc(item.name)}
+                        </b>
+
+                        ${esc(item.detail)}
+
+                    </div>
+                `
+            ).join("")}
+
+        </div>
+
+
+        <div class="note">
+
+            <b>Aturan analisis:</b>
+
+            Maksimal 25 soal.
+            Jumlah dianggap 100% hanya jika tepat 25 soal.
+            Literasi hanya dibaca dari isi HTML kolom
+            <b>soal</b>.
+            Sistem tidak membaca
+            <b>row.literasi</b> dan tidak menggunakan
+            stimulus database sebagai penentu literasi.
+            Tidak ada batas persentase HOTS,
+            Mudah+Sedang, maupun Sukar.
+
+        </div>
     `;
+}
 
 
-    container.innerHTML =
+/* =========================================================
+   RENDER DAFTAR SOAL
+   ========================================================= */
+
+function renderQuestions() {
+
+    const list =
+        document.getElementById(
+            "questionList"
+        );
+
+
+    if (
+        !hasilAnalisis ||
+        !hasilAnalisis.qs.length
+    ) {
+
+        list.innerHTML =
+            `<div class="empty">
+                📝 Belum ada soal.
+            </div>`;
+
+        return;
+    }
+
+
+    const input =
+        document.getElementById(
+            "searchInput"
+        );
+
+
+    const filterLevel =
+        document.getElementById(
+            "filterLevel"
+        );
+
+
+    const filterDifficulty =
+        document.getElementById(
+            "filterDifficulty"
+        );
+
+
+    const keyword =
+        cleanText(
+            input?.value || ""
+        );
+
+
+    const fl =
+        filterLevel?.value || "";
+
+
+    const fd =
+        filterDifficulty?.value || "";
+
+
+    const data =
+        hasilAnalisis.qs.filter(q => {
+
+            const searchText =
+                cleanText(
+                    `${q.nomor} ${q.pertanyaan}`
+                );
+
+
+            return (
+
+                (
+                    !keyword ||
+                    searchText.includes(keyword)
+                )
+
+                &&
+
+                (
+                    !fl ||
+                    q.analisisLevel === fl
+                )
+
+                &&
+
+                (
+                    !fd ||
+                    q.analisisDifficulty === fd
+                )
+            );
+        });
+
+
+    if (!data.length) {
+
+        list.innerHTML =
+            `<div class="empty">
+                Tidak ada soal yang sesuai filter.
+            </div>`;
+
+        return;
+    }
+
+
+    list.innerHTML =
+        data.map(q => {
+
+            const levelClass =
+                q.analisisLevel === "HOTS"
+                    ? "c-hot"
+                    : q.analisisLevel === "MOTS"
+                        ? "c-mid"
+                        : "c-low";
+
+
+            const diffClass =
+                q.analisisDifficulty === "Sukar"
+                    ? "diff-hard"
+                    : q.analisisDifficulty === "Sedang"
+                        ? "diff-mid"
+                        : "diff-easy";
+
+
+            /*
+               PENTING:
+
+               Jangan mengambil stimulus database
+               untuk menentukan literasi.
+
+               Badge literasi berasal dari:
+                   q.pertanyaan
+            */
+
+            return `
+
+                <article class="question">
+
+                    <div class="qhead">
+
+                        <div class="qnum">
+
+                            Soal ${esc(q.nomor)}
+
+                        </div>
+
+
+                        <div class="badges">
+
+                            <span class="
+                                badge
+                                ${levelClass}
+                            ">
+
+                                ${q.analisisLevel}
+                                •
+                                ${q.analisisC}
+
+                            </span>
+
+
+                            <span class="
+                                badge
+                                ${diffClass}
+                            ">
+
+                                ${q.analisisDifficulty}
+
+                            </span>
+
+
+                            <span class="
+                                badge
+                                ${q.analisisLiterasi
+                                    ? "lit"
+                                    : "nol"}
+                            ">
+
+                                ${q.analisisLiterasi
+                                    ? "📖 Literasi"
+                                    : "Non-Literasi"}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="qtext">
+
+                        ${renderQuestionHTML(
+                            q.pertanyaan
+                        )}
+
+                        ${
+                            q.gambar_soal
+                                ? `
+                                    <img
+                                        src="${escAttr(
+                                            q.gambar_soal
+                                        )}"
+                                        alt="Gambar soal"
+                                    >
+                                  `
+                                : ""
+                        }
+
+                    </div>
+
+
+                    ${
+                        q.analisisLiterasi
+                            ? `
+                                <div style="
+                                    margin-top:10px;
+                                    padding:8px 10px;
+                                    border-radius:8px;
+                                    background:#faf5ff;
+                                    color:#7e22ce;
+                                    font-size:11px;
+                                ">
+                                    📖 Literasi terdeteksi
+                                    dari isi HTML kolom soal.
+                                </div>
+                              `
+                            : ""
+                    }
+
+                </article>
+            `;
+
+        }).join("");
+}
+
+
+/* =========================================================
+   RENDER HTML SOAL
+   =========================================================
+
+   Pertanyaan dapat berupa HTML.
+   Script/iframe/object/embed dibuang.
+   ========================================================= */
+
+function renderQuestionHTML(value) {
+
+    const html =
+        String(value ?? "");
+
+
+    /*
+       Jika bukan HTML,
+       tampilkan sebagai teks aman.
+    */
+
+    if (!/<[a-z][\s\S]*>/i.test(html)) {
+
+        return esc(html)
+            .replace(/\n/g, "<br>");
+    }
+
+
+    /*
+       Sanitasi HTML.
+    */
+
+    const template =
+        document.createElement(
+            "template"
+        );
+
+
+    template.innerHTML =
         html;
 
-}
 
+    template.content
+        .querySelectorAll(
+            "script,iframe,object,embed"
+        )
+        .forEach(
+            el => el.remove()
+        );
+
+
+    /*
+       Hapus event handler seperti onclick.
+    */
+
+    template.content
+        .querySelectorAll("*")
+        .forEach(el => {
+
+            [...el.attributes]
+                .forEach(attr => {
+
+                    if (
+                        attr.name
+                            .toLowerCase()
+                            .startsWith("on")
+                    ) {
+
+                        el.removeAttribute(
+                            attr.name
+                        );
+                    }
+
+
+                    /*
+                       Blokir javascript:
+                       pada src/href.
+                    */
+
+                    if (
+                        (
+                            attr.name === "src" ||
+                            attr.name === "href"
+                        ) &&
+                        /^javascript:/i.test(
+                            attr.value
+                        )
+                    ) {
+
+                        el.removeAttribute(
+                            attr.name
+                        );
+                    }
+
+                });
+        });
 
-/* =========================================================
-   BADGES
-========================================================= */
-
-function getLevelBadge(
-    level
-){
-
-    if(
-        level === "C1" ||
-        level === "C2"
-    ){
-
-        return `
-            <span class="
-                badge
-                badge-lots">
-
-                ${level} • LOTS
-
-            </span>
-        `;
-
-    }
-
-
-    if(level === "C3"){
-
-        return `
-            <span class="
-                badge
-                badge-mots">
-
-                C3 • MOTS
-
-            </span>
-        `;
-
-    }
-
-
-    return `
-        <span class="
-            badge
-            badge-hots">
-
-            ${escapeHTML(
-                level
-            )}
-            • HOTS
-
-        </span>
-    `;
-
-}
-
-
-function getLevelDescription(
-    level
-){
-
-    const map = {
-
-        C1:"Mengingat",
-
-        C2:"Memahami",
-
-        C3:"Menerapkan",
-
-        C4:"Menganalisis",
-
-        C5:"Mengevaluasi",
-
-        C6:"Mencipta"
-
-    };
-
-
-    return (
-        map[level] ||
-        ""
-    );
-
-}
-
-
-function getDifficultyBadge(
-    difficulty
-){
-
-    if(
-        difficulty === "Mudah"
-    ){
-
-        return `
-            <span class="
-                badge
-                badge-easy">
-
-                Mudah
-
-            </span>
-        `;
-
-    }
-
-
-    if(
-        difficulty === "Sedang"
-    ){
-
-        return `
-            <span class="
-                badge
-                badge-medium">
-
-                Sedang
-
-            </span>
-        `;
-
-    }
-
-
-    return `
-        <span class="
-            badge
-            badge-hard">
-
-            Sukar
-
-        </span>
-    `;
-
-}
-
-
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function countDifficulty(
-    difficulty
-){
-
-    return allQuestions.filter(
-        q =>
-            q.difficulty ===
-            difficulty
-    ).length;
-
-}
-
-
-function containsAny(
-    text,
-    list
-){
-
-    return list.some(
-        word =>
-            text.includes(
-                word.toLowerCase()
-            )
-    );
-
-}
-
-
-function firstValue(
-    row,
-    fields
-){
-
-    for(
-        const field of fields
-    ){
-
-        if(
-            row[field] !== undefined &&
-            row[field] !== null &&
-            String(
-                row[field]
-            ).trim() !== ""
-        ){
-
-            return row[field];
-
-        }
-
-    }
-
-
-    return "";
-
-}
-
-
-function stripHTML(
-    value
-){
 
     const div =
         document.createElement(
@@ -3702,314 +2037,196 @@ function stripHTML(
         );
 
 
-    div.innerHTML =
-        String(
-            value || ""
-        );
-
-
-    return (
-        div.textContent ||
-        div.innerText ||
-        ""
+    div.appendChild(
+        template.content.cloneNode(true)
     );
 
-}
 
-
-function safeHTML(
-    value
-){
-
-    if(
-        value === null ||
-        value === undefined
-    ){
-
-        return "";
-
-    }
-
-
-    const str =
-        String(value);
-
-
-    /*
-     * Plain text
-     */
-
-    if(
-        !/<[a-z][\s\S]*>/i.test(
-            str
-        )
-    ){
-
-        return escapeHTML(
-            str
-        ).replace(
-            /\n/g,
-            "<br>"
-        );
-
-    }
-
-
-    /*
-     * HTML dari editor soal.
-     *
-     * Script dan iframe dibuang.
-     */
-
-    const parser =
-        new DOMParser();
-
-
-    const doc =
-        parser.parseFromString(
-            str,
-            "text/html"
-        );
-
-
-    doc
-        .querySelectorAll(
-            "script,iframe,object,embed"
-        )
-        .forEach(
-            el =>
-                el.remove()
-        );
-
-
-    doc
-        .querySelectorAll("*")
-        .forEach(
-            el => {
-
-                [...el.attributes]
-                    .forEach(
-                        attr => {
-
-                            if(
-                                attr.name
-                                    .toLowerCase()
-                                    .startsWith(
-                                        "on"
-                                    )
-                            ){
-
-                                el.removeAttribute(
-                                    attr.name
-                                );
-
-                            }
-
-                        }
-                    );
-
-            }
-        );
-
-
-    return doc.body.innerHTML;
-
-}
-
-
-function escapeHTML(
-    value
-){
-
-    return String(
-        value
-    )
-    .replace(
-        /&/g,
-        "&amp;"
-    )
-    .replace(
-        /</g,
-        "&lt;"
-    )
-    .replace(
-        />/g,
-        "&gt;"
-    )
-    .replace(
-        /"/g,
-        "&quot;"
-    )
-    .replace(
-        /'/g,
-        "&#039;"
-    );
-
-}
-
-
-function escapeAttribute(
-    value
-){
-
-    return escapeHTML(
-        value
-    );
-
-}
-
-
-function percent(
-    value,
-    total
-){
-
-    if(!total)
-        return 0;
-
-
-    return Math.round(
-        (
-            value /
-            total
-        ) *
-        100
-    );
-
-}
-
-
-function setText(
-    id,
-    value
-){
-
-    const el =
-        document.getElementById(
-            id
-        );
-
-
-    if(el)
-        el.textContent =
-            value;
-
-}
-
-
-function setGuruName(
-    name
-){
-
-    setText(
-        "guruName",
-        name
-    );
-
-}
-
-
-function showStatus(
-    message,
-    type
-){
-
-    document.getElementById(
-        "loadStatus"
-    ).innerHTML = `
-
-        <div class="
-            status
-            ${type}">
-
-            ${message}
-
-        </div>
-
-    `;
-
+    return div.innerHTML;
 }
 
 
 /* =========================================================
-   RESET
-========================================================= */
+   UJI KELAYAKAN
+   ========================================================= */
 
-function resetIndicators(){
+function bukaUji() {
 
-    for(
-        let i=1;
-        i<=7;
-        i++
-    ){
+    if (!hasilAnalisis) {
 
-        const box =
-            document.getElementById(
-                "indicator" + i
-            );
+        alert(
+            "Pilih ujian terlebih dahulu."
+        );
 
-
-        const score =
-            document.getElementById(
-                "score" + i
-            );
-
-
-        const detail =
-            document.getElementById(
-                "detail" + i
-            );
-
-
-        box.className =
-            "indicator warning";
-
-
-        score.textContent =
-            "—";
-
-
-        detail.textContent =
-            "Menunggu analisis.";
-
+        return;
     }
 
+
+    const a =
+        hasilAnalisis;
+
+
+    const statusClass =
+        a.status === "LAYAK"
+            ? "layak"
+            : a.status === "PERLU PERBAIKAN"
+                ? "perbaikan"
+                : "belum";
+
+
+    document.getElementById(
+        "testContent"
+    ).innerHTML = `
+
+        <div class="
+            test-result
+            ${statusClass}
+        ">
+
+            <h3 style="
+                margin-bottom:7px;
+            ">
+
+                ${
+                    a.status === "LAYAK"
+                        ? "🟢"
+                        : a.status === "PERLU PERBAIKAN"
+                            ? "🟡"
+                            : "🔴"
+                }
+
+                ${esc(a.status)}
+
+            </h3>
+
+
+            <div style="
+                font-size:13px;
+                line-height:1.6;
+            ">
+
+                ${esc(
+                    ujianTerpilih?.judul ||
+                    "Naskah Ujian"
+                )}
+
+            </div>
+
+
+            <div style="
+                margin-top:8px;
+                font-size:13px;
+            ">
+
+                Indikator terpenuhi:
+                <b>
+                    ${a.jumlahTerpenuhi}/7
+                </b>
+
+            </div>
+
+        </div>
+
+
+        <div class="test-list">
+
+            ${a.checks.map(
+                item => `
+
+                    <div class="
+                        test-item
+                        ${item.ok ? "ok" : "bad"}
+                    ">
+
+                        ${
+                            item.ok
+                                ? "✅"
+                                : "⚠️"
+                        }
+
+                        <b>
+                            ${esc(item.name)}
+                        </b>
+
+                        <br>
+
+                        ${esc(item.detail)}
+
+                    </div>
+
+                `
+            ).join("")}
+
+        </div>
+
+
+        <p class="note">
+
+            <b>Aturan:</b>
+            maksimal 25 soal;
+            tepat 25 soal untuk indikator jumlah;
+            LOTS/MOTS harus ada;
+            HOTS harus ada;
+            Mudah, Sedang, dan Sukar harus ada;
+            serta literasi harus terdeteksi dari
+            isi HTML kolom soal.
+
+            Tidak ada lagi aturan HOTS 30%,
+            Mudah+Sedang 60%,
+            atau Sukar 20–30%.
+
+        </p>
+    `;
+
+
+    document.getElementById(
+        "testModal"
+    ).style.display =
+        "flex";
 }
 
 
-function resetAll(){
+function closeTest() {
 
-    [
-        "totalSoal",
-        "totalLOTS",
-        "totalMOTS",
-        "totalHOTS",
-        "totalMudah",
-        "totalSedang",
-        "totalSukar",
-        "totalLiterasi"
-    ]
-    .forEach(
-        id =>
-            setText(
-                id,
-                0
-            )
-    );
-
-
-    resetIndicators();
-
-
-    setBalance(
-        0,
-        "Belum dianalisis",
-        "Pilih ujian dan lakukan analisis."
-    );
-
+    document.getElementById(
+        "testModal"
+    ).style.display =
+        "none";
 }
+
+
+function kembaliDashboard() {
+
+    location.href =
+        "guru.html";
+}
+
+
+/* =========================================================
+   EVENT
+   ========================================================= */
+
+document.getElementById(
+    "testModal"
+).addEventListener(
+    "click",
+    e => {
+
+        if (
+            e.target ===
+            e.currentTarget
+        ) {
+
+            closeTest();
+        }
+    }
+);
+
+
+/* =========================================================
+   JALANKAN
+   ========================================================= */
+
+loadData();
 
 </script>
-
-</body>
-</html>
