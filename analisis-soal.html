@@ -391,7 +391,7 @@ body{
 
 .standar-grid{
     display:grid;
-    grid-template-columns:repeat(4,1fr);
+    grid-template-columns:repeat(3,1fr);
     gap:12px;
 }
 
@@ -504,6 +504,26 @@ body{
     margin-bottom:15px;
 }
 
+.question-text img,
+.literasi-content img{
+    max-width:100%;
+    height:auto;
+}
+
+.question-text table,
+.literasi-content table{
+    max-width:100%;
+    border-collapse:collapse;
+}
+
+.question-text td,
+.question-text th,
+.literasi-content td,
+.literasi-content th{
+    border:1px solid #d1d5db;
+    padding:6px;
+}
+
 .analysis-grid{
     display:grid;
     grid-template-columns:repeat(6,1fr);
@@ -548,7 +568,7 @@ body{
 
 .literasi-title{
     font-weight:bold;
-    color:#6d28d9;
+    color:#6d28a9;
     margin-bottom:7px;
 }
 
@@ -585,6 +605,16 @@ body{
     border-radius:8px;
     margin-bottom:15px;
     font-size:13px;
+}
+
+.debug-info{
+    background:#fff7ed;
+    border-left:5px solid #f97316;
+    padding:12px;
+    border-radius:7px;
+    font-size:12px;
+    line-height:1.6;
+    margin-bottom:20px;
 }
 
 @media(max-width:1200px){
@@ -627,6 +657,10 @@ body{
 
     .analysis-grid{
         grid-template-columns:repeat(2,1fr);
+    }
+
+    .standar-grid{
+        grid-template-columns:1fr;
     }
 
 }
@@ -871,31 +905,39 @@ body{
 
 <div class="note">
 
-    <b>ℹ️ STANDAR KOMPOSISI TERBARU</b><br>
+    <b>ℹ️ ATURAN ANALISIS FINAL — SEMUA MATA PELAJARAN</b><br>
 
-    🟢 <b>LOTS + MOTS = 40–50%</b><br>
+    🟢 <b>C1–C2 = LOTS + Mudah</b><br>
 
-    🔴 <b>HOTS = 50–60%</b><br>
+    🟡 <b>C3 = MOTS + Sedang</b><br>
 
-    🟣 <b>Literasi = minimal 50%</b><br>
+    🔴 <b>C4–C5 = HOTS + Sedang</b><br>
 
-    🟢 <b>Mudah + Sedang = 75%</b><br>
+    🔴 <b>C6 = HOTS + Sukar</b><br><br>
 
-    🔴 <b>Sukar = 25%</b><br><br>
+    📖 <b>Literasi hanya ditentukan dari HTML pada kolom pertanyaan (`soal.pertanyaan`).</b><br>
+
+    📚 <b>Maksimal 25 soal yang dianalisis.</b><br>
+
+    🔢 <b>Indikator jumlah terpenuhi hanya jika jumlah soal tepat 25.</b><br><br>
 
     <b>Ketentuan kelayakan:</b><br>
 
-    Jika minimal <b>6 dari 7 indikator</b>
-    terpenuhi, naskah dinyatakan
-    <b>LAYAK DIUJIKAN</b>.
+    1. LOTS/MOTS minimal 1 soal<br>
+    2. HOTS minimal 1 soal<br>
+    3. Literasi minimal 1 soal<br>
+    4. Mudah minimal 1 soal<br>
+    5. Sedang minimal 1 soal<br>
+    6. Jumlah tepat 25 soal<br><br>
+
+    Jika seluruh <b>6 indikator</b> terpenuhi,
+    naskah dinyatakan <b>LAYAK DIUJIKAN</b>.
 
     <br><br>
 
     <b>Catatan:</b>
-    HOTS tidak otomatis berarti Sukar.
-    LOTS/MOTS tidak otomatis berarti Mudah.
-    Level kognitif dan tingkat kesukaran
-    dianalisis secara terpisah.
+    Tingkat Sukar dapat muncul pada analisis,
+    tetapi <b>tidak menjadi syarat kelayakan</b>.
 
 </div>
 
@@ -1278,13 +1320,6 @@ let daftarUjian = [];
 
 let daftarSoal = [];
 
-let daftarLiterasiSoal = [];
-
-let daftarLiterasiLegacy = [];
-
-/* Data mata pelajaran untuk aturan khusus Bahasa Inggris. */
-let daftarMataPelajaran = [];
-
 let dataAnalisis = [];
 
 let currentUser = null;
@@ -1318,14 +1353,9 @@ function cekLogin(){
         }
 
 
-        /*
-         * SESUAI PERMINTAAN:
-         * HANYA GURU PEMBUAT SOAL
-         * YANG BOLEH MENGANALISIS.
-         */
-
         if(
-            currentUser.role !== "guru"
+            String(currentUser.role || "").toLowerCase() !==
+            "guru"
         ){
 
             alert(
@@ -1372,7 +1402,7 @@ function normalisasi(value){
 
 
 /* =========================================================
-AMBIL IDENTITAS GURU LOGIN
+NILAI IDENTITAS USER
 ========================================================= */
 
 function daftarNilaiUser(){
@@ -1381,16 +1411,18 @@ function daftarNilaiUser(){
         return [];
     }
 
-
-    return [
+    const hasil = [
 
         currentUser.id,
         currentUser.guru_id,
         currentUser.guruId,
+
         currentUser.profile_id,
         currentUser.profileId,
+
         currentUser.user_id,
         currentUser.userId,
+
         currentUser.username,
         currentUser.nip,
         currentUser.nik,
@@ -1407,11 +1439,15 @@ function daftarNilaiUser(){
         normalisasi
     );
 
+    return [
+        ...new Set(hasil)
+    ];
+
 }
 
 
 /* =========================================================
-CARI DATA GURU
+CARI GURU LOGIN
 ========================================================= */
 
 async function cariGuruLogin(){
@@ -1419,15 +1455,10 @@ async function cariGuruLogin(){
     guruLogin = null;
 
 
-    /*
-     * Jika exam_user sudah menyimpan guru_id,
-     * gunakan langsung.
-     */
-
     const kemungkinanId = [
 
-        currentUser.guru_id,
-        currentUser.guruId
+        currentUser?.guru_id,
+        currentUser?.guruId
 
     ]
     .filter(
@@ -1439,30 +1470,42 @@ async function cariGuruLogin(){
 
 
     /*
-     * Coba cari berdasarkan ID
+     * PRIORITAS 1:
+     * Cari guru berdasarkan guru_id.
      */
 
     for(
         const id of kemungkinanId
     ){
 
-        const res =
-            await supabaseClient
-                .from("guru")
-                .select("*")
-                .eq("id",id)
-                .maybeSingle();
+        try{
+
+            const res =
+                await supabaseClient
+                    .from("guru")
+                    .select("*")
+                    .eq("id",id)
+                    .maybeSingle();
 
 
-        if(
-            !res.error &&
-            res.data
-        ){
+            if(
+                !res.error &&
+                res.data
+            ){
 
-            guruLogin =
-                res.data;
+                guruLogin =
+                    res.data;
 
-            return guruLogin;
+                return guruLogin;
+
+            }
+
+        }catch(e){
+
+            console.warn(
+                "Pencarian guru berdasarkan ID gagal:",
+                e
+            );
 
         }
 
@@ -1470,8 +1513,8 @@ async function cariGuruLogin(){
 
 
     /*
-     * Coba ambil seluruh guru lalu cocokkan
-     * dengan data login.
+     * PRIORITAS 2:
+     * Cocokkan identitas user dengan tabel guru.
      */
 
     const res =
@@ -1546,14 +1589,122 @@ async function cariGuruLogin(){
 
 
 /* =========================================================
-CEK KEPEMILIKAN UJIAN
+AMBIL SEMUA FIELD KEPEMILIKAN
+========================================================= */
+
+function nilaiKepemilikan(obj){
+
+    if(!obj){
+        return [];
+    }
+
+    return [
+
+        obj.guru_id,
+        obj.guruId,
+
+        obj.created_by,
+        obj.createdBy,
+
+        obj.pembuat_id,
+        obj.pembuatId,
+
+        obj.user_id,
+        obj.userId,
+
+        obj.profile_id,
+        obj.profileId,
+
+        obj.owner_id,
+        obj.ownerId,
+
+        obj.guru_username,
+        obj.username_guru,
+
+        obj.nip_guru,
+        obj.nik_guru,
+        obj.email_guru,
+
+        obj.created_by_username,
+        obj.created_by_nip,
+        obj.created_by_nik,
+        obj.created_by_email,
+
+        obj.pembuat_username,
+        obj.pembuat_nip,
+        obj.pembuat_nik,
+        obj.pembuat_email,
+
+        obj.username,
+        obj.nip,
+        obj.nik,
+        obj.email
+
+    ]
+    .filter(
+        x =>
+            x !== undefined &&
+            x !== null &&
+            String(x).trim() !== ""
+    )
+    .map(
+        normalisasi
+    );
+
+}
+
+
+/* =========================================================
+CEK KEPEMILIKAN DATA
+========================================================= */
+
+function dataMilikGuru(obj){
+
+    if(
+        !currentUser ||
+        String(currentUser.role || "").toLowerCase() !== "guru"
+    ){
+
+        return false;
+
+    }
+
+
+    const userValues =
+        daftarNilaiUser();
+
+
+    const ownerValues =
+        nilaiKepemilikan(obj);
+
+
+    if(
+        !userValues.length ||
+        !ownerValues.length
+    ){
+
+        return false;
+
+    }
+
+
+    return ownerValues.some(
+        x =>
+            userValues.includes(x)
+    );
+
+}
+
+
+/* =========================================================
+CEK UJIAN MILIK GURU
 ========================================================= */
 
 function ujianMilikGuru(ujian){
 
     if(
-        !currentUser ||
-        currentUser.role !== "guru"
+        !ujian ||
+        !currentUser
     ){
 
         return false;
@@ -1562,66 +1713,15 @@ function ujianMilikGuru(ujian){
 
 
     /*
-     * PRIORITAS 1:
-     * Jika sudah ditemukan data guru.
+     * Cocokkan dengan guruLogin terlebih dahulu.
      */
 
     if(guruLogin){
 
-        const guruIds = [
+        const guruValues = [
 
             guruLogin.id,
-            guruLogin.guru_id
-
-        ]
-        .filter(
-            x =>
-                x !== undefined &&
-                x !== null &&
-                String(x).trim() !== ""
-        )
-        .map(
-            normalisasi
-        );
-
-
-        const ujianGuruIds = [
-
-            ujian.guru_id,
-            ujian.guruId,
-            ujian.created_by,
-            ujian.createdBy,
-            ujian.pembuat_id,
-            ujian.pembuatId,
-            ujian.user_id,
-            ujian.userId
-
-        ]
-        .filter(
-            x =>
-                x !== undefined &&
-                x !== null &&
-                String(x).trim() !== ""
-        )
-        .map(
-            normalisasi
-        );
-
-
-        if(
-            guruIds.some(
-                id =>
-                    ujianGuruIds.includes(id)
-            )
-        ){
-
-            return true;
-
-        }
-
-
-        const guruUsernames = [
-
+            guruLogin.guru_id,
             guruLogin.username,
             guruLogin.nip,
             guruLogin.nik,
@@ -1639,35 +1739,16 @@ function ujianMilikGuru(ujian){
         );
 
 
-        const ujianUsernames = [
-
-            ujian.guru_username,
-            ujian.username_guru,
-            ujian.nip_guru,
-            ujian.nik_guru,
-            ujian.email_guru,
-            ujian.created_by_username,
-            ujian.created_by_nip,
-            ujian.pembuat_username,
-            ujian.pembuat_nip
-
-        ]
-        .filter(
-            x =>
-                x !== undefined &&
-                x !== null &&
-                String(x).trim() !== ""
-        )
-        .map(
-            normalisasi
-        );
+        const ujianValues =
+            nilaiKepemilikan(
+                ujian
+            );
 
 
         if(
-            guruUsernames.length &&
-            ujianUsernames.some(
+            guruValues.some(
                 x =>
-                    guruUsernames.includes(x)
+                    ujianValues.includes(x)
             )
         ){
 
@@ -1679,65 +1760,40 @@ function ujianMilikGuru(ujian){
 
 
     /*
-     * PRIORITAS 2:
      * Cocokkan langsung dengan exam_user.
      */
 
-    const userValues =
-        daftarNilaiUser();
-
-
-    const ujianValues = [
-
-        ujian.guru_id,
-        ujian.guruId,
-        ujian.created_by,
-        ujian.createdBy,
-        ujian.pembuat_id,
-        ujian.pembuatId,
-        ujian.user_id,
-        ujian.userId,
-        ujian.guru_username,
-        ujian.username_guru,
-        ujian.nip_guru,
-        ujian.nik_guru,
-        ujian.email_guru,
-        ujian.created_by_username,
-        ujian.created_by_nip,
-        ujian.pembuat_username,
-        ujian.pembuat_nip
-
-    ]
-    .filter(
-        x =>
-            x !== undefined &&
-            x !== null &&
-            String(x).trim() !== ""
-    )
-    .map(
-        normalisasi
-    );
-
-
-    return userValues.some(
-        x =>
-            ujianValues.includes(x)
+    return dataMilikGuru(
+        ujian
     );
 
 }
 
 
 /* =========================================================
-FILTER UJIAN
+CEK SOAL MILIK GURU LANGSUNG
 ========================================================= */
 
-function filterUjianPemilik(){
+function soalMilikGuruLangsung(soal){
 
-    return daftarUjian.filter(
-        ujian =>
-            ujianMilikGuru(
-                ujian
-            )
+    if(
+        !soal ||
+        !currentUser
+    ){
+
+        return false;
+
+    }
+
+
+    /*
+     * Hanya gunakan field kepemilikan eksplisit.
+     * Tidak menggunakan nama soal,
+     * nama ujian, atau nomor soal sebagai identitas.
+     */
+
+    return dataMilikGuru(
+        soal
     );
 
 }
@@ -1758,7 +1814,7 @@ async function loadData(){
     questionList.innerHTML = `
 
         <div class="loading">
-            ⏳ Mengambil data soal...
+            ⏳ Mengambil seluruh data soal guru...
         </div>
 
     `;
@@ -1766,12 +1822,12 @@ async function loadData(){
 
     try{
 
-        /*
-         * Pastikan guru ditemukan dahulu.
-         */
-
         await cariGuruLogin();
 
+
+        /*
+         * Ambil ujian.
+         */
 
         const ujianRes =
             await supabaseClient
@@ -1792,6 +1848,10 @@ async function loadData(){
         }
 
 
+        /*
+         * Ambil seluruh soal.
+         */
+
         const soalRes =
             await supabaseClient
                 .from("soal")
@@ -1811,64 +1871,32 @@ async function loadData(){
         }
 
 
-        const literasiSoalRes =
-            await supabaseClient
-                .from("literasi_soal")
-                .select("*");
-
-
-        const literasiLegacyRes =
-            await supabaseClient
-                .from("literasi")
-                .select("*");
-
-        /* Mata pelajaran bersifat tambahan. */
-        const mapelRes =
-            await supabaseClient
-                .from("mata_pelajaran")
-                .select("*");
-
-
-        daftarUjian =
+        const semuaUjian =
             ujianRes.data || [];
 
 
-        daftarSoal =
+        const semuaSoal =
             soalRes.data || [];
 
 
-        daftarLiterasiSoal =
-            literasiSoalRes.error
-                ? []
-                : literasiSoalRes.data || [];
-
-
-        daftarLiterasiLegacy =
-            literasiLegacyRes.error
-                ? []
-                : literasiLegacyRes.data || [];
-
-        daftarMataPelajaran =
-            mapelRes.error
-                ? []
-                : mapelRes.data || [];
-
-
         /*
-         * FILTER HANYA UJIAN MILIK GURU LOGIN.
+         * =====================================================
+         * 1. CARI UJIAN YANG SECARA LANGSUNG DIMILIKI GURU
+         * =====================================================
          */
 
-        const ujianMilik =
-            filterUjianPemilik();
+        const ujianLangsung =
+            semuaUjian.filter(
+                ujian =>
+                    ujianMilikGuru(
+                        ujian
+                    )
+            );
 
 
-        /*
-         * ID UJIAN YANG BOLEH DIANALISIS.
-         */
-
-        const idUjianMilik =
+        const idUjianLangsung =
             new Set(
-                ujianMilik.map(
+                ujianLangsung.map(
                     x =>
                         String(x.id)
                 )
@@ -1876,19 +1904,98 @@ async function loadData(){
 
 
         /*
-         * SIMPAN HANYA UJIAN MILIK GURU.
+         * =====================================================
+         * 2. CARI SOAL YANG SECARA LANGSUNG DIMILIKI GURU
+         *
+         * Ini penting jika ujian memiliki masalah relasi
+         * guru_id / created_by tetapi record soal sendiri
+         * mempunyai identitas guru pembuat.
+         * =====================================================
          */
 
-        daftarUjian =
-            ujianMilik;
+        const soalLangsung =
+            semuaSoal.filter(
+                soal =>
+                    soalMilikGuruLangsung(
+                        soal
+                    )
+            );
 
 
         /*
-         * SIMPAN HANYA SOAL MILIK GURU.
+         * =====================================================
+         * 3. ID UJIAN DARI SOAL MILIK GURU
+         * =====================================================
          */
 
-        daftarSoal =
-            daftarSoal.filter(
+        const idUjianDariSoal =
+            new Set(
+                soalLangsung
+                    .map(
+                        soal =>
+                            soal.ujian_id
+                    )
+                    .filter(
+                        x =>
+                            x !== undefined &&
+                            x !== null &&
+                            String(x).trim() !== ""
+                    )
+                    .map(
+                        String
+                    )
+            );
+
+
+        /*
+         * =====================================================
+         * 4. GABUNGKAN ID UJIAN
+         * =====================================================
+         */
+
+        const idUjianMilik =
+            new Set([
+                ...idUjianLangsung,
+                ...idUjianDariSoal
+            ]);
+
+
+        /*
+         * =====================================================
+         * 5. UJIAN YANG BOLEH DITAMPILKAN
+         *
+         * Jika soal secara langsung terbukti milik guru,
+         * ujian terkait juga boleh ditampilkan walaupun
+         * field kepemilikan ujian tidak konsisten.
+         * =====================================================
+         */
+
+        daftarUjian =
+            semuaUjian.filter(
+                ujian =>
+                    idUjianMilik.has(
+                        String(
+                            ujian.id
+                        )
+                    )
+            );
+
+
+        /*
+         * =====================================================
+         * 6. SOAL YANG BOLEH DIANALISIS
+         *
+         * Metode A:
+         * Soal berada di ujian milik guru.
+         *
+         * Metode B:
+         * Soal sendiri memiliki kepemilikan langsung
+         * kepada guru login.
+         * =====================================================
+         */
+
+        const soalDariUjian =
+            semuaSoal.filter(
                 soal =>
                     idUjianMilik.has(
                         String(
@@ -1898,74 +2005,190 @@ async function loadData(){
             );
 
 
-        /* Maksimal 25 soal yang dianalisis. */
+        /*
+         * =====================================================
+         * 7. GABUNGKAN DAN HILANGKAN DUPLIKAT
+         * =====================================================
+         */
+
+        const gabunganSoal = [
+            ...soalDariUjian,
+            ...soalLangsung
+        ];
+
+
+        const mapSoal =
+            new Map();
+
+
+        gabunganSoal.forEach(
+            soal=>{
+
+                /*
+                 * Gunakan ID sebagai identitas utama.
+                 */
+
+                const key =
+                    soal.id
+                        ? String(soal.id)
+                        : [
+                            soal.ujian_id,
+                            soal.nomor
+                        ].join("|");
+
+
+                /*
+                 * Jika soal ditemukan melalui
+                 * kepemilikan langsung, record tersebut
+                 * tetap dipertahankan.
+                 */
+
+                if(
+                    !mapSoal.has(key)
+                ){
+
+                    mapSoal.set(
+                        key,
+                        soal
+                    );
+
+                }
+
+            }
+        );
+
+
+        /*
+         * =====================================================
+         * 8. SORTIR BERDASARKAN UJIAN DAN NOMOR
+         * =====================================================
+         */
+
         daftarSoal =
-            daftarSoal
-                .sort((a,b) => Number(a.nomor ?? 0) - Number(b.nomor ?? 0))
-                .slice(0,25);
+            [...mapSoal.values()]
+                .sort(
+                    (a,b)=>{
+
+                        const ujianA =
+                            String(
+                                a.ujian_id ?? ""
+                            );
+
+                        const ujianB =
+                            String(
+                                b.ujian_id ?? ""
+                            );
+
+
+                        if(
+                            ujianA !== ujianB
+                        ){
+
+                            return ujianA.localeCompare(
+                                ujianB
+                            );
+
+                        }
+
+
+                        return (
+                            Number(
+                                a.nomor ?? 0
+                            ) -
+                            Number(
+                                b.nomor ?? 0
+                            )
+                        );
+
+                    }
+                );
 
 
         /*
-         * LITERASI SOAL JUGA DIBATASI.
+         * =====================================================
+         * 9. MAKSIMAL 25 SOAL
+         *
+         * Slicing dilakukan SETELAH seluruh soal guru
+         * dikumpulkan dan diduplikasi dihilangkan.
+         * =====================================================
          */
 
-        daftarLiterasiSoal =
-            daftarLiterasiSoal.filter(
-                literasi =>
-                    idUjianMilik.has(
-                        String(
-                            literasi.ujian_id
-                        )
-                    )
+        daftarSoal =
+            daftarSoal.slice(
+                0,
+                25
             );
 
 
         /*
-         * LITERASI LEGACY.
+         * =====================================================
+         * DEBUG
+         * =====================================================
          */
 
-        daftarLiterasiLegacy =
-            daftarLiterasiLegacy.filter(
-                literasi =>
-                    literasi.ujian_id &&
-                    idUjianMilik.has(
-                        String(
-                            literasi.ujian_id
-                        )
-                    )
-            );
-
+        console.group(
+            "📊 DEBUG ANALISIS SOAL GURU"
+        );
 
         console.log(
             "Guru login:",
             guruLogin
         );
 
-
         console.log(
-            "Ujian milik guru:",
-            daftarUjian
+            "TOTAL SEMUA UJIAN:",
+            semuaUjian.length
         );
 
+        console.log(
+            "UJIAN MILIK GURU:",
+            daftarUjian.length
+        );
 
         console.log(
-            "Soal milik guru:",
-            daftarSoal
+            "TOTAL SEMUA SOAL:",
+            semuaSoal.length
         );
+
+        console.log(
+            "SOAL DARI UJIAN GURU:",
+            soalDariUjian.length
+        );
+
+        console.log(
+            "SOAL DENGAN KEPEMILIKAN LANGSUNG:",
+            soalLangsung.length
+        );
+
+        console.log(
+            "TOTAL SOAL UNIK GURU:",
+            mapSoal.size
+        );
+
+        console.log(
+            "TOTAL SOAL YANG DIANALISIS:",
+            daftarSoal.length
+        );
+
+        console.log(
+            "NOMOR SOAL:",
+            daftarSoal.map(
+                x =>
+                    x.nomor
+            )
+        );
+
+        console.groupEnd();
 
 
         /*
-         * TAMPILKAN INFORMASI JUMLAH UJIAN.
+         * =====================================================
+         * INFO DI UI
+         * =====================================================
          */
 
-        const info =
-            document.getElementById(
-                "filterUjian"
-            );
-
-
         if(
-            daftarUjian.length === 0
+            daftarSoal.length === 0
         ){
 
             questionList.innerHTML = `
@@ -1976,8 +2199,8 @@ async function loadData(){
 
                     <br><br>
 
-                    Sistem tidak menemukan ujian
-                    yang dibuat oleh guru yang sedang login.
+                    Sistem tidak menemukan soal
+                    yang terhubung dengan guru yang sedang login.
 
                     <br><br>
 
@@ -2001,7 +2224,7 @@ async function loadData(){
     }catch(error){
 
         console.error(
-            "ERROR:",
+            "ERROR LOAD DATA:",
             error
         );
 
@@ -2080,196 +2303,459 @@ function isiFilterUjian(){
 
 
 /* =========================================================
+BERSIHKAN HTML
+========================================================= */
+
+function bersihkanHTML(value){
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+
+    wrapper.innerHTML =
+        String(
+            value ?? ""
+        );
+
+
+    wrapper
+        .querySelectorAll(
+            "script,style,noscript"
+        )
+        .forEach(
+            el =>
+                el.remove()
+        );
+
+
+    return wrapper;
+
+}
+
+
+/* =========================================================
+TEKS AMAN
+========================================================= */
+
+function teksAman(value){
+
+    const wrapper =
+        bersihkanHTML(
+            value
+        );
+
+
+    return String(
+        wrapper.textContent ||
+        ""
+    )
+    .replace(/\u00a0/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+
+}
+
+
+/* =========================================================
+NORMALISASI TEKS
+========================================================= */
+
+function normalisasiTeks(value){
+
+    return String(
+        value ?? ""
+    )
+    .toLowerCase()
+    .replace(/\u00a0/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+
+}
+
+
+/* =========================================================
+LITERASI — HANYA DARI HTML SOAL.PERTANYAAN
+========================================================= */
+
+function analisisLiterasiHTML(soal){
+
+    const raw =
+        String(
+            soal?.pertanyaan ??
+            ""
+        );
+
+
+    if(!raw.trim()){
+
+        return {
+
+            isLiterasi:false,
+
+            judul:"",
+
+            html:"",
+
+            teks:""
+
+        };
+
+    }
+
+
+    const wrapper =
+        bersihkanHTML(
+            raw
+        );
+
+
+    const teks =
+        normalisasiTeks(
+            wrapper.textContent
+        );
+
+
+    /*
+     * =====================================================
+     * MARKER LITERASI/STIMULUS
+     * =====================================================
+     */
+
+    const markerLiterasi = [
+
+        /\bliterasi\b/i,
+        /\bstimulus\b/i,
+        /\bbacaan\b/i,
+        /\bwacana\b/i,
+
+        /\bteks berikut\b/i,
+        /\bteks di bawah\b/i,
+        /\bteks tersebut\b/i,
+
+        /\bperhatikan teks\b/i,
+        /\bperhatikan bacaan\b/i,
+        /\bperhatikan wacana\b/i,
+        /\bperhatikan informasi\b/i,
+
+        /\bbacalah teks\b/i,
+        /\bbacalah bacaan\b/i,
+        /\bbacalah wacana\b/i,
+
+        /\bberdasarkan teks\b/i,
+        /\bberdasarkan bacaan\b/i,
+        /\bberdasarkan wacana\b/i,
+        /\bberdasarkan informasi\b/i,
+
+        /\bmenurut teks\b/i,
+        /\bmenurut bacaan\b/i,
+        /\bmenurut wacana\b/i,
+
+        /\bread the text\b/i,
+        /\bread the following text\b/i,
+        /\bread the passage\b/i,
+        /\bbased on the text\b/i,
+        /\baccording to the text\b/i,
+        /\bobserve the following\b/i,
+        /\blook at the following\b/i
+
+    ];
+
+
+    const adaMarker =
+        markerLiterasi.some(
+            pattern =>
+                pattern.test(
+                    teks
+                )
+        );
+
+
+    /*
+     * =====================================================
+     * CARI CONTAINER HTML YANG SECARA EKSPLISIT
+     * MENGANDUNG KATA STIMULUS/LITERASI/BACAAN/WACANA
+     * PADA ID ATAU CLASS.
+     * =====================================================
+     */
+
+    const kandidatContainer =
+        wrapper.querySelectorAll(
+            '[id*="stimulus" i], [class*="stimulus" i], ' +
+            '[id*="literasi" i], [class*="literasi" i], ' +
+            '[id*="bacaan" i], [class*="bacaan" i], ' +
+            '[id*="wacana" i], [class*="wacana" i]'
+        );
+
+
+    let stimulusHTML = "";
+
+
+    if(
+        kandidatContainer.length
+    ){
+
+        const bagian = [];
+
+
+        kandidatContainer.forEach(
+            el=>{
+
+                const html =
+                    el.outerHTML;
+
+
+                if(
+                    html &&
+                    !bagian.includes(html)
+                ){
+
+                    bagian.push(
+                        html
+                    );
+
+                }
+
+            }
+        );
+
+
+        stimulusHTML =
+            bagian.join("");
+
+    }
+
+
+    /*
+     * =====================================================
+     * JIKA TIDAK ADA CONTAINER KHUSUS,
+     * TENTUKAN LITERASI BERDASARKAN STRUKTUR HTML
+     * DAN MARKER DI DALAM PERTANYAAN.
+     * =====================================================
+     */
+
+    const jumlahParagraph =
+        wrapper.querySelectorAll(
+            "p,div,section,article,blockquote"
+        ).length;
+
+
+    const adaTabel =
+        wrapper.querySelector(
+            "table"
+        ) !== null;
+
+
+    const adaGambar =
+        wrapper.querySelector(
+            "img"
+        ) !== null;
+
+
+    /*
+     * Struktur panjang + marker lebih kuat.
+     */
+
+    const strukturLiterasi =
+        adaMarker &&
+        (
+            jumlahParagraph >= 2 ||
+            adaTabel ||
+            adaGambar
+        );
+
+
+    const isLiterasi =
+        Boolean(
+            kandidatContainer.length ||
+            strukturLiterasi
+        );
+
+
+    /*
+     * =====================================================
+     * EKSTRAK STIMULUS DARI HTML
+     *
+     * Hanya untuk tampilan.
+     * Tidak menggunakan tabel database literasi.
+     * =====================================================
+     */
+
+    if(
+        isLiterasi &&
+        !stimulusHTML
+    ){
+
+        const clone =
+            wrapper.cloneNode(
+                true
+            );
+
+
+        /*
+         * Buang bagian yang jelas merupakan
+         * instruksi pertanyaan jika ada.
+         */
+
+        const semuaNode =
+            clone.querySelectorAll(
+                "p,div,section,article,blockquote"
+            );
+
+
+        const bagianStimulus = [];
+
+
+        semuaNode.forEach(
+            el=>{
+
+                const t =
+                    normalisasiTeks(
+                        el.textContent
+                    );
+
+
+                if(!t){
+                    return;
+                }
+
+
+                const apakahMarker =
+                    markerLiterasi.some(
+                        pattern =>
+                            pattern.test(
+                                t
+                            )
+                    );
+
+
+                if(
+                    apakahMarker
+                ){
+
+                    bagianStimulus.push(
+                        el.outerHTML
+                    );
+
+                }
+
+            }
+        );
+
+
+        if(
+            bagianStimulus.length
+        ){
+
+            stimulusHTML =
+                [...new Set(
+                    bagianStimulus
+                )]
+                .join("");
+
+        }
+
+    }
+
+
+    /*
+     * Jika tetap belum menemukan bagian khusus,
+     * gunakan HTML pertanyaan sebagai sumber tampilan
+     * hanya bila ada marker literasi yang jelas.
+     */
+
+    if(
+        isLiterasi &&
+        !stimulusHTML &&
+        adaMarker
+    ){
+
+        stimulusHTML =
+            raw;
+
+    }
+
+
+    return {
+
+        isLiterasi,
+
+        judul:
+            isLiterasi
+                ? "Literasi / Stimulus"
+                : "",
+
+        html:
+            stimulusHTML,
+
+        teks:
+            stimulusHTML
+                ? teksAman(
+                    stimulusHTML
+                )
+                : ""
+
+    };
+
+}
+
+
+/* =========================================================
 CARI LITERASI
 ========================================================= */
 
 function cariLiterasi(soal){
 
     /*
-     * 1. LITERASI_ID
+     * PENTING:
+     *
+     * Tidak ada lagi:
+     * - literasi_id
+     * - literasi_soal
+     * - literasi legacy
+     * - nomor_mulai
+     * - nomor_selesai
+     *
+     * Literasi hanya berasal dari HTML
+     * pada soal.pertanyaan.
      */
 
-    if(soal.literasi_id){
-
-        const found =
-            daftarLiterasiSoal.find(
-                x =>
-                    String(x.id) ===
-                    String(soal.literasi_id)
-            );
-
-
-        if(found){
-
-            return {
-
-                isLiterasi:true,
-
-                data:found
-
-            };
-
-        }
-
-    }
-
-
-    /*
-     * 2. RANGE NOMOR
-     */
-
-    const nomor =
-        Number(
-            soal.nomor
+    const hasil =
+        analisisLiterasiHTML(
+            soal
         );
-
-
-    if(
-        Number.isFinite(nomor)
-    ){
-
-        const found =
-            daftarLiterasiSoal.find(
-                x=>{
-
-                    if(
-                        String(x.ujian_id) !==
-                        String(soal.ujian_id)
-                    ){
-
-                        return false;
-
-                    }
-
-
-                    const mulai =
-                        Number(
-                            x.nomor_mulai
-                        );
-
-
-                    const selesai =
-                        Number(
-                            x.nomor_selesai
-                        );
-
-
-                    if(
-                        !Number.isFinite(mulai) ||
-                        !Number.isFinite(selesai)
-                    ){
-
-                        return false;
-
-                    }
-
-
-                    return (
-                        nomor >= mulai &&
-                        nomor <= selesai
-                    );
-
-                }
-            );
-
-
-        if(found){
-
-            return {
-
-                isLiterasi:true,
-
-                data:found
-
-            };
-
-        }
-
-    }
-
-
-    /*
-     * 3. LEGACY LITERASI
-     */
-
-    if(
-        Number.isFinite(nomor)
-    ){
-
-        const foundLegacy =
-            daftarLiterasiLegacy.find(
-                x=>{
-
-                    if(
-                        !x.ujian_id
-                    ){
-
-                        return false;
-
-                    }
-
-
-                    if(
-                        String(x.ujian_id) !==
-                        String(soal.ujian_id)
-                    ){
-
-                        return false;
-
-                    }
-
-
-                    const mulai =
-                        Number(
-                            x.nomor_mulai
-                        );
-
-
-                    const selesai =
-                        Number(
-                            x.nomor_selesai
-                        );
-
-
-                    if(
-                        !Number.isFinite(mulai) ||
-                        !Number.isFinite(selesai)
-                    ){
-
-                        return false;
-
-                    }
-
-
-                    return (
-                        nomor >= mulai &&
-                        nomor <= selesai
-                    );
-
-                }
-            );
-
-
-        if(foundLegacy){
-
-            return {
-
-                isLiterasi:true,
-
-                data:foundLegacy
-
-            };
-
-        }
-
-    }
 
 
     return {
 
-        isLiterasi:false,
+        isLiterasi:
+            hasil.isLiterasi,
 
-        data:null
+        data:
+            hasil.isLiterasi
+                ? {
+
+                    judul:
+                        hasil.judul,
+
+                    isi_literasi:
+                        hasil.html,
+
+                    isi:
+                        hasil.html,
+
+                    stimulus:
+                        hasil.html
+
+                }
+                : null,
+
+        html:
+            hasil.html,
+
+        teks:
+            hasil.teks
 
     };
 
@@ -2277,698 +2763,1322 @@ function cariLiterasi(soal){
 
 
 /* =========================================================
-MESIN ANALISIS SOAL — KKO / C1-C6 / SOAL + OPSI A-D
+AMBIL STIMULUS
 ========================================================= */
-
-function teksAman(value){
-    return String(value ?? "")
-        .replace(/<[^>]*>/g," ")
-        .replace(/&nbsp;/gi," ")
-        .replace(/\s+/g," ")
-        .trim();
-}
 
 function ambilStimulus(soal){
-    let stimulus = "";
 
-    try{
-        const lit = cariLiterasi(soal);
-        if(lit && lit.isLiterasi && lit.data){
-            const d = lit.data;
-            stimulus = teksAman(
-                d.isi_literasi ??
-                d.isi ??
-                d.stimulus ??
-                d.teks ??
-                d.narasi ??
-                d.content ??
-                ""
-            );
-        }
-    }catch(e){
-        console.warn("Stimulus literasi tidak dapat dibaca:",e);
+    const literasi =
+        cariLiterasi(
+            soal
+        );
+
+
+    if(
+        !literasi.isLiterasi
+    ){
+
+        return "";
+
     }
 
-    return stimulus;
+
+    return
+        literasi.teks ||
+        "";
+
 }
+
+
+/* =========================================================
+AMBIL PILIHAN A-D
+========================================================= */
 
 function ambilPilihan(soal){
+
     const hasil = [];
-    const tambah = (v,label)=>{
-        const t = teksAman(v);
-        if(t) hasil.push({label,text:t});
-    };
+
+
+    const tambah =
+        (v,label)=>{
+
+            const t =
+                teksAman(
+                    v
+                );
+
+
+            if(t){
+
+                hasil.push({
+                    label,
+                    text:t
+                });
+
+            }
+
+        };
+
 
     const kandidat = [
-        ["A", soal.pilihan_a], ["B", soal.pilihan_b],
-        ["C", soal.pilihan_c], ["D", soal.pilihan_d],
-        ["A", soal.opsi_a], ["B", soal.opsi_b],
-        ["C", soal.opsi_c], ["D", soal.opsi_d],
-        ["A", soal.option_a], ["B", soal.option_b],
-        ["C", soal.option_c], ["D", soal.option_d],
-        ["A", soal.a], ["B", soal.b],
-        ["C", soal.c], ["D", soal.d]
+
+        ["A",soal.pilihan_a],
+        ["B",soal.pilihan_b],
+        ["C",soal.pilihan_c],
+        ["D",soal.pilihan_d],
+
+        ["A",soal.opsi_a],
+        ["B",soal.opsi_b],
+        ["C",soal.opsi_c],
+        ["D",soal.opsi_d],
+
+        ["A",soal.option_a],
+        ["B",soal.option_b],
+        ["C",soal.option_c],
+        ["D",soal.option_d],
+
+        ["A",soal.a],
+        ["B",soal.b],
+        ["C",soal.c],
+        ["D",soal.d]
+
     ];
 
-    kandidat.forEach(([label,v])=>tambah(v,label));
 
-    const raw = soal.pilihan ?? soal.opsi ?? soal.options;
+    kandidat.forEach(
+        ([label,v]) =>
+            tambah(
+                v,
+                label
+            )
+    );
+
+
+    const raw =
+        soal.pilihan ??
+        soal.opsi ??
+        soal.options;
+
+
     if(raw){
+
         try{
-            const obj = typeof raw === "string" ? JSON.parse(raw) : raw;
-            if(Array.isArray(obj)){
-                obj.slice(0,4).forEach((v,i)=>tambah(v,String.fromCharCode(65+i)));
-            }else if(obj && typeof obj === "object"){
-                ["A","B","C","D"].forEach(k=>{
-                    const v = obj[k] ?? obj[k.toLowerCase()];
-                    if(v !== undefined) tambah(v,k);
-                });
+
+            const obj =
+                typeof raw === "string"
+                    ? JSON.parse(raw)
+                    : raw;
+
+
+            if(
+                Array.isArray(obj)
+            ){
+
+                obj
+                    .slice(0,4)
+                    .forEach(
+                        (v,i)=>
+                            tambah(
+                                v,
+                                String.fromCharCode(
+                                    65+i
+                                )
+                            )
+                    );
+
+            }else if(
+                obj &&
+                typeof obj === "object"
+            ){
+
+                ["A","B","C","D"]
+                    .forEach(
+                        k=>{
+
+                            const v =
+                                obj[k] ??
+                                obj[
+                                    k.toLowerCase()
+                                ];
+
+
+                            if(
+                                v !== undefined
+                            ){
+
+                                tambah(
+                                    v,
+                                    k
+                                );
+
+                            }
+
+                        }
+                    );
+
             }
+
         }catch(e){
-            /* Bukan JSON — abaikan. */
+
+            /*
+             * Bukan JSON.
+             */
+
         }
+
     }
+
 
     const unik = [];
-    const seen = new Set();
-    hasil.forEach(x=>{
-        const key = x.label + "|" + x.text;
-        if(!seen.has(key) && unik.length < 4){
-            seen.add(key);
-            unik.push(x);
+
+    const seen =
+        new Set();
+
+
+    hasil.forEach(
+        x=>{
+
+            const key =
+                x.label +
+                "|" +
+                x.text;
+
+
+            if(
+                !seen.has(key) &&
+                unik.length < 4
+            ){
+
+                seen.add(
+                    key
+                );
+
+                unik.push(
+                    x
+                );
+
+            }
+
         }
-    });
+    );
+
+
     return unik;
+
 }
+
+
+/* =========================================================
+TEKS ANALISIS
+========================================================= */
 
 function teksAnalisis(soal){
-    const pertanyaan = teksAman(soal.pertanyaan);
-    const stimulus = ambilStimulus(soal);
+
+    const pertanyaan =
+        teksAman(
+            soal.pertanyaan
+        );
+
+
+    const stimulus =
+        ambilStimulus(
+            soal
+        );
+
+
     return {
+
         pertanyaan,
+
         stimulus,
-        tugas: pertanyaan.toLowerCase(),
-        gabungan: (stimulus + " " + pertanyaan).toLowerCase()
+
+        tugas:
+            pertanyaan.toLowerCase(),
+
+        gabungan:
+            (
+                stimulus +
+                " " +
+                pertanyaan
+            ).toLowerCase()
+
     };
+
 }
+
+
+/* =========================================================
+COCOK
+========================================================= */
 
 function cocok(text,pola){
-    return pola.some(p=>p.test(text));
+
+    return pola.some(
+        p =>
+            p.test(
+                text
+            )
+    );
+
 }
 
+
 /* =========================================================
-KKO C6 — MENCIPTA
+KKO C6
 ========================================================= */
+
 function deteksiC6(text){
-    return cocok(text,[
-        /\brancang(?:lah)?\b/i,
-        /\bmerancang\b/i,
-        /\bdesainkan\b/i,
-        /\bkembangkan(?:lah)?\b/i,
-        /\bciptakan(?:lah)?\b/i,
-        /\bprototipe\b/i,
-        /\bmodelkan\b/i,
-        /\bsusunlah\b.*\bsolusi\b/i,
-        /\bsusunlah\b.*\brencana\b/i,
-        /\bbuatlah\b.*\bsolusi\b/i,
-        /\bbuatlah\b.*\brancangan\b/i,
-        /\bmembuat\b.*\bproduk\b/i,
-        /\bmembuat\b.*\bsolusi\b/i,
-        /\bmenghasilkan\b.*\bproduk\b/i,
-        /\bmenghasilkan\b.*\brancangan\b/i
-    ]);
+
+    return cocok(
+        text,
+        [
+
+            /\brancang(?:lah)?\b/i,
+            /\bmerancang\b/i,
+            /\bdesainkan\b/i,
+            /\bkembangkan(?:lah)?\b/i,
+            /\bciptakan(?:lah)?\b/i,
+            /\bprototipe\b/i,
+            /\bmodelkan\b/i,
+
+            /\bsusunlah\b.*\bsolusi\b/i,
+            /\bsusunlah\b.*\brencana\b/i,
+
+            /\bbuatlah\b.*\bsolusi\b/i,
+            /\bbuatlah\b.*\brancangan\b/i,
+            /\bbuatlah\b.*\bdesain\b/i,
+            /\bbuatlah\b.*\bmodel\b/i,
+
+            /\bmembuat\b.*\bproduk\b/i,
+            /\bmembuat\b.*\bsolusi\b/i,
+            /\bmenghasilkan\b.*\bproduk\b/i,
+            /\bmenghasilkan\b.*\brancangan\b/i,
+            /\bmenghasilkan\b.*\bsolusi\b/i
+
+        ]
+    );
+
 }
 
+
 /* =========================================================
-KKO C5 — MENGEVALUASI
+KKO C5
 ========================================================= */
+
 function deteksiC5(text){
-    return cocok(text,[
-        /\bevaluasi(?:lah)?\b/i,
-        /\bmengevaluasi\b/i,
-        /\bnilai(?:lah)?\b.*\bberdasarkan\b/i,
-        /\bmenilai\b.*\bberdasarkan\b/i,
-        /\bkritisi(?:lah)?\b/i,
-        /\bkritikilah\b/i,
-        /\bsetujukah\b.*\bkarena\b/i,
-        /\bsetujukah\b.*\balasan\b/i,
-        /\btepatkah\b.*\balasan\b/i,
-        /\blayakkah\b.*\balasan\b/i,
-        /\bmanakah\b.*\bpaling efektif\b/i,
-        /\bmanakah\b.*\bpaling tepat\b.*\bkarena\b/i,
-        /\bmana(?:kah)?\b.*\bpaling tepat\b.*\bberdasarkan\b/i,
-        /\bkelebihan dan kekurangan\b/i,
-        /\bberikan justifikasi\b/i,
-        /\bberikan alasan\b.*\bpilihan\b/i,
-        /\bjelaskan alasan\b.*\bpilihan\b/i,
-        /\bbenar atau salah\b.*\balasan\b/i
-    ]);
+
+    return cocok(
+        text,
+        [
+
+            /\bevaluasi(?:lah)?\b/i,
+            /\bmengevaluasi\b/i,
+
+            /\bnilai(?:lah)?\b.*\bberdasarkan\b/i,
+            /\bmenilai\b.*\bberdasarkan\b/i,
+
+            /\bkritisi(?:lah)?\b/i,
+            /\bkritikilah\b/i,
+
+            /\bsetujukah\b.*\bkarena\b/i,
+            /\btepatkah\b.*\balasan\b/i,
+            /\blayakkah\b.*\balasan\b/i,
+
+            /\bmanakah\b.*\bpaling efektif\b/i,
+            /\bmanakah\b.*\bpaling tepat\b.*\bkarena\b/i,
+            /\bmana(?:kah)?\b.*\bpaling tepat\b.*\bberdasarkan\b/i,
+
+            /\bkelebihan dan kekurangan\b/i,
+            /\bberikan justifikasi\b/i,
+
+            /\bberikan alasan\b.*\bpilihan\b/i,
+            /\bjelaskan alasan\b.*\bpilihan\b/i,
+
+            /\bbenar atau salah\b.*\balasan\b/i
+
+        ]
+    );
+
 }
 
+
 /* =========================================================
-KKO C4 — MENGANALISIS
+KKO C4
 ========================================================= */
+
 function deteksiC4(text){
-    return cocok(text,[
-        /\banalisis(?:lah)?\b/i,
-        /\bmenganalisis\b/i,
-        /\bbandingkan\b/i,
-        /\bmembandingkan\b/i,
-        /\bperbandingan\b.*\bantara\b/i,
-        /\bhubungkan\b/i,
-        /\bmenghubungkan\b/i,
-        /\bidentifikasi\b.*\bkesalahan\b/i,
-        /\bkesalahan\b.*\bterjadi\b/i,
-        /\btentukan\b.*\bhubungan\b/i,
-        /\bsebab\s+dan\s+akibat\b/i,
-        /\bhubungan\s+antara\b/i,
-        /\bmengapa\b.*\bjika\b/i,
-        /\bmengapa\b.*\bsehingga\b/i,
-        /\bapa akibatnya\b/i,
-        /\bapa dampaknya\b/i,
-        /\bkemungkinan yang terjadi\b/i,
-        /\bprediksi(?:kan)?\b/i,
-        /\bsimpulkan\b.*\bberdasarkan\b/i,
-        /\btemukan\b.*\bpola\b/i,
-        /\bmanakah\b.*\bberdasarkan informasi\b/i,
-        /\bberdasarkan data\b/i,
-        /\bberdasarkan tabel\b/i,
-        /\bberdasarkan grafik\b/i
-    ]);
+
+    return cocok(
+        text,
+        [
+
+            /\banalisis(?:lah)?\b/i,
+            /\bmenganalisis\b/i,
+
+            /\bbandingkan\b/i,
+            /\bmembandingkan\b/i,
+            /\bperbandingan\b.*\bantara\b/i,
+
+            /\bhubungkan\b/i,
+            /\bmenghubungkan\b/i,
+
+            /\bidentifikasi\b.*\bkesalahan\b/i,
+            /\bkesalahan\b.*\bterjadi\b/i,
+
+            /\btentukan\b.*\bhubungan\b/i,
+
+            /\bsebab\s+dan\s+akibat\b/i,
+            /\bhubungan\s+antara\b/i,
+
+            /\bmengapa\b.*\bjika\b/i,
+            /\bmengapa\b.*\bsehingga\b/i,
+
+            /\bapa akibatnya\b/i,
+            /\bapa dampaknya\b/i,
+
+            /\bkemungkinan yang terjadi\b/i,
+            /\bprediksi(?:kan)?\b/i,
+
+            /\bsimpulkan\b.*\bberdasarkan\b/i,
+
+            /\btemukan\b.*\bpola\b/i,
+
+            /\bberdasarkan data\b/i,
+            /\bberdasarkan tabel\b/i,
+            /\bberdasarkan grafik\b/i,
+            /\bberdasarkan informasi\b/i
+
+        ]
+    );
+
 }
 
+
 /* =========================================================
-KKO C3 — MENERAPKAN
+KKO C3
 ========================================================= */
+
 function deteksiC3(text){
-    return cocok(text,[
-        /\bhitung(?:lah)?\b/i,
-        /\bgunakan\b.*\brumus\b/i,
-        /\bgunakan\b.*\bkonsep\b/i,
-        /\bterapkan\b/i,
-        /\bmenerapkan\b/i,
-        /\btentukan\b.*\bdengan rumus\b/i,
-        /\bgunakan\b.*\bprinsip\b/i,
-        /\bgunakan\b.*\bprosedur\b/i,
-        /\bberapakah\b.*\bjika\b/i,
-        /\bhitung\b.*\bpersentase\b/i
-    ]);
+
+    return cocok(
+        text,
+        [
+
+            /\bhitung(?:lah)?\b/i,
+
+            /\bgunakan\b.*\brumus\b/i,
+            /\bgunakan\b.*\bkonsep\b/i,
+            /\bgunakan\b.*\bprinsip\b/i,
+            /\bgunakan\b.*\bprosedur\b/i,
+
+            /\bterapkan\b/i,
+            /\bmenerapkan\b/i,
+
+            /\btentukan\b.*\bdengan rumus\b/i,
+
+            /\bberapakah\b.*\bjika\b/i,
+
+            /\bhitung\b.*\bpersentase\b/i
+
+        ]
+    );
+
 }
 
+
 /* =========================================================
-KKO C2 — MEMAHAMI
+KKO C2
 ========================================================= */
+
 function deteksiC2(text){
-    return cocok(text,[
-        /\bjelaskan(?:lah)?\b/i,
-        /\bmenjelaskan\b/i,
-        /\bmengapa\b/i,
-        /\buraikan(?:lah)?\b/i,
-        /\bmenguraikan\b/i,
-        /\bmakna\b/i,
-        /\bmaksud\b/i,
-        /\bperbedaan\b/i,
-        /\bpersamaan\b/i,
-        /\bcontoh\b/i,
-        /\binterpretasikan\b/i,
-        /\bartikan\b/i
-    ]);
+
+    return cocok(
+        text,
+        [
+
+            /\bjelaskan(?:lah)?\b/i,
+            /\bmenjelaskan\b/i,
+
+            /\bmengapa\b/i,
+
+            /\buraikan(?:lah)?\b/i,
+            /\bmenguraikan\b/i,
+
+            /\bmakna\b/i,
+            /\bmaksud\b/i,
+
+            /\bperbedaan\b/i,
+            /\bpersamaan\b/i,
+
+            /\bcontoh\b/i,
+
+            /\binterpretasikan\b/i,
+            /\bartikan\b/i
+
+        ]
+    );
+
 }
 
+
 /* =========================================================
-KKO C1 — MENGINGAT
+KKO C1
 ========================================================= */
+
 function deteksiC1(text){
-    return cocok(text,[
-        /\bsebutkan(?:lah)?\b/i,
-        /\bapa nama\b/i,
-        /\bsiapa\b/i,
-        /\bkapan\b/i,
-        /\bdi mana\b/i,
-        /\bdimana\b/i,
-        /\bdefinisi\b/i,
-        /\bpengertian\b/i,
-        /\bnama\b/i,
-        /\bjenis\b/i,
-        /\bistilah\b/i,
-        /\btermasuk\b/i
-    ]);
+
+    return cocok(
+        text,
+        [
+
+            /\bsebutkan(?:lah)?\b/i,
+
+            /\bapa nama\b/i,
+            /\bsiapa\b/i,
+            /\bkapan\b/i,
+
+            /\bdi mana\b/i,
+            /\bdimana\b/i,
+
+            /\bdefinisi\b/i,
+            /\bpengertian\b/i,
+
+            /\bnama\b/i,
+            /\bjenis\b/i,
+            /\bistilah\b/i,
+
+            /\btermasuk\b/i
+
+        ]
+    );
+
 }
+
+
+/* =========================================================
+SKOR KKO
+========================================================= */
 
 function skorKKO(tugas){
-    const skor = {C1:0,C2:0,C3:0,C4:0,C5:0,C6:0};
 
-    if(deteksiC1(tugas)) skor.C1 += 6;
-    if(deteksiC2(tugas)) skor.C2 += 6;
-    if(deteksiC3(tugas)) skor.C3 += 9;
-    if(deteksiC4(tugas)) skor.C4 += 10;
-    if(deteksiC5(tugas)) skor.C5 += 12;
-    if(deteksiC6(tugas)) skor.C6 += 14;
+    const skor = {
 
-    /* KKO yang sangat spesifik mendapat bobot kuat. */
-    if(/\bsebutkan|\bsiapa\b|\bkapan\b|\bapa nama\b|\bdefinisi\b|\bpengertian\b/i.test(tugas)) skor.C1 += 12;
-    if(/\bjelaskan|\buraikan|\bmakna|\bmaksud\b|\binterpretasikan\b/i.test(tugas)) skor.C2 += 12;
-    if(/\bhitung|\bterapkan|\bmenerapkan|\bgunakan\s+(rumus|konsep|prinsip|prosedur)/i.test(tugas)) skor.C3 += 14;
-    if(/\banalisis|\bmenganalisis|\bbandingkan|\bmembandingkan|\bhubungkan|\bmenghubungkan/i.test(tugas)) skor.C4 += 16;
-    if(/\bevaluasi|\bmengevaluasi|\bmenilai|\bkritisi|\bjustifikasi/i.test(tugas)) skor.C5 += 18;
-    if(/\brancang|\bmerancang|\bdesainkan|\bkembangkan|\bciptakan|\bprototipe|\bmodelkan/i.test(tugas)) skor.C6 += 20;
+        C1:0,
+        C2:0,
+        C3:0,
+        C4:0,
+        C5:0,
+        C6:0
+
+    };
+
+
+    if(
+        deteksiC1(tugas)
+    ){
+
+        skor.C1 += 6;
+
+    }
+
+
+    if(
+        deteksiC2(tugas)
+    ){
+
+        skor.C2 += 6;
+
+    }
+
+
+    if(
+        deteksiC3(tugas)
+    ){
+
+        skor.C3 += 9;
+
+    }
+
+
+    if(
+        deteksiC4(tugas)
+    ){
+
+        skor.C4 += 10;
+
+    }
+
+
+    if(
+        deteksiC5(tugas)
+    ){
+
+        skor.C5 += 12;
+
+    }
+
+
+    if(
+        deteksiC6(tugas)
+    ){
+
+        skor.C6 += 14;
+
+    }
+
+
+    /*
+     * KKO sangat spesifik.
+     */
+
+    if(
+        /\bsebutkan|\bsiapa\b|\bkapan\b|\bapa nama\b|\bdefinisi\b|\bpengertian\b/i
+            .test(tugas)
+    ){
+
+        skor.C1 += 12;
+
+    }
+
+
+    if(
+        /\bjelaskan|\buraikan|\bmakna|\bmaksud|\binterpretasikan/i
+            .test(tugas)
+    ){
+
+        skor.C2 += 12;
+
+    }
+
+
+    if(
+        /\bhitung|\bterapkan|\bmenerapkan|\bgunakan\s+(rumus|konsep|prinsip|prosedur)/i
+            .test(tugas)
+    ){
+
+        skor.C3 += 14;
+
+    }
+
+
+    if(
+        /\banalisis|\bmenganalisis|\bbandingkan|\bmembandingkan|\bhubungkan|\bmenghubungkan/i
+            .test(tugas)
+    ){
+
+        skor.C4 += 16;
+
+    }
+
+
+    if(
+        /\bevaluasi|\bmengevaluasi|\bmenilai|\bkritisi|\bjustifikasi/i
+            .test(tugas)
+    ){
+
+        skor.C5 += 18;
+
+    }
+
+
+    if(
+        /\brancang|\bmerancang|\bdesainkan|\bkembangkan|\bciptakan|\bprototipe|\bmodelkan/i
+            .test(tugas)
+    ){
+
+        skor.C6 += 20;
+
+    }
+
 
     return skor;
+
 }
+
+
+/* =========================================================
+PILIH LEVEL
+========================================================= */
 
 function pilihLevelTerbaik(skor){
-    const urutan = ["C6","C5","C4","C3","C2","C1"];
-    let terbaik = "C2";
-    let nilai = -1;
 
-    urutan.forEach(level=>{
-        if(skor[level] > nilai){
-            nilai = skor[level];
-            terbaik = level;
-        }
-    });
+    const urutan = [
 
-    return terbaik;
-}
+        "C6",
+        "C5",
+        "C4",
+        "C3",
+        "C2",
+        "C1"
 
-/* =========================================================
-DETEKSI BAHASA INGGRIS
-========================================================= */
-function teksNilai(v){
-    if(v === undefined || v === null) return "";
-    if(typeof v === "string" || typeof v === "number") return String(v);
-    if(typeof v === "object"){
-        return String(
-            v.nama ||
-            v.nama_mapel ||
-            v.mata_pelajaran ||
-            v.name ||
-            v.title ||
-            v.judul ||
-            ""
-        );
-    }
-    return "";
-}
-
-function namaMataPelajaran(soal){
-    const ujian =
-        daftarUjian.find(
-            u => String(u.id) === String(soal.ujian_id)
-        ) || {};
-
-    const langsung = [
-        soal.mata_pelajaran,
-        soal.mapel,
-        soal.nama_mapel,
-        soal.subject,
-        soal.subject_name,
-        ujian.mata_pelajaran,
-        ujian.mapel,
-        ujian.nama_mapel,
-        ujian.subject,
-        ujian.subject_name,
-        ujian.mataPelajaran,
-        ujian.mataPelajaranNama
-    ]
-    .map(teksNilai)
-    .find(Boolean) || "";
-
-    if(langsung) return langsung;
-
-    const ids = [
-        soal.mata_pelajaran_id,
-        soal.mapel_id,
-        soal.subject_id,
-        ujian.mata_pelajaran_id,
-        ujian.mapel_id,
-        ujian.subject_id
-    ]
-    .filter(v => v !== undefined && v !== null)
-    .map(String);
-
-    const mapel =
-        daftarMataPelajaran.find(
-            x => ids.includes(String(x.id))
-        );
-
-    return mapel ? teksNilai(mapel) : "";
-}
-
-function isBahasaInggris(soal){
-    const mapel =
-        namaMataPelajaran(soal)
-            .toLowerCase()
-            .replace(/\s+/g," ")
-            .trim();
-
-    return /bahasa\s*inggris|english/.test(mapel);
-}
-
-/* KKO Bahasa Inggris dibuat khusus agar C1-C2 tidak terdorong
-   menjadi HOTS hanya karena soal menggunakan teks Bahasa Inggris. */
-function analisisKognitifBahasaInggris(soal){
-    const info = teksAnalisis(soal);
-    const text = info.gabungan.toLowerCase();
-
-    if(/\b(design|create|develop|compose|produce|construct|propose|plan|write)\b/i.test(text) ||
-       /\b(rancang|merancang|kembangkan|kembangkanlah|ciptakan|buatlah|susunlah)\b/i.test(text)){
-        return "C6";
-    }
-
-    if(/\b(evaluate|assess|judge|justify|critique|criticize|review)\b/i.test(text) ||
-       /\b(evaluasi|mengevaluasi|menilai|kritisi|justifikasi)\b/i.test(text) ||
-       /\b(do you agree|which is the most effective|which is the best|which is most appropriate)\b/i.test(text)){
-        return "C5";
-    }
-
-    if(/\b(analyze|analyse|infer|inferred|implied|implicit|conclude|conclusion|compare|contrast|relationship between|cause and effect|most likely|evidence|reasoning)\b/i.test(text) ||
-       /\b(analisis|menganalisis|bandingkan|membandingkan|hubungkan|hubungan antara|sebab dan akibat|simpulkan|kesimpulan|kemungkinan)\b/i.test(text) ||
-       /\b(what can be inferred|what can be concluded|what is implied|why does .* happen)\b/i.test(text)){
-        return "C4";
-    }
-
-    if(/\b(apply|use|complete|rewrite|change into|arrange|choose an appropriate response|use the expression)\b/i.test(text) ||
-       /\b(terapkan|menerapkan|gunakan|lengkapi|ubah menjadi|susun)\b/i.test(text)){
-        return "C3";
-    }
-
-    if(/\b(explain|explanation|main idea|specific information|according to the text|based on the text|what is the text about|what happened|how many|how old|why)\b/i.test(text) ||
-       /\b(jelaskan|menjelaskan|makna|maksud|ide pokok|informasi|menurut teks|berdasarkan teks|tentang apa|apa yang terjadi)\b/i.test(text)){
-        return "C2";
-    }
-
-    if(/\b(what is|who is|when|where|name|identify|definition|vocabulary|synonym|antonym|word meaning)\b/i.test(text) ||
-       /\b(sebutkan|siapa|kapan|di mana|nama|identifikasi|definisi|kosakata|sinonim|antonim)\b/i.test(text)){
-        return "C1";
-    }
-
-    return null;
-}
-
-function analisisKognitif(soal){
-    const info = teksAnalisis(soal);
-    const tugas = info.tugas;
-
-    /* =====================================================
-       ATURAN KHUSUS BAHASA INGGRIS SMP
-       C1-C2 = LOTS, C3 = MOTS, C4-C6 = HOTS
-       ===================================================== */
-    if(isBahasaInggris(soal)){
-        const levelInggris = analisisKognitifBahasaInggris(soal);
-
-        if(levelInggris){
-            const metaInggris = {
-                C1:["Mengingat","LOTS","Menuntut pengingatan fakta, kosakata, informasi, nama, atau definisi sederhana."],
-                C2:["Memahami","LOTS","Menuntut pemahaman makna, informasi tersurat, ide pokok, atau isi teks sederhana."],
-                C3:["Menerapkan","MOTS","Menuntut penerapan ungkapan, tata bahasa, kosakata, konsep, atau prosedur pada situasi soal."],
-                C4:["Menganalisis","HOTS","Menuntut analisis, perbandingan, hubungan, inferensi, kesimpulan, atau bukti dari informasi."],
-                C5:["Mengevaluasi","HOTS","Menuntut penilaian, pertimbangan, kritik, atau justifikasi terhadap pilihan/solusi."],
-                C6:["Mencipta","HOTS","Menuntut peserta didik menghasilkan teks, gagasan, rancangan, solusi, atau produk baru."]
-            };
-
-            return {
-                level:levelInggris,
-                nama:metaInggris[levelInggris][0],
-                kategori:metaInggris[levelInggris][1],
-                alasan:metaInggris[levelInggris][2] + " (aturan khusus Bahasa Inggris SMP).",
-                skorKKO:{C1:0,C2:0,C3:0,C4:0,C5:0,C6:0}
-            };
-        }
-    }
-
-    const skor = skorKKO(tugas);
-
-    /* Struktur tuntutan dapat mengangkat C3/C4 bila tidak ada KKO eksplisit. */
-    if(/\bjika\b.*\b(maka|sehingga|akibat|terjadi)\b/i.test(tugas)) skor.C4 += 8;
-    if(/\bdua\b|\bkedua\b|\bkeduanya\b|\bmasing-masing\b/i.test(info.gabungan) && /\bbanding|\bbeda|\bhubung|\bpilih|\btentukan/i.test(tugas)) skor.C4 += 6;
-    if(/\bkesalahan\b|\bbertentangan\b|\btidak sesuai\b|\bkontradiksi\b/i.test(tugas)) skor.C4 += 7;
-    if(/\bberdasarkan\b.*\bdata\b|\bberdasarkan\b.*\binformasi\b|\bberdasarkan\b.*\btabel\b|\bberdasarkan\b.*\bgrafik\b/i.test(tugas)) skor.C4 += 5;
-
-    /* "membuat" saja tidak cukup untuk C6. Harus ada produk/solusi/rancangan. */
-    if(/\bmembuat\b/i.test(tugas) && /\b(produk|solusi|rancangan|desain|model|prototipe|strategi|rencana)\b/i.test(tugas)){
-        skor.C6 += 12;
-    }
-
-    /* "manakah yang paling tepat" belum otomatis C5. */
-    if(/\bmanakah\b.*\bpaling tepat\b/i.test(tugas) && /\bkarena\b|\bberdasarkan kriteria\b|\bberdasarkan alasan\b|\bjustifikasi\b/i.test(tugas)){
-        skor.C5 += 10;
-    }
-
-    /* Bila tidak ada KKO yang kuat, gunakan bentuk tuntutan sebagai fallback. */
-    const level = pilihLevelTerbaik(skor);
-
-    const meta = {
-        C1:["Mengingat","LOTS","KKO menuntut pengingatan fakta, nama, istilah, definisi, atau informasi."],
-        C2:["Memahami","LOTS","KKO menuntut penjelasan, interpretasi, makna, atau pemahaman hubungan sederhana."],
-        C3:["Menerapkan","MOTS","KKO menuntut penerapan konsep, prinsip, rumus, atau prosedur pada situasi soal."],
-        C4:["Menganalisis","HOTS","KKO dan struktur tugas menuntut penguraian informasi, hubungan, sebab-akibat, perbandingan, pola, atau inferensi."],
-        C5:["Mengevaluasi","HOTS","KKO menuntut penilaian terhadap pilihan/solusi berdasarkan pertimbangan, kriteria, alasan, atau justifikasi."],
-        C6:["Mencipta","HOTS","KKO menuntut menghasilkan rancangan, produk, model, strategi, solusi, atau gagasan baru sesuai tujuan." ]
-    };
-
-    return {
-        level,
-        nama:meta[level][0],
-        kategori:meta[level][1],
-        alasan:meta[level][2],
-        skorKKO:skor
-    };
-}
-
-/* =========================================================
-ANALISIS KOMPLEKSITAS OPSI A-D
-========================================================= */
-function analisisPilihanJawaban(soal){
-    const opsi = ambilPilihan(soal);
-    if(!opsi.length){
-        return {
-            tersedia:false,
-            skor:0,
-            alasan:"Opsi A–D tidak terbaca dari kolom data soal; kesukaran dinilai dari tuntutan soal saja."
-        };
-    }
-
-    let skor = 0;
-    const alasan = [];
-    const teks = opsi.map(x=>x.text);
-    const rata = teks.reduce((a,b)=>a+b.length,0) / teks.length;
-    const min = Math.min(...teks.map(x=>x.length));
-    const max = Math.max(...teks.map(x=>x.length));
-
-    if(opsi.length >= 4){
-        skor += 3;
-        alasan.push("empat opsi terbaca");
-    }else if(opsi.length === 3){
-        skor += 2;
-        alasan.push("tiga opsi terbaca");
-    }
-
-    if(rata >= 90) skor += 4;
-    else if(rata >= 55) skor += 2;
-
-    if(max-min >= 100){
-        skor += 1;
-        alasan.push("panjang opsi cukup bervariasi");
-    }
-
-    const polaPenalaran = /\bkarena\b|\bsehingga\b|\bagar\b|\bsebaiknya\b|\bpaling tepat\b|\bpaling efektif\b|\bberdasarkan\b|\bjika\b|\bdampak\b|\bakibat\b/i;
-    const jumlahPenalaran = teks.filter(t=>polaPenalaran.test(t)).length;
-    if(jumlahPenalaran >= 3){
-        skor += 5;
-        alasan.push("sebagian besar opsi memuat alasan/kondisi atau konsekuensi");
-    }else if(jumlahPenalaran >= 2){
-        skor += 3;
-        alasan.push("beberapa opsi memuat alasan/kondisi");
-    }
-
-    /* Opsi yang mirip membuat pembeda jawaban lebih menuntut. */
-    function kataSet(t){
-        return new Set(t.toLowerCase().split(/[^a-z0-9À-ÿ]+/).filter(w=>w.length>3));
-    }
-    let kemiripanTinggi = 0;
-    for(let i=0;i<teks.length;i++){
-        for(let j=i+1;j<teks.length;j++){
-            const a=kataSet(teks[i]), b=kataSet(teks[j]);
-            const inter=[...a].filter(x=>b.has(x)).length;
-            const union=new Set([...a,...b]).size || 1;
-            if(inter/union >= 0.45) kemiripanTinggi++;
-        }
-    }
-    if(kemiripanTinggi >= 2){
-        skor += 5;
-        alasan.push("beberapa pengecoh memiliki kemiripan makna/struktur");
-    }else if(kemiripanTinggi === 1){
-        skor += 2;
-        alasan.push("terdapat opsi yang cukup mirip");
-    }
-
-    return {
-        tersedia:true,
-        jumlah:opsi.length,
-        skor:Math.min(20,skor),
-        alasan:alasan.length ? alasan.join(", ") + "." : "Opsi tersedia dan relatif mudah dibedakan."
-    };
-}
-
-/* =========================================================
-KESUKARAN — TIDAK MENGGUNAKAN PANJANG TEKS SEBAGAI PENENTU
-========================================================= */
-function analisisKesukaran(soal){
-    const info = teksAnalisis(soal);
-    const tugas = info.tugas;
-    const gabungan = info.gabungan;
-    const kognitif = analisisKognitif(soal);
-    const opsi = analisisPilihanJawaban(soal);
-
-    /* =====================================================
-       ATURAN KHUSUS BAHASA INGGRIS SMP
-       C1-C2 = Mudah
-       C3-C5 = Sedang
-       C6    = Sukar
-
-       Panjang teks Bahasa Inggris TIDAK boleh otomatis
-       mengubah C4/C5 menjadi Sukar.
-       ===================================================== */
-    if(isBahasaInggris(soal)){
-        const skorInggris = {
-            C1:20,
-            C2:28,
-            C3:45,
-            C4:55,
-            C5:60,
-            C6:85
-        };
-
-        const tingkatInggris = {
-            C1:"Mudah",
-            C2:"Mudah",
-            C3:"Sedang",
-            C4:"Sedang",
-            C5:"Sedang",
-            C6:"Sukar"
-        };
-
-        const alasanInggris = {
-            C1:"Bahasa Inggris SMP: C1 dikategorikan LOTS dan Mudah",
-            C2:"Bahasa Inggris SMP: C2 dikategorikan LOTS dan Mudah",
-            C3:"Bahasa Inggris SMP: C3 dikategorikan MOTS dan Sedang",
-            C4:"Bahasa Inggris SMP: C4 dikategorikan HOTS tetapi tetap Sedang",
-            C5:"Bahasa Inggris SMP: C5 dikategorikan HOTS tetapi tetap Sedang",
-            C6:"Bahasa Inggris SMP: C6 dikategorikan HOTS dan Sukar"
-        };
-
-        return {
-            tingkat:tingkatInggris[kognitif.level] || "Sedang",
-            skor:skorInggris[kognitif.level] || 50,
-            alasan:alasanInggris[kognitif.level] || "Aturan tingkat kesukaran Bahasa Inggris SMP diterapkan."
-        };
-    }
-
-    /* Base berasal dari tuntutan kognitif, bukan jumlah kata. */
-    const base = {
-        C1:16,
-        C2:22,
-        C3:31,
-        C4:34,
-        C5:45,
-        C6:50
-    };
-
-    let skor = base[kognitif.level] ?? 22;
-    const alasan = [];
-
-    if(kognitif.level === "C1") alasan.push("tuntutan utama mengingat");
-    if(kognitif.level === "C2") alasan.push("tuntutan utama memahami");
-    if(kognitif.level === "C3") alasan.push("menerapkan konsep/prosedur");
-    if(kognitif.level === "C4") alasan.push("menganalisis hubungan atau informasi");
-    if(kognitif.level === "C5") alasan.push("menilai berdasarkan pertimbangan");
-    if(kognitif.level === "C6") alasan.push("menghasilkan rancangan/solusi/produk");
-
-    /* Beban penalaran dari isi soal. */
-    const aturan = [
-        [/\b(jika|apabila|seandainya)\b/i,6,"memuat kondisi atau skenario"],
-        [/\b(kemudian|selanjutnya|sebelum|setelah|tahap berikutnya)\b/i,4,"memuat urutan proses"],
-        [/\b(karena|sehingga|akibatnya|dampak|konsekuensi)\b/i,5,"memuat sebab-akibat"],
-        [/\b(namun|sedangkan|meskipun|walaupun|berbeda dengan)\b/i,5,"memuat kontras informasi"],
-        [/\b(dibandingkan|bandingkan|perbedaan|persamaan)\b/i,5,"memerlukan perbandingan"],
-        [/\b(kemungkinan|prediksi|diperkirakan|apa yang terjadi|apa akibatnya)\b/i,6,"memerlukan prediksi/inferensi"],
-        [/\b(dua|kedua|keduanya|masing-masing|beberapa)\b/i,5,"melibatkan lebih dari satu objek/kondisi"],
-        [/\b(bertentangan|kontradiksi|tidak sesuai|kesalahan|keliru)\b/i,7,"memerlukan pemeriksaan ketidaksesuaian/kesalahan"],
-        [/\b(data|tabel|grafik|diagram|informasi)\b/i,5,"menggunakan data/informasi untuk mengambil keputusan"],
-        [/\b(hitung|rumus|persentase|perbandingan)\b/i,5,"memerlukan pengolahan/perhitungan"],
-        [/\b(beberapa langkah|langkah-langkah|tahapan)\b/i,6,"memerlukan lebih dari satu langkah"],
-        [/\b(pilih|tentukan|putuskan)\b.*\bberdasarkan\b/i,5,"memerlukan keputusan berdasarkan informasi"],
-        [/\b(paling tepat|paling efektif|paling sesuai)\b/i,4,"opsi harus dibedakan berdasarkan kriteria"],
-        [/\b(alasan|justifikasi)\b/i,5,"memerlukan pertimbangan alasan" ]
     ];
 
-    const sudah = new Set();
-    aturan.forEach(([p,b,ket])=>{
-        if(p.test(gabungan) && !sudah.has(ket)){
-            skor += b;
-            alasan.push(ket);
-            sudah.add(ket);
+
+    let terbaik =
+        "C2";
+
+
+    let nilai =
+        -1;
+
+
+    urutan.forEach(
+        level=>{
+
+            if(
+                skor[level] > nilai
+            ){
+
+                nilai =
+                    skor[level];
+
+                terbaik =
+                    level;
+
+            }
+
         }
-    });
+    );
 
-    /* Struktur soal: lebih dari satu tugas nyata. */
-    const kataTugas = (tugas.match(/\b(tentukan|jelaskan|bandingkan|analisis|hitung|pilih|nilai|rancang|buat|buatlah|terapkan|identifikasi)\b/gi)||[]).length;
-    if(kataTugas >= 2){
-        skor += 5;
-        alasan.push("memuat lebih dari satu tuntutan tindakan");
+
+    return terbaik;
+
+}
+
+
+/* =========================================================
+ANALISIS KOGNITIF
+SEMUA MAPEL MENGGUNAKAN ATURAN YANG SAMA
+========================================================= */
+
+function analisisKognitif(soal){
+
+    const info =
+        teksAnalisis(
+            soal
+        );
+
+
+    const tugas =
+        info.tugas;
+
+
+    const gabungan =
+        info.gabungan;
+
+
+    const skor =
+        skorKKO(
+            tugas
+        );
+
+
+    /*
+     * Struktur tuntutan dapat memperkuat C3/C4.
+     */
+
+    if(
+        /\bjika\b.*\b(maka|sehingga|akibat|terjadi)\b/i
+            .test(tugas)
+    ){
+
+        skor.C4 += 8;
+
     }
 
-    /* Opsi A-D ikut menentukan kesukaran. */
-    if(opsi.tersedia){
-        skor += opsi.skor;
-        alasan.push("kompleksitas opsi A–D ikut diperhitungkan");
+
+    if(
+        /\bdua\b|\bkedua\b|\bkeduanya\b|\bmasing-masing\b/i
+            .test(gabungan) &&
+        /\bbanding|\bbeda|\bhubung|\bpilih|\btentukan/i
+            .test(tugas)
+    ){
+
+        skor.C4 += 6;
+
     }
 
-    /* Stimulus literasi yang benar-benar harus digunakan menambah sedikit beban,
-       tetapi panjang stimulus tidak dihitung sebagai kesukaran. */
-    if(info.stimulus && /\bberdasarkan\b|\bmenurut\b|\bdari informasi\b|\bberdasarkan bacaan\b/i.test(tugas)){
-        skor += 4;
-        alasan.push("jawaban perlu mengambil informasi dari stimulus");
+
+    if(
+        /\bkesalahan\b|\bbertentangan\b|\btidak sesuai\b|\bkontradiksi\b/i
+            .test(tugas)
+    ){
+
+        skor.C4 += 7;
+
     }
 
-    /* Panjang teks sengaja TIDAK digunakan. */
-    skor = Math.max(0,Math.min(100,Math.round(skor)));
 
-    let tingkat;
-    if(skor < 40) tingkat = "Mudah";
-    else if(skor < 65) tingkat = "Sedang";
-    else tingkat = "Sukar";
+    if(
+        /\bberdasarkan\b.*\bdata\b|
+         \bberdasarkan\b.*\binformasi\b|
+         \bberdasarkan\b.*\btabel\b|
+         \bberdasarkan\b.*\bgrafik\b/i
+            .test(tugas)
+    ){
+
+        skor.C4 += 5;
+
+    }
+
+
+    /*
+     * Membuat produk/solusi/rancangan = C6.
+     */
+
+    if(
+        /\bmembuat\b/i.test(tugas) &&
+        /\b(produk|solusi|rancangan|desain|model|prototipe|strategi|rencana)\b/i
+            .test(tugas)
+    ){
+
+        skor.C6 += 12;
+
+    }
+
+
+    /*
+     * Evaluasi berdasarkan kriteria/alasan.
+     */
+
+    if(
+        /\bmanakah\b.*\bpaling tepat\b/i
+            .test(tugas) &&
+        /\bkarena\b|\bberdasarkan kriteria\b|\bberdasarkan alasan\b|\bjustifikasi\b/i
+            .test(tugas)
+    ){
+
+        skor.C5 += 10;
+
+    }
+
+
+    /*
+     * Jika terdapat KKO eksplisit, level dipilih
+     * berdasarkan skor tertinggi.
+     */
+
+    let level =
+        pilihLevelTerbaik(
+            skor
+        );
+
+
+    /*
+     * Jika semua skor nol, gunakan fallback C2.
+     */
+
+    if(
+        Object.values(skor)
+            .every(
+                nilai =>
+                    nilai === 0
+            )
+    ){
+
+        level =
+            "C2";
+
+    }
+
+
+    const meta = {
+
+        C1:[
+            "Mengingat",
+            "LOTS",
+            "Menuntut pengingatan fakta, nama, istilah, definisi, atau informasi."
+        ],
+
+        C2:[
+            "Memahami",
+            "LOTS",
+            "Menuntut pemahaman makna, penjelasan, interpretasi, atau informasi."
+        ],
+
+        C3:[
+            "Menerapkan",
+            "MOTS",
+            "Menuntut penerapan konsep, prinsip, rumus, atau prosedur."
+        ],
+
+        C4:[
+            "Menganalisis",
+            "HOTS",
+            "Menuntut penguraian informasi, hubungan, sebab-akibat, perbandingan, pola, atau inferensi."
+        ],
+
+        C5:[
+            "Mengevaluasi",
+            "HOTS",
+            "Menuntut penilaian berdasarkan pertimbangan, kriteria, alasan, atau justifikasi."
+        ],
+
+        C6:[
+            "Mencipta",
+            "HOTS",
+            "Menuntut menghasilkan rancangan, produk, model, strategi, solusi, atau gagasan baru."
+        ]
+
+    };
+
 
     return {
-        tingkat,
-        skor,
-        alasan:alasan.length ? alasan.join(", ") + "." : "Tuntutan soal dan opsi relatif sederhana."
+
+        level,
+
+        nama:
+            meta[level][0],
+
+        kategori:
+            meta[level][1],
+
+        alasan:
+            meta[level][2],
+
+        skorKKO:
+            skor
+
     };
+
 }
+
+
+/* =========================================================
+ANALISIS OPSI A-D
+========================================================= */
+
+function analisisPilihanJawaban(soal){
+
+    const opsi =
+        ambilPilihan(
+            soal
+        );
+
+
+    if(
+        !opsi.length
+    ){
+
+        return {
+
+            tersedia:false,
+
+            skor:0,
+
+            alasan:
+                "Opsi A–D tidak terbaca dari kolom data soal."
+
+        };
+
+    }
+
+
+    let skor =
+        0;
+
+
+    const alasan =
+        [];
+
+
+    const teks =
+        opsi.map(
+            x =>
+                x.text
+        );
+
+
+    const rata =
+        teks.reduce(
+            (a,b)=>
+                a+b.length,
+            0
+        ) /
+        teks.length;
+
+
+    const min =
+        Math.min(
+            ...teks.map(
+                x =>
+                    x.length
+            )
+        );
+
+
+    const max =
+        Math.max(
+            ...teks.map(
+                x =>
+                    x.length
+            )
+        );
+
+
+    if(
+        opsi.length >= 4
+    ){
+
+        skor += 3;
+
+        alasan.push(
+            "empat opsi terbaca"
+        );
+
+    }else if(
+        opsi.length === 3
+    ){
+
+        skor += 2;
+
+        alasan.push(
+            "tiga opsi terbaca"
+        );
+
+    }
+
+
+    if(
+        rata >= 90
+    ){
+
+        skor += 4;
+
+    }else if(
+        rata >= 55
+    ){
+
+        skor += 2;
+
+    }
+
+
+    if(
+        max-min >= 100
+    ){
+
+        skor += 1;
+
+        alasan.push(
+            "panjang opsi cukup bervariasi"
+        );
+
+    }
+
+
+    const polaPenalaran =
+        /\bkarena\b|\bsehingga\b|\bagar\b|\bsebaiknya\b|\bpaling tepat\b|\bpaling efektif\b|\bberdasarkan\b|\bjika\b|\bdampak\b|\bakibat\b/i;
+
+
+    const jumlahPenalaran =
+        teks.filter(
+            t =>
+                polaPenalaran.test(t)
+        ).length;
+
+
+    if(
+        jumlahPenalaran >= 3
+    ){
+
+        skor += 5;
+
+        alasan.push(
+            "sebagian besar opsi memuat alasan atau konsekuensi"
+        );
+
+    }else if(
+        jumlahPenalaran >= 2
+    ){
+
+        skor += 3;
+
+        alasan.push(
+            "beberapa opsi memuat alasan atau kondisi"
+        );
+
+    }
+
+
+    function kataSet(t){
+
+        return new Set(
+            t
+                .toLowerCase()
+                .split(
+                    /[^a-z0-9À-ÿ]+/
+                )
+                .filter(
+                    w =>
+                        w.length > 3
+                )
+        );
+
+    }
+
+
+    let kemiripanTinggi =
+        0;
+
+
+    for(
+        let i=0;
+        i<teks.length;
+        i++
+    ){
+
+        for(
+            let j=i+1;
+            j<teks.length;
+            j++
+        ){
+
+            const a =
+                kataSet(
+                    teks[i]
+                );
+
+
+            const b =
+                kataSet(
+                    teks[j]
+                );
+
+
+            const inter =
+                [
+                    ...a
+                ]
+                .filter(
+                    x =>
+                        b.has(x)
+                )
+                .length;
+
+
+            const union =
+                new Set([
+                    ...a,
+                    ...b
+                ]).size || 1;
+
+
+            if(
+                inter /
+                union >=
+                0.45
+            ){
+
+                kemiripanTinggi++;
+
+            }
+
+        }
+
+    }
+
+
+    if(
+        kemiripanTinggi >= 2
+    ){
+
+        skor += 5;
+
+        alasan.push(
+            "beberapa pengecoh memiliki kemiripan struktur"
+        );
+
+    }else if(
+        kemiripanTinggi === 1
+    ){
+
+        skor += 2;
+
+        alasan.push(
+            "terdapat opsi yang cukup mirip"
+        );
+
+    }
+
+
+    return {
+
+        tersedia:true,
+
+        jumlah:
+            opsi.length,
+
+        skor:
+            Math.min(
+                20,
+                skor
+            ),
+
+        alasan:
+            alasan.length
+                ? alasan.join(", ") + "."
+                : "Opsi tersedia."
+
+    };
+
+}
+
+
+/* =========================================================
+KESUKARAN
+ATURAN FINAL SEMUA MAPEL
+========================================================= */
+
+function analisisKesukaran(soal){
+
+    const kognitif =
+        analisisKognitif(
+            soal
+        );
+
+
+    /*
+     * =====================================================
+     * ATURAN FINAL:
+     *
+     * C1-C2 = Mudah
+     * C3-C5 = Sedang
+     * C6    = Sukar
+     *
+     * Berlaku untuk SEMUA mata pelajaran.
+     * Tidak ada pengecualian Bahasa Inggris.
+     * =====================================================
+     */
+
+    const aturan = {
+
+        C1:{
+            tingkat:"Mudah",
+            skor:20,
+            alasan:"C1 berada pada level LOTS sehingga dikategorikan Mudah."
+        },
+
+        C2:{
+            tingkat:"Mudah",
+            skor:30,
+            alasan:"C2 berada pada level LOTS sehingga dikategorikan Mudah."
+        },
+
+        C3:{
+            tingkat:"Sedang",
+            skor:50,
+            alasan:"C3 berada pada level MOTS sehingga dikategorikan Sedang."
+        },
+
+        C4:{
+            tingkat:"Sedang",
+            skor:60,
+            alasan:"C4 berada pada level HOTS tetapi dikategorikan Sedang."
+        },
+
+        C5:{
+            tingkat:"Sedang",
+            skor:65,
+            alasan:"C5 berada pada level HOTS tetapi dikategorikan Sedang."
+        },
+
+        C6:{
+            tingkat:"Sukar",
+            skor:85,
+            alasan:"C6 berada pada level HOTS dan dikategorikan Sukar."
+        }
+
+    };
+
+
+    const hasil =
+        aturan[
+            kognitif.level
+        ] ||
+        aturan.C2;
+
+
+    return {
+
+        tingkat:
+            hasil.tingkat,
+
+        skor:
+            hasil.skor,
+
+        alasan:
+            hasil.alasan
+
+    };
+
+}
+
 
 /* =========================================================
 BUAT ANALISIS
 ========================================================= */
-function buatAnalisis(){
-    dataAnalisis = daftarSoal.map(soal=>{
-        const literasi = cariLiterasi(soal);
-        const kognitif = analisisKognitif(soal);
-        const kesukaran = analisisKesukaran(soal);
-        const isLiterasi = literasi.isLiterasi;
-        const literasiHOTS = isLiterasi && kognitif.kategori === "HOTS";
 
-        return {
-            ...soal,
-            kognitif,
-            kesukaran,
-            literasi,
-            isLiterasi,
-            literasiHOTS,
-            pilihanAnalisis:analisisPilihanJawaban(soal)
-        };
-    });
+function buatAnalisis(){
+
+    dataAnalisis =
+        daftarSoal.map(
+            soal=>{
+
+                const literasi =
+                    cariLiterasi(
+                        soal
+                    );
+
+
+                const kognitif =
+                    analisisKognitif(
+                        soal
+                    );
+
+
+                const kesukaran =
+                    analisisKesukaran(
+                        soal
+                    );
+
+
+                const isLiterasi =
+                    literasi.isLiterasi;
+
+
+                const literasiHOTS =
+                    isLiterasi &&
+                    kognitif.kategori ===
+                    "HOTS";
+
+
+                return {
+
+                    ...soal,
+
+                    kognitif,
+
+                    kesukaran,
+
+                    literasi,
+
+                    isLiterasi,
+
+                    literasiHOTS,
+
+                    pilihanAnalisis:
+                        analisisPilihanJawaban(
+                            soal
+                        )
+
+                };
+
+            }
+        );
+
 }
+
 
 /* =========================================================
 FILTER DATA
@@ -3019,8 +4129,12 @@ function getFilteredData(){
 
             if(
                 ujian &&
-                String(item.ujian_id) !==
-                String(ujian)
+                String(
+                    item.ujian_id
+                ) !==
+                String(
+                    ujian
+                )
             ){
 
                 return false;
@@ -3100,9 +4214,7 @@ function getFilteredData(){
                     [
 
                         item.pertanyaan,
-
                         item.nomor,
-
                         item.tipe
 
                     ]
@@ -3141,17 +4253,34 @@ function renderAll(){
         getFilteredData();
 
 
-    renderSummary(data);
+    renderSummary(
+        data
+    );
 
-    renderDifficulty(data);
 
-    renderCognitive(data);
+    renderDifficulty(
+        data
+    );
 
-    renderMatrix(data);
 
-    renderKelayakan(data);
+    renderCognitive(
+        data
+    );
 
-    renderQuestions(data);
+
+    renderMatrix(
+        data
+    );
+
+
+    renderKelayakan(
+        data
+    );
+
+
+    renderQuestions(
+        data
+    );
 
 }
 
@@ -3168,12 +4297,14 @@ function renderSummary(data){
 
     const literasi =
         data.filter(
-            x=>x.isLiterasi
+            x =>
+                x.isLiterasi
         ).length;
 
 
     const nonLiterasi =
-        total - literasi;
+        total -
+        literasi;
 
 
     const lots =
@@ -3366,15 +4497,10 @@ function renderCognitive(data){
     const levels = [
 
         ["C1","Mengingat"],
-
         ["C2","Memahami"],
-
         ["C3","Menerapkan"],
-
         ["C4","Menganalisis"],
-
         ["C5","Mengevaluasi"],
-
         ["C6","Mencipta"]
 
     ];
@@ -3386,7 +4512,8 @@ function renderCognitive(data){
         );
 
 
-    container.innerHTML = "";
+    container.innerHTML =
+        "";
 
 
     levels.forEach(
@@ -3453,16 +4580,20 @@ MATRIX
 function renderMatrix(data){
 
     const kategori = [
+
         "LOTS",
         "MOTS",
         "HOTS"
+
     ];
 
 
     const tingkat = [
+
         "Mudah",
         "Sedang",
         "Sukar"
+
     ];
 
 
@@ -3581,7 +4712,8 @@ function renderMatrix(data){
 
 
 /* =========================================================
-KELAYAKAN - STANDAR FINAL
+KELAYAKAN
+6 INDIKATOR FINAL
 ========================================================= */
 
 function renderKelayakan(data){
@@ -3603,7 +4735,9 @@ function renderKelayakan(data){
         data.length;
 
 
-    if(total === 0){
+    if(
+        total === 0
+    ){
 
         container.innerHTML = `
 
@@ -3642,19 +4776,26 @@ function renderKelayakan(data){
 
 
     const lots =
-        jumlah("LOTS");
+        jumlah(
+            "LOTS"
+        );
 
 
     const mots =
-        jumlah("MOTS");
+        jumlah(
+            "MOTS"
+        );
 
 
     const hots =
-        jumlah("HOTS");
+        jumlah(
+            "HOTS"
+        );
 
 
     const lotsMots =
-        lots + mots;
+        lots +
+        mots;
 
 
     const literasi =
@@ -3688,74 +4829,132 @@ function renderKelayakan(data){
         ).length;
 
 
-    const persen =
-        nilai =>
-            Math.round(
-                nilai /
-                total *
-                100
-            );
+    /*
+     * =====================================================
+     * 6 INDIKATOR SAJA
+     * =====================================================
+     */
+
+    const okLOTSMOTS =
+        lotsMots > 0;
 
 
-    const pLOTSMOTS =
-        persen(lotsMots);
+    const okHOTS =
+        hots > 0;
 
 
-    const pHOTS =
-        persen(hots);
+    const okLiterasi =
+        literasi > 0;
 
 
-    const pLiterasi =
-        persen(literasi);
+    const okMudah =
+        mudah > 0;
 
 
-    const mudahSedang =
-        mudah + sedang;
+    const okSedang =
+        sedang > 0;
 
 
-    const pMudahSedang =
-        persen(mudahSedang);
+    const okJumlah =
+        total === 25;
 
-
-    const pSukar =
-        persen(sukar);
-
-
-    /* =====================================================
-       6 INDIKATOR FINAL
-    ===================================================== */
-
-    const okLOTSMOTS = lotsMots > 0;
-    const okHOTS = hots > 0;
-    const okLiterasi = literasi > 0;
-    const okMudah = mudah > 0;
-    const okSedang = sedang > 0;
-    const okJumlah = total === 25;
 
     const indikatorUtama = [
+
         okLOTSMOTS,
         okHOTS,
         okLiterasi,
         okMudah,
         okSedang,
         okJumlah
+
     ];
 
-    const memenuhi = indikatorUtama.filter(Boolean).length;
-    const layak = memenuhi === 6;
 
-    /* =====================================================
-       REKOMENDASI
-    ===================================================== */
+    const memenuhi =
+        indikatorUtama.filter(
+            Boolean
+        ).length;
+
+
+    const layak =
+        memenuhi === 6;
+
+
+    /*
+     * Sukar sengaja tidak dimasukkan
+     * sebagai indikator.
+     */
+
 
     const rekomendasi = [];
 
-    if(!okLOTSMOTS) rekomendasi.push(`Belum ada soal LOTS/MOTS (C1–C3).`);
-    if(!okHOTS) rekomendasi.push(`Belum ada soal HOTS (C4–C6).`);
-    if(!okLiterasi) rekomendasi.push(`Belum ada soal literasi berdasarkan HTML pada kolom pertanyaan.`);
-    if(!okMudah) rekomendasi.push(`Belum ada soal dengan tingkat kesukaran Mudah.`);
-    if(!okSedang) rekomendasi.push(`Belum ada soal dengan tingkat kesukaran Sedang.`);
-    if(!okJumlah) rekomendasi.push(`Jumlah soal saat ini ${total}. Target wajib tepat 25 soal.`);
+
+    if(
+        !okLOTSMOTS
+    ){
+
+        rekomendasi.push(
+            "Belum ada soal LOTS/MOTS (C1–C3)."
+        );
+
+    }
+
+
+    if(
+        !okHOTS
+    ){
+
+        rekomendasi.push(
+            "Belum ada soal HOTS (C4–C6)."
+        );
+
+    }
+
+
+    if(
+        !okLiterasi
+    ){
+
+        rekomendasi.push(
+            "Belum ada soal literasi berdasarkan HTML pada kolom pertanyaan."
+        );
+
+    }
+
+
+    if(
+        !okMudah
+    ){
+
+        rekomendasi.push(
+            "Belum ada soal dengan tingkat kesukaran Mudah."
+        );
+
+    }
+
+
+    if(
+        !okSedang
+    ){
+
+        rekomendasi.push(
+            "Belum ada soal dengan tingkat kesukaran Sedang."
+        );
+
+    }
+
+
+    if(
+        !okJumlah
+    ){
+
+        rekomendasi.push(
+            `Jumlah soal saat ini ${total}. Target wajib tepat 25 soal.`
+        );
+
+    }
+
 
     function indikator(
         nama,
@@ -3825,19 +5024,39 @@ function renderKelayakan(data){
     let deskripsi;
 
 
-    if(layak){
+    if(
+        layak
+    ){
+
         deskripsi = `
-            Naskah memenuhi <b>6 dari 6 indikator</b> kelayakan.
+
+            Naskah memenuhi
+            <b>6 dari 6 indikator</b> kelayakan.
+
             <br><br>
-            Naskah dinyatakan <b>LAYAK DIUJIKAN</b>.
+
+            Naskah dinyatakan
+            <b>LAYAK DIUJIKAN</b>.
+
         `;
+
     }else{
+
         deskripsi = `
-            Naskah baru memenuhi <b>${memenuhi} dari 6 indikator</b>.
+
+            Naskah baru memenuhi
+            <b>${memenuhi} dari 6 indikator</b>.
+
             <br><br>
-            Semua 6 indikator wajib terpenuhi agar naskah dinyatakan <b>LAYAK DIUJIKAN</b>.
+
+            Semua 6 indikator wajib terpenuhi
+            agar naskah dinyatakan
+            <b>LAYAK DIUJIKAN</b>.
+
         `;
+
     }
+
 
     container.innerHTML = `
 
@@ -3914,50 +5133,156 @@ function renderKelayakan(data){
                 ${
                     rekomendasi.length
 
-                        ?
+                    ?
 
-                        `
+                    `
 
-                        <ul>
+                    <ul>
 
-                            ${
-                                rekomendasi
-                                    .map(
-                                        x =>
-                                            `<li>${escapeHTML(x)}</li>`
-                                    )
-                                    .join("")
-                            }
+                        ${
+                            rekomendasi
+                                .map(
+                                    x =>
+                                        `<li>${escapeHTML(x)}</li>`
+                                )
+                                .join("")
+                        }
 
-                        </ul>
+                    </ul>
 
-                        `
+                    `
 
-                        :
+                    :
 
-                        `
+                    `
 
-                        <p>
+                    <p>
 
-                            ✅ Semua indikator
-                            telah memenuhi standar.
+                        ✅ Semua 6 indikator
+                        telah memenuhi standar.
 
-                        </p>
+                    </p>
 
-                        `
+                    `
 
                 }
+
 
                 <br>
 
 
                 <div>
-                    <span class="badge ${okHOTS ? "badge-ok" : "badge-warning"}">${okHOTS ? "✅ HOTS" : "❌ HOTS"}</span>
-                    <span class="badge ${okLiterasi ? "badge-ok" : "badge-warning"}">${okLiterasi ? "✅ Literasi" : "❌ Literasi"}</span>
-                    <span class="badge ${okLOTSMOTS ? "badge-ok" : "badge-warning"}">${okLOTSMOTS ? "✅ LOTS/MOTS" : "❌ LOTS/MOTS"}</span>
-                    <span class="badge ${okMudah ? "badge-ok" : "badge-warning"}">${okMudah ? "✅ Mudah" : "❌ Mudah"}</span>
-                    <span class="badge ${okSedang ? "badge-ok" : "badge-warning"}">${okSedang ? "✅ Sedang" : "❌ Sedang"}</span>
-                    <span class="badge ${okJumlah ? "badge-ok" : "badge-warning"}">${okJumlah ? "✅ 25 Soal" : "❌ Bukan 25 Soal"}</span>
+
+                    <span class="badge ${
+                        okHOTS
+                            ? "badge-ok"
+                            : "badge-warning"
+                    }">
+
+                        ${
+                            okHOTS
+                                ? "✅ HOTS"
+                                : "❌ HOTS"
+                        }
+
+                    </span>
+
+
+                    <span class="badge ${
+                        okLiterasi
+                            ? "badge-ok"
+                            : "badge-warning"
+                    }">
+
+                        ${
+                            okLiterasi
+                                ? "✅ Literasi"
+                                : "❌ Literasi"
+                        }
+
+                    </span>
+
+
+                    <span class="badge ${
+                        okLOTSMOTS
+                            ? "badge-ok"
+                            : "badge-warning"
+                    }">
+
+                        ${
+                            okLOTSMOTS
+                                ? "✅ LOTS/MOTS"
+                                : "❌ LOTS/MOTS"
+                        }
+
+                    </span>
+
+
+                    <span class="badge ${
+                        okMudah
+                            ? "badge-ok"
+                            : "badge-warning"
+                    }">
+
+                        ${
+                            okMudah
+                                ? "✅ Mudah"
+                                : "❌ Mudah"
+                        }
+
+                    </span>
+
+
+                    <span class="badge ${
+                        okSedang
+                            ? "badge-ok"
+                            : "badge-warning"
+                    }">
+
+                        ${
+                            okSedang
+                                ? "✅ Sedang"
+                                : "❌ Sedang"
+                        }
+
+                    </span>
+
+
+                    <span class="badge ${
+                        okJumlah
+                            ? "badge-ok"
+                            : "badge-warning"
+                    }">
+
+                        ${
+                            okJumlah
+                                ? "✅ 25 Soal"
+                                : "❌ Bukan 25 Soal"
+                        }
+
+                    </span>
+
+                </div>
+
+
+                <br>
+
+
+                <div style="
+                    font-size:12px;
+                    color:#6b7280;
+                    line-height:1.6;
+                ">
+
+                    ℹ️ Tingkat Sukar:
+                    <b>${sukar}</b> soal.
+
+                    <br>
+
+                    Tingkat Sukar ditampilkan dalam
+                    analisis tetapi tidak menjadi
+                    indikator kelayakan.
+
                 </div>
 
             </div>
@@ -3965,6 +5290,98 @@ function renderKelayakan(data){
         </div>
 
     `;
+
+}
+
+
+/* =========================================================
+SANITASI HTML UNTUK TAMPILAN
+========================================================= */
+
+function sanitasiHTML(value){
+
+    const wrapper =
+        document.createElement(
+            "div"
+        );
+
+
+    wrapper.innerHTML =
+        String(
+            value ?? ""
+        );
+
+
+    wrapper
+        .querySelectorAll(
+            "script,style,noscript,iframe,object,embed,form"
+        )
+        .forEach(
+            el =>
+                el.remove()
+        );
+
+
+    wrapper
+        .querySelectorAll(
+            "*"
+        )
+        .forEach(
+            el=>{
+
+                [
+                    "onclick",
+                    "ondblclick",
+                    "onload",
+                    "onerror",
+                    "onmouseover",
+                    "onmouseout",
+                    "onmouseenter",
+                    "onmouseleave",
+                    "onfocus",
+                    "onblur",
+                    "onchange",
+                    "onsubmit"
+                ]
+                .forEach(
+                    attr =>
+                        el.removeAttribute(
+                            attr
+                        )
+                );
+
+
+                if(
+                    el.hasAttribute(
+                        "href"
+                    )
+                ){
+
+                    const href =
+                        el.getAttribute(
+                            "href"
+                        );
+
+
+                    if(
+                        /^javascript:/i.test(
+                            href
+                        )
+                    ){
+
+                        el.removeAttribute(
+                            "href"
+                        );
+
+                    }
+
+                }
+
+            }
+        );
+
+
+    return wrapper.innerHTML;
 
 }
 
@@ -3987,7 +5404,9 @@ function renderQuestions(data){
         `${data.length} soal`;
 
 
-    if(!data.length){
+    if(
+        !data.length
+    ){
 
         container.innerHTML = `
 
@@ -4005,7 +5424,8 @@ function renderQuestions(data){
     }
 
 
-    container.innerHTML = "";
+    container.innerHTML =
+        "";
 
 
     data.forEach(
@@ -4131,42 +5551,55 @@ function renderQuestions(data){
                     "";
 
 
+            /*
+             * HTML soal dirender sebagai HTML,
+             * bukan di-escape menjadi teks mentah.
+             */
+
             const teksSoal =
-                escapeHTML(
+                sanitasiHTML(
                     item.pertanyaan ||
                     "(Soal tidak tersedia)"
                 );
 
 
-            let namaLiterasi = "-";
+            let namaLiterasi =
+                "-";
 
-            let isiLiterasi = "";
+
+            let isiLiterasi =
+                "";
 
 
             if(
                 item.literasi &&
-                item.literasi.data
+                item.literasi.data &&
+                item.literasi.data.isi_literasi
             ){
 
                 namaLiterasi =
                     escapeHTML(
                         item.literasi.data.judul ||
-                        "Literasi"
+                        "Literasi / Stimulus"
                     );
 
 
                 isiLiterasi =
-                    escapeHTML(
-                        item.literasi.data.isi_literasi ||
-                        item.literasi.data.isi ||
-                        ""
+                    sanitasiHTML(
+                        item.literasi.data.isi_literasi
                     );
 
             }
 
 
-            let literasiBox = "";
+            let literasiBox =
+                "";
 
+
+            /*
+             * Tampilkan stimulus jika memang
+             * berhasil ditemukan dari HTML pertanyaan.
+             */
 
             if(
                 item.isLiterasi &&
@@ -4372,7 +5805,7 @@ function renderQuestions(data){
 
                         <br><br>
 
-                        <b>Indikator kesukaran:</b>
+                        <b>Aturan kesukaran:</b>
 
                         ${escapeHTML(
                             item.kesukaran.alasan
@@ -4382,7 +5815,11 @@ function renderQuestions(data){
 
                         <b>Literasi:</b>
 
-                        ${namaLiterasi}
+                        ${
+                            item.isLiterasi
+                                ? "Ya — terdeteksi dari HTML soal.pertanyaan"
+                                : "Tidak"
+                        }
 
                     </div>
 
