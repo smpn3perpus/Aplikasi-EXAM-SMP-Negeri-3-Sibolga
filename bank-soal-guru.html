@@ -1,38 +1,886 @@
-```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Analisis Soal Guru - RUANG EXAM</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --primary:#2563eb;
+    --primary-dark:#1d4ed8;
+    --success:#16a34a;
+    --danger:#dc2626;
+    --warning:#d97706;
+    --purple:#7c3aed;
+    --dark:#0f172a;
+    --muted:#64748b;
+    --border:#e2e8f0;
+    --bg:#f1f5f9;
+    --white:#ffffff;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:var(--bg);
+    color:var(--dark);
+}
+
+.header{
+    background:linear-gradient(135deg,#1d4ed8,#2563eb);
+    color:white;
+    padding:22px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    box-shadow:0 4px 15px rgba(0,0,0,.12);
+}
+
+.header-left h1{
+    font-size:25px;
+    margin-bottom:6px;
+}
+
+.header-left p{
+    opacity:.9;
+    font-size:14px;
+}
+
+.header-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:0;
+    border-radius:9px;
+    padding:10px 16px;
+    cursor:pointer;
+    font-weight:700;
+    transition:.2s;
+}
+
+.btn:hover{
+    transform:translateY(-1px);
+}
+
+.btn-light{
+    background:white;
+    color:#1d4ed8;
+}
+
+.btn-primary{
+    background:var(--primary);
+    color:white;
+}
+
+.btn-success{
+    background:var(--success);
+    color:white;
+}
+
+.btn-danger{
+    background:var(--danger);
+    color:white;
+}
+
+.container{
+    max-width:1450px;
+    margin:auto;
+    padding:25px;
+}
+
+.card{
+    background:white;
+    border-radius:14px;
+    border:1px solid var(--border);
+    box-shadow:0 4px 15px rgba(15,23,42,.05);
+    margin-bottom:20px;
+}
+
+.card-header{
+    padding:18px 20px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.card-header h2{
+    font-size:18px;
+}
+
+.card-body{
+    padding:20px;
+}
+
+.filter-grid{
+    display:grid;
+    grid-template-columns:2fr 1fr auto;
+    gap:15px;
+    align-items:end;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.form-group label{
+    font-size:13px;
+    font-weight:700;
+    color:#475569;
+}
+
+select,
+input{
+    width:100%;
+    padding:11px 13px;
+    border:1px solid #cbd5e1;
+    border-radius:9px;
+    background:white;
+    outline:none;
+    font-size:14px;
+}
+
+select:focus,
+input:focus{
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(37,99,235,.1);
+}
+
+.summary-grid{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:12px;
+}
+
+.summary-item{
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+    background:#fff;
+    text-align:center;
+}
+
+.summary-number{
+    font-size:27px;
+    font-weight:800;
+    margin-bottom:5px;
+}
+
+.summary-label{
+    font-size:12px;
+    color:var(--muted);
+    font-weight:700;
+}
+
+.blue{color:#2563eb}
+.green{color:#16a34a}
+.orange{color:#d97706}
+.red{color:#dc2626}
+.purple{color:#7c3aed}
+.gray{color:#475569}
+
+.target-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+}
+
+.target-item{
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:15px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:#fff;
+}
+
+.target-icon{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:19px;
+    flex:none;
+}
+
+.target-ok .target-icon{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.target-no .target-icon{
+    background:#fee2e2;
+    color:#b91c1c;
+}
+
+.target-info{
+    flex:1;
+}
+
+.target-title{
+    font-weight:800;
+    font-size:14px;
+    margin-bottom:4px;
+}
+
+.target-detail{
+    font-size:12px;
+    color:var(--muted);
+}
+
+.status-box{
+    padding:18px;
+    border-radius:12px;
+    margin-top:15px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.status-layak{
+    background:#dcfce7;
+    border:1px solid #86efac;
+    color:#166534;
+}
+
+.status-perbaikan{
+    background:#fef3c7;
+    border:1px solid #fcd34d;
+    color:#92400e;
+}
+
+.status-belum{
+    background:#fee2e2;
+    border:1px solid #fca5a5;
+    color:#991b1b;
+}
+
+.status-title{
+    font-size:18px;
+    font-weight:800;
+}
+
+.status-detail{
+    font-size:13px;
+    margin-top:4px;
+}
+
+.table-wrap{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:12px 10px;
+    border-bottom:1px solid var(--border);
+    vertical-align:top;
+    text-align:left;
+}
+
+th{
+    background:#f8fafc;
+    font-size:12px;
+    text-transform:uppercase;
+    color:#475569;
+    white-space:nowrap;
+}
+
+td{
+    font-size:13px;
+}
+
+.question-number{
+    width:45px;
+    font-weight:800;
+    text-align:center;
+}
+
+.question-text{
+    max-width:600px;
+    line-height:1.55;
+}
+
+.question-text img{
+    max-width:100%;
+    height:auto;
+    border-radius:7px;
+}
+
+.question-text table{
+    width:auto;
+    margin:8px 0;
+}
+
+.badges{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+}
+
+.badge{
+    display:inline-flex;
+    align-items:center;
+    padding:5px 8px;
+    border-radius:6px;
+    font-size:11px;
+    font-weight:800;
+    white-space:nowrap;
+}
+
+.badge-lots{
+    background:#e0f2fe;
+    color:#0369a1;
+}
+
+.badge-mots{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.badge-hots{
+    background:#ede9fe;
+    color:#6d28d9;
+}
+
+.badge-mudah{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.badge-sedang{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.badge-sukar{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.badge-literasi{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.empty{
+    text-align:center;
+    padding:50px 20px;
+    color:var(--muted);
+}
+
+.loading{
+    text-align:center;
+    padding:45px;
+    color:var(--muted);
+}
+
+.alert{
+    padding:14px 16px;
+    border-radius:10px;
+    margin-bottom:15px;
+    font-size:14px;
+}
+
+.alert-danger{
+    background:#fee2e2;
+    color:#991b1b;
+    border:1px solid #fecaca;
+}
+
+.alert-info{
+    background:#dbeafe;
+    color:#1e40af;
+    border:1px solid #bfdbfe;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,.65);
+    z-index:1000;
+    padding:20px;
+    overflow:auto;
+}
+
+.modal.show{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.modal-content{
+    width:min(950px,100%);
+    max-height:90vh;
+    overflow:auto;
+    background:white;
+    border-radius:15px;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+
+.modal-header{
+    padding:18px 20px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+}
+
+.modal-header h3{
+    font-size:18px;
+}
+
+.close{
+    border:0;
+    background:#f1f5f9;
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:18px;
+}
+
+.modal-body{
+    padding:20px;
+}
+
+.detail-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.detail-box{
+    background:#f8fafc;
+    border:1px solid var(--border);
+    border-radius:9px;
+    padding:12px;
+}
+
+.detail-label{
+    color:var(--muted);
+    font-size:11px;
+    margin-bottom:4px;
+    font-weight:700;
+}
+
+.detail-value{
+    font-size:14px;
+    font-weight:700;
+}
+
+.question-display{
+    line-height:1.7;
+    font-size:15px;
+    padding:18px;
+    background:#f8fafc;
+    border-radius:10px;
+    border:1px solid var(--border);
+}
+
+.question-display img{
+    max-width:100%;
+    height:auto;
+}
+
+.question-display table{
+    border-collapse:collapse;
+    margin:10px 0;
+}
+
+.question-display td,
+.question-display th{
+    border:1px solid #94a3b8;
+    padding:7px;
+}
+
+.option{
+    margin-top:9px;
+    padding:10px 12px;
+    border:1px solid var(--border);
+    border-radius:8px;
+}
+
+.footer{
+    text-align:center;
+    padding:25px;
+    color:#64748b;
+    font-size:12px;
+}
+
+@media(max-width:1100px){
+    .summary-grid{
+        grid-template-columns:repeat(4,1fr);
+    }
+
+    .target-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:700px){
+    .header{
+        padding:18px;
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .container{
+        padding:15px;
+    }
+
+    .filter-grid{
+        grid-template-columns:1fr;
+    }
+
+    .summary-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .target-grid{
+        grid-template-columns:1fr;
+    }
+
+    .detail-grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="header-left">
+        <h1>📊 ANALISIS SOAL GURU</h1>
+        <p>Analisis HOTS • LOTS/MOTS • Literasi • Kesukaran • Kelayakan Naskah</p>
+    </div>
+
+    <div class="header-actions">
+        <button class="btn btn-light" onclick="window.location.href='dashboard-guru.html'">
+            🏠 Dashboard Guru
+        </button>
+        <button class="btn btn-light" onclick="location.reload()">
+            🔄 Refresh
+        </button>
+    </div>
+</header>
+
+<main class="container">
+
+    <div id="alertArea"></div>
+
+    <section class="card">
+        <div class="card-header">
+            <h2>📚 Pilih Ujian</h2>
+        </div>
+
+        <div class="card-body">
+            <div class="filter-grid">
+
+                <div class="form-group">
+                    <label for="ujianSelect">Ujian</label>
+                    <select id="ujianSelect">
+                        <option value="">-- Memuat ujian --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="searchInput">Cari soal</label>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Cari nomor atau isi soal..."
+                    >
+                </div>
+
+                <button class="btn btn-primary" onclick="analisisSekarang()">
+                    📊 Analisis
+                </button>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="card" id="ujianInfoCard" style="display:none;">
+        <div class="card-header">
+            <h2 id="ujianTitle">Analisis Ujian</h2>
+        </div>
+
+        <div class="card-body">
+            <div class="detail-grid">
+                <div class="detail-box">
+                    <div class="detail-label">Mata Pelajaran</div>
+                    <div class="detail-value" id="infoMapel">-</div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-label">Kelas</div>
+                    <div class="detail-value" id="infoKelas">-</div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-label">Guru</div>
+                    <div class="detail-value" id="infoGuru">-</div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-label">Soal Dianalisis</div>
+                    <div class="detail-value" id="infoJumlah">0</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2>📈 Ringkasan Analisis</h2>
+        </div>
+
+        <div class="card-body">
+
+            <div class="summary-grid">
+
+                <div class="summary-item">
+                    <div class="summary-number blue" id="totalSoal">0</div>
+                    <div class="summary-label">TOTAL SOAL</div>
+                </div>
+
+                <div class="summary-item">
+                    <div class="summary-number blue" id="lots">0</div>
+                    <div class="summary-label">LOTS</div>
+                </div>
+
+                <div class="summary-item">
+                    <div class="summary-number orange" id="mots">0</div>
+                    <div class="summary-label">MOTS</div>
+                </div>
+
+                <div class="summary-item">
+                    <div class="summary-number purple" id="hots">0</div>
+                    <div class="summary-label">HOTS</div>
+                </div>
+
+                <div class="summary-item">
+                    <div class="summary-number green" id="mudah">0</div>
+                    <div class="summary-label">MUDAH</div>
+                </div>
+
+                <div class="summary-item">
+                    <div class="summary-number orange" id="sedang">0</div>
+                    <div class="summary-label">SEDANG</div>
+                </div>
+
+                <div class="summary-item">
+                    <div class="summary-number red" id="sukar">0</div>
+                    <div class="summary-label">SUKAR</div>
+                </div>
+
+            </div>
+
+            <div style="margin-top:12px;">
+                <div class="summary-item">
+                    <div class="summary-number blue" id="literasi">0</div>
+                    <div class="summary-label">SOAL LITERASI</div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2>🎯 Target Kelayakan</h2>
+            <span id="targetCounter" class="badge badge-literasi">0 / 6</span>
+        </div>
+
+        <div class="card-body">
+
+            <div class="target-grid" id="targetGrid">
+
+                <div class="target-item target-no" id="targetLotsMots">
+                    <div class="target-icon">✕</div>
+                    <div class="target-info">
+                        <div class="target-title">LOTS/MOTS</div>
+                        <div class="target-detail">Minimal 1 soal C1–C3</div>
+                    </div>
+                </div>
+
+                <div class="target-item target-no" id="targetHots">
+                    <div class="target-icon">✕</div>
+                    <div class="target-info">
+                        <div class="target-title">HOTS</div>
+                        <div class="target-detail">Minimal 1 soal C4–C6</div>
+                    </div>
+                </div>
+
+                <div class="target-item target-no" id="targetLiterasi">
+                    <div class="target-icon">✕</div>
+                    <div class="target-info">
+                        <div class="target-title">LITERASI</div>
+                        <div class="target-detail">Minimal 1 soal literasi</div>
+                    </div>
+                </div>
+
+                <div class="target-item target-no" id="targetMudah">
+                    <div class="target-icon">✕</div>
+                    <div class="target-info">
+                        <div class="target-title">MUDAH</div>
+                        <div class="target-detail">Minimal 1 soal mudah</div>
+                    </div>
+                </div>
+
+                <div class="target-item target-no" id="targetSedang">
+                    <div class="target-icon">✕</div>
+                    <div class="target-info">
+                        <div class="target-title">SEDANG</div>
+                        <div class="target-detail">Minimal 1 soal sedang</div>
+                    </div>
+                </div>
+
+                <div class="target-item target-no" id="targetJumlah">
+                    <div class="target-icon">✕</div>
+                    <div class="target-info">
+                        <div class="target-title">JUMLAH SOAL</div>
+                        <div class="target-detail">Harus tepat 25 soal</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div id="statusBox" class="status-box status-belum">
+                <div>
+                    <div class="status-title" id="statusTitle">
+                        BELUM ADA ANALISIS
+                    </div>
+                    <div class="status-detail" id="statusDetail">
+                        Pilih ujian untuk memulai analisis.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-header">
+            <h2>📝 Daftar Analisis Soal</h2>
+            <span id="questionCountLabel" class="badge badge-literasi">0 soal</span>
+        </div>
+
+        <div class="card-body" style="padding:0;">
+
+            <div id="loadingArea" class="loading">
+                Pilih ujian untuk melihat soal.
+            </div>
+
+            <div id="questionArea" class="table-wrap" style="display:none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Soal</th>
+                            <th>Level Kognitif</th>
+                            <th>Kesukaran</th>
+                            <th>Literasi</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="questionTableBody"></tbody>
+                </table>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<footer class="footer">
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P • RUANG EXAM
+</footer>
+
+
+<!-- MODAL DETAIL SOAL -->
+<div class="modal" id="questionModal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <h3 id="modalTitle">Detail Soal</h3>
+            <button class="close" onclick="tutupModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+
+            <div class="detail-grid">
+
+                <div class="detail-box">
+                    <div class="detail-label">Nomor</div>
+                    <div class="detail-value" id="modalNomor">-</div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-label">Level</div>
+                    <div class="detail-value" id="modalLevel">-</div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-label">Kesukaran</div>
+                    <div class="detail-value" id="modalDifficulty">-</div>
+                </div>
+
+                <div class="detail-box">
+                    <div class="detail-label">Literasi</div>
+                    <div class="detail-value" id="modalLiterasi">-</div>
+                </div>
+
+            </div>
+
+            <div class="question-display" id="modalQuestion">
+                -
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
 <script>
 /* =========================================================
-   RUANG EXAM
-   ANALISIS SOAL GURU
-   ATURAN FINAL
-
-   TARGET FINAL HANYA:
-   1. Maksimal 25 soal
-   2. Jumlah = 100% hanya jika tepat 25 soal
-   3. Ada LOTS/MOTS (C1-C3)
-   4. Ada HOTS (C4-C6)
-   5. Ada Literasi
-   6. Ada soal Mudah
-   7. Ada soal Sedang
-
-   TIDAK ADA LAGI:
-   - Target persentase HOTS
-   - Target persentase LOTS/MOTS
-   - Target persentase Literasi
-   - Target persentase Mudah/Sedang
-   - Target Sukar
-   - Sukar sebagai syarat kelayakan
-   - Keseimbangan persentase
-   - Target 60%, 30%, 20%-30%, dan sebagainya
-
-   ANALISIS:
-   - Hanya soal yang benar-benar tersedia
-   - Maksimal 25 soal
-   - Tidak membuat soal tambahan
-   - Hanya soal ujian milik guru yang sedang login
-   - Literasi hanya membaca HTML/isi kolom SOAL
-   - Tidak membaca row.literasi
-   - Tidak menggunakan stimulus database sebagai penentu literasi
-   ========================================================= */
+   SUPABASE
+========================================================= */
 
 const SUPABASE_URL =
     "https://sztfucrmjexoalyiwwnq.supabase.co";
@@ -46,45 +894,39 @@ const supabaseClient =
         SUPABASE_KEY
     );
 
-const MAX_SOAL = 25;
-
 
 /* =========================================================
    SESSION GURU
-   ========================================================= */
+========================================================= */
 
 const sessionRaw =
     localStorage.getItem("exam_user");
 
-if (!sessionRaw) {
-    location.href = "login.html";
+if(!sessionRaw){
+    window.location.href = "login.html";
 }
 
 let currentUser = null;
 
-try {
+try{
 
     currentUser = JSON.parse(sessionRaw);
 
-    if (
+    if(
         !currentUser ||
         currentUser.role !== "guru"
-    ) {
+    ){
+
         localStorage.removeItem("exam_user");
-        location.href = "login.html";
+        window.location.href = "login.html";
     }
 
-} catch (e) {
+}catch(error){
 
     localStorage.removeItem("exam_user");
-    location.href = "login.html";
+    window.location.href = "login.html";
 }
 
-
-/*
-   ID GURU YANG SEDANG LOGIN.
-   Hanya ID ini yang boleh digunakan.
-*/
 
 const guruId =
     currentUser?.guru_id ||
@@ -95,548 +937,143 @@ const guruId =
 
 
 /* =========================================================
-   STATE
-   ========================================================= */
+   KONSTANTA
+========================================================= */
 
-let semuaUjian = [];
-let semuaSoal = [];
+const MAX_SOAL = 25;
+
+let daftarUjian = [];
 let ujianTerpilih = null;
-let hasilAnalisis = null;
+let semuaSoal = [];
+let hasilAnalisis = [];
 
 
 /* =========================================================
-   UTILITAS
-   ========================================================= */
+   ELEMENT
+========================================================= */
 
-function showMessage(text, type) {
+const ujianSelect =
+    document.getElementById("ujianSelect");
 
-    const el =
-        document.getElementById("message");
+const searchInput =
+    document.getElementById("searchInput");
 
-    if (!el) return;
+const loadingArea =
+    document.getElementById("loadingArea");
 
-    el.textContent = text;
-    el.className = "message " + type;
-}
+const questionArea =
+    document.getElementById("questionArea");
 
+const questionTableBody =
+    document.getElementById("questionTableBody");
 
-function hideMessage() {
-
-    const el =
-        document.getElementById("message");
-
-    if (!el) return;
-
-    el.className = "message";
-    el.textContent = "";
-}
+const questionCountLabel =
+    document.getElementById("questionCountLabel");
 
 
-/*
-   Escape teks biasa.
-*/
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
 
-function esc(value) {
+function escapeHTML(value){
 
     return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
 }
 
 
-function escAttr(value) {
-    return esc(value);
+/* =========================================================
+   SANITASI HTML SOAL
+========================================================= */
+
+function sanitizeQuestionHTML(html){
+
+    if(!html){
+        return "";
+    }
+
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.innerHTML = String(html);
+
+    wrapper
+        .querySelectorAll(
+            "script,iframe,object,embed,form"
+        )
+        .forEach(el => el.remove());
+
+    wrapper
+        .querySelectorAll("*")
+        .forEach(el => {
+
+            [...el.attributes].forEach(attr => {
+
+                const name =
+                    attr.name.toLowerCase();
+
+                const value =
+                    attr.value || "";
+
+                if(
+                    name.startsWith("on") ||
+                    (
+                        (name === "href" || name === "src") &&
+                        value.toLowerCase().trim().startsWith("javascript:")
+                    )
+                ){
+                    el.removeAttribute(attr.name);
+                }
+
+            });
+
+        });
+
+    return wrapper.innerHTML;
 }
 
 
-/*
-   Bersihkan HTML menjadi teks biasa.
-   Digunakan untuk membaca isi kolom soal.
-*/
+/* =========================================================
+   TEXT DARI HTML
+========================================================= */
 
-function stripHTML(html) {
+function htmlToText(html){
 
     const div =
         document.createElement("div");
 
-    div.innerHTML =
-        String(html ?? "");
+    div.innerHTML = html || "";
 
     return (
-        div.textContent ||
         div.innerText ||
+        div.textContent ||
         ""
     )
-        .replace(/\s+/g, " ")
-        .trim();
-}
-
-
-/*
-   Normalisasi teks untuk analisis.
-*/
-
-function cleanText(value) {
-
-    return stripHTML(value)
-        .toLowerCase()
-        .replace(/\s+/g, " ")
-        .trim();
-}
-
-
-function countAny(text, words) {
-
-    return words.reduce(
-        (total, word) =>
-            total +
-            (
-                text.includes(word)
-                    ? 1
-                    : 0
-            ),
-        0
-    );
-}
-
-
-/* =========================================================
-   LOAD DATA
-   ========================================================= */
-
-async function loadData() {
-
-    hideMessage();
-
-    if (!guruId) {
-
-        showMessage(
-            "ID guru tidak ditemukan pada sesi login.",
-            "error"
-        );
-
-        return;
-    }
-
-    const select =
-        document.getElementById(
-            "ujianSelect"
-        );
-
-    if (!select) return;
-
-    select.innerHTML =
-        "<option>⏳ Memuat ujian...</option>";
-
-    try {
-
-        /*
-           HANYA ujian milik guru login.
-        */
-
-        const {
-            data,
-            error
-        } = await supabaseClient
-            .from("ujian")
-            .select(`
-                id,
-                judul,
-                mata_pelajaran_id,
-                kelas_id,
-                guru_id,
-                durasi_menit,
-                tanggal_mulai,
-                tanggal_selesai,
-                status,
-                created_at,
-                mata_pelajaran(id,nama),
-                kelas(id,nama_kelas,tingkat)
-            `)
-            .eq("guru_id", guruId)
-            .order("created_at", {
-                ascending: false
-            });
-
-        if (error) {
-            throw error;
-        }
-
-        /*
-           Filter tambahan di JavaScript.
-        */
-
-        semuaUjian =
-            (data || []).filter(
-                u =>
-                    String(u.guru_id) ===
-                    String(guruId)
-            );
-
-        select.innerHTML =
-            '<option value="">-- Pilih Ujian Anda --</option>';
-
-        semuaUjian.forEach(u => {
-
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-            option.value = u.id;
-
-            option.textContent =
-                `${u.judul || "Tanpa Judul"} — ` +
-                `${u.mata_pelajaran?.nama || "Tanpa Mapel"}`;
-
-            select.appendChild(option);
-        });
-
-        if (!semuaUjian.length) {
-
-            resetView();
-
-            document.getElementById(
-                "questionList"
-            ).innerHTML =
-                `
-                <div class="empty">
-                    📝 Belum ada ujian milik akun guru ini.
-                </div>
-                `;
-
-            return;
-        }
-
-        if (
-            ujianTerpilih &&
-            semuaUjian.some(
-                u =>
-                    String(u.id) ===
-                    String(ujianTerpilih.id)
-            )
-        ) {
-
-            select.value =
-                ujianTerpilih.id;
-
-            await pilihUjian();
-
-        } else {
-
-            resetView();
-        }
-
-    } catch (error) {
-
-        console.error(
-            "LOAD DATA ERROR:",
-            error
-        );
-
-        showMessage(
-            "Gagal memuat ujian: " +
-            (error.message || error),
-            "error"
-        );
-    }
-}
-
-
-/* =========================================================
-   RESET
-   ========================================================= */
-
-function resetView() {
-
-    ujianTerpilih = null;
-    semuaSoal = [];
-    hasilAnalisis = null;
-
-    const examInfo =
-        document.getElementById(
-            "examInfo"
-        );
-
-    if (examInfo) {
-        examInfo.classList.add("hidden");
-    }
-
-    [
-        "totalSoal",
-        "lots",
-        "mots",
-        "hots",
-        "sukar",
-        "literasi"
-    ].forEach(id => {
-
-        const el =
-            document.getElementById(id);
-
-        if (el) {
-            el.textContent = "0";
-        }
-    });
-
-    const badge =
-        document.getElementById(
-            "hasilBadge"
-        );
-
-    if (badge) {
-
-        badge.className =
-            "result belum";
-
-        badge.textContent =
-            "BELUM DIUJI";
-    }
-
-    const analysisContent =
-        document.getElementById(
-            "analysisContent"
-        );
-
-    if (analysisContent) {
-
-        analysisContent.innerHTML =
-            `
-            <div class="empty">
-                Pilih ujian untuk memulai analisis.
-            </div>
-            `;
-    }
-
-    const questionList =
-        document.getElementById(
-            "questionList"
-        );
-
-    if (questionList) {
-
-        questionList.innerHTML =
-            `
-            <div class="empty">
-                👆 Pilih ujian terlebih dahulu.
-            </div>
-            `;
-    }
-}
-
-
-/* =========================================================
-   PILIH UJIAN
-   ========================================================= */
-
-async function pilihUjian() {
-
-    const id =
-        document.getElementById(
-            "ujianSelect"
-        ).value;
-
-    if (!id) {
-
-        resetView();
-
-        return;
-    }
-
-    /*
-       Cari hanya dari daftar ujian
-       milik guru login.
-    */
-
-    ujianTerpilih =
-        semuaUjian.find(
-            u =>
-                String(u.id) ===
-                String(id)
-        );
-
-    if (!ujianTerpilih) {
-
-        showMessage(
-            "Ujian tidak ditemukan atau bukan milik Anda.",
-            "error"
-        );
-
-        resetView();
-
-        return;
-    }
-
-    /*
-       CEK KEPEMILIKAN LAGI.
-    */
-
-    if (
-        String(ujianTerpilih.guru_id) !==
-        String(guruId)
-    ) {
-
-        showMessage(
-            "Akses ditolak. Ujian bukan milik guru yang login.",
-            "error"
-        );
-
-        resetView();
-
-        return;
-    }
-
-    const examInfo =
-        document.getElementById(
-            "examInfo"
-        );
-
-    examInfo.classList.remove(
-        "hidden"
-    );
-
-    examInfo.innerHTML =
-
-        `<b>Ujian:</b>
-            ${esc(
-                ujianTerpilih.judul ||
-                "-"
-            )}
-        <br>
-
-        <b>Mata Pelajaran:</b>
-            ${esc(
-                ujianTerpilih
-                    .mata_pelajaran
-                    ?.nama ||
-                "-"
-            )}
-        <br>
-
-        <b>Kelas:</b>
-            ${esc(
-                ujianTerpilih
-                    .kelas
-                    ?.nama_kelas ||
-                "-"
-            )}
-        <br>
-
-        <b>Status:</b>
-            ${esc(
-                ujianTerpilih.status ||
-                "-"
-            )}
-        <br>
-
-        <b>Analisis:</b>
-            Maksimal 25 soal dan hanya soal ujian Anda.`;
-
-    await loadSoal();
-
-    hasilAnalisis =
-        buatAnalisis();
-
-    renderAnalysis();
-
-    renderQuestions();
-}
-
-
-/* =========================================================
-   LOAD SOAL
-   ========================================================= */
-
-async function loadSoal() {
-
-    if (!ujianTerpilih) return;
-
-    /*
-       Soal dibatasi berdasarkan ujian_id.
-    */
-
-    const {
-        data,
-        error
-    } = await supabaseClient
-        .from("soal")
-        .select(`
-            id,
-            ujian_id,
-            nomor,
-            pertanyaan,
-            tipe,
-            pilihan_a,
-            pilihan_b,
-            pilihan_c,
-            pilihan_d,
-            gambar_soal,
-            gambar_a,
-            gambar_b,
-            gambar_c,
-            gambar_d,
-            bobot,
-            created_at
-        `)
-        .eq(
-            "ujian_id",
-            ujianTerpilih.id
-        )
-        .order(
-            "nomor",
-            {
-                ascending: true
-            }
-        );
-
-    if (error) {
-        throw error;
-    }
-
-    /*
-       Filter pengaman.
-    */
-
-    semuaSoal =
-        (data || []).filter(
-            q =>
-                String(q.ujian_id) ===
-                String(ujianTerpilih.id)
-        );
+    .replace(/\s+/g," ")
+    .trim();
 }
 
 
 /* =========================================================
    DETEKSI LEVEL KOGNITIF
-   =========================================================
+========================================================= */
 
-   C1-C2 = LOTS
-   C3    = MOTS
-   C4-C6 = HOTS
+function detectLevel(q){
 
-   TARGET:
-   LOTS/MOTS = ADA
-   HOTS      = ADA
-   ========================================================= */
+    const raw =
+        q?.pertanyaan ??
+        q?.soal ??
+        q?.question ??
+        "";
 
-function detectLevel(q) {
+    const text =
+        htmlToText(raw).toLowerCase();
 
-    /*
-       HANYA kolom pertanyaan/soal.
-    */
-
-    const t =
-        cleanText(q.pertanyaan);
-
-
-    /*
-       C6 - Mencipta
-    */
-
-    const c6 = [
+    const C6 = [
 
         "rancang",
         "merancang",
@@ -667,12 +1104,7 @@ function detectLevel(q) {
         "write a dialogue"
     ];
 
-
-    /*
-       C5 - Mengevaluasi
-    */
-
-    const c5 = [
+    const C5 = [
 
         "evaluasi",
         "evaluasilah",
@@ -699,12 +1131,7 @@ function detectLevel(q) {
         "is it effective"
     ];
 
-
-    /*
-       C4 - Menganalisis
-    */
-
-    const c4 = [
+    const C4 = [
 
         "analisis",
         "analisislah",
@@ -712,50 +1139,36 @@ function detectLevel(q) {
         "analys",
         "analyze",
         "analyse",
-
         "bandingkan",
         "membandingkan",
         "compare",
-
         "hubungkan",
         "hubungan antara",
         "hubungan",
-
         "sebab akibat",
         "sebab-akibat",
         "cause and effect",
-
         "simpulkan berdasarkan",
         "buat kesimpulan berdasarkan",
         "kesimpulan berdasarkan",
-
         "berdasarkan data",
         "berdasarkan informasi",
         "berdasarkan bukti",
         "berdasarkan tabel",
         "berdasarkan grafik",
-
         "identifikasi hubungan",
         "identifikasi masalah",
-
         "pola",
         "dampak",
         "pengaruh",
-
         "perbedaan dan persamaan",
         "persamaan dan perbedaan",
-
         "what can be inferred",
         "what can we conclude",
         "relationship between"
     ];
 
-
-    /*
-       C3 - Menerapkan
-    */
-
-    const c3 = [
+    const C3 = [
 
         "gunakan",
         "gunakanlah",
@@ -776,12 +1189,7 @@ function detectLevel(q) {
         "use the method"
     ];
 
-
-    /*
-       C2 - Memahami
-    */
-
-    const c2 = [
+    const C2 = [
 
         "jelaskan",
         "jelaskanlah",
@@ -805,12 +1213,7 @@ function detectLevel(q) {
         "what is the purpose"
     ];
 
-
-    /*
-       C1 - Mengingat
-    */
-
-    const c1 = [
+    const C1 = [
 
         "apa itu",
         "siapa",
@@ -825,126 +1228,111 @@ function detectLevel(q) {
     ];
 
 
-    /*
-       URUTAN:
-       C6 -> C5 -> C4 -> C3 -> C2 -> C1
-    */
+    function hasAny(arr){
 
-    if (countAny(t, c6) > 0) {
+        return arr.some(
+            keyword => text.includes(keyword)
+        );
+    }
 
+
+    if(hasAny(C6)){
         return {
-            level: "HOTS",
-            c: "C6"
+            level:"C6",
+            kategori:"HOTS"
         };
     }
 
-    if (countAny(t, c5) > 0) {
-
+    if(hasAny(C5)){
         return {
-            level: "HOTS",
-            c: "C5"
+            level:"C5",
+            kategori:"HOTS"
         };
     }
 
-    if (countAny(t, c4) > 0) {
-
+    if(hasAny(C4)){
         return {
-            level: "HOTS",
-            c: "C4"
+            level:"C4",
+            kategori:"HOTS"
         };
     }
 
-    if (countAny(t, c3) > 0) {
-
+    if(hasAny(C3)){
         return {
-            level: "MOTS",
-            c: "C3"
+            level:"C3",
+            kategori:"MOTS"
         };
     }
 
-    if (countAny(t, c2) > 0) {
-
+    if(hasAny(C2)){
         return {
-            level: "LOTS",
-            c: "C2"
+            level:"C2",
+            kategori:"LOTS"
+        };
+    }
+
+    if(hasAny(C1)){
+        return {
+            level:"C1",
+            kategori:"LOTS"
         };
     }
 
     return {
-        level: "LOTS",
-        c: "C1"
+        level:"C1",
+        kategori:"LOTS"
     };
 }
 
 
 /* =========================================================
    DETEKSI LITERASI
-   =========================================================
+   HANYA DARI KOLOM pertanyaan
+========================================================= */
 
-   Literasi HANYA dari:
-       q.pertanyaan
+function detectLiterasi(q){
 
-   Tidak membaca:
-       row.literasi
-       literasi database
-       stimulus database
-       gambar stimulus database
+    const raw =
+        q?.pertanyaan ??
+        q?.soal ??
+        q?.question ??
+        "";
 
-   HTML di dalam kolom soal tetap dibaca.
-   ========================================================= */
-
-function detectLiterasi(q) {
+    if(!raw){
+        return false;
+    }
 
     const html =
-        String(q.pertanyaan || "");
+        String(raw);
 
     const text =
-        cleanText(html);
-
+        htmlToText(html).toLowerCase();
 
     /*
-       1. Elemen HTML visual/data
-       yang terdapat langsung di kolom SOAL.
+       LITERASI HANYA DIAMBIL DARI HTML
+       PADA KOLOM PERTANYAAN.
+       TIDAK MEMBACA row.literasi.
+       TIDAK MEMBACA stimulus database.
     */
 
-    const hasHTMLLiteracyElement =
-
-        /<img\b/i.test(html) ||
-
-        /<table\b/i.test(html) ||
-
-        /<figure\b/i.test(html) ||
-
-        /<svg\b/i.test(html) ||
-
-        /<canvas\b/i.test(html);
-
-
-    if (hasHTMLLiteracyElement) {
+    if(
+        /<(img|table|figure|svg|canvas)\b/i.test(html)
+    ){
         return true;
     }
 
-
-    /*
-       2. Frasa literasi.
-    */
-
-    const literacyWords = [
+    const keywords = [
 
         "bacalah",
-        "bacalah teks berikut",
         "cermati teks",
-        "cermatilah teks",
         "perhatikan teks",
-        "simak teks",
-
+        "perhatikan bacaan",
         "berdasarkan bacaan",
         "berdasarkan teks",
         "berdasarkan paragraf",
         "berdasarkan informasi",
         "berdasarkan wacana",
         "berdasarkan artikel",
-
         "teks berikut",
         "bacaan berikut",
         "paragraf berikut",
@@ -967,10 +1355,9 @@ function detectLiterasi(q) {
         "perhatikan gambar",
         "berdasarkan gambar",
         "gambar berikut",
-
         "ilustrasi berikut",
-        "kasus berikut",
 
+        "kasus berikut",
         "dialog berikut",
         "dialogue berikut",
         "percakapan berikut",
@@ -988,55 +1375,34 @@ function detectLiterasi(q) {
         "following passage"
     ];
 
-
-    if (
-        countAny(
-            text,
-            literacyWords
-        ) > 0
-    ) {
-
+    if(
+        keywords.some(
+            keyword => text.includes(keyword)
+        )
+    ){
         return true;
     }
 
-
-    /*
-       3. Struktur bacaan.
-       Panjang teks + kata "berdasarkan".
-    */
-
-    const hasReadingStructure =
-
+    if(
         text.includes("berdasarkan") &&
-        text.length >= 180;
-
-
-    if (hasReadingStructure) {
+        text.length >= 180
+    ){
         return true;
     }
 
+    const dialogPattern =
+        /(^|\s)[a-z]{2,20}\s*:/i;
 
-    /*
-       4. Dialog.
-    */
-
-    const hasDialogue =
-
-        /(^|\s)[a-z]{2,20}\s*:/i.test(
-            stripHTML(html)
-        ) &&
-
+    if(
         (
             text.includes("dialog") ||
             text.includes("percakapan") ||
             text.includes("conversation")
-        );
-
-
-    if (hasDialogue) {
+        ) &&
+        dialogPattern.test(text)
+    ){
         return true;
     }
-
 
     return false;
 }
@@ -1044,41 +1410,29 @@ function detectLiterasi(q) {
 
 /* =========================================================
    KESUKARAN
-   =========================================================
+========================================================= */
 
-   C1-C2 = Mudah
-   C3-C5 = Sedang
-   C6    = Sukar
+function detectDifficulty(levelData){
 
-   CATATAN:
-   Sukar tetap dihitung sebagai HASIL ANALISIS,
-   tetapi TIDAK menjadi target wajib.
-   ========================================================= */
+    const level =
+        levelData?.level;
 
-function detectDifficulty(levelData) {
-
-    if (!levelData) {
+    if(
+        level === "C1" ||
+        level === "C2"
+    ){
         return "Mudah";
     }
 
-    if (
-        levelData.c === "C1" ||
-        levelData.c === "C2"
-    ) {
-
-        return "Mudah";
-    }
-
-    if (
-        levelData.c === "C3" ||
-        levelData.c === "C4" ||
-        levelData.c === "C5"
-    ) {
-
+    if(
+        level === "C3" ||
+        level === "C4" ||
+        level === "C5"
+    ){
         return "Sedang";
     }
 
-    if (levelData.c === "C6") {
+    if(level === "C6"){
         return "Sukar";
     }
 
@@ -1087,257 +1441,394 @@ function detectDifficulty(levelData) {
 
 
 /* =========================================================
-   PERKAYA DATA SOAL
-   ========================================================= */
+   LOAD UJIAN
+========================================================= */
 
-function enrichQuestions() {
+async function loadData(){
 
-    /*
-       Sortir berdasarkan nomor.
-    */
+    if(!guruId){
 
-    const sorted =
-        [...semuaSoal].sort(
-            (a, b) =>
-                Number(a.nomor || 0) -
-                Number(b.nomor || 0)
+        tampilkanAlert(
+            "ID guru tidak ditemukan pada sesi login.",
+            "danger"
         );
 
+        return;
+    }
 
-    /*
-       Maksimal 25 soal.
+    try{
 
-       Jika hanya tersedia 10,
-       maka hanya 10 yang dianalisis.
-    */
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("ujian")
+            .select(`
+                *,
+                mata_pelajaran (
+                    id,
+                    nama
+                ),
+                kelas (
+                    id,
+                    nama_kelas,
+                    tingkat
+                )
+            `)
+            .eq("guru_id",guruId)
+            .order("created_at",{ascending:false});
 
-    const limited =
-        sorted.slice(
-            0,
-            MAX_SOAL
+        if(error){
+            throw error;
+        }
+
+        daftarUjian =
+            (data || []).filter(
+                u => String(u.guru_id) === String(guruId)
+            );
+
+        renderUjian();
+
+    }catch(error){
+
+        console.error(error);
+
+        tampilkanAlert(
+            "Gagal memuat data ujian: " +
+            (error.message || error),
+            "danger"
         );
 
+        ujianSelect.innerHTML =
+            `<option value="">-- Gagal memuat ujian --</option>`;
+    }
+}
 
-    return limited.map(q => {
 
-        const level =
-            detectLevel(q);
+/* =========================================================
+   RENDER UJIAN
+========================================================= */
 
-        const literasi =
-            detectLiterasi(q);
+function renderUjian(){
 
-        const difficulty =
-            detectDifficulty(level);
+    ujianSelect.innerHTML =
+        `<option value="">-- Pilih Ujian --</option>`;
 
-        return {
+    if(!daftarUjian.length){
 
-            ...q,
+        ujianSelect.innerHTML =
+            `<option value="">-- Belum ada ujian --</option>`;
 
-            analisisLevel:
-                level.level,
+        return;
+    }
 
-            analisisC:
-                level.c,
+    daftarUjian.forEach(u => {
 
-            analisisLiterasi:
-                literasi,
+        const mapel =
+            u.mata_pelajaran?.nama ||
+            u.mata_pelajaran?.nama_mapel ||
+            "-";
 
-            analisisDifficulty:
-                difficulty
-        };
+        const kelas =
+            u.kelas?.nama_kelas ||
+            "-";
+
+        const option =
+            document.createElement("option");
+
+        option.value =
+            u.id;
+
+        option.textContent =
+            `${u.judul || u.nama || "Ujian"} — ${mapel} — ${kelas}`;
+
+        ujianSelect.appendChild(option);
+
     });
 }
 
 
 /* =========================================================
+   PILIH UJIAN
+========================================================= */
+
+ujianSelect.addEventListener(
+    "change",
+    async function(){
+
+        const id =
+            this.value;
+
+        if(!id){
+
+            resetAnalysis();
+
+            return;
+        }
+
+        ujianTerpilih =
+            daftarUjian.find(
+                u => String(u.id) === String(id)
+            );
+
+        await loadSoal();
+
+    }
+);
+
+
+/* =========================================================
+   LOAD SOAL
+========================================================= */
+
+async function loadSoal(){
+
+    if(!ujianTerpilih){
+        return;
+    }
+
+    loadingArea.style.display =
+        "block";
+
+    questionArea.style.display =
+        "none";
+
+    loadingArea.textContent =
+        "⏳ Memuat soal...";
+
+    try{
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+            .from("soal")
+            .select("*")
+            .eq("ujian_id",ujianTerpilih.id)
+            .order("nomor",{ascending:true});
+
+        if(error){
+            throw error;
+        }
+
+        /*
+           HANYA soal dari ujian terpilih.
+           Maksimal 25 soal.
+           Tidak membuat soal tambahan.
+        */
+
+        semuaSoal =
+            (data || [])
+            .filter(
+                row =>
+                    String(row.ujian_id) ===
+                    String(ujianTerpilih.id)
+            )
+            .sort(
+                (a,b) =>
+                    Number(a.nomor || 0) -
+                    Number(b.nomor || 0)
+            )
+            .slice(0,MAX_SOAL);
+
+        hasilAnalisis =
+            semuaSoal.map(
+                (q,index) => {
+
+                    const levelData =
+                        detectLevel(q);
+
+                    const literasi =
+                        detectLiterasi(q);
+
+                    const difficulty =
+                        detectDifficulty(levelData);
+
+                    return {
+                        ...q,
+                        nomor:
+                            q.nomor ??
+                            index + 1,
+                        level:
+                            levelData.level,
+                        kategori:
+                            levelData.kategori,
+                        difficulty,
+                        literasi
+                    };
+
+                }
+            );
+
+        tampilkanInfoUjian();
+
+        buatAnalisis();
+
+        renderQuestions();
+
+    }catch(error){
+
+        console.error(error);
+
+        loadingArea.innerHTML =
+            `<div class="alert alert-danger">
+                Gagal memuat soal:
+                ${escapeHTML(error.message || error)}
+            </div>`;
+
+    }
+
+}
+
+
+/* =========================================================
+   INFO UJIAN
+========================================================= */
+
+function tampilkanInfoUjian(){
+
+    document.getElementById(
+        "ujianInfoCard"
+    ).style.display = "block";
+
+    document.getElementById(
+        "ujianTitle"
+    ).textContent =
+        ujianTerpilih.judul ||
+        ujianTerpilih.nama ||
+        "Analisis Ujian";
+
+    document.getElementById(
+        "infoMapel"
+    ).textContent =
+        ujianTerpilih.mata_pelajaran?.nama ||
+        "-";
+
+    document.getElementById(
+        "infoKelas"
+    ).textContent =
+        ujianTerpilih.kelas?.nama_kelas ||
+        "-";
+
+    document.getElementById(
+        "infoGuru"
+    ).textContent =
+        currentUser?.nama ||
+        currentUser?.name ||
+        currentUser?.nama_guru ||
+        "Guru";
+
+    document.getElementById(
+        "infoJumlah"
+    ).textContent =
+        hasilAnalisis.length;
+}
+
+
+/* =========================================================
    ANALISIS
-   =========================================================
+========================================================= */
 
-   TARGET HANYA 6:
-   1. LOTS/MOTS
-   2. HOTS
-   3. Literasi
-   4. Mudah
-   5. Sedang
-   6. Jumlah 25 soal
-
-   TIDAK ADA TARGET SUKAR.
-   ========================================================= */
-
-function buatAnalisis() {
-
-    const qs =
-        enrichQuestions();
+function buatAnalisis(){
 
     const total =
-        qs.length;
-
-
-    /*
-       LOTS + MOTS DIGABUNG.
-    */
+        hasilAnalisis.length;
 
     const lots =
-        qs.filter(
-            q =>
-                q.analisisLevel ===
-                "LOTS"
+        hasilAnalisis.filter(
+            q => q.kategori === "LOTS"
         ).length;
 
     const mots =
-        qs.filter(
-            q =>
-                q.analisisLevel ===
-                "MOTS"
+        hasilAnalisis.filter(
+            q => q.kategori === "MOTS"
         ).length;
 
+    const hots =
+        hasilAnalisis.filter(
+            q => q.kategori === "HOTS"
+        ).length;
 
     const lotsMots =
         lots + mots;
 
-
-    /*
-       HOTS = C4-C6.
-    */
-
-    const hots =
-        qs.filter(
-            q =>
-                q.analisisLevel ===
-                "HOTS"
-        ).length;
-
-
-    /*
-       Kesukaran tetap dihitung
-       sebagai informasi analisis.
-    */
-
     const mudah =
-        qs.filter(
-            q =>
-                q.analisisDifficulty ===
-                "Mudah"
+        hasilAnalisis.filter(
+            q => q.difficulty === "Mudah"
         ).length;
-
 
     const sedang =
-        qs.filter(
-            q =>
-                q.analisisDifficulty ===
-                "Sedang"
+        hasilAnalisis.filter(
+            q => q.difficulty === "Sedang"
         ).length;
-
 
     const sukar =
-        qs.filter(
-            q =>
-                q.analisisDifficulty ===
-                "Sukar"
+        hasilAnalisis.filter(
+            q => q.difficulty === "Sukar"
         ).length;
-
-
-    /*
-       Literasi hanya dari isi soal.
-    */
 
     const literasi =
-        qs.filter(
-            q =>
-                q.analisisLiterasi === true
+        hasilAnalisis.filter(
+            q => q.literasi === true
         ).length;
 
 
     /*
-       ======================================================
-       TARGET FINAL
-       ====================================================== */
+       TARGET BARU — HANYA 6.
+
+       TIDAK ADA:
+       - target persentase
+       - target Sukar
+       - target keseimbangan kesukaran
+       - target LOTS terpisah
+       - target MOTS terpisah
+    */
 
     const checks = [
 
         {
-            name:
-                "Ada soal LOTS/MOTS",
-
-            ok:
-                lotsMots > 0,
-
-            detail:
-                `${lotsMots} soal LOTS/MOTS`
+            key:"lotsMots",
+            title:"LOTS/MOTS",
+            detail:`${lotsMots} soal C1–C3`,
+            ok:lotsMots > 0
         },
 
-
         {
-            name:
-                "Ada soal HOTS",
-
-            ok:
-                hots > 0,
-
-            detail:
-                `${hots} soal HOTS`
+            key:"hots",
+            title:"HOTS",
+            detail:`${hots} soal C4–C6`,
+            ok:hots > 0
         },
 
-
         {
-            name:
-                "Ada soal Literasi",
-
-            ok:
-                literasi > 0,
-
-            detail:
-                `${literasi} soal literasi`
+            key:"literasi",
+            title:"Literasi",
+            detail:`${literasi} soal literasi`,
+            ok:literasi > 0
         },
 
-
         {
-            name:
-                "Ada soal Mudah",
-
-            ok:
-                mudah > 0,
-
-            detail:
-                `${mudah} soal Mudah`
+            key:"mudah",
+            title:"Mudah",
+            detail:`${mudah} soal mudah`,
+            ok:mudah > 0
         },
 
-
         {
-            name:
-                "Ada soal Sedang",
-
-            ok:
-                sedang > 0,
-
-            detail:
-                `${sedang} soal Sedang`
+            key:"sedang",
+            title:"Sedang",
+            detail:`${sedang} soal sedang`,
+            ok:sedang > 0
         },
 
-
         {
-            name:
-                "Jumlah 25 soal",
-
-            ok:
-                total === 25,
-
-            detail:
-                `${total} / 25 soal`
+            key:"jumlah",
+            title:"Jumlah Soal",
+            detail:`${total} soal / target tepat 25`,
+            ok:total === 25
         }
 
     ];
-
-
-    /*
-       Semua 6 target harus ada
-       untuk status LAYAK.
-    */
-
-    const semuaTerpenuhi =
-        checks.every(
-            item => item.ok
-        );
 
 
     const jumlahTerpenuhi =
@@ -1345,860 +1836,679 @@ function buatAnalisis() {
             item => item.ok
         ).length;
 
-
-    let status;
-
-
-    if (semuaTerpenuhi) {
-
-        status = "LAYAK";
-
-    } else if (jumlahTerpenuhi >= 4) {
-
-        status = "PERLU PERBAIKAN";
-
-    } else {
-
-        status = "BELUM LAYAK";
-    }
-
-
-    return {
-
-        qs,
-
-        total,
-
-        lots,
-
-        mots,
-
-        lotsMots,
-
-        hots,
-
-        mudah,
-
-        sedang,
-
-        sukar,
-
-        literasi,
-
-        checks,
-
-        jumlahTerpenuhi,
-
-        status
-    };
-}
-
-
-/* =========================================================
-   RENDER ANALISIS
-   ========================================================= */
-
-function renderAnalysis() {
-
-    const a =
-        hasilAnalisis;
-
-    if (!a) return;
-
-
-    const badge =
-        document.getElementById(
-            "hasilBadge"
+    const semuaTerpenuhi =
+        checks.every(
+            item => item.ok
         );
-
-
-    badge.className =
-        "result " +
-        (
-            a.status === "LAYAK"
-                ? "layak"
-                : a.status === "PERLU PERBAIKAN"
-                    ? "perbaikan"
-                    : "belum"
-        );
-
-
-    badge.textContent =
-        a.status;
 
 
     /*
-       SUMMARY
+       Status bukan berdasarkan persentase.
+       Hanya berdasarkan jumlah target yang terpenuhi.
     */
 
-    const totalSoal =
-        document.getElementById(
-            "totalSoal"
-        );
+    let status =
+        "BELUM LAYAK";
 
-    if (totalSoal) {
-        totalSoal.textContent =
-            a.total;
+    let statusClass =
+        "status-belum";
+
+    let detail =
+        `${jumlahTerpenuhi} dari 6 target terpenuhi.`;
+
+    if(semuaTerpenuhi){
+
+        status =
+            "LAYAK";
+
+        statusClass =
+            "status-layak";
+
+        detail =
+            "Semua 6 target analisis telah terpenuhi.";
+
+    }else if(jumlahTerpenuhi >= 4){
+
+        status =
+            "PERLU PERBAIKAN";
+
+        statusClass =
+            "status-perbaikan";
+
+        detail =
+            `${jumlahTerpenuhi} dari 6 target terpenuhi. ` +
+            "Masih ada target yang perlu diperbaiki.";
+
     }
 
 
-    const lotsEl =
-        document.getElementById(
-            "lots"
-        );
-
-    if (lotsEl) {
-        lotsEl.textContent =
-            a.lots;
-    }
-
-
-    const motsEl =
-        document.getElementById(
-            "mots"
-        );
-
-    if (motsEl) {
-        motsEl.textContent =
-            a.mots;
-    }
-
-
-    const hotsEl =
-        document.getElementById(
-            "hots"
-        );
-
-    if (hotsEl) {
-        hotsEl.textContent =
-            a.hots;
-    }
-
-
-    const sukarEl =
-        document.getElementById(
-            "sukar"
-        );
-
-    if (sukarEl) {
-        sukarEl.textContent =
-            a.sukar;
-    }
-
-
-    const literasiEl =
-        document.getElementById(
-            "literasi"
-        );
-
-    if (literasiEl) {
-        literasiEl.textContent =
-            a.literasi;
-    }
-
-
-    /*
-       ======================================================
-       TIDAK ADA LAGI PERSENTASE.
-       ======================================================
-    */
-
-    const alasan = [];
-
-
-    if (a.total !== 25) {
-
-        alasan.push(
-            `Jumlah soal saat ini ${a.total} dari 25.`
-        );
-    }
-
-
-    if (a.lotsMots === 0) {
-
-        alasan.push(
-            "Belum ada soal LOTS/MOTS."
-        );
-    }
-
-
-    if (a.hots === 0) {
-
-        alasan.push(
-            "Belum ada soal HOTS."
-        );
-    }
-
-
-    if (a.literasi === 0) {
-
-        alasan.push(
-            "Belum ada soal literasi dari isi kolom soal."
-        );
-    }
-
-
-    if (a.mudah === 0) {
-
-        alasan.push(
-            "Belum ada soal Mudah."
-        );
-    }
-
-
-    if (a.sedang === 0) {
-
-        alasan.push(
-            "Belum ada soal Sedang."
-        );
-    }
-
-
-    let message;
-
-
-    if (a.status === "LAYAK") {
-
-        message =
-            "Naskah memenuhi seluruh target analisis.";
-
-    } else {
-
-        message =
-            "Target yang belum terpenuhi: " +
-            alasan.join(" ");
-    }
-
-
-    /*
-       TAMPILAN ANALISIS TANPA PERSENTASE.
-    */
+    /* RINGKASAN */
 
     document.getElementById(
-        "analysisContent"
-    ).innerHTML = `
+        "totalSoal"
+    ).textContent = total;
 
-        <div style="
-            margin-bottom:15px;
-            font-size:13px;
-            line-height:1.6;
-        ">
+    document.getElementById(
+        "lots"
+    ).textContent = lots;
 
-            <b>${esc(message)}</b>
+    document.getElementById(
+        "mots"
+    ).textContent = mots;
 
-            <div style="
-                margin-top:8px;
-                color:#64748b;
-            ">
+    document.getElementById(
+        "hots"
+    ).textContent = hots;
 
-                Target terpenuhi:
-                <b>
-                    ${a.jumlahTerpenuhi}/6
-                </b>
+    document.getElementById(
+        "mudah"
+    ).textContent = mudah;
 
-            </div>
+    document.getElementById(
+        "sedang"
+    ).textContent = sedang;
 
-        </div>
+    document.getElementById(
+        "sukar"
+    ).textContent = sukar;
 
-
-        <div class="criteria">
-
-            ${a.checks.map(
-                item => `
-
-                    <div class="
-                        criterion
-                        ${item.ok ? "ok" : "bad"}
-                    ">
-
-                        <b>
-                            ${item.ok ? "✅" : "⚠️"}
-                            ${esc(item.name)}
-                        </b>
-
-                        <div>
-                            ${esc(item.detail)}
-                        </div>
-
-                    </div>
-
-                `
-            ).join("")}
-
-        </div>
+    document.getElementById(
+        "literasi"
+    ).textContent = literasi;
 
 
-        <div class="note">
+    /* TARGET */
 
-            <b>Target analisis:</b>
+    checks.forEach(
+        item => {
 
-            maksimal 25 soal,
-            ada LOTS/MOTS,
-            ada HOTS,
-            ada literasi,
-            ada soal Mudah,
-            dan ada soal Sedang.
-
-            <br><br>
-
-            <b>Catatan:</b>
-            Soal Sukar tetap dianalisis dan ditampilkan
-            sebagai hasil klasifikasi, tetapi tidak menjadi
-            target wajib.
-
-            <br><br>
-
-            Literasi hanya dibaca dari isi HTML kolom
-            <b>soal</b>. Sistem tidak membaca
-            <b>row.literasi</b> dan tidak menggunakan
-            stimulus database sebagai penentu literasi.
-
-            <br><br>
-
-            Tidak ada target persentase.
-        </div>
-    `;
-}
-
-
-/* =========================================================
-   RENDER DAFTAR SOAL
-   ========================================================= */
-
-function renderQuestions() {
-
-    const list =
-        document.getElementById(
-            "questionList"
-        );
-
-
-    if (
-        !hasilAnalisis ||
-        !hasilAnalisis.qs.length
-    ) {
-
-        list.innerHTML =
-            `
-            <div class="empty">
-                📝 Belum ada soal.
-            </div>
-            `;
-
-        return;
-    }
-
-
-    const input =
-        document.getElementById(
-            "searchInput"
-        );
-
-
-    const filterLevel =
-        document.getElementById(
-            "filterLevel"
-        );
-
-
-    const filterDifficulty =
-        document.getElementById(
-            "filterDifficulty"
-        );
-
-
-    const keyword =
-        cleanText(
-            input?.value || ""
-        );
-
-
-    const fl =
-        filterLevel?.value || "";
-
-
-    const fd =
-        filterDifficulty?.value || "";
-
-
-    const data =
-        hasilAnalisis.qs.filter(q => {
-
-            const searchText =
-                cleanText(
-                    `${q.nomor} ${q.pertanyaan}`
+            const el =
+                document.getElementById(
+                    "target" +
+                    item.key.charAt(0).toUpperCase() +
+                    item.key.slice(1)
                 );
 
-
-            return (
-
-                (
-                    !keyword ||
-                    searchText.includes(
-                        keyword
-                    )
-                )
-
-                &&
-
-                (
-                    !fl ||
-                    q.analisisLevel === fl
-                )
-
-                &&
-
-                (
-                    !fd ||
-                    q.analisisDifficulty === fd
-                )
-            );
-        });
-
-
-    if (!data.length) {
-
-        list.innerHTML =
-            `
-            <div class="empty">
-                Tidak ada soal yang sesuai filter.
-            </div>
-            `;
-
-        return;
-    }
-
-
-    list.innerHTML =
-        data.map(q => {
-
-            const levelClass =
-                q.analisisLevel === "HOTS"
-                    ? "c-hot"
-                    : q.analisisLevel === "MOTS"
-                        ? "c-mid"
-                        : "c-low";
-
-
-            const diffClass =
-                q.analisisDifficulty === "Sukar"
-                    ? "diff-hard"
-                    : q.analisisDifficulty === "Sedang"
-                        ? "diff-mid"
-                        : "diff-easy";
-
-
-            return `
-
-                <article class="question">
-
-                    <div class="qhead">
-
-                        <div class="qnum">
-
-                            Soal ${esc(q.nomor)}
-
-                        </div>
-
-
-                        <div class="badges">
-
-                            <span class="
-                                badge
-                                ${levelClass}
-                            ">
-
-                                ${q.analisisLevel}
-                                •
-                                ${q.analisisC}
-
-                            </span>
-
-
-                            <span class="
-                                badge
-                                ${diffClass}
-                            ">
-
-                                ${q.analisisDifficulty}
-
-                            </span>
-
-
-                            <span class="
-                                badge
-                                ${q.analisisLiterasi
-                                    ? "lit"
-                                    : "nol"}
-                            ">
-
-                                ${q.analisisLiterasi
-                                    ? "📖 Literasi"
-                                    : "Non-Literasi"}
-
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="qtext">
-
-                        ${renderQuestionHTML(
-                            q.pertanyaan
-                        )}
-
-                        ${
-                            q.gambar_soal
-                                ? `
-                                    <img
-                                        src="${escAttr(
-                                            q.gambar_soal
-                                        )}"
-                                        alt="Gambar soal"
-                                    >
-                                  `
-                                : ""
-                        }
-
-                    </div>
-
-
-                    ${
-                        q.analisisLiterasi
-                            ? `
-                                <div style="
-                                    margin-top:10px;
-                                    padding:8px 10px;
-                                    border-radius:8px;
-                                    background:#faf5ff;
-                                    color:#7e22ce;
-                                    font-size:11px;
-                                ">
-                                    📖 Literasi terdeteksi
-                                    dari isi HTML kolom soal.
-                                </div>
-                              `
-                            : ""
-                    }
-
-                </article>
-            `;
-
-        }).join("");
-}
-
-
-/* =========================================================
-   RENDER HTML SOAL
-   ========================================================= */
-
-function renderQuestionHTML(value) {
-
-    const html =
-        String(value ?? "");
-
-
-    /*
-       Jika bukan HTML,
-       tampilkan sebagai teks aman.
-    */
-
-    if (!/<[a-z][\s\S]*>/i.test(html)) {
-
-        return esc(html)
-            .replace(
-                /\n/g,
-                "<br>"
-            );
-    }
-
-
-    /*
-       Sanitasi HTML.
-    */
-
-    const template =
-        document.createElement(
-            "template"
-        );
-
-
-    template.innerHTML =
-        html;
-
-
-    template.content
-        .querySelectorAll(
-            "script,iframe,object,embed"
-        )
-        .forEach(
-            el => el.remove()
-        );
-
-
-    /*
-       Hapus event handler.
-    */
-
-    template.content
-        .querySelectorAll("*")
-        .forEach(el => {
-
-            [...el.attributes]
-                .forEach(attr => {
-
-                    if (
-                        attr.name
-                            .toLowerCase()
-                            .startsWith("on")
-                    ) {
-
-                        el.removeAttribute(
-                            attr.name
-                        );
-                    }
-
-
-                    /*
-                       Blokir javascript:
-                       pada src/href.
-                    */
-
-                    if (
-                        (
-                            attr.name === "src" ||
-                            attr.name === "href"
-                        ) &&
-                        /^javascript:/i.test(
-                            attr.value
-                        )
-                    ) {
-
-                        el.removeAttribute(
-                            attr.name
-                        );
-                    }
-
-                });
-        });
-
-
-    const div =
-        document.createElement(
-            "div"
-        );
-
-
-    div.appendChild(
-        template.content.cloneNode(
-            true
-        )
-    );
-
-
-    return div.innerHTML;
-}
-
-
-/* =========================================================
-   UJI KELAYAKAN
-   ========================================================= */
-
-function bukaUji() {
-
-    if (!hasilAnalisis) {
-
-        alert(
-            "Pilih ujian terlebih dahulu."
-        );
-
-        return;
-    }
-
-
-    const a =
-        hasilAnalisis;
-
-
-    const statusClass =
-        a.status === "LAYAK"
-            ? "layak"
-            : a.status === "PERLU PERBAIKAN"
-                ? "perbaikan"
-                : "belum";
-
-
-    document.getElementById(
-        "testContent"
-    ).innerHTML = `
-
-        <div class="
-            test-result
-            ${statusClass}
-        ">
-
-            <h3 style="
-                margin-bottom:7px;
-            ">
-
-                ${
-                    a.status === "LAYAK"
-                        ? "🟢"
-                        : a.status === "PERLU PERBAIKAN"
-                            ? "🟡"
-                            : "🔴"
+            if(!el){
+                return;
+            }
+
+            if(item.ok){
+
+                el.classList.remove(
+                    "target-no"
+                );
+
+                el.classList.add(
+                    "target-ok"
+                );
+
+                const icon =
+                    el.querySelector(
+                        ".target-icon"
+                    );
+
+                if(icon){
+                    icon.textContent = "✓";
                 }
 
-                ${esc(a.status)}
+            }else{
 
-            </h3>
+                el.classList.remove(
+                    "target-ok"
+                );
 
+                el.classList.add(
+                    "target-no"
+                );
 
-            <div style="
-                font-size:13px;
-                line-height:1.6;
-            ">
+                const icon =
+                    el.querySelector(
+                        ".target-icon"
+                    );
 
-                ${esc(
-                    ujianTerpilih?.judul ||
-                    "Naskah Ujian"
-                )}
+                if(icon){
+                    icon.textContent = "✕";
+                }
 
-            </div>
-
-
-            <div style="
-                margin-top:8px;
-                font-size:13px;
-            ">
-
-                Target terpenuhi:
-                <b>
-                    ${a.jumlahTerpenuhi}/6
-                </b>
-
-            </div>
-
-        </div>
-
-
-        <div class="test-list">
-
-            ${a.checks.map(
-                item => `
-
-                    <div class="
-                        test-item
-                        ${item.ok ? "ok" : "bad"}
-                    ">
-
-                        ${
-                            item.ok
-                                ? "✅"
-                                : "⚠️"
-                        }
-
-                        <b>
-                            ${esc(item.name)}
-                        </b>
-
-                        <br>
-
-                        ${esc(item.detail)}
-
-                    </div>
-
-                `
-            ).join("")}
-
-        </div>
-
-
-        <p class="note">
-
-            <b>Target final:</b>
-
-            25 soal,
-            LOTS/MOTS,
-            HOTS,
-            Literasi,
-            Mudah,
-            dan Sedang.
-
-            <br><br>
-
-            Soal Sukar tetap dapat muncul
-            dalam hasil analisis, tetapi
-            <b>bukan target wajib</b>.
-
-            <br><br>
-
-            Tidak ada target persentase.
-            Tidak ada target HOTS 30%.
-            Tidak ada target Mudah+Sedang 60%.
-            Tidak ada target Sukar 20–30%.
-
-        </p>
-    `;
-
-
-    document.getElementById(
-        "testModal"
-    ).style.display =
-        "flex";
-}
-
-
-function closeTest() {
-
-    document.getElementById(
-        "testModal"
-    ).style.display =
-        "none";
-}
-
-
-function kembaliDashboard() {
-
-    location.href =
-        "guru.html";
-}
-
-
-/* =========================================================
-   EVENT
-   ========================================================= */
-
-const testModal =
-    document.getElementById(
-        "testModal"
-    );
-
-if (testModal) {
-
-    testModal.addEventListener(
-        "click",
-        e => {
-
-            if (
-                e.target ===
-                e.currentTarget
-            ) {
-
-                closeTest();
             }
+
+            const detailEl =
+                el.querySelector(
+                    ".target-detail"
+                );
+
+            if(detailEl){
+                detailEl.textContent =
+                    item.detail;
+            }
+
         }
     );
+
+
+    document.getElementById(
+        "targetCounter"
+    ).textContent =
+        `${jumlahTerpenuhi} / 6`;
+
+
+    /* STATUS */
+
+    const statusBox =
+        document.getElementById(
+            "statusBox"
+        );
+
+    statusBox.className =
+        `status-box ${statusClass}`;
+
+    document.getElementById(
+        "statusTitle"
+    ).textContent =
+        status;
+
+    document.getElementById(
+        "statusDetail"
+    ).textContent =
+        detail;
+
 }
 
 
 /* =========================================================
-   JALANKAN
-   ========================================================= */
+   RENDER SOAL
+========================================================= */
+
+function renderQuestions(){
+
+    const search =
+        searchInput.value
+            .trim()
+            .toLowerCase();
+
+    const filtered =
+        hasilAnalisis.filter(q => {
+
+            const nomor =
+                String(q.nomor || "");
+
+            const text =
+                htmlToText(
+                    q.pertanyaan ||
+                    q.soal ||
+                    q.question ||
+                    ""
+                ).toLowerCase();
+
+            return (
+                !search ||
+                nomor.includes(search) ||
+                text.includes(search)
+            );
+
+        });
+
+
+    questionCountLabel.textContent =
+        `${filtered.length} soal`;
+
+
+    if(!filtered.length){
+
+        loadingArea.style.display =
+            "block";
+
+        questionArea.style.display =
+            "none";
+
+        loadingArea.innerHTML =
+            `<div class="empty">
+                Tidak ada soal yang sesuai.
+            </div>`;
+
+        return;
+    }
+
+
+    loadingArea.style.display =
+        "none";
+
+    questionArea.style.display =
+        "block";
+
+
+    questionTableBody.innerHTML =
+        filtered.map(
+            (q,index) => {
+
+                const rawQuestion =
+                    q.pertanyaan ||
+                    q.soal ||
+                    q.question ||
+                    "";
+
+                const questionHTML =
+                    sanitizeQuestionHTML(
+                        rawQuestion
+                    );
+
+
+                let levelClass =
+                    "badge-lots";
+
+                if(q.kategori === "MOTS"){
+                    levelClass =
+                        "badge-mots";
+                }
+
+                if(q.kategori === "HOTS"){
+                    levelClass =
+                        "badge-hots";
+                }
+
+
+                let diffClass =
+                    "badge-mudah";
+
+                if(q.difficulty === "Sedang"){
+                    diffClass =
+                        "badge-sedang";
+                }
+
+                if(q.difficulty === "Sukar"){
+                    diffClass =
+                        "badge-sukar";
+                }
+
+
+                return `
+                    <tr>
+
+                        <td class="question-number">
+                            ${escapeHTML(q.nomor)}
+                        </td>
+
+                        <td class="question-text">
+                            ${questionHTML}
+                        </td>
+
+                        <td>
+                            <div class="badges">
+                                <span class="badge ${levelClass}">
+                                    ${escapeHTML(q.kategori)}
+                                </span>
+
+                                <span class="badge ${levelClass}">
+                                    ${escapeHTML(q.level)}
+                                </span>
+                            </div>
+                        </td>
+
+                        <td>
+                            <span class="badge ${diffClass}">
+                                ${escapeHTML(q.difficulty)}
+                            </span>
+                        </td>
+
+                        <td>
+                            ${
+                                q.literasi
+                                ?
+                                `<span class="badge badge-literasi">
+                                    ✓ Literasi
+                                </span>`
+                                :
+                                `<span class="badge">
+                                    Tidak
+                                </span>`
+                            }
+                        </td>
+
+                        <td>
+                            <button
+                                class="btn btn-primary"
+                                onclick="lihatSoal(${indexOfQuestion(q)})">
+                                👁️ Detail
+                            </button>
+                        </td>
+
+                    </tr>
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+/* =========================================================
+   INDEX SOAL
+========================================================= */
+
+function indexOfQuestion(q){
+
+    return hasilAnalisis.indexOf(q);
+}
+
+
+/* =========================================================
+   DETAIL SOAL
+========================================================= */
+
+function lihatSoal(index){
+
+    const q =
+        hasilAnalisis[index];
+
+    if(!q){
+        return;
+    }
+
+    document.getElementById(
+        "modalNomor"
+    ).textContent =
+        q.nomor;
+
+    document.getElementById(
+        "modalLevel"
+    ).textContent =
+        `${q.kategori} — ${q.level}`;
+
+    document.getElementById(
+        "modalDifficulty"
+    ).textContent =
+        q.difficulty;
+
+    document.getElementById(
+        "modalLiterasi"
+    ).textContent =
+        q.literasi
+        ? "✓ Ya"
+        : "Tidak";
+
+
+    const rawQuestion =
+        q.pertanyaan ||
+        q.soal ||
+        q.question ||
+        "";
+
+    document.getElementById(
+        "modalQuestion"
+    ).innerHTML =
+        sanitizeQuestionHTML(
+            rawQuestion
+        );
+
+
+    document.getElementById(
+        "modalTitle"
+    ).textContent =
+        `Detail Soal Nomor ${q.nomor}`;
+
+
+    document.getElementById(
+        "questionModal"
+    ).classList.add("show");
+
+}
+
+
+function tutupModal(){
+
+    document.getElementById(
+        "questionModal"
+    ).classList.remove("show");
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+searchInput.addEventListener(
+    "input",
+    renderQuestions
+);
+
+
+/* =========================================================
+   ANALISIS SEKARANG
+========================================================= */
+
+function analisisSekarang(){
+
+    if(!ujianTerpilih){
+
+        tampilkanAlert(
+            "Silakan pilih ujian terlebih dahulu.",
+            "info"
+        );
+
+        return;
+    }
+
+    buatAnalisis();
+
+    renderQuestions();
+
+    document.getElementById(
+        "ujianInfoCard"
+    ).scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetAnalysis(){
+
+    ujianTerpilih = null;
+
+    semuaSoal = [];
+
+    hasilAnalisis = [];
+
+
+    document.getElementById(
+        "ujianInfoCard"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "totalSoal"
+    ).textContent = "0";
+
+    document.getElementById(
+        "lots"
+    ).textContent = "0";
+
+    document.getElementById(
+        "mots"
+    ).textContent = "0";
+
+    document.getElementById(
+        "hots"
+    ).textContent = "0";
+
+    document.getElementById(
+        "mudah"
+    ).textContent = "0";
+
+    document.getElementById(
+        "sedang"
+    ).textContent = "0";
+
+    document.getElementById(
+        "sukar"
+    ).textContent = "0";
+
+    document.getElementById(
+        "literasi"
+    ).textContent = "0";
+
+
+    document.getElementById(
+        "targetCounter"
+    ).textContent = "0 / 6";
+
+
+    document.getElementById(
+        "statusBox"
+    ).className =
+        "status-box status-belum";
+
+
+    document.getElementById(
+        "statusTitle"
+    ).textContent =
+        "BELUM ADA ANALISIS";
+
+
+    document.getElementById(
+        "statusDetail"
+    ).textContent =
+        "Pilih ujian untuk memulai analisis.";
+
+
+    const targets = [
+        "targetLotsMots",
+        "targetHots",
+        "targetLiterasi",
+        "targetMudah",
+        "targetSedang",
+        "targetJumlah"
+    ];
+
+
+    targets.forEach(id => {
+
+        const el =
+            document.getElementById(id);
+
+        if(!el){
+            return;
+        }
+
+        el.classList.remove(
+            "target-ok"
+        );
+
+        el.classList.add(
+            "target-no"
+        );
+
+        const icon =
+            el.querySelector(
+                ".target-icon"
+            );
+
+        if(icon){
+            icon.textContent = "✕";
+        }
+
+    });
+
+
+    loadingArea.style.display =
+        "block";
+
+    questionArea.style.display =
+        "none";
+
+    loadingArea.textContent =
+        "Pilih ujian untuk melihat soal.";
+
+    questionCountLabel.textContent =
+        "0 soal";
+
+}
+
+
+/* =========================================================
+   ALERT
+========================================================= */
+
+function tampilkanAlert(
+    message,
+    type = "info"
+){
+
+    const area =
+        document.getElementById(
+            "alertArea"
+        );
+
+    const className =
+        type === "danger"
+        ? "alert-danger"
+        : "alert-info";
+
+    area.innerHTML =
+        `
+        <div class="alert ${className}">
+            ${escapeHTML(message)}
+        </div>
+        `;
+
+    setTimeout(
+        () => {
+            area.innerHTML = "";
+        },
+        5000
+    );
+}
+
+
+/* =========================================================
+   MODAL CLICK OUTSIDE
+========================================================= */
+
+document.getElementById(
+    "questionModal"
+).addEventListener(
+    "click",
+    function(e){
+
+        if(e.target === this){
+            tutupModal();
+        }
+
+    }
+);
+
+
+/* =========================================================
+   ESC MODAL
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function(e){
+
+        if(e.key === "Escape"){
+            tutupModal();
+        }
+
+    }
+);
+
+
+/* =========================================================
+   LOAD AWAL
+========================================================= */
 
 loadData();
 
 </script>
-```
+
+</body>
+</html>
