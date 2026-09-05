@@ -9,6 +9,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
 *{
     box-sizing:border-box;
     margin:0;
@@ -17,117 +18,159 @@
 
 body{
     font-family:Arial,Helvetica,sans-serif;
-    background:#f4f6f9;
-    color:#1f2937;
+    background:#f1f5f9;
+    color:#1e293b;
 }
 
 .header{
     background:linear-gradient(135deg,#1e3a8a,#2563eb);
     color:white;
-    padding:22px 30px;
+    padding:20px 25px;
+    box-shadow:0 3px 10px rgba(0,0,0,.15);
+}
+
+.header-inner{
+    max-width:1450px;
+    margin:auto;
     display:flex;
     justify-content:space-between;
     align-items:center;
     gap:15px;
-    flex-wrap:wrap;
-    box-shadow:0 3px 10px rgba(0,0,0,.15);
 }
 
 .header h1{
     font-size:25px;
+    margin-bottom:6px;
 }
 
 .header p{
-    margin-top:5px;
-    opacity:.9;
     font-size:14px;
-}
-
-.header-actions{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-}
-
-.btn{
-    border:none;
-    padding:10px 16px;
-    border-radius:8px;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-.btn-light{
-    background:white;
-    color:#1e3a8a;
-}
-
-.btn-refresh{
-    background:#16a34a;
-    color:white;
+    opacity:.9;
 }
 
 .container{
-    max-width:1500px;
+    max-width:1450px;
     margin:25px auto;
     padding:0 20px;
 }
 
-.filter-box{
+.card{
     background:white;
-    border-radius:12px;
+    border-radius:14px;
     padding:20px;
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
     margin-bottom:20px;
+    box-shadow:0 3px 12px rgba(0,0,0,.07);
 }
 
-.filter-title{
+.card-title{
     font-size:18px;
     font-weight:bold;
+    color:#1e3a8a;
     margin-bottom:15px;
 }
 
-.filters{
+.filter-grid{
     display:grid;
-    grid-template-columns:repeat(5,1fr);
-    gap:15px;
+    grid-template-columns:2fr 1fr 1fr 1fr;
+    gap:14px;
 }
 
-.filter-group label{
-    display:block;
+.form-group{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.form-group label{
     font-size:13px;
     font-weight:bold;
-    margin-bottom:6px;
+    color:#475569;
 }
 
-.filter-group select,
-.filter-group input{
+input,
+select{
     width:100%;
-    padding:10px;
-    border:1px solid #d1d5db;
-    border-radius:7px;
-    background:white;
+    padding:11px 12px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+    font-size:14px;
     outline:none;
+    background:white;
 }
 
-.note{
-    background:#eff6ff;
-    border-left:5px solid #2563eb;
-    padding:14px;
-    border-radius:7px;
-    font-size:13px;
-    line-height:1.7;
-    margin-bottom:20px;
+input:focus,
+select:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 2px rgba(37,99,235,.1);
 }
 
-.owner-note{
-    background:#f0fdf4;
-    border-left:5px solid #16a34a;
-    padding:14px;
-    border-radius:7px;
+.btn{
+    border:none;
+    border-radius:8px;
+    padding:10px 15px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:.2s;
+}
+
+.btn:hover{
+    opacity:.9;
+    transform:translateY(-1px);
+}
+
+.btn-primary{
+    background:#2563eb;
+    color:white;
+}
+
+.btn-success{
+    background:#16a34a;
+    color:white;
+}
+
+.btn-secondary{
+    background:#64748b;
+    color:white;
+}
+
+.btn-warning{
+    background:#f59e0b;
+    color:white;
+}
+
+.btn-danger{
+    background:#dc2626;
+    color:white;
+}
+
+.status{
+    margin-top:15px;
+    padding:12px 14px;
+    border-radius:8px;
     font-size:13px;
-    line-height:1.7;
-    margin-bottom:20px;
+    display:none;
+}
+
+.status.show{
+    display:block;
+}
+
+.status.success{
+    background:#dcfce7;
+    color:#166534;
+    border:1px solid #86efac;
+}
+
+.status.warning{
+    background:#fef3c7;
+    color:#92400e;
+    border:1px solid #fcd34d;
+}
+
+.status.error{
+    background:#fee2e2;
+    color:#991b1b;
+    border:1px solid #fca5a5;
 }
 
 .summary-grid{
@@ -137,114 +180,198 @@ body{
     margin-bottom:20px;
 }
 
-.summary-card{
-    background:white;
-    border-radius:10px;
-    padding:15px;
-    box-shadow:0 2px 7px rgba(0,0,0,.07);
-    border-left:5px solid #2563eb;
-}
-
-.summary-card .number{
-    font-size:26px;
-    font-weight:bold;
-    margin-bottom:5px;
-}
-
-.summary-card .label{
-    font-size:12px;
-    color:#6b7280;
-    font-weight:bold;
-}
-
-.summary-card.literasi{
-    border-left-color:#7c3aed;
-}
-
-.summary-card.nonliterasi{
-    border-left-color:#64748b;
-}
-
-.summary-card.lots{
-    border-left-color:#16a34a;
-}
-
-.summary-card.mots{
-    border-left-color:#f59e0b;
-}
-
-.summary-card.hots{
-    border-left-color:#dc2626;
-}
-
-.summary-card.literasihots{
-    border-left-color:#9333ea;
-}
-
-.section{
+.summary-box{
     background:white;
     border-radius:12px;
-    padding:20px;
-    box-shadow:0 2px 8px rgba(0,0,0,.08);
-    margin-bottom:20px;
+    padding:16px;
+    box-shadow:0 3px 10px rgba(0,0,0,.06);
 }
 
-.section-title{
-    font-size:19px;
+.summary-label{
+    color:#64748b;
+    font-size:12px;
+    margin-bottom:7px;
+}
+
+.summary-value{
+    font-size:25px;
     font-weight:bold;
-    margin-bottom:18px;
+    color:#1e3a8a;
+}
+
+.summary-small{
+    font-size:11px;
+    color:#64748b;
+    margin-top:5px;
+}
+
+.toolbar{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    gap:10px;
+    gap:15px;
     flex-wrap:wrap;
 }
 
-.bar-row{
-    margin-bottom:14px;
+.toolbar-buttons{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
 }
 
-.bar-head{
+.info-box{
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    color:#1e40af;
+    padding:14px;
+    border-radius:10px;
+    line-height:1.7;
+    font-size:13px;
+    margin-bottom:20px;
+}
+
+.info-box b{
+    color:#1e3a8a;
+}
+
+.kelayakan{
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:20px;
+    border:2px solid;
+}
+
+.kelayakan.layak{
+    background:#f0fdf4;
+    border-color:#86efac;
+}
+
+.kelayakan.tidak-layak{
+    background:#fff7ed;
+    border-color:#fdba74;
+}
+
+.kelayakan-header{
     display:flex;
     justify-content:space-between;
-    margin-bottom:6px;
-    font-size:13px;
+    align-items:center;
+    gap:15px;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+}
+
+.kelayakan-title{
+    font-size:20px;
     font-weight:bold;
 }
 
-.bar-container{
-    height:12px;
-    background:#e5e7eb;
+.layak .kelayakan-title{
+    color:#166534;
+}
+
+.tidak-layak .kelayakan-title{
+    color:#9a3412;
+}
+
+.kelayakan-score{
+    font-size:16px;
+    font-weight:bold;
+    padding:8px 14px;
+    border-radius:20px;
+    background:white;
+}
+
+.indikator-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+}
+
+.indikator{
+    background:white;
+    border-radius:10px;
+    padding:13px;
+    border:1px solid #e2e8f0;
+}
+
+.indikator.ok{
+    border-color:#86efac;
+}
+
+.indikator.no{
+    border-color:#fca5a5;
+}
+
+.indikator-head{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-weight:bold;
+    font-size:13px;
+    margin-bottom:6px;
+}
+
+.indikator-desc{
+    font-size:11px;
+    color:#64748b;
+    line-height:1.5;
+}
+
+.progress-section{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    margin-bottom:20px;
+}
+
+.progress-box{
+    background:white;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 3px 12px rgba(0,0,0,.07);
+}
+
+.progress-title{
+    font-size:17px;
+    font-weight:bold;
+    color:#1e3a8a;
+    margin-bottom:15px;
+}
+
+.bar-row{
+    margin-bottom:13px;
+}
+
+.bar-label{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    margin-bottom:5px;
+}
+
+.bar-bg{
+    height:10px;
+    background:#e2e8f0;
     border-radius:20px;
     overflow:hidden;
 }
 
-.bar{
+.bar-fill{
     height:100%;
     border-radius:20px;
-}
-
-.bar-easy{
-    background:#16a34a;
-}
-
-.bar-medium{
-    background:#f59e0b;
-}
-
-.bar-hard{
-    background:#dc2626;
-}
-
-.bar-cognitive{
     background:#2563eb;
 }
 
-.matrix-wrap{
-    overflow-x:auto;
+.matrix{
+    background:white;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 3px 12px rgba(0,0,0,.07);
+    margin-bottom:20px;
+    overflow:auto;
 }
 
-.matrix{
+.matrix table{
     width:100%;
     border-collapse:collapse;
     min-width:650px;
@@ -252,46 +379,68 @@ body{
 
 .matrix th,
 .matrix td{
-    border:1px solid #d1d5db;
-    padding:11px;
+    border:1px solid #e2e8f0;
+    padding:10px;
     text-align:center;
+    font-size:13px;
 }
 
 .matrix th{
     background:#eff6ff;
-    font-size:13px;
+    color:#1e3a8a;
 }
 
-.matrix td{
+.matrix td:first-child{
     font-weight:bold;
+    text-align:left;
 }
 
-.matrix .lots{
-    background:#f0fdf4;
+.soal-list{
+    background:white;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 3px 12px rgba(0,0,0,.07);
 }
 
-.matrix .mots{
-    background:#fffbeb;
-}
-
-.matrix .hots{
-    background:#fef2f2;
-}
-
-.matrix .total{
-    background:#f3f4f6;
-}
-
-.legend{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
+.soal-list-title{
+    font-size:18px;
+    font-weight:bold;
+    color:#1e3a8a;
     margin-bottom:15px;
 }
 
-.badge{
-    display:inline-flex;
+.soal-item{
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:12px;
+}
+
+.soal-header{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:12px;
+}
+
+.soal-left{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
     align-items:center;
+}
+
+.nomor{
+    background:#1e3a8a;
+    color:white;
+    padding:5px 9px;
+    border-radius:6px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.badge{
     padding:5px 9px;
     border-radius:20px;
     font-size:11px;
@@ -318,303 +467,102 @@ body{
     color:#991b1b;
 }
 
+.badge-mudah{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.badge-sedang{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.badge-sukar{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
 .badge-literasi{
     background:#ede9fe;
     color:#6d28d9;
 }
 
-.badge-non{
-    background:#e5e7eb;
-    color:#374151;
+.badge-tanpa{
+    background:#f1f5f9;
+    color:#64748b;
 }
 
-.badge-hard{
-    background:#fee2e2;
-    color:#991b1b;
-}
-
-.badge-medium{
-    background:#fef3c7;
-    color:#92400e;
-}
-
-.badge-easy{
-    background:#dcfce7;
-    color:#166534;
-}
-
-.badge-ok{
-    background:#dcfce7;
-    color:#166534;
-}
-
-.badge-warning{
-    background:#fee2e2;
-    color:#991b1b;
-}
-
-.kelayakan-box{
-    border-radius:12px;
-    padding:20px;
-    border:2px solid #e5e7eb;
-}
-
-.kelayakan-layak{
-    background:#f0fdf4;
-    border-color:#16a34a;
-}
-
-.kelayakan-tidak{
-    background:#fef2f2;
-    border-color:#dc2626;
-}
-
-.kelayakan-status{
-    font-size:26px;
-    font-weight:bold;
-    margin-bottom:10px;
-}
-
-.kelayakan-layak .kelayakan-status{
-    color:#15803d;
-}
-
-.kelayakan-tidak .kelayakan-status{
-    color:#b91c1c;
-}
-
-.kelayakan-deskripsi{
+.pertanyaan{
+    line-height:1.7;
     font-size:14px;
-    line-height:1.7;
-    margin-bottom:20px;
+    color:#1e293b;
 }
 
-.standar-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:12px;
-}
-
-.standar-item{
-    background:white;
-    border:1px solid #e5e7eb;
+.stimulus-box{
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
     border-radius:9px;
-    padding:13px;
+    padding:12px;
+    margin-bottom:12px;
 }
 
-.standar-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
+.stimulus-title{
+    font-weight:bold;
+    color:#1e40af;
     margin-bottom:7px;
-}
-
-.standar-nama{
-    font-weight:bold;
     font-size:13px;
 }
 
-.standar-persen{
-    font-size:18px;
-    font-weight:bold;
-}
-
-.standar-target{
-    font-size:11px;
-    color:#6b7280;
-    margin-bottom:7px;
-}
-
-.standar-ok{
-    color:#15803d;
-    font-weight:bold;
-    font-size:12px;
-}
-
-.standar-warning{
-    color:#b91c1c;
-    font-weight:bold;
-    font-size:12px;
-}
-
-.rekomendasi-box{
-    margin-top:20px;
-    background:white;
-    border-radius:9px;
-    padding:15px;
-}
-
-.rekomendasi-box h4{
-    margin-bottom:10px;
-}
-
-.rekomendasi-box ul{
-    padding-left:22px;
-}
-
-.rekomendasi-box li{
-    margin-bottom:8px;
-    line-height:1.5;
-    font-size:13px;
-}
-
-.question-list{
-    display:flex;
-    flex-direction:column;
-    gap:15px;
-}
-
-.question-card{
-    border:1px solid #e5e7eb;
-    border-radius:10px;
-    overflow:hidden;
-    background:#fff;
-}
-
-.question-header{
-    padding:12px 15px;
-    background:#f8fafc;
-    border-bottom:1px solid #e5e7eb;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-    flex-wrap:wrap;
-}
-
-.question-number{
-    font-weight:bold;
-    color:#1e3a8a;
-}
-
-.badges{
-    display:flex;
-    gap:6px;
-    flex-wrap:wrap;
-}
-
-.question-body{
-    padding:16px;
-}
-
-.question-text{
-    font-size:15px;
-    line-height:1.7;
-    margin-bottom:15px;
-}
-
-.question-text img,
-.literasi-content img{
-    max-width:100%;
-    height:auto;
-}
-
-.question-text table,
-.literasi-content table{
-    max-width:100%;
-    border-collapse:collapse;
-}
-
-.question-text td,
-.question-text th,
-.literasi-content td,
-.literasi-content th{
-    border:1px solid #d1d5db;
-    padding:6px;
-}
-
-.analysis-grid{
-    display:grid;
-    grid-template-columns:repeat(6,1fr);
-    gap:10px;
-}
-
-.analysis-item{
-    background:#f8fafc;
-    border:1px solid #e5e7eb;
-    border-radius:8px;
-    padding:10px;
-}
-
-.analysis-item .title{
-    font-size:11px;
-    color:#6b7280;
-    font-weight:bold;
-    margin-bottom:5px;
-}
-
-.analysis-item .value{
-    font-size:13px;
-    font-weight:bold;
-}
-
-.reason{
+.meta{
+    border-top:1px solid #e2e8f0;
     margin-top:12px;
-    padding:11px;
-    background:#f8fafc;
-    border-radius:7px;
-    font-size:12px;
-    line-height:1.6;
-}
-
-.literasi-box{
-    margin-bottom:14px;
-    padding:14px;
-    background:#faf5ff;
-    border-left:4px solid #7c3aed;
-    border-radius:7px;
-}
-
-.literasi-title{
-    font-weight:bold;
-    color:#6d28a9;
-    margin-bottom:7px;
-}
-
-.literasi-content{
-    font-size:13px;
-    line-height:1.7;
-}
-
-.loading{
-    text-align:center;
-    padding:40px;
-    color:#6b7280;
+    padding-top:10px;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
 }
 
 .empty{
+    background:white;
+    border-radius:14px;
+    padding:55px 20px;
     text-align:center;
-    padding:40px;
-    color:#6b7280;
+    color:#64748b;
+    box-shadow:0 3px 12px rgba(0,0,0,.06);
 }
 
-.error{
-    padding:15px;
-    background:#fee2e2;
-    color:#991b1b;
-    border-radius:8px;
-    margin-bottom:15px;
+.empty h3{
+    margin-bottom:8px;
+    color:#334155;
 }
 
-.info-owner{
-    background:#eff6ff;
-    border:1px solid #bfdbfe;
-    color:#1e40af;
-    padding:12px;
-    border-radius:8px;
-    margin-bottom:15px;
+.loading{
+    background:white;
+    border-radius:14px;
+    padding:50px;
+    text-align:center;
+    color:#64748b;
+}
+
+.rekomendasi{
+    margin-top:15px;
+    background:white;
+    border-radius:10px;
+    padding:14px;
+    border:1px solid #e2e8f0;
+}
+
+.rekomendasi ul{
+    margin-left:20px;
+    margin-top:7px;
+    line-height:1.7;
+}
+
+footer{
+    text-align:center;
+    padding:25px;
+    color:#64748b;
     font-size:13px;
-}
-
-.debug-info{
-    background:#fff7ed;
-    border-left:5px solid #f97316;
-    padding:12px;
-    border-radius:7px;
-    font-size:12px;
-    line-height:1.6;
-    margin-bottom:20px;
 }
 
 @media(max-width:1200px){
@@ -623,67 +571,39 @@ body{
         grid-template-columns:repeat(4,1fr);
     }
 
-    .filters{
-        grid-template-columns:repeat(3,1fr);
-    }
-
-    .analysis-grid{
-        grid-template-columns:repeat(3,1fr);
-    }
-
-    .standar-grid{
-        grid-template-columns:repeat(2,1fr);
+    .filter-grid{
+        grid-template-columns:1fr 1fr;
     }
 
 }
 
-@media(max-width:768px){
-
-    .header{
-        padding:18px;
-    }
-
-    .container{
-        padding:0 12px;
-    }
-
-    .filters{
-        grid-template-columns:1fr;
-    }
+@media(max-width:800px){
 
     .summary-grid{
-        grid-template-columns:repeat(2,1fr);
+        grid-template-columns:1fr 1fr;
     }
 
-    .analysis-grid{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .standar-grid{
+    .indikator-grid,
+    .progress-section{
         grid-template-columns:1fr;
     }
 
 }
 
-@media(max-width:480px){
+@media(max-width:600px){
 
+    .header-inner{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .filter-grid,
     .summary-grid{
         grid-template-columns:1fr;
     }
 
-    .analysis-grid{
-        grid-template-columns:1fr;
-    }
-
-    .standar-grid{
-        grid-template-columns:1fr;
-    }
-
-    .header h1{
-        font-size:20px;
-    }
-
 }
+
 </style>
 </head>
 
@@ -691,28 +611,20 @@ body{
 
 <header class="header">
 
-    <div>
+    <div class="header-inner">
 
-        <h1>📊 ANALISIS SOAL</h1>
-
-        <p>
-            Analisis Kognitif • HOTS • Literasi • Kesukaran • Kelayakan Naskah
-        </p>
-
-    </div>
-
-    <div class="header-actions">
+        <div>
+            <h1>📊 ANALISIS SOAL GURU</h1>
+            <p>
+                Analisis 25 Soal • HOTS • Literasi • Kesukaran • Kelayakan
+            </p>
+        </div>
 
         <button
-            class="btn btn-light"
-            onclick="window.location.href='bank-soal-guru.html'">
-            📚 Bank Soal
-        </button>
-
-        <button
-            class="btn btn-refresh"
-            onclick="loadData()">
-            🔄 Refresh
+            class="btn btn-secondary"
+            onclick="kembaliDashboard()"
+        >
+            ← Dashboard Guru
         </button>
 
     </div>
@@ -720,45 +632,32 @@ body{
 </header>
 
 
-<div class="container">
-
-<div class="owner-note">
-
-    <b>🔐 KEAMANAN ANALISIS GURU</b><br>
-
-    Halaman ini hanya dapat digunakan oleh
-    <b>guru pembuat soal</b>.
-
-    Sistem hanya mengambil ujian dan soal yang
-    terhubung dengan guru yang sedang login.
-
-    <br><br>
-
-    <b>Soal guru lain tidak akan ditampilkan,
-    tidak akan dihitung, dan tidak akan masuk
-    dalam analisis.</b>
-
-</div>
+<main class="container">
 
 
-<div class="filter-box">
+<!-- =====================================================
+     FILTER
+===================================================== -->
 
-    <div class="filter-title">
+<div class="card">
+
+    <div class="card-title">
         🔎 Filter Analisis
     </div>
 
-    <div class="filters">
+    <div class="filter-grid">
 
-        <div class="filter-group">
+        <div class="form-group">
 
             <label>Ujian</label>
 
             <select
-                id="filterUjian"
-                onchange="renderAll()">
+                id="ujianFilter"
+                onchange="ubahUjian()"
+            >
 
                 <option value="">
-                    Semua Ujian Saya
+                    Semua Ujian Guru
                 </option>
 
             </select>
@@ -766,54 +665,43 @@ body{
         </div>
 
 
-        <div class="filter-group">
+        <div class="form-group">
 
-            <label>Level Kognitif</label>
+            <label>Kognitif</label>
 
             <select
-                id="filterKognitif"
-                onchange="renderAll()">
+                id="kognitifFilter"
+                onchange="renderSemua()"
+            >
 
-                <option value="">Semua</option>
-
-                <option value="C1">
-                    C1 - Mengingat
+                <option value="semua">
+                    Semua
                 </option>
 
-                <option value="C2">
-                    C2 - Memahami
-                </option>
-
-                <option value="C3">
-                    C3 - Menerapkan
-                </option>
-
-                <option value="C4">
-                    C4 - Menganalisis
-                </option>
-
-                <option value="C5">
-                    C5 - Mengevaluasi
-                </option>
-
-                <option value="C6">
-                    C6 - Mencipta
-                </option>
+                <option value="C1">C1</option>
+                <option value="C2">C2</option>
+                <option value="C3">C3</option>
+                <option value="C4">C4</option>
+                <option value="C5">C5</option>
+                <option value="C6">C6</option>
 
             </select>
 
         </div>
 
 
-        <div class="filter-group">
+        <div class="form-group">
 
             <label>Kategori</label>
 
             <select
-                id="filterKategori"
-                onchange="renderAll()">
+                id="kategoriFilter"
+                onchange="renderSemua()"
+            >
 
-                <option value="">Semua</option>
+                <option value="semua">
+                    Semua
+                </option>
 
                 <option value="LOTS">
                     LOTS
@@ -832,15 +720,18 @@ body{
         </div>
 
 
-        <div class="filter-group">
+        <div class="form-group">
 
             <label>Kesukaran</label>
 
             <select
-                id="filterKesukaran"
-                onchange="renderAll()">
+                id="kesukaranFilter"
+                onchange="renderSemua()"
+            >
 
-                <option value="">Semua</option>
+                <option value="semua">
+                    Semua
+                </option>
 
                 <option value="Mudah">
                     Mudah
@@ -858,27 +749,33 @@ body{
 
         </div>
 
+    </div>
 
-        <div class="filter-group">
+
+    <div
+        class="filter-grid"
+        style="margin-top:14px;"
+    >
+
+        <div class="form-group">
 
             <label>Literasi</label>
 
             <select
-                id="filterLiterasi"
-                onchange="renderAll()">
+                id="literasiFilter"
+                onchange="renderSemua()"
+            >
 
-                <option value="">Semua</option>
+                <option value="semua">
+                    Semua
+                </option>
 
-                <option value="Literasi">
+                <option value="literasi">
                     Literasi
                 </option>
 
-                <option value="Non-Literasi">
+                <option value="nonliterasi">
                     Non-Literasi
-                </option>
-
-                <option value="Literasi HOTS">
-                    Literasi HOTS
                 </option>
 
             </select>
@@ -886,417 +783,204 @@ body{
         </div>
 
 
-        <div class="filter-group">
+        <div class="form-group">
 
-            <label>Pencarian</label>
+            <label>Cari Soal</label>
 
             <input
                 type="text"
-                id="search"
-                placeholder="Cari soal..."
-                oninput="renderAll()">
+                id="searchFilter"
+                placeholder="Cari nomor atau isi soal..."
+                oninput="renderSemua()"
+            >
 
         </div>
-
-    </div>
-
-</div>
-
-
-<div class="note">
-
-    <b>ℹ️ ATURAN ANALISIS FINAL — SEMUA MATA PELAJARAN</b><br>
-
-    🟢 <b>C1–C2 = LOTS + Mudah</b><br>
-
-    🟡 <b>C3 = MOTS + Sedang</b><br>
-
-    🔴 <b>C4–C5 = HOTS + Sedang</b><br>
-
-    🔴 <b>C6 = HOTS + Sukar</b><br><br>
-
-    📖 <b>Literasi hanya ditentukan dari HTML pada kolom pertanyaan (`soal.pertanyaan`).</b><br>
-
-    📚 <b>Maksimal 25 soal yang dianalisis.</b><br>
-
-    🔢 <b>Indikator jumlah terpenuhi hanya jika jumlah soal tepat 25.</b><br><br>
-
-    <b>Ketentuan kelayakan:</b><br>
-
-    1. LOTS/MOTS minimal 1 soal<br>
-    2. HOTS minimal 1 soal<br>
-    3. Literasi minimal 1 soal<br>
-    4. Mudah minimal 1 soal<br>
-    5. Sedang minimal 1 soal<br>
-    6. Jumlah tepat 25 soal<br><br>
-
-    Jika seluruh <b>6 indikator</b> terpenuhi,
-    naskah dinyatakan <b>LAYAK DIUJIKAN</b>.
-
-    <br><br>
-
-    <b>Catatan:</b>
-    Tingkat Sukar dapat muncul pada analisis,
-    tetapi <b>tidak menjadi syarat kelayakan</b>.
-
-</div>
-
-
-<div class="summary-grid">
-
-    <div class="summary-card">
-
-        <div class="number" id="totalSoal">
-            0
-        </div>
-
-        <div class="label">
-            TOTAL SOAL
-        </div>
-
-    </div>
-
-
-    <div class="summary-card literasi">
-
-        <div class="number" id="totalLiterasi">
-            0
-        </div>
-
-        <div class="label">
-            LITERASI
-        </div>
-
-    </div>
-
-
-    <div class="summary-card nonliterasi">
-
-        <div class="number" id="totalNonLiterasi">
-            0
-        </div>
-
-        <div class="label">
-            NON-LITERASI
-        </div>
-
-    </div>
-
-
-    <div class="summary-card lots">
-
-        <div class="number" id="totalLOTS">
-            0
-        </div>
-
-        <div class="label">
-            LOTS
-        </div>
-
-    </div>
-
-
-    <div class="summary-card mots">
-
-        <div class="number" id="totalMOTS">
-            0
-        </div>
-
-        <div class="label">
-            MOTS
-        </div>
-
-    </div>
-
-
-    <div class="summary-card hots">
-
-        <div class="number" id="totalHOTS">
-            0
-        </div>
-
-        <div class="label">
-            HOTS
-        </div>
-
-    </div>
-
-
-    <div class="summary-card literasihots">
-
-        <div class="number" id="totalLiterasiHOTS">
-            0
-        </div>
-
-        <div class="label">
-            LITERASI HOTS
-        </div>
-
-    </div>
-
-</div>
-
-
-<div class="section">
-
-    <div class="section-title">
-        📈 Persentase Tingkat Kesukaran
-    </div>
-
-
-    <div class="bar-row">
-
-        <div class="bar-head">
-            <span>🟢 Mudah</span>
-            <span id="persenMudah">0%</span>
-        </div>
-
-        <div class="bar-container">
-
-            <div
-                id="barMudah"
-                class="bar bar-easy"
-                style="width:0%">
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="bar-row">
-
-        <div class="bar-head">
-            <span>🟡 Sedang</span>
-            <span id="persenSedang">0%</span>
-        </div>
-
-        <div class="bar-container">
-
-            <div
-                id="barSedang"
-                class="bar bar-medium"
-                style="width:0%">
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <div class="bar-row">
-
-        <div class="bar-head">
-            <span>🔴 Sukar</span>
-            <span id="persenSukar">0%</span>
-        </div>
-
-        <div class="bar-container">
-
-            <div
-                id="barSukar"
-                class="bar bar-hard"
-                style="width:0%">
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<div class="section">
-
-    <div class="section-title">
-        🧠 Distribusi Level Kognitif C1–C6
-    </div>
-
-    <div id="cognitiveBars"></div>
-
-</div>
-
-
-<div class="section">
-
-    <div class="section-title">
-        📊 Matriks Kognitif × Kesukaran
-    </div>
-
-    <div class="matrix-wrap">
-
-        <table class="matrix">
-
-            <thead>
-
-                <tr>
-
-                    <th>Kategori</th>
-                    <th>Mudah</th>
-                    <th>Sedang</th>
-                    <th>Sukar</th>
-                    <th>Total</th>
-
-                </tr>
-
-            </thead>
-
-
-            <tbody>
-
-                <tr class="lots">
-
-                    <td>LOTS</td>
-
-                    <td id="lotsMudah">0</td>
-
-                    <td id="lotsSedang">0</td>
-
-                    <td id="lotsSukar">0</td>
-
-                    <td id="lotsTotal">0</td>
-
-                </tr>
-
-
-                <tr class="mots">
-
-                    <td>MOTS</td>
-
-                    <td id="motsMudah">0</td>
-
-                    <td id="motsSedang">0</td>
-
-                    <td id="motsSukar">0</td>
-
-                    <td id="motsTotal">0</td>
-
-                </tr>
-
-
-                <tr class="hots">
-
-                    <td>HOTS</td>
-
-                    <td id="hotsMudah">0</td>
-
-                    <td id="hotsSedang">0</td>
-
-                    <td id="hotsSukar">0</td>
-
-                    <td id="hotsTotal">0</td>
-
-                </tr>
-
-
-                <tr class="total">
-
-                    <td>TOTAL</td>
-
-                    <td id="totalMudahMatrix">0</td>
-
-                    <td id="totalSedangMatrix">0</td>
-
-                    <td id="totalSukarMatrix">0</td>
-
-                    <td id="grandTotalMatrix">0</td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-</div>
-
-
-<div class="section">
-
-    <div class="section-title">
-        ✅ Kesimpulan Kelayakan Naskah Ujian
-    </div>
-
-    <div id="kelayakanBox">
-
-        <div class="loading">
-            ⏳ Menghitung kelayakan naskah...
-        </div>
-
-    </div>
-
-</div>
-
-
-<div class="section">
-
-    <div class="section-title">
-
-        <span>
-            📝 Analisis Per Soal
-        </span>
-
-        <span
-            id="jumlahTampil"
-            style="font-size:13px;color:#6b7280">
-
-            0 soal
-
-        </span>
-
-    </div>
-
-
-    <div class="legend">
-
-        <span class="badge badge-c">
-            C1–C6
-        </span>
-
-        <span class="badge badge-lots">
-            LOTS
-        </span>
-
-        <span class="badge badge-mots">
-            MOTS
-        </span>
-
-        <span class="badge badge-hots">
-            HOTS
-        </span>
-
-        <span class="badge badge-literasi">
-            Literasi
-        </span>
-
-        <span class="badge badge-non">
-            Non-Literasi
-        </span>
 
     </div>
 
 
     <div
-        id="questionList"
-        class="question-list">
+        id="statusBox"
+        class="status"
+    ></div>
 
-        <div class="loading">
-            ⏳ Memuat data soal...
+</div>
+
+
+<!-- =====================================================
+     INFO
+===================================================== -->
+
+<div class="info-box">
+
+    <b>📌 Aturan Kelayakan Naskah</b>
+
+    <br>
+
+    Analisis maksimal <b>25 soal</b> milik guru yang sedang login.
+
+    <br>
+
+    Naskah dinyatakan <b>LAYAK</b> jika seluruh 6 indikator terpenuhi:
+
+    <br>
+
+    1. LOTS/MOTS (C1–C3) minimal 1 soal
+    &nbsp;•&nbsp;
+    2. HOTS (C4–C6) minimal 1 soal
+    &nbsp;•&nbsp;
+    3. Literasi minimal 1 soal
+    &nbsp;•&nbsp;
+    4. Mudah minimal 1 soal
+    &nbsp;•&nbsp;
+    5. Sedang minimal 1 soal
+    &nbsp;•&nbsp;
+    6. Jumlah soal harus tepat 25.
+
+    <br>
+
+    <b>Sukar tidak menjadi indikator kelayakan.</b>
+
+</div>
+
+
+<!-- =====================================================
+     SUMMARY
+===================================================== -->
+
+<div class="summary-grid">
+
+    <div class="summary-box">
+        <div class="summary-label">TOTAL SOAL</div>
+        <div class="summary-value" id="totalSoal">0</div>
+        <div class="summary-small">Maksimal 25</div>
+    </div>
+
+
+    <div class="summary-box">
+        <div class="summary-label">LOTS + MOTS</div>
+        <div class="summary-value" id="totalLotsMots">0</div>
+        <div class="summary-small" id="persenLotsMots">0%</div>
+    </div>
+
+
+    <div class="summary-box">
+        <div class="summary-label">HOTS</div>
+        <div class="summary-value" id="totalHots">0</div>
+        <div class="summary-small" id="persenHots">0%</div>
+    </div>
+
+
+    <div class="summary-box">
+        <div class="summary-label">LITERASI</div>
+        <div class="summary-value" id="totalLiterasi">0</div>
+        <div class="summary-small" id="persenLiterasi">0%</div>
+    </div>
+
+
+    <div class="summary-box">
+        <div class="summary-label">MUDAH</div>
+        <div class="summary-value" id="totalMudah">0</div>
+        <div class="summary-small" id="persenMudah">0%</div>
+    </div>
+
+
+    <div class="summary-box">
+        <div class="summary-label">SEDANG</div>
+        <div class="summary-value" id="totalSedang">0</div>
+        <div class="summary-small" id="persenSedang">0%</div>
+    </div>
+
+
+    <div class="summary-box">
+        <div class="summary-label">SUKAR</div>
+        <div class="summary-value" id="totalSukar">0</div>
+        <div class="summary-small" id="persenSukar">0%</div>
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     KELAYAKAN
+===================================================== -->
+
+<div id="kelayakanContainer"></div>
+
+
+<!-- =====================================================
+     GRAFIK
+===================================================== -->
+
+<div class="progress-section">
+
+    <div class="progress-box">
+
+        <div class="progress-title">
+            📊 Distribusi Kesukaran
         </div>
+
+        <div id="difficultyBars"></div>
+
+    </div>
+
+
+    <div class="progress-box">
+
+        <div class="progress-title">
+            🧠 Distribusi Kognitif
+        </div>
+
+        <div id="cognitiveBars"></div>
 
     </div>
 
 </div>
 
 
+<!-- =====================================================
+     MATRIX
+===================================================== -->
+
+<div class="matrix">
+
+    <div class="progress-title">
+        📋 Matriks Kognitif × Kesukaran
+    </div>
+
+    <div id="matrixContainer"></div>
+
 </div>
+
+
+<!-- =====================================================
+     SOAL
+===================================================== -->
+
+<div
+    id="questionContainer"
+    class="soal-list"
+>
+
+    <div class="loading">
+        ⏳ Memuat analisis soal...
+    </div>
+
+</div>
+
+
+</main>
+
+
+<footer>
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+</footer>
 
 
 <script>
 
 /* =========================================================
-SUPABASE
+   SUPABASE
 ========================================================= */
 
 const SUPABASE_URL =
@@ -1313,8 +997,12 @@ const supabaseClient =
 
 
 /* =========================================================
-GLOBAL
+   VARIABEL
 ========================================================= */
+
+let currentUser = null;
+
+let guruLogin = null;
 
 let daftarUjian = [];
 
@@ -1322,72 +1010,79 @@ let daftarSoal = [];
 
 let dataAnalisis = [];
 
-let currentUser = null;
-
-let guruLogin = null;
+let ujianAktif = "";
 
 
 /* =========================================================
-LOGIN
+   LOGIN
 ========================================================= */
 
 function cekLogin(){
 
-    try{
+    const data =
+        localStorage.getItem(
+            "exam_user"
+        );
 
-        currentUser =
-            JSON.parse(
-                localStorage.getItem(
-                    "exam_user"
-                ) || "null"
-            );
+    if(!data){
 
-
-        if(!currentUser){
-
-            window.location.href =
-                "login.html";
-
-            return false;
-
-        }
-
-
-        if(
-            String(currentUser.role || "").toLowerCase() !==
-            "guru"
-        ){
-
-            alert(
-                "Analisis soal hanya dapat diakses oleh guru pembuat soal."
-            );
-
-            window.location.href =
-                "dashboard-guru.html";
-
-            return false;
-
-        }
-
-
-        return true;
-
-    }catch(error){
-
-        console.error(error);
+        alert(
+            "Silakan login terlebih dahulu."
+        );
 
         window.location.href =
             "login.html";
 
         return false;
-
     }
 
+    try{
+
+        currentUser =
+            JSON.parse(data);
+
+    }catch(error){
+
+        localStorage.removeItem(
+            "exam_user"
+        );
+
+        alert(
+            "Data login tidak valid."
+        );
+
+        window.location.href =
+            "login.html";
+
+        return false;
+    }
+
+
+    const role =
+        String(
+            currentUser.role || ""
+        ).toLowerCase();
+
+
+    if(role !== "guru"){
+
+        alert(
+            "Halaman ini hanya untuk Guru."
+        );
+
+        window.location.href =
+            "login.html";
+
+        return false;
+    }
+
+
+    return true;
 }
 
 
 /* =========================================================
-NORMALISASI
+   NORMALISASI
 ========================================================= */
 
 function normalisasi(value){
@@ -1402,52 +1097,111 @@ function normalisasi(value){
 
 
 /* =========================================================
-NILAI IDENTITAS USER
+   IDENTITAS GURU
+   TIDAK ADA EMAIL
 ========================================================= */
 
-function daftarNilaiUser(){
+function kumpulkanIdentitas(){
 
-    if(!currentUser){
-        return [];
+    const set =
+        new Set();
+
+
+    const tambah =
+        value => {
+
+            if(
+                value !== null &&
+                value !== undefined &&
+                String(value).trim() !== ""
+            ){
+
+                set.add(
+                    normalisasi(value)
+                );
+
+            }
+
+        };
+
+
+    if(currentUser){
+
+        tambah(
+            currentUser.id
+        );
+
+        tambah(
+            currentUser.guru_id
+        );
+
+        tambah(
+            currentUser.guruId
+        );
+
+        tambah(
+            currentUser.profile_id
+        );
+
+        tambah(
+            currentUser.profileId
+        );
+
+        tambah(
+            currentUser.user_id
+        );
+
+        tambah(
+            currentUser.userId
+        );
+
+        tambah(
+            currentUser.username
+        );
+
+        tambah(
+            currentUser.nip
+        );
+
+        tambah(
+            currentUser.nik
+        );
+
     }
 
-    const hasil = [
 
-        currentUser.id,
-        currentUser.guru_id,
-        currentUser.guruId,
+    if(guruLogin){
 
-        currentUser.profile_id,
-        currentUser.profileId,
+        tambah(
+            guruLogin.id
+        );
 
-        currentUser.user_id,
-        currentUser.userId,
+        tambah(
+            guruLogin.guru_id
+        );
 
-        currentUser.username,
-        currentUser.nip,
-        currentUser.nik,
-        currentUser.email
+        tambah(
+            guruLogin.username
+        );
 
-    ]
-    .filter(
-        x =>
-            x !== undefined &&
-            x !== null &&
-            String(x).trim() !== ""
-    )
-    .map(
-        normalisasi
-    );
+        tambah(
+            guruLogin.nip
+        );
 
-    return [
-        ...new Set(hasil)
-    ];
+        tambah(
+            guruLogin.nik
+        );
+
+    }
+
+
+    return set;
 
 }
 
 
 /* =========================================================
-CARI GURU LOGIN
+   CARI GURU LOGIN
 ========================================================= */
 
 async function cariGuruLogin(){
@@ -1455,419 +1209,298 @@ async function cariGuruLogin(){
     guruLogin = null;
 
 
-    const kemungkinanId = [
+    try{
 
-        currentUser?.guru_id,
-        currentUser?.guruId
-
-    ]
-    .filter(
-        x =>
-            x !== undefined &&
-            x !== null &&
-            String(x).trim() !== ""
-    );
+        const identitas =
+            kumpulkanIdentitas();
 
 
-    /*
-     * PRIORITAS 1:
-     * Cari guru berdasarkan guru_id.
-     */
-
-    for(
-        const id of kemungkinanId
-    ){
-
-        try{
-
-            const res =
-                await supabaseClient
-                    .from("guru")
-                    .select("*")
-                    .eq("id",id)
-                    .maybeSingle();
+        const { data,error } =
+            await supabaseClient
+                .from("guru")
+                .select("*");
 
 
-            if(
-                !res.error &&
-                res.data
-            ){
-
-                guruLogin =
-                    res.data;
-
-                return guruLogin;
-
-            }
-
-        }catch(e){
+        if(error){
 
             console.warn(
-                "Pencarian guru berdasarkan ID gagal:",
-                e
+                "Tabel guru:",
+                error.message
             );
+
+            return null;
 
         }
 
-    }
+
+        const daftar =
+            data || [];
 
 
-    /*
-     * PRIORITAS 2:
-     * Cocokkan identitas user dengan tabel guru.
-     */
+        guruLogin =
+            daftar.find(
+                guru => {
 
-    const res =
-        await supabaseClient
-            .from("guru")
-            .select("*");
+                    return [
+
+                        guru.id,
+                        guru.guru_id,
+                        guru.username,
+                        guru.nip,
+                        guru.nik
+
+                    ].some(
+                        value =>
+                            identitas.has(
+                                normalisasi(value)
+                            )
+                    );
+
+                }
+            ) || null;
 
 
-    if(res.error){
+        return guruLogin;
+
+    }catch(error){
 
         console.warn(
-            "Tidak dapat membaca tabel guru:",
-            res.error.message
+            "cariGuruLogin:",
+            error
         );
 
         return null;
 
     }
 
-
-    const users =
-        daftarNilaiUser();
+}
 
 
-    for(
-        const guru of (
-            res.data || []
-        )
-    ){
+/* =========================================================
+   STATUS
+========================================================= */
 
-        const nilaiGuru = [
+function status(
+    pesan,
+    tipe = "success"
+){
 
-            guru.id,
-            guru.guru_id,
-            guru.username,
-            guru.nip,
-            guru.nik,
-            guru.email
-
-        ]
-        .filter(
-            x =>
-                x !== undefined &&
-                x !== null &&
-                String(x).trim() !== ""
-        )
-        .map(
-            normalisasi
+    const el =
+        document.getElementById(
+            "statusBox"
         );
 
-
-        if(
-            nilaiGuru.some(
-                x =>
-                    users.includes(x)
-            )
-        ){
-
-            guruLogin =
-                guru;
-
-            return guruLogin;
-
-        }
-
-    }
+    if(!el) return;
 
 
-    return null;
+    el.className =
+        "status show " +
+        tipe;
+
+
+    el.textContent =
+        pesan;
 
 }
 
 
 /* =========================================================
-AMBIL SEMUA FIELD KEPEMILIKAN
+   LOAD UTAMA
 ========================================================= */
 
-function nilaiKepemilikan(obj){
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
 
-    if(!obj){
-        return [];
+        if(!cekLogin()) return;
+
+
+        await loadData();
+
     }
-
-    return [
-
-        obj.guru_id,
-        obj.guruId,
-
-        obj.created_by,
-        obj.createdBy,
-
-        obj.pembuat_id,
-        obj.pembuatId,
-
-        obj.user_id,
-        obj.userId,
-
-        obj.profile_id,
-        obj.profileId,
-
-        obj.owner_id,
-        obj.ownerId,
-
-        obj.guru_username,
-        obj.username_guru,
-
-        obj.nip_guru,
-        obj.nik_guru,
-        obj.email_guru,
-
-        obj.created_by_username,
-        obj.created_by_nip,
-        obj.created_by_nik,
-        obj.created_by_email,
-
-        obj.pembuat_username,
-        obj.pembuat_nip,
-        obj.pembuat_nik,
-        obj.pembuat_email,
-
-        obj.username,
-        obj.nip,
-        obj.nik,
-        obj.email
-
-    ]
-    .filter(
-        x =>
-            x !== undefined &&
-            x !== null &&
-            String(x).trim() !== ""
-    )
-    .map(
-        normalisasi
-    );
-
-}
+);
 
 
 /* =========================================================
-CEK KEPEMILIKAN DATA
-========================================================= */
-
-function dataMilikGuru(obj){
-
-    if(
-        !currentUser ||
-        String(currentUser.role || "").toLowerCase() !== "guru"
-    ){
-
-        return false;
-
-    }
-
-
-    const userValues =
-        daftarNilaiUser();
-
-
-    const ownerValues =
-        nilaiKepemilikan(obj);
-
-
-    if(
-        !userValues.length ||
-        !ownerValues.length
-    ){
-
-        return false;
-
-    }
-
-
-    return ownerValues.some(
-        x =>
-            userValues.includes(x)
-    );
-
-}
-
-
-/* =========================================================
-CEK UJIAN MILIK GURU
-========================================================= */
-
-function ujianMilikGuru(ujian){
-
-    if(
-        !ujian ||
-        !currentUser
-    ){
-
-        return false;
-
-    }
-
-
-    /*
-     * Cocokkan dengan guruLogin terlebih dahulu.
-     */
-
-    if(guruLogin){
-
-        const guruValues = [
-
-            guruLogin.id,
-            guruLogin.guru_id,
-            guruLogin.username,
-            guruLogin.nip,
-            guruLogin.nik,
-            guruLogin.email
-
-        ]
-        .filter(
-            x =>
-                x !== undefined &&
-                x !== null &&
-                String(x).trim() !== ""
-        )
-        .map(
-            normalisasi
-        );
-
-
-        const ujianValues =
-            nilaiKepemilikan(
-                ujian
-            );
-
-
-        if(
-            guruValues.some(
-                x =>
-                    ujianValues.includes(x)
-            )
-        ){
-
-            return true;
-
-        }
-
-    }
-
-
-    /*
-     * Cocokkan langsung dengan exam_user.
-     */
-
-    return dataMilikGuru(
-        ujian
-    );
-
-}
-
-
-/* =========================================================
-CEK SOAL MILIK GURU LANGSUNG
-========================================================= */
-
-function soalMilikGuruLangsung(soal){
-
-    if(
-        !soal ||
-        !currentUser
-    ){
-
-        return false;
-
-    }
-
-
-    /*
-     * Hanya gunakan field kepemilikan eksplisit.
-     * Tidak menggunakan nama soal,
-     * nama ujian, atau nomor soal sebagai identitas.
-     */
-
-    return dataMilikGuru(
-        soal
-    );
-
-}
-
-
-/* =========================================================
-/* =========================================================
-LOAD DATA — SUMBER UTAMA BANK SOAL
+   LOAD DATA
 ========================================================= */
 
 async function loadData(){
 
-    const questionList =
-        document.getElementById("questionList");
+    const container =
+        document.getElementById(
+            "questionContainer"
+        );
 
-    questionList.innerHTML = `
+
+    container.innerHTML = `
         <div class="loading">
             ⏳ Mengambil soal langsung dari Bank Soal...
         </div>
     `;
 
+
+    status(
+        "⏳ Mengambil data Bank Soal...",
+        "warning"
+    );
+
+
     try{
+
+        /*
+         * =====================================================
+         * 1. CARI GURU LOGIN
+         * =====================================================
+         */
 
         await cariGuruLogin();
 
-        /* =====================================================
-         * IDENTITAS GURU LOGIN
-         * ===================================================== */
 
-        const identitasUser = new Set(
-            daftarNilaiUser()
-        );
+        const identitas =
+            kumpulkanIdentitas();
 
-        const identitasGuru = new Set([
-            guruLogin?.id,
-            guruLogin?.guru_id,
-            guruLogin?.username,
-            guruLogin?.nip,
-            guruLogin?.nik,
-            guruLogin?.email,
-            guruLogin?.profile_id,
-            guruLogin?.user_id
-        ]
-        .filter(
-            x =>
-                x !== undefined &&
-                x !== null &&
-                String(x).trim() !== ""
-        )
-        .map(
-            normalisasi
-        )
-        );
-
-        const semuaIdentitas = new Set([
-            ...identitasUser,
-            ...identitasGuru
-        ]);
-
-
-        console.log(
-            "IDENTITAS USER:",
-            [...identitasUser]
-        );
 
         console.log(
             "IDENTITAS GURU:",
-            [...identitasGuru]
+            [...identitas]
         );
 
 
-        /* =====================================================
-         * AMBIL BANK SOAL LANGSUNG
-         * ===================================================== */
+        /*
+         * =====================================================
+         * 2. AMBIL SEMUA UJIAN
+         * =====================================================
+         */
+
+        const ujianRes =
+            await supabaseClient
+                .from("ujian")
+                .select("*")
+                .order(
+                    "created_at",
+                    {
+                        ascending:false
+                    }
+                );
+
+
+        if(ujianRes.error){
+
+            throw ujianRes.error;
+
+        }
+
+
+        const semuaUjian =
+            ujianRes.data || [];
+
+
+        /*
+         * =====================================================
+         * 3. FIELD PEMILIK UJIAN
+         *
+         * TIDAK ADA EMAIL
+         * =====================================================
+         */
+
+        const ownerFields = [
+
+            "guru_id",
+            "guruId",
+            "guru",
+
+            "teacher_id",
+            "teacherId",
+
+            "created_by",
+            "createdBy",
+
+            "pembuat_id",
+            "pembuatId",
+
+            "user_id",
+            "userId",
+
+            "username",
+            "nip",
+            "nik",
+
+            "guru_username",
+            "guruUsername",
+
+            "guru_nip",
+            "guruNip"
+
+        ];
+
+
+        function milikGuru(ujian){
+
+            if(!ujian) return false;
+
+
+            return ownerFields.some(
+                field => {
+
+                    const value =
+                        ujian[field];
+
+
+                    if(
+                        value === null ||
+                        value === undefined ||
+                        String(value).trim() === ""
+                    ){
+
+                        return false;
+
+                    }
+
+
+                    return identitas.has(
+                        normalisasi(value)
+                    );
+
+                }
+            );
+
+        }
+
+
+        /*
+         * =====================================================
+         * 4. FILTER UJIAN MILIK GURU
+         * =====================================================
+         */
+
+        daftarUjian =
+            semuaUjian.filter(
+                milikGuru
+            );
+
+
+        console.log(
+            "SEMUA UJIAN:",
+            semuaUjian.length
+        );
+
+
+        console.log(
+            "UJIAN MILIK GURU:",
+            daftarUjian
+        );
+
+
+        /*
+         * =====================================================
+         * 5. AMBIL SOAL
+         *
+         * INI SAMA DENGAN BANK SOAL:
+         *
+         * from("soal")
+         * =====================================================
+         */
 
         const soalRes =
             await supabaseClient
@@ -1888,452 +1521,98 @@ async function loadData(){
         }
 
 
-        const semuaSoal =
+        const semuaSoalDatabase =
             soalRes.data || [];
 
 
-        /* =====================================================
-         * AMBIL UJIAN HANYA UNTUK INFORMASI/FILTER
-         * BUKAN SEBAGAI SUMBER UTAMA SOAL
-         * ===================================================== */
-
-        const ujianRes =
-            await supabaseClient
-                .from("ujian")
-                .select("*");
-
-
-        const semuaUjian =
-            ujianRes.error
-                ? []
-                : (
-                    ujianRes.data || []
-                );
-
-
-        /* =====================================================
-         * MAP UJIAN
-         * ===================================================== */
-
-        const mapUjian =
-            new Map();
-
-        semuaUjian.forEach(
-            ujian => {
-
-                mapUjian.set(
-                    String(ujian.id),
-                    ujian
-                );
-
-            }
+        console.log(
+            "TOTAL BANK SOAL:",
+            semuaSoalDatabase.length
         );
 
 
-        /* =====================================================
-         * FIELD YANG BOLEH MENUNJUKKAN PEMILIK SOAL
-         * ===================================================== */
-
-        const fieldGuruSoal = [
-
-            "guru_id",
-            "guruId",
-
-            "teacher_id",
-            "teacherId",
-
-            "pemilik_id",
-            "pemilikId",
-
-            "pembuat_id",
-            "pembuatId",
-
-            "created_by",
-            "createdBy",
-
-            "user_id",
-            "userId",
-
-            "profile_id",
-            "profileId",
-
-            "owner_id",
-            "ownerId",
-
-            "guru_username",
-            "guruUsername",
-
-            "username_guru",
-
-            "guru_nip",
-            "guruNip",
-
-            "nip_guru",
-
-            "guru_nik",
-            "guruNik",
-
-            "nik_guru",
-
-            "guru_email",
-            "guruEmail",
-
-            "email_guru"
-
-        ];
-
-
-        /* =====================================================
-         * CEK KEPEMILIKAN SOAL LANGSUNG
-         * ===================================================== */
-
-        function soalMilikGuruBankSoal(soal){
-
-            if(
-                !soal ||
-                !semuaIdentitas.size
-            ){
-
-                return false;
-
-            }
-
-
-            for(
-                const field of fieldGuruSoal
-            ){
-
-                const value =
-                    soal[field];
-
-
-                if(
-                    value !== undefined &&
-                    value !== null &&
-                    String(value).trim() !== ""
-                ){
-
-                    if(
-                        semuaIdentitas.has(
-                            normalisasi(value)
-                        )
-                    ){
-
-                        return true;
-
-                    }
-
-                }
-
-            }
-
-
-            return false;
-
-        }
-
-
-        /* =====================================================
-         * CARI SOAL LANGSUNG MILIK GURU
-         * ===================================================== */
-
-        let soalGuru =
-            semuaSoal.filter(
-                soal =>
-                    soalMilikGuruBankSoal(
-                        soal
-                    )
-            );
-
-
-        /* =====================================================
-         * JIKA BANK SOAL TIDAK MENYIMPAN guru_id LANGSUNG,
-         * BARU GUNAKAN ujian_id SEBAGAI FALLBACK.
-         *
-         * TETAPI HANYA UNTUK SOAL YANG BERADA PADA UJIAN
-         * MILIK GURU.
-         * ===================================================== */
-
-        if(
-            soalGuru.length === 0
-        ){
-
-            const fieldGuruUjian = [
-
-                "guru_id",
-                "guruId",
-
-                "teacher_id",
-                "teacherId",
-
-                "pemilik_id",
-                "pemilikId",
-
-                "pembuat_id",
-                "pembuatId",
-
-                "created_by",
-                "createdBy",
-
-                "user_id",
-                "userId",
-
-                "profile_id",
-                "profileId",
-
-                "owner_id",
-                "ownerId"
-
-            ];
-
-
-            function ujianMilikGuruBankSoal(ujian){
-
-                if(
-                    !ujian ||
-                    !semuaIdentitas.size
-                ){
-
-                    return false;
-
-                }
-
-
-                for(
-                    const field of fieldGuruUjian
-                ){
-
-                    const value =
-                        ujian[field];
-
-
-                    if(
-                        value !== undefined &&
-                        value !== null &&
-                        String(value).trim() !== ""
-                    ){
-
-                        if(
-                            semuaIdentitas.has(
-                                normalisasi(value)
-                            )
-                        ){
-
-                            return true;
-
-                        }
-
-                    }
-
-                }
-
-
-                /*
-                 * Coba juga username/NIP/email
-                 * pada tabel ujian.
-                 */
-
-                const fieldIdentitas = [
-
-                    "username",
-                    "nip",
-                    "nik",
-                    "email",
-
-                    "guru_username",
-                    "guruUsername",
-
-                    "guru_nip",
-                    "guruNip",
-
-                    "guru_nik",
-                    "guruNik",
-
-                    "guru_email",
-                    "guruEmail"
-
-                ];
-
-
-                for(
-                    const field of fieldIdentitas
-                ){
-
-                    const value =
-                        ujian[field];
-
-
-                    if(
-                        value !== undefined &&
-                        value !== null &&
-                        String(value).trim() !== ""
-                    ){
-
-                        if(
-                            semuaIdentitas.has(
-                                normalisasi(value)
-                            )
-                        ){
-
-                            return true;
-
-                        }
-
-                    }
-
-                }
-
-
-                return false;
-
-            }
-
-
-            const ujianGuru =
-                semuaUjian.filter(
+        /*
+         * =====================================================
+         * 6. AMBIL SOAL BERDASARKAN ujian_id
+         * =====================================================
+         */
+
+        const idUjianGuru =
+            new Set(
+                daftarUjian.map(
                     ujian =>
-                        ujianMilikGuruBankSoal(
-                            ujian
-                        )
-                );
-
-
-            const idUjianGuru =
-                new Set(
-                    ujianGuru
-                        .map(
-                            ujian =>
-                                ujian.id
-                        )
-                        .filter(
-                            x =>
-                                x !== undefined &&
-                                x !== null
-                        )
-                        .map(
-                            x =>
-                                String(x)
-                        )
-                );
-
-
-            soalGuru =
-                semuaSoal.filter(
-                    soal => {
-
-                        if(
-                            soal.ujian_id === undefined ||
-                            soal.ujian_id === null
-                        ){
-
-                            return false;
-
-                        }
-
-
-                        return idUjianGuru.has(
-                            String(
-                                soal.ujian_id
-                            )
-                        );
-
-                    }
-                );
-
-
-            console.log(
-                "SOAL DITEMUKAN MELALUI UJIAN:",
-                soalGuru.length
+                        String(ujian.id)
+                )
             );
 
-        }
+
+        daftarSoal =
+            semuaSoalDatabase.filter(
+                soal => {
+
+                    if(
+                        !soal.ujian_id
+                    ){
+
+                        return false;
+
+                    }
 
 
-        /* =====================================================
-         * HILANGKAN DUPLIKAT
-         * ===================================================== */
-
-        const mapSoal =
-            new Map();
-
-
-        soalGuru.forEach(
-            soal => {
-
-                const key =
-                    soal.id
-                        ? String(soal.id)
-                        : [
-                            soal.ujian_id,
-                            soal.nomor,
-                            teksAman(
-                                soal.pertanyaan
-                            )
-                        ].join("|");
-
-
-                if(
-                    !mapSoal.has(key)
-                ){
-
-                    mapSoal.set(
-                        key,
-                        soal
+                    return idUjianGuru.has(
+                        String(
+                            soal.ujian_id
+                        )
                     );
 
                 }
-
-            }
-        );
+            );
 
 
-        /* =====================================================
-         * SORTIR
-         * ===================================================== */
+        /*
+         * =====================================================
+         * 7. SORT
+         * =====================================================
+         */
 
         daftarSoal =
-            [...mapSoal.values()]
-                .sort(
-                    (a,b) => {
+            daftarSoal.sort(
+                (a,b) => {
 
-                        const ujianA =
-                            String(
-                                a.ujian_id ?? ""
-                            );
+                    const ua =
+                        String(
+                            a.ujian_id || ""
+                        );
 
-                        const ujianB =
-                            String(
-                                b.ujian_id ?? ""
-                            );
-
-
-                        if(
-                            ujianA !== ujianB
-                        ){
-
-                            return ujianA.localeCompare(
-                                ujianB
-                            );
-
-                        }
+                    const ub =
+                        String(
+                            b.ujian_id || ""
+                        );
 
 
-                        return (
-                            Number(
-                                a.nomor ?? 0
-                            ) -
-                            Number(
-                                b.nomor ?? 0
-                            )
+                    if(ua !== ub){
+
+                        return ua.localeCompare(
+                            ub
                         );
 
                     }
-                );
 
 
-        /* =====================================================
-         * MAKSIMAL 25 SOAL
-         * ===================================================== */
+                    return (
+                        Number(a.nomor || 0) -
+                        Number(b.nomor || 0)
+                    );
+
+                }
+            );
+
+
+        /*
+         * =====================================================
+         * 8. MAKSIMAL 25
+         * =====================================================
+         */
 
         daftarSoal =
             daftarSoal.slice(
@@ -2342,165 +1621,157 @@ async function loadData(){
             );
 
 
-        /* =====================================================
-         * BUAT DAFTAR UJIAN DARI SOAL YANG TERPANGGIL
-         *
-         * Jadi filter ujian tetap bekerja.
-         * ===================================================== */
-
-        const idUjianSoal =
-            new Set(
-                daftarSoal
-                    .map(
-                        soal =>
-                            soal.ujian_id
-                    )
-                    .filter(
-                        x =>
-                            x !== undefined &&
-                            x !== null
-                    )
-                    .map(
-                        x =>
-                            String(x)
-                    )
-            );
-
-
-        daftarUjian =
-            semuaUjian.filter(
-                ujian =>
-                    idUjianSoal.has(
-                        String(
-                            ujian.id
-                        )
-                    )
-            );
-
-
-        /* =====================================================
-         * DEBUG UTAMA
-         * ===================================================== */
-
-        console.group(
-            "📚 BANK SOAL → ANALISIS SOAL"
-        );
-
         console.log(
-            "Guru login:",
-            guruLogin
-        );
-
-        console.log(
-            "Identitas yang dicocokkan:",
-            [...semuaIdentitas]
-        );
-
-        console.log(
-            "TOTAL SOAL BANK SOAL:",
-            semuaSoal.length
-        );
-
-        console.log(
-            "SOAL MILIK GURU:",
-            soalGuru.length
-        );
-
-        console.log(
-            "SOAL UNIK:",
-            mapSoal.size
-        );
-
-        console.log(
-            "SOAL YANG DIANALISIS:",
+            "SOAL GURU:",
             daftarSoal.length
         );
+
 
         console.log(
             "NOMOR SOAL:",
             daftarSoal.map(
-                soal =>
-                    soal.nomor
+                x => x.nomor
             )
         );
 
-        console.log(
-            "ID UJIAN:",
+
+        /*
+         * =====================================================
+         * 9. BUAT ANALISIS
+         * =====================================================
+         */
+
+        dataAnalisis =
             daftarSoal.map(
-                soal =>
-                    soal.ujian_id
-            )
-        );
+                soal => {
 
-        console.groupEnd();
+                    const kognitif =
+                        analisisKognitif(
+                            soal
+                        );
 
 
-        /* =====================================================
-         * JIKA KOSONG
-         * ===================================================== */
+                    const kesukaran =
+                        analisisKesukaran(
+                            soal,
+                            kognitif
+                        );
 
-        if(
-            daftarSoal.length === 0
-        ){
 
-            questionList.innerHTML = `
+                    const literasi =
+                        cariLiterasi(
+                            soal
+                        );
+
+
+                    return {
+
+                        ...soal,
+
+                        kognitif:
+                            kognitif.c,
+
+                        level:
+                            kognitif.level,
+
+                        kesukaran,
+
+                        literasi:
+
+                            !!literasi,
+
+                        stimulus:
+
+                            literasi
+                                ?
+                                literasi.text
+                                :
+                                ""
+
+                    };
+
+                }
+            );
+
+
+        isiFilterUjian();
+
+        renderSemua();
+
+
+        if(!daftarSoal.length){
+
+            status(
+                "⚠️ Tidak ditemukan soal pada ujian yang teridentifikasi sebagai milik guru login.",
+                "warning"
+            );
+
+            container.innerHTML = `
 
                 <div class="empty">
 
-                    📭 <b>Soal Bank Soal belum ditemukan.</b>
+                    <h3>
+                        📭 Soal belum ditemukan
+                    </h3>
 
-                    <br><br>
+                    <p>
+                        Bank Soal berhasil dibaca,
+                        tetapi tidak ada soal yang terhubung
+                        dengan ujian milik akun guru ini.
+                    </p>
 
-                    Sistem sudah membaca tabel
-                    <b>soal</b>, tetapi tidak menemukan
-                    record yang teridentifikasi sebagai
-                    milik guru yang sedang login.
+                    <br>
 
-                    <br><br>
-
-                    Buka Console Browser
-                    <b>(F12 → Console)</b>
-                    untuk melihat detail identitas
-                    dan data soal.
+                    <p style="font-size:12px;">
+                        Hubungan yang digunakan:
+                        <b>soal.ujian_id = ujian.id</b>
+                    </p>
 
                 </div>
 
             `;
 
+            return;
+
         }
 
 
-        /* =====================================================
-         * LANJUTKAN ANALISIS
-         * ===================================================== */
-
-        isiFilterUjian();
-
-        buatAnalisis();
-
-        renderAll();
+        status(
+            "✅ Berhasil mengambil " +
+            daftarSoal.length +
+            " soal langsung dari Bank Soal.",
+            "success"
+        );
 
 
     }catch(error){
 
         console.error(
-            "ERROR LOAD DATA BANK SOAL:",
+            "ERROR LOAD ANALISIS:",
             error
         );
 
 
-        questionList.innerHTML = `
+        status(
+            "❌ " +
+            error.message,
+            "error"
+        );
 
-            <div class="error">
 
-                <b>❌ Gagal membaca Bank Soal.</b>
+        container.innerHTML = `
 
-                <br><br>
+            <div class="empty">
 
-                ${escapeHTML(
-                    error.message ||
-                    "Terjadi kesalahan saat membaca tabel soal."
-                )}
+                <h3>
+                    ❌ Gagal memuat analisis
+                </h3>
+
+                <p>
+                    ${escapeHtml(
+                        error.message
+                    )}
+                </p>
 
             </div>
 
@@ -2509,32 +1780,29 @@ async function loadData(){
     }
 
 }
-}
 
 
 /* =========================================================
-FILTER UJIAN
+   FILTER UJIAN
 ========================================================= */
 
 function isiFilterUjian(){
 
     const select =
         document.getElementById(
-            "filterUjian"
+            "ujianFilter"
         );
 
 
     select.innerHTML = `
-
         <option value="">
-            Semua Ujian Saya
+            Semua Ujian Guru
         </option>
-
     `;
 
 
     daftarUjian.forEach(
-        ujian=>{
+        ujian => {
 
             const option =
                 document.createElement(
@@ -2543,14 +1811,15 @@ function isiFilterUjian(){
 
 
             option.value =
-                ujian.id;
+                String(
+                    ujian.id
+                );
 
 
             option.textContent =
-                ujian.judul ||
-                ujian.nama ||
-                ujian.title ||
-                `Ujian ${ujian.id}`;
+                buatNamaUjian(
+                    ujian
+                );
 
 
             select.appendChild(
@@ -2563,399 +1832,255 @@ function isiFilterUjian(){
 }
 
 
+function buatNamaUjian(ujian){
+
+    if(!ujian){
+
+        return "Tanpa Ujian";
+
+    }
+
+
+    const judul =
+        ujian.judul ||
+        ujian.nama ||
+        "Tanpa Judul";
+
+
+    const mapel =
+        ujian.mata_pelajaran ||
+        ujian.mata_pelajaran_nama ||
+        ujian.mapel ||
+        "";
+
+
+    const kelas =
+        ujian.kelas ||
+        ujian.kelas_nama ||
+        "";
+
+
+    let nama =
+        judul;
+
+
+    if(mapel){
+
+        nama +=
+            " — " +
+            mapel;
+
+    }
+
+
+    if(kelas){
+
+        nama +=
+            " — " +
+            kelas;
+
+    }
+
+
+    return nama;
+
+}
+
+
+function ubahUjian(){
+
+    ujianAktif =
+        document.getElementById(
+            "ujianFilter"
+        ).value;
+
+
+    renderSemua();
+
+}
+
+
 /* =========================================================
-BERSIHKAN HTML
+   HTML → TEXT
 ========================================================= */
 
-function bersihkanHTML(value){
+function teksAman(value){
 
-    const wrapper =
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /<[^>]*>/g,
+        " "
+    )
+    .replace(
+        /&nbsp;/gi,
+        " "
+    )
+    .replace(
+        /\s+/g,
+        " "
+    )
+    .trim();
+
+}
+
+
+/* =========================================================
+   LITERASI HANYA DARI HTML PERTANYAAN
+========================================================= */
+
+function cariLiterasi(soal){
+
+    if(!soal){
+
+        return null;
+
+    }
+
+
+    const html =
+        String(
+            soal.pertanyaan || ""
+        );
+
+
+    if(!html.trim()){
+
+        return null;
+
+    }
+
+
+    const div =
         document.createElement(
             "div"
         );
 
 
-    wrapper.innerHTML =
-        String(
-            value ?? ""
+    div.innerHTML =
+        html;
+
+
+    div.querySelectorAll(
+        "script,style"
+    ).forEach(
+        el => el.remove()
+    );
+
+
+    const text =
+        teksAman(
+            div.textContent || ""
         );
 
 
-    wrapper
-        .querySelectorAll(
-            "script,style,noscript"
-        )
-        .forEach(
-            el =>
-                el.remove()
-        );
-
-
-    return wrapper;
-
-}
-
-
-/* =========================================================
-TEKS AMAN
-========================================================= */
-
-function teksAman(value){
-
-    const wrapper =
-        bersihkanHTML(
-            value
-        );
-
-
-    return String(
-        wrapper.textContent ||
-        ""
-    )
-    .replace(/\u00a0/g," ")
-    .replace(/\s+/g," ")
-    .trim();
-
-}
-
-
-/* =========================================================
-NORMALISASI TEKS
-========================================================= */
-
-function normalisasiTeks(value){
-
-    return String(
-        value ?? ""
-    )
-    .toLowerCase()
-    .replace(/\u00a0/g," ")
-    .replace(/\s+/g," ")
-    .trim();
-
-}
-
-
-/* =========================================================
-LITERASI — HANYA DARI HTML SOAL.PERTANYAAN
-========================================================= */
-
-function analisisLiterasiHTML(soal){
-
-    const raw =
-        String(
-            soal?.pertanyaan ??
-            ""
-        );
-
-
-    if(!raw.trim()){
-
-        return {
-
-            isLiterasi:false,
-
-            judul:"",
-
-            html:"",
-
-            teks:""
-
-        };
-
-    }
-
-
-    const wrapper =
-        bersihkanHTML(
-            raw
-        );
-
-
-    const teks =
-        normalisasiTeks(
-            wrapper.textContent
-        );
+    const lower =
+        text.toLowerCase();
 
 
     /*
-     * =====================================================
-     * MARKER LITERASI/STIMULUS
-     * =====================================================
+     * Penanda literasi.
+     * Semua diperiksa dari HTML pertanyaan.
      */
 
-    const markerLiterasi = [
+    const marker = [
 
-        /\bliterasi\b/i,
-        /\bstimulus\b/i,
-        /\bbacaan\b/i,
-        /\bwacana\b/i,
+        "stimulus",
 
-        /\bteks berikut\b/i,
-        /\bteks di bawah\b/i,
-        /\bteks tersebut\b/i,
+        "literasi",
 
-        /\bperhatikan teks\b/i,
-        /\bperhatikan bacaan\b/i,
-        /\bperhatikan wacana\b/i,
-        /\bperhatikan informasi\b/i,
+        "bacaan",
 
-        /\bbacalah teks\b/i,
-        /\bbacalah bacaan\b/i,
-        /\bbacalah wacana\b/i,
+        "wacana",
 
-        /\bberdasarkan teks\b/i,
-        /\bberdasarkan bacaan\b/i,
-        /\bberdasarkan wacana\b/i,
-        /\bberdasarkan informasi\b/i,
+        "teks berikut",
 
-        /\bmenurut teks\b/i,
-        /\bmenurut bacaan\b/i,
-        /\bmenurut wacana\b/i,
+        "perhatikan teks",
 
-        /\bread the text\b/i,
-        /\bread the following text\b/i,
-        /\bread the passage\b/i,
-        /\bbased on the text\b/i,
-        /\baccording to the text\b/i,
-        /\bobserve the following\b/i,
-        /\blook at the following\b/i
+        "bacalah teks",
+
+        "berdasarkan teks",
+
+        "berdasarkan bacaan",
+
+        "read the text",
+
+        "read the following text",
+
+        "based on the text",
+
+        "according to the text",
+
+        "observe the following",
+
+        "look at the following"
 
     ];
 
 
     const adaMarker =
-        markerLiterasi.some(
-            pattern =>
-                pattern.test(
-                    teks
+        marker.some(
+            kata =>
+                lower.includes(
+                    kata
                 )
         );
 
 
-    /*
-     * =====================================================
-     * CARI CONTAINER HTML YANG SECARA EKSPLISIT
-     * MENGANDUNG KATA STIMULUS/LITERASI/BACAAN/WACANA
-     * PADA ID ATAU CLASS.
-     * =====================================================
-     */
-
-    const kandidatContainer =
-        wrapper.querySelectorAll(
-            '[id*="stimulus" i], [class*="stimulus" i], ' +
-            '[id*="literasi" i], [class*="literasi" i], ' +
-            '[id*="bacaan" i], [class*="bacaan" i], ' +
-            '[id*="wacana" i], [class*="wacana" i]'
+    const adaContainer =
+        div.querySelector(
+            `
+            [class*="stimulus" i],
+            [id*="stimulus" i],
+            [class*="literasi" i],
+            [id*="literasi" i],
+            [class*="bacaan" i],
+            [id*="bacaan" i],
+            [class*="wacana" i],
+            [id*="wacana" i]
+            `
         );
-
-
-    let stimulusHTML = "";
 
 
     if(
-        kandidatContainer.length
+        !adaMarker &&
+        !adaContainer
     ){
 
-        const bagian = [];
-
-
-        kandidatContainer.forEach(
-            el=>{
-
-                const html =
-                    el.outerHTML;
-
-
-                if(
-                    html &&
-                    !bagian.includes(html)
-                ){
-
-                    bagian.push(
-                        html
-                    );
-
-                }
-
-            }
-        );
-
-
-        stimulusHTML =
-            bagian.join("");
+        return null;
 
     }
 
 
-    /*
-     * =====================================================
-     * JIKA TIDAK ADA CONTAINER KHUSUS,
-     * TENTUKAN LITERASI BERDASARKAN STRUKTUR HTML
-     * DAN MARKER DI DALAM PERTANYAAN.
-     * =====================================================
-     */
-
-    const jumlahParagraph =
-        wrapper.querySelectorAll(
-            "p,div,section,article,blockquote"
-        ).length;
+    let stimulusText =
+        text;
 
 
-    const adaTabel =
-        wrapper.querySelector(
-            "table"
-        ) !== null;
+    if(adaContainer){
 
-
-    const adaGambar =
-        wrapper.querySelector(
-            "img"
-        ) !== null;
-
-
-    /*
-     * Struktur panjang + marker lebih kuat.
-     */
-
-    const strukturLiterasi =
-        adaMarker &&
-        (
-            jumlahParagraph >= 2 ||
-            adaTabel ||
-            adaGambar
-        );
-
-
-    const isLiterasi =
-        Boolean(
-            kandidatContainer.length ||
-            strukturLiterasi
-        );
-
-
-    /*
-     * =====================================================
-     * EKSTRAK STIMULUS DARI HTML
-     *
-     * Hanya untuk tampilan.
-     * Tidak menggunakan tabel database literasi.
-     * =====================================================
-     */
-
-    if(
-        isLiterasi &&
-        !stimulusHTML
-    ){
-
-        const clone =
-            wrapper.cloneNode(
-                true
+        stimulusText =
+            teksAman(
+                adaContainer.textContent || ""
             );
-
-
-        /*
-         * Buang bagian yang jelas merupakan
-         * instruksi pertanyaan jika ada.
-         */
-
-        const semuaNode =
-            clone.querySelectorAll(
-                "p,div,section,article,blockquote"
-            );
-
-
-        const bagianStimulus = [];
-
-
-        semuaNode.forEach(
-            el=>{
-
-                const t =
-                    normalisasiTeks(
-                        el.textContent
-                    );
-
-
-                if(!t){
-                    return;
-                }
-
-
-                const apakahMarker =
-                    markerLiterasi.some(
-                        pattern =>
-                            pattern.test(
-                                t
-                            )
-                    );
-
-
-                if(
-                    apakahMarker
-                ){
-
-                    bagianStimulus.push(
-                        el.outerHTML
-                    );
-
-                }
-
-            }
-        );
-
-
-        if(
-            bagianStimulus.length
-        ){
-
-            stimulusHTML =
-                [...new Set(
-                    bagianStimulus
-                )]
-                .join("");
-
-        }
-
-    }
-
-
-    /*
-     * Jika tetap belum menemukan bagian khusus,
-     * gunakan HTML pertanyaan sebagai sumber tampilan
-     * hanya bila ada marker literasi yang jelas.
-     */
-
-    if(
-        isLiterasi &&
-        !stimulusHTML &&
-        adaMarker
-    ){
-
-        stimulusHTML =
-            raw;
 
     }
 
 
     return {
 
-        isLiterasi,
-
-        judul:
-            isLiterasi
-                ? "Literasi / Stimulus"
-                : "",
+        text:
+            stimulusText,
 
         html:
-            stimulusHTML,
+            adaContainer
+                ?
+                adaContainer.innerHTML
+                :
+                html,
 
-        teks:
-            stimulusHTML
-                ? teksAman(
-                    stimulusHTML
-                )
-                : ""
+        source:
+            "HTML_PERTANYAAN"
 
     };
 
@@ -2963,1223 +2088,500 @@ function analisisLiterasiHTML(soal){
 
 
 /* =========================================================
-CARI LITERASI
+   DETEKSI BAHASA INGGRIS
 ========================================================= */
 
-function cariLiterasi(soal){
+function isBahasaInggris(soal){
 
-    /*
-     * PENTING:
-     *
-     * Tidak ada lagi:
-     * - literasi_id
-     * - literasi_soal
-     * - literasi legacy
-     * - nomor_mulai
-     * - nomor_selesai
-     *
-     * Literasi hanya berasal dari HTML
-     * pada soal.pertanyaan.
-     */
+    const gabungan = (
 
-    const hasil =
-        analisisLiterasiHTML(
-            soal
-        );
+        soal.mata_pelajaran ||
+        soal.mata_pelajaran_nama ||
+        soal.mapel ||
+        soal.subject ||
+        soal.subject_name ||
+        soal.ujian?.mata_pelajaran ||
+        ""
+
+    ).toLowerCase();
 
 
-    return {
+    return (
 
-        isLiterasi:
-            hasil.isLiterasi,
+        gabungan.includes(
+            "bahasa inggris"
+        ) ||
 
-        data:
-            hasil.isLiterasi
-                ? {
+        gabungan === "inggris" ||
 
-                    judul:
-                        hasil.judul,
+        gabungan.includes(
+            "english"
+        )
 
-                    isi_literasi:
-                        hasil.html,
-
-                    isi:
-                        hasil.html,
-
-                    stimulus:
-                        hasil.html
-
-                }
-                : null,
-
-        html:
-            hasil.html,
-
-        teks:
-            hasil.teks
-
-    };
-
-}
-
-
-/* =========================================================
-AMBIL STIMULUS
-========================================================= */
-
-function ambilStimulus(soal){
-
-    const literasi =
-        cariLiterasi(
-            soal
-        );
-
-
-    if(
-        !literasi.isLiterasi
-    ){
-
-        return "";
-
-    }
-
-
-    return
-        literasi.teks ||
-        "";
-
-}
-
-
-/* =========================================================
-AMBIL PILIHAN A-D
-========================================================= */
-
-function ambilPilihan(soal){
-
-    const hasil = [];
-
-
-    const tambah =
-        (v,label)=>{
-
-            const t =
-                teksAman(
-                    v
-                );
-
-
-            if(t){
-
-                hasil.push({
-                    label,
-                    text:t
-                });
-
-            }
-
-        };
-
-
-    const kandidat = [
-
-        ["A",soal.pilihan_a],
-        ["B",soal.pilihan_b],
-        ["C",soal.pilihan_c],
-        ["D",soal.pilihan_d],
-
-        ["A",soal.opsi_a],
-        ["B",soal.opsi_b],
-        ["C",soal.opsi_c],
-        ["D",soal.opsi_d],
-
-        ["A",soal.option_a],
-        ["B",soal.option_b],
-        ["C",soal.option_c],
-        ["D",soal.option_d],
-
-        ["A",soal.a],
-        ["B",soal.b],
-        ["C",soal.c],
-        ["D",soal.d]
-
-    ];
-
-
-    kandidat.forEach(
-        ([label,v]) =>
-            tambah(
-                v,
-                label
-            )
     );
 
-
-    const raw =
-        soal.pilihan ??
-        soal.opsi ??
-        soal.options;
-
-
-    if(raw){
-
-        try{
-
-            const obj =
-                typeof raw === "string"
-                    ? JSON.parse(raw)
-                    : raw;
-
-
-            if(
-                Array.isArray(obj)
-            ){
-
-                obj
-                    .slice(0,4)
-                    .forEach(
-                        (v,i)=>
-                            tambah(
-                                v,
-                                String.fromCharCode(
-                                    65+i
-                                )
-                            )
-                    );
-
-            }else if(
-                obj &&
-                typeof obj === "object"
-            ){
-
-                ["A","B","C","D"]
-                    .forEach(
-                        k=>{
-
-                            const v =
-                                obj[k] ??
-                                obj[
-                                    k.toLowerCase()
-                                ];
-
-
-                            if(
-                                v !== undefined
-                            ){
-
-                                tambah(
-                                    v,
-                                    k
-                                );
-
-                            }
-
-                        }
-                    );
-
-            }
-
-        }catch(e){
-
-            /*
-             * Bukan JSON.
-             */
-
-        }
-
-    }
-
-
-    const unik = [];
-
-    const seen =
-        new Set();
-
-
-    hasil.forEach(
-        x=>{
-
-            const key =
-                x.label +
-                "|" +
-                x.text;
-
-
-            if(
-                !seen.has(key) &&
-                unik.length < 4
-            ){
-
-                seen.add(
-                    key
-                );
-
-                unik.push(
-                    x
-                );
-
-            }
-
-        }
-    );
-
-
-    return unik;
-
 }
 
 
 /* =========================================================
-TEKS ANALISIS
+   ANALISIS KOGNITIF BAHASA INGGRIS
 ========================================================= */
 
-function teksAnalisis(soal){
+function analisisKognitifBahasaInggris(
+    soal
+){
 
-    const pertanyaan =
+    const text =
         teksAman(
             soal.pertanyaan
-        );
-
-
-    const stimulus =
-        ambilStimulus(
-            soal
-        );
-
-
-    return {
-
-        pertanyaan,
-
-        stimulus,
-
-        tugas:
-            pertanyaan.toLowerCase(),
-
-        gabungan:
-            (
-                stimulus +
-                " " +
-                pertanyaan
-            ).toLowerCase()
-
-    };
-
-}
-
-
-/* =========================================================
-COCOK
-========================================================= */
-
-function cocok(text,pola){
-
-    return pola.some(
-        p =>
-            p.test(
-                text
-            )
-    );
-
-}
-
-
-/* =========================================================
-KKO C6
-========================================================= */
-
-function deteksiC6(text){
-
-    return cocok(
-        text,
-        [
-
-            /\brancang(?:lah)?\b/i,
-            /\bmerancang\b/i,
-            /\bdesainkan\b/i,
-            /\bkembangkan(?:lah)?\b/i,
-            /\bciptakan(?:lah)?\b/i,
-            /\bprototipe\b/i,
-            /\bmodelkan\b/i,
-
-            /\bsusunlah\b.*\bsolusi\b/i,
-            /\bsusunlah\b.*\brencana\b/i,
-
-            /\bbuatlah\b.*\bsolusi\b/i,
-            /\bbuatlah\b.*\brancangan\b/i,
-            /\bbuatlah\b.*\bdesain\b/i,
-            /\bbuatlah\b.*\bmodel\b/i,
-
-            /\bmembuat\b.*\bproduk\b/i,
-            /\bmembuat\b.*\bsolusi\b/i,
-            /\bmenghasilkan\b.*\bproduk\b/i,
-            /\bmenghasilkan\b.*\brancangan\b/i,
-            /\bmenghasilkan\b.*\bsolusi\b/i
-
-        ]
-    );
-
-}
-
-
-/* =========================================================
-KKO C5
-========================================================= */
-
-function deteksiC5(text){
-
-    return cocok(
-        text,
-        [
-
-            /\bevaluasi(?:lah)?\b/i,
-            /\bmengevaluasi\b/i,
-
-            /\bnilai(?:lah)?\b.*\bberdasarkan\b/i,
-            /\bmenilai\b.*\bberdasarkan\b/i,
-
-            /\bkritisi(?:lah)?\b/i,
-            /\bkritikilah\b/i,
-
-            /\bsetujukah\b.*\bkarena\b/i,
-            /\btepatkah\b.*\balasan\b/i,
-            /\blayakkah\b.*\balasan\b/i,
-
-            /\bmanakah\b.*\bpaling efektif\b/i,
-            /\bmanakah\b.*\bpaling tepat\b.*\bkarena\b/i,
-            /\bmana(?:kah)?\b.*\bpaling tepat\b.*\bberdasarkan\b/i,
-
-            /\bkelebihan dan kekurangan\b/i,
-            /\bberikan justifikasi\b/i,
-
-            /\bberikan alasan\b.*\bpilihan\b/i,
-            /\bjelaskan alasan\b.*\bpilihan\b/i,
-
-            /\bbenar atau salah\b.*\balasan\b/i
-
-        ]
-    );
-
-}
-
-
-/* =========================================================
-KKO C4
-========================================================= */
-
-function deteksiC4(text){
-
-    return cocok(
-        text,
-        [
-
-            /\banalisis(?:lah)?\b/i,
-            /\bmenganalisis\b/i,
-
-            /\bbandingkan\b/i,
-            /\bmembandingkan\b/i,
-            /\bperbandingan\b.*\bantara\b/i,
-
-            /\bhubungkan\b/i,
-            /\bmenghubungkan\b/i,
-
-            /\bidentifikasi\b.*\bkesalahan\b/i,
-            /\bkesalahan\b.*\bterjadi\b/i,
-
-            /\btentukan\b.*\bhubungan\b/i,
-
-            /\bsebab\s+dan\s+akibat\b/i,
-            /\bhubungan\s+antara\b/i,
-
-            /\bmengapa\b.*\bjika\b/i,
-            /\bmengapa\b.*\bsehingga\b/i,
-
-            /\bapa akibatnya\b/i,
-            /\bapa dampaknya\b/i,
-
-            /\bkemungkinan yang terjadi\b/i,
-            /\bprediksi(?:kan)?\b/i,
-
-            /\bsimpulkan\b.*\bberdasarkan\b/i,
-
-            /\btemukan\b.*\bpola\b/i,
-
-            /\bberdasarkan data\b/i,
-            /\bberdasarkan tabel\b/i,
-            /\bberdasarkan grafik\b/i,
-            /\bberdasarkan informasi\b/i
-
-        ]
-    );
-
-}
-
-
-/* =========================================================
-KKO C3
-========================================================= */
-
-function deteksiC3(text){
-
-    return cocok(
-        text,
-        [
-
-            /\bhitung(?:lah)?\b/i,
-
-            /\bgunakan\b.*\brumus\b/i,
-            /\bgunakan\b.*\bkonsep\b/i,
-            /\bgunakan\b.*\bprinsip\b/i,
-            /\bgunakan\b.*\bprosedur\b/i,
-
-            /\bterapkan\b/i,
-            /\bmenerapkan\b/i,
-
-            /\btentukan\b.*\bdengan rumus\b/i,
-
-            /\bberapakah\b.*\bjika\b/i,
-
-            /\bhitung\b.*\bpersentase\b/i
-
-        ]
-    );
-
-}
-
-
-/* =========================================================
-KKO C2
-========================================================= */
-
-function deteksiC2(text){
-
-    return cocok(
-        text,
-        [
-
-            /\bjelaskan(?:lah)?\b/i,
-            /\bmenjelaskan\b/i,
-
-            /\bmengapa\b/i,
-
-            /\buraikan(?:lah)?\b/i,
-            /\bmenguraikan\b/i,
-
-            /\bmakna\b/i,
-            /\bmaksud\b/i,
-
-            /\bperbedaan\b/i,
-            /\bpersamaan\b/i,
-
-            /\bcontoh\b/i,
-
-            /\binterpretasikan\b/i,
-            /\bartikan\b/i
-
-        ]
-    );
-
-}
-
-
-/* =========================================================
-KKO C1
-========================================================= */
-
-function deteksiC1(text){
-
-    return cocok(
-        text,
-        [
-
-            /\bsebutkan(?:lah)?\b/i,
-
-            /\bapa nama\b/i,
-            /\bsiapa\b/i,
-            /\bkapan\b/i,
-
-            /\bdi mana\b/i,
-            /\bdimana\b/i,
-
-            /\bdefinisi\b/i,
-            /\bpengertian\b/i,
-
-            /\bnama\b/i,
-            /\bjenis\b/i,
-            /\bistilah\b/i,
-
-            /\btermasuk\b/i
-
-        ]
-    );
-
-}
-
-
-/* =========================================================
-SKOR KKO
-========================================================= */
-
-function skorKKO(tugas){
-
-    const skor = {
-
-        C1:0,
-        C2:0,
-        C3:0,
-        C4:0,
-        C5:0,
-        C6:0
-
-    };
+        )
+        .toLowerCase();
+
+
+    /*
+     * C6
+     */
+
+    const c6 = [
+
+        "design",
+        "design a",
+        "create",
+        "create a",
+        "develop",
+        "develop a",
+        "make a",
+        "write a dialogue",
+        "write a text",
+        "write an invitation",
+        "compose",
+        "produce",
+        "construct",
+        "rancang",
+        "buatlah",
+        "susunlah",
+        "ciptakan",
+        "kembangkan"
+
+    ];
 
 
     if(
-        deteksiC1(tugas)
+        c6.some(
+            x =>
+                text.includes(x)
+        )
     ){
 
-        skor.C1 += 6;
-
-    }
-
-
-    if(
-        deteksiC2(tugas)
-    ){
-
-        skor.C2 += 6;
-
-    }
-
-
-    if(
-        deteksiC3(tugas)
-    ){
-
-        skor.C3 += 9;
-
-    }
-
-
-    if(
-        deteksiC4(tugas)
-    ){
-
-        skor.C4 += 10;
-
-    }
-
-
-    if(
-        deteksiC5(tugas)
-    ){
-
-        skor.C5 += 12;
-
-    }
-
-
-    if(
-        deteksiC6(tugas)
-    ){
-
-        skor.C6 += 14;
+        return {
+            c:"C6",
+            level:"HOTS"
+        };
 
     }
 
 
     /*
-     * KKO sangat spesifik.
+     * C5
      */
 
-    if(
-        /\bsebutkan|\bsiapa\b|\bkapan\b|\bapa nama\b|\bdefinisi\b|\bpengertian\b/i
-            .test(tugas)
-    ){
+    const c5 = [
 
-        skor.C1 += 12;
-
-    }
-
-
-    if(
-        /\bjelaskan|\buraikan|\bmakna|\bmaksud|\binterpretasikan/i
-            .test(tugas)
-    ){
-
-        skor.C2 += 12;
-
-    }
-
-
-    if(
-        /\bhitung|\bterapkan|\bmenerapkan|\bgunakan\s+(rumus|konsep|prinsip|prosedur)/i
-            .test(tugas)
-    ){
-
-        skor.C3 += 14;
-
-    }
-
-
-    if(
-        /\banalisis|\bmenganalisis|\bbandingkan|\bmembandingkan|\bhubungkan|\bmenghubungkan/i
-            .test(tugas)
-    ){
-
-        skor.C4 += 16;
-
-    }
-
-
-    if(
-        /\bevaluasi|\bmengevaluasi|\bmenilai|\bkritisi|\bjustifikasi/i
-            .test(tugas)
-    ){
-
-        skor.C5 += 18;
-
-    }
-
-
-    if(
-        /\brancang|\bmerancang|\bdesainkan|\bkembangkan|\bciptakan|\bprototipe|\bmodelkan/i
-            .test(tugas)
-    ){
-
-        skor.C6 += 20;
-
-    }
-
-
-    return skor;
-
-}
-
-
-/* =========================================================
-PILIH LEVEL
-========================================================= */
-
-function pilihLevelTerbaik(skor){
-
-    const urutan = [
-
-        "C6",
-        "C5",
-        "C4",
-        "C3",
-        "C2",
-        "C1"
+        "evaluate",
+        "evaluate the",
+        "judge",
+        "assess",
+        "justify",
+        "which is the most appropriate",
+        "which is the best",
+        "do you agree",
+        "is it appropriate",
+        "menilai",
+        "evaluasi",
+        "justifikasi",
+        "paling tepat",
+        "paling efektif"
 
     ];
 
 
-    let terbaik =
-        "C2";
+    if(
+        c5.some(
+            x =>
+                text.includes(x)
+        )
+    ){
+
+        return {
+            c:"C5",
+            level:"HOTS"
+        };
+
+    }
 
 
-    let nilai =
-        -1;
+    /*
+     * C4
+     */
+
+    const c4 = [
+
+        "analyze",
+        "analyse",
+        "compare",
+        "comparison",
+        "relationship",
+        "cause",
+        "effect",
+        "infer",
+        "inference",
+        "predict",
+        "identify the difference",
+        "why does",
+        "why did",
+        "what would happen",
+        "menganalisis",
+        "analisis",
+        "bandingkan",
+        "hubungan",
+        "sebab",
+        "akibat",
+        "dampak",
+        "prediksi"
+
+    ];
 
 
-    urutan.forEach(
-        level=>{
+    if(
+        c4.some(
+            x =>
+                text.includes(x)
+        )
+    ){
 
-            if(
-                skor[level] > nilai
-            ){
+        return {
+            c:"C4",
+            level:"HOTS"
+        };
 
-                nilai =
-                    skor[level];
-
-                terbaik =
-                    level;
-
-            }
-
-        }
-    );
+    }
 
 
-    return terbaik;
+    /*
+     * C3
+     */
+
+    const c3 = [
+
+        "use",
+        "apply",
+        "using",
+        "how would you use",
+        "complete the sentence",
+        "choose the correct expression",
+        "gunakan",
+        "terapkan",
+        "menggunakan"
+
+    ];
+
+
+    if(
+        c3.some(
+            x =>
+                text.includes(x)
+        )
+    ){
+
+        return {
+            c:"C3",
+            level:"MOTS"
+        };
+
+    }
+
+
+    /*
+     * C2
+     */
+
+    const c2 = [
+
+        "explain",
+        "what does",
+        "what is meant by",
+        "meaning",
+        "describe",
+        "why",
+        "jelaskan",
+        "makna",
+        "maksud",
+        "uraikan"
+
+    ];
+
+
+    if(
+        c2.some(
+            x =>
+                text.includes(x)
+        )
+    ){
+
+        return {
+            c:"C2",
+            level:"LOTS"
+        };
+
+    }
+
+
+    /*
+     * C1
+     */
+
+    return {
+
+        c:"C1",
+
+        level:"LOTS"
+
+    };
 
 }
 
 
 /* =========================================================
-ANALISIS KOGNITIF
-SEMUA MAPEL MENGGUNAKAN ATURAN YANG SAMA
+   SKOR KKO
+========================================================= */
+
+function skorKKO(text){
+
+    const patterns = {
+
+        C6:[
+            "rancang",
+            "merancang",
+            "desain",
+            "desainkan",
+            "kembangkan",
+            "ciptakan",
+            "buatlah",
+            "susunlah solusi",
+            "buatlah solusi",
+            "membuat produk",
+            "menghasilkan produk",
+            "prototipe",
+            "modelkan"
+        ],
+
+        C5:[
+            "evaluasi",
+            "mengevaluasi",
+            "nilai berdasarkan",
+            "menilai berdasarkan",
+            "kritisi",
+            "kritikilah",
+            "setujukah",
+            "tepatkah",
+            "layakkah",
+            "paling efektif",
+            "paling tepat",
+            "kelebihan dan kekurangan",
+            "justifikasi"
+        ],
+
+        C4:[
+            "analisis",
+            "menganalisis",
+            "bandingkan",
+            "membandingkan",
+            "hubungan",
+            "identifikasi kesalahan",
+            "sebab-akibat",
+            "mengapa jika",
+            "dampak",
+            "kemungkinan",
+            "prediksi",
+            "simpulkan berdasarkan",
+            "pola",
+            "berdasarkan informasi",
+            "berdasarkan data",
+            "berdasarkan tabel",
+            "berdasarkan grafik"
+        ],
+
+        C3:[
+            "hitung",
+            "gunakan rumus",
+            "gunakan konsep",
+            "gunakan prinsip",
+            "gunakan prosedur",
+            "terapkan",
+            "menentukan dengan rumus",
+            "berapakah jika"
+        ],
+
+        C2:[
+            "jelaskan",
+            "mengapa",
+            "uraikan",
+            "makna",
+            "maksud",
+            "perbedaan",
+            "persamaan",
+            "contoh",
+            "interpretasikan",
+            "artikan"
+        ],
+
+        C1:[
+            "sebutkan",
+            "apa nama",
+            "siapa",
+            "kapan",
+            "di mana",
+            "definisi",
+            "pengertian",
+            "nama",
+            "jenis",
+            "istilah",
+            "termasuk"
+        ]
+
+    };
+
+
+    for(
+        const level of [
+            "C6",
+            "C5",
+            "C4",
+            "C3",
+            "C2",
+            "C1"
+        ]
+    ){
+
+        if(
+            patterns[level].some(
+                kata =>
+                    text.includes(
+                        kata
+                    )
+            )
+        ){
+
+            return level;
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   ANALISIS KOGNITIF
 ========================================================= */
 
 function analisisKognitif(soal){
 
-    const info =
-        teksAnalisis(
+    if(
+        isBahasaInggris(
+            soal
+        )
+    ){
+
+        return analisisKognitifBahasaInggris(
             soal
         );
 
-
-    const tugas =
-        info.tugas;
+    }
 
 
-    const gabungan =
-        info.gabungan;
+    const text =
+        teksAman(
+            soal.pertanyaan
+        )
+        .toLowerCase();
 
 
-    const skor =
+    const kko =
         skorKKO(
-            tugas
+            text
         );
 
 
-    /*
-     * Struktur tuntutan dapat memperkuat C3/C4.
-     */
+    if(kko){
 
-    if(
-        /\bjika\b.*\b(maka|sehingga|akibat|terjadi)\b/i
-            .test(tugas)
-    ){
+        const levelMap = {
 
-        skor.C4 += 8;
+            C1:"LOTS",
+            C2:"LOTS",
+            C3:"MOTS",
+            C4:"HOTS",
+            C5:"HOTS",
+            C6:"HOTS"
 
-    }
+        };
 
-
-    if(
-        /\bdua\b|\bkedua\b|\bkeduanya\b|\bmasing-masing\b/i
-            .test(gabungan) &&
-        /\bbanding|\bbeda|\bhubung|\bpilih|\btentukan/i
-            .test(tugas)
-    ){
-
-        skor.C4 += 6;
-
-    }
-
-
-    if(
-        /\bkesalahan\b|\bbertentangan\b|\btidak sesuai\b|\bkontradiksi\b/i
-            .test(tugas)
-    ){
-
-        skor.C4 += 7;
-
-    }
-
-
-    if(
-        /\bberdasarkan\b.*\bdata\b|
-         \bberdasarkan\b.*\binformasi\b|
-         \bberdasarkan\b.*\btabel\b|
-         \bberdasarkan\b.*\bgrafik\b/i
-            .test(tugas)
-    ){
-
-        skor.C4 += 5;
-
-    }
-
-
-    /*
-     * Membuat produk/solusi/rancangan = C6.
-     */
-
-    if(
-        /\bmembuat\b/i.test(tugas) &&
-        /\b(produk|solusi|rancangan|desain|model|prototipe|strategi|rencana)\b/i
-            .test(tugas)
-    ){
-
-        skor.C6 += 12;
-
-    }
-
-
-    /*
-     * Evaluasi berdasarkan kriteria/alasan.
-     */
-
-    if(
-        /\bmanakah\b.*\bpaling tepat\b/i
-            .test(tugas) &&
-        /\bkarena\b|\bberdasarkan kriteria\b|\bberdasarkan alasan\b|\bjustifikasi\b/i
-            .test(tugas)
-    ){
-
-        skor.C5 += 10;
-
-    }
-
-
-    /*
-     * Jika terdapat KKO eksplisit, level dipilih
-     * berdasarkan skor tertinggi.
-     */
-
-    let level =
-        pilihLevelTerbaik(
-            skor
-        );
-
-
-    /*
-     * Jika semua skor nol, gunakan fallback C2.
-     */
-
-    if(
-        Object.values(skor)
-            .every(
-                nilai =>
-                    nilai === 0
-            )
-    ){
-
-        level =
-            "C2";
-
-    }
-
-
-    const meta = {
-
-        C1:[
-            "Mengingat",
-            "LOTS",
-            "Menuntut pengingatan fakta, nama, istilah, definisi, atau informasi."
-        ],
-
-        C2:[
-            "Memahami",
-            "LOTS",
-            "Menuntut pemahaman makna, penjelasan, interpretasi, atau informasi."
-        ],
-
-        C3:[
-            "Menerapkan",
-            "MOTS",
-            "Menuntut penerapan konsep, prinsip, rumus, atau prosedur."
-        ],
-
-        C4:[
-            "Menganalisis",
-            "HOTS",
-            "Menuntut penguraian informasi, hubungan, sebab-akibat, perbandingan, pola, atau inferensi."
-        ],
-
-        C5:[
-            "Mengevaluasi",
-            "HOTS",
-            "Menuntut penilaian berdasarkan pertimbangan, kriteria, alasan, atau justifikasi."
-        ],
-
-        C6:[
-            "Mencipta",
-            "HOTS",
-            "Menuntut menghasilkan rancangan, produk, model, strategi, solusi, atau gagasan baru."
-        ]
-
-    };
-
-
-    return {
-
-        level,
-
-        nama:
-            meta[level][0],
-
-        kategori:
-            meta[level][1],
-
-        alasan:
-            meta[level][2],
-
-        skorKKO:
-            skor
-
-    };
-
-}
-
-
-/* =========================================================
-ANALISIS OPSI A-D
-========================================================= */
-
-function analisisPilihanJawaban(soal){
-
-    const opsi =
-        ambilPilihan(
-            soal
-        );
-
-
-    if(
-        !opsi.length
-    ){
 
         return {
 
-            tersedia:false,
+            c:kko,
 
-            skor:0,
-
-            alasan:
-                "Opsi A–D tidak terbaca dari kolom data soal."
+            level:
+                levelMap[kko]
 
         };
 
     }
 
 
-    let skor =
-        0;
-
-
-    const alasan =
-        [];
-
-
-    const teks =
-        opsi.map(
-            x =>
-                x.text
-        );
-
-
-    const rata =
-        teks.reduce(
-            (a,b)=>
-                a+b.length,
-            0
-        ) /
-        teks.length;
-
-
-    const min =
-        Math.min(
-            ...teks.map(
-                x =>
-                    x.length
-            )
-        );
-
-
-    const max =
-        Math.max(
-            ...teks.map(
-                x =>
-                    x.length
-            )
-        );
-
+    /*
+     * Jika tidak ditemukan KKO,
+     * gunakan struktur pertanyaan.
+     */
 
     if(
-        opsi.length >= 4
+        /\b(apa|siapa|kapan|di mana|sebutkan)\b/i
+            .test(text)
     ){
 
-        skor += 3;
-
-        alasan.push(
-            "empat opsi terbaca"
-        );
-
-    }else if(
-        opsi.length === 3
-    ){
-
-        skor += 2;
-
-        alasan.push(
-            "tiga opsi terbaca"
-        );
+        return {
+            c:"C1",
+            level:"LOTS"
+        };
 
     }
 
 
     if(
-        rata >= 90
+        /\b(jelaskan|uraikan|mengapa|makna|maksud)\b/i
+            .test(text)
     ){
 
-        skor += 4;
-
-    }else if(
-        rata >= 55
-    ){
-
-        skor += 2;
+        return {
+            c:"C2",
+            level:"LOTS"
+        };
 
     }
 
 
-    if(
-        max-min >= 100
-    ){
-
-        skor += 1;
-
-        alasan.push(
-            "panjang opsi cukup bervariasi"
-        );
-
-    }
-
-
-    const polaPenalaran =
-        /\bkarena\b|\bsehingga\b|\bagar\b|\bsebaiknya\b|\bpaling tepat\b|\bpaling efektif\b|\bberdasarkan\b|\bjika\b|\bdampak\b|\bakibat\b/i;
-
-
-    const jumlahPenalaran =
-        teks.filter(
-            t =>
-                polaPenalaran.test(t)
-        ).length;
-
-
-    if(
-        jumlahPenalaran >= 3
-    ){
-
-        skor += 5;
-
-        alasan.push(
-            "sebagian besar opsi memuat alasan atau konsekuensi"
-        );
-
-    }else if(
-        jumlahPenalaran >= 2
-    ){
-
-        skor += 3;
-
-        alasan.push(
-            "beberapa opsi memuat alasan atau kondisi"
-        );
-
-    }
-
-
-    function kataSet(t){
-
-        return new Set(
-            t
-                .toLowerCase()
-                .split(
-                    /[^a-z0-9À-ÿ]+/
-                )
-                .filter(
-                    w =>
-                        w.length > 3
-                )
-        );
-
-    }
-
-
-    let kemiripanTinggi =
-        0;
-
-
-    for(
-        let i=0;
-        i<teks.length;
-        i++
-    ){
-
-        for(
-            let j=i+1;
-            j<teks.length;
-            j++
-        ){
-
-            const a =
-                kataSet(
-                    teks[i]
-                );
-
-
-            const b =
-                kataSet(
-                    teks[j]
-                );
-
-
-            const inter =
-                [
-                    ...a
-                ]
-                .filter(
-                    x =>
-                        b.has(x)
-                )
-                .length;
-
-
-            const union =
-                new Set([
-                    ...a,
-                    ...b
-                ]).size || 1;
-
-
-            if(
-                inter /
-                union >=
-                0.45
-            ){
-
-                kemiripanTinggi++;
-
-            }
-
-        }
-
-    }
-
-
-    if(
-        kemiripanTinggi >= 2
-    ){
-
-        skor += 5;
-
-        alasan.push(
-            "beberapa pengecoh memiliki kemiripan struktur"
-        );
-
-    }else if(
-        kemiripanTinggi === 1
-    ){
-
-        skor += 2;
-
-        alasan.push(
-            "terdapat opsi yang cukup mirip"
-        );
-
-    }
-
+    /*
+     * Default konservatif C2.
+     */
 
     return {
 
-        tersedia:true,
+        c:"C2",
 
-        jumlah:
-            opsi.length,
-
-        skor:
-            Math.min(
-                20,
-                skor
-            ),
-
-        alasan:
-            alasan.length
-                ? alasan.join(", ") + "."
-                : "Opsi tersedia."
+        level:"LOTS"
 
     };
 
@@ -4187,214 +2589,128 @@ function analisisPilihanJawaban(soal){
 
 
 /* =========================================================
-KESUKARAN
-ATURAN FINAL SEMUA MAPEL
+   KESUKARAN
 ========================================================= */
 
-function analisisKesukaran(soal){
+function analisisKesukaran(
+    soal,
+    kognitif
+){
 
-    const kognitif =
-        analisisKognitif(
-            soal
-        );
+    const c =
+        kognitif.c;
 
 
     /*
-     * =====================================================
-     * ATURAN FINAL:
+     * Bahasa Inggris:
      *
      * C1-C2 = Mudah
      * C3-C5 = Sedang
      * C6    = Sukar
-     *
-     * Berlaku untuk SEMUA mata pelajaran.
-     * Tidak ada pengecualian Bahasa Inggris.
-     * =====================================================
      */
 
-    const aturan = {
+    if(
+        isBahasaInggris(
+            soal
+        )
+    ){
 
-        C1:{
-            tingkat:"Mudah",
-            skor:20,
-            alasan:"C1 berada pada level LOTS sehingga dikategorikan Mudah."
-        },
+        const map = {
 
-        C2:{
-            tingkat:"Mudah",
-            skor:30,
-            alasan:"C2 berada pada level LOTS sehingga dikategorikan Mudah."
-        },
+            C1:"Mudah",
+            C2:"Mudah",
 
-        C3:{
-            tingkat:"Sedang",
-            skor:50,
-            alasan:"C3 berada pada level MOTS sehingga dikategorikan Sedang."
-        },
+            C3:"Sedang",
+            C4:"Sedang",
+            C5:"Sedang",
 
-        C4:{
-            tingkat:"Sedang",
-            skor:60,
-            alasan:"C4 berada pada level HOTS tetapi dikategorikan Sedang."
-        },
+            C6:"Sukar"
 
-        C5:{
-            tingkat:"Sedang",
-            skor:65,
-            alasan:"C5 berada pada level HOTS tetapi dikategorikan Sedang."
-        },
-
-        C6:{
-            tingkat:"Sukar",
-            skor:85,
-            alasan:"C6 berada pada level HOTS dan dikategorikan Sukar."
-        }
-
-    };
+        };
 
 
-    const hasil =
-        aturan[
-            kognitif.level
-        ] ||
-        aturan.C2;
+        return map[c] || "Sedang";
+
+    }
 
 
-    return {
+    /*
+     * Umum
+     */
 
-        tingkat:
-            hasil.tingkat,
+    const mapUmum = {
 
-        skor:
-            hasil.skor,
+        C1:"Mudah",
 
-        alasan:
-            hasil.alasan
+        C2:"Mudah",
+
+        C3:"Sedang",
+
+        C4:"Sedang",
+
+        C5:"Sedang",
+
+        C6:"Sukar"
 
     };
+
+
+    return (
+        mapUmum[c] ||
+        "Sedang"
+    );
 
 }
 
 
 /* =========================================================
-BUAT ANALISIS
-========================================================= */
-
-function buatAnalisis(){
-
-    dataAnalisis =
-        daftarSoal.map(
-            soal=>{
-
-                const literasi =
-                    cariLiterasi(
-                        soal
-                    );
-
-
-                const kognitif =
-                    analisisKognitif(
-                        soal
-                    );
-
-
-                const kesukaran =
-                    analisisKesukaran(
-                        soal
-                    );
-
-
-                const isLiterasi =
-                    literasi.isLiterasi;
-
-
-                const literasiHOTS =
-                    isLiterasi &&
-                    kognitif.kategori ===
-                    "HOTS";
-
-
-                return {
-
-                    ...soal,
-
-                    kognitif,
-
-                    kesukaran,
-
-                    literasi,
-
-                    isLiterasi,
-
-                    literasiHOTS,
-
-                    pilihanAnalisis:
-                        analisisPilihanJawaban(
-                            soal
-                        )
-
-                };
-
-            }
-        );
-
-}
-
-
-/* =========================================================
-FILTER DATA
+   DATA FILTER
 ========================================================= */
 
 function getFilteredData(){
 
-    const ujian =
-        document.getElementById(
-            "filterUjian"
-        ).value;
-
-
     const kognitif =
         document.getElementById(
-            "filterKognitif"
+            "kognitifFilter"
         ).value;
 
 
     const kategori =
         document.getElementById(
-            "filterKategori"
+            "kategoriFilter"
         ).value;
 
 
     const kesukaran =
         document.getElementById(
-            "filterKesukaran"
+            "kesukaranFilter"
         ).value;
 
 
-    const literasi =
+    const literasiFilter =
         document.getElementById(
-            "filterLiterasi"
+            "literasiFilter"
         ).value;
 
 
     const search =
         document.getElementById(
-            "search"
+            "searchFilter"
         ).value
         .toLowerCase()
         .trim();
 
 
     return dataAnalisis.filter(
-        item=>{
+        item => {
 
             if(
-                ujian &&
+                ujianAktif &&
                 String(
                     item.ujian_id
                 ) !==
                 String(
-                    ujian
+                    ujianAktif
                 )
             ){
 
@@ -4404,9 +2720,8 @@ function getFilteredData(){
 
 
             if(
-                kognitif &&
-                item.kognitif.level !==
-                kognitif
+                kognitif !== "semua" &&
+                item.kognitif !== kognitif
             ){
 
                 return false;
@@ -4415,9 +2730,8 @@ function getFilteredData(){
 
 
             if(
-                kategori &&
-                item.kognitif.kategori !==
-                kategori
+                kategori !== "semua" &&
+                item.level !== kategori
             ){
 
                 return false;
@@ -4426,9 +2740,8 @@ function getFilteredData(){
 
 
             if(
-                kesukaran &&
-                item.kesukaran.tingkat !==
-                kesukaran
+                kesukaran !== "semua" &&
+                item.kesukaran !== kesukaran
             ){
 
                 return false;
@@ -4437,9 +2750,9 @@ function getFilteredData(){
 
 
             if(
-                literasi ===
-                "Literasi" &&
-                !item.isLiterasi
+                literasiFilter ===
+                "literasi" &&
+                !item.literasi
             ){
 
                 return false;
@@ -4448,20 +2761,9 @@ function getFilteredData(){
 
 
             if(
-                literasi ===
-                "Non-Literasi" &&
-                item.isLiterasi
-            ){
-
-                return false;
-
-            }
-
-
-            if(
-                literasi ===
-                "Literasi HOTS" &&
-                !item.literasiHOTS
+                literasiFilter ===
+                "nonliterasi" &&
+                item.literasi
             ){
 
                 return false;
@@ -4471,20 +2773,23 @@ function getFilteredData(){
 
             if(search){
 
-                const gabungan =
-                    [
+                const text = (
 
-                        item.pertanyaan,
-                        item.nomor,
-                        item.tipe
+                    String(
+                        item.nomor || ""
+                    ) +
 
-                    ]
-                    .join(" ")
-                    .toLowerCase();
+                    " " +
+
+                    teksAman(
+                        item.pertanyaan
+                    )
+
+                ).toLowerCase();
 
 
                 if(
-                    !gabungan.includes(
+                    !text.includes(
                         search
                     )
                 ){
@@ -4505,10 +2810,10 @@ function getFilteredData(){
 
 
 /* =========================================================
-RENDER ALL
+   RENDER SEMUA
 ========================================================= */
 
-function renderAll(){
+function renderSemua(){
 
     const data =
         getFilteredData();
@@ -4518,26 +2823,21 @@ function renderAll(){
         data
     );
 
+    renderKelayakan(
+        data
+    );
 
     renderDifficulty(
         data
     );
 
-
     renderCognitive(
         data
     );
 
-
     renderMatrix(
         data
     );
-
-
-    renderKelayakan(
-        data
-    );
-
 
     renderQuestions(
         data
@@ -4547,554 +2847,194 @@ function renderAll(){
 
 
 /* =========================================================
-SUMMARY
+   SUMMARY
 ========================================================= */
 
-function renderSummary(data){
+function renderSummary(
+    data
+){
 
     const total =
         data.length;
-
-
-    const literasi =
-        data.filter(
-            x =>
-                x.isLiterasi
-        ).length;
-
-
-    const nonLiterasi =
-        total -
-        literasi;
-
-
-    const lots =
-        data.filter(
-            x =>
-                x.kognitif.kategori ===
-                "LOTS"
-        ).length;
-
-
-    const mots =
-        data.filter(
-            x =>
-                x.kognitif.kategori ===
-                "MOTS"
-        ).length;
-
-
-    const hots =
-        data.filter(
-            x =>
-                x.kognitif.kategori ===
-                "HOTS"
-        ).length;
-
-
-    const literasiHOTS =
-        data.filter(
-            x =>
-                x.literasiHOTS
-        ).length;
-
-
-    document.getElementById(
-        "totalSoal"
-    ).textContent =
-        total;
-
-
-    document.getElementById(
-        "totalLiterasi"
-    ).textContent =
-        literasi;
-
-
-    document.getElementById(
-        "totalNonLiterasi"
-    ).textContent =
-        nonLiterasi;
-
-
-    document.getElementById(
-        "totalLOTS"
-    ).textContent =
-        lots;
-
-
-    document.getElementById(
-        "totalMOTS"
-    ).textContent =
-        mots;
-
-
-    document.getElementById(
-        "totalHOTS"
-    ).textContent =
-        hots;
-
-
-    document.getElementById(
-        "totalLiterasiHOTS"
-    ).textContent =
-        literasiHOTS;
-
-}
-
-
-/* =========================================================
-DIFFICULTY
-========================================================= */
-
-function renderDifficulty(data){
-
-    const total =
-        data.length;
-
-
-    const mudah =
-        data.filter(
-            x =>
-                x.kesukaran.tingkat ===
-                "Mudah"
-        ).length;
-
-
-    const sedang =
-        data.filter(
-            x =>
-                x.kesukaran.tingkat ===
-                "Sedang"
-        ).length;
-
-
-    const sukar =
-        data.filter(
-            x =>
-                x.kesukaran.tingkat ===
-                "Sukar"
-        ).length;
-
-
-    const pMudah =
-        total
-            ? Math.round(
-                mudah /
-                total *
-                100
-            )
-            : 0;
-
-
-    const pSedang =
-        total
-            ? Math.round(
-                sedang /
-                total *
-                100
-            )
-            : 0;
-
-
-    const pSukar =
-        total
-            ? Math.round(
-                sukar /
-                total *
-                100
-            )
-            : 0;
-
-
-    document.getElementById(
-        "persenMudah"
-    ).textContent =
-        pMudah + "%";
-
-
-    document.getElementById(
-        "persenSedang"
-    ).textContent =
-        pSedang + "%";
-
-
-    document.getElementById(
-        "persenSukar"
-    ).textContent =
-        pSukar + "%";
-
-
-    document.getElementById(
-        "barMudah"
-    ).style.width =
-        pMudah + "%";
-
-
-    document.getElementById(
-        "barSedang"
-    ).style.width =
-        pSedang + "%";
-
-
-    document.getElementById(
-        "barSukar"
-    ).style.width =
-        pSukar + "%";
-
-}
-
-
-/* =========================================================
-COGNITIVE
-========================================================= */
-
-function renderCognitive(data){
-
-    const total =
-        data.length;
-
-
-    const levels = [
-
-        ["C1","Mengingat"],
-        ["C2","Memahami"],
-        ["C3","Menerapkan"],
-        ["C4","Menganalisis"],
-        ["C5","Mengevaluasi"],
-        ["C6","Mencipta"]
-
-    ];
-
-
-    const container =
-        document.getElementById(
-            "cognitiveBars"
-        );
-
-
-    container.innerHTML =
-        "";
-
-
-    levels.forEach(
-        ([level,nama])=>{
-
-            const jumlah =
-                data.filter(
-                    x =>
-                        x.kognitif.level ===
-                        level
-                ).length;
-
-
-            const persen =
-                total
-                    ? Math.round(
-                        jumlah /
-                        total *
-                        100
-                    )
-                    : 0;
-
-
-            container.innerHTML += `
-
-                <div class="bar-row">
-
-                    <div class="bar-head">
-
-                        <span>
-                            ${level} - ${nama}
-                        </span>
-
-                        <span>
-                            ${jumlah} soal
-                            (${persen}%)
-                        </span>
-
-                    </div>
-
-                    <div class="bar-container">
-
-                        <div
-                            class="bar bar-cognitive"
-                            style="width:${persen}%">
-                        </div>
-
-                    </div>
-
-                </div>
-
-            `;
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-MATRIX
-========================================================= */
-
-function renderMatrix(data){
-
-    const kategori = [
-
-        "LOTS",
-        "MOTS",
-        "HOTS"
-
-    ];
-
-
-    const tingkat = [
-
-        "Mudah",
-        "Sedang",
-        "Sukar"
-
-    ];
-
-
-    kategori.forEach(
-        kategoriNama=>{
-
-            tingkat.forEach(
-                tingkatNama=>{
-
-                    const jumlah =
-                        data.filter(
-                            x =>
-                                x.kognitif.kategori ===
-                                kategoriNama &&
-                                x.kesukaran.tingkat ===
-                                tingkatNama
-                        ).length;
-
-
-                    const id =
-                        kategoriNama.toLowerCase() +
-                        tingkatNama;
-
-
-                    const element =
-                        document.getElementById(
-                            id
-                        );
-
-
-                    if(element){
-
-                        element.textContent =
-                            jumlah;
-
-                    }
-
-                }
-            );
-
-
-            const total =
-                data.filter(
-                    x =>
-                        x.kognitif.kategori ===
-                        kategoriNama
-                ).length;
-
-
-            const element =
-                document.getElementById(
-                    kategoriNama.toLowerCase() +
-                    "Total"
-                );
-
-
-            if(element){
-
-                element.textContent =
-                    total;
-
-            }
-
-        }
-    );
-
-
-    const mudah =
-        data.filter(
-            x =>
-                x.kesukaran.tingkat ===
-                "Mudah"
-        ).length;
-
-
-    const sedang =
-        data.filter(
-            x =>
-                x.kesukaran.tingkat ===
-                "Sedang"
-        ).length;
-
-
-    const sukar =
-        data.filter(
-            x =>
-                x.kesukaran.tingkat ===
-                "Sukar"
-        ).length;
-
-
-    document.getElementById(
-        "totalMudahMatrix"
-    ).textContent =
-        mudah;
-
-
-    document.getElementById(
-        "totalSedangMatrix"
-    ).textContent =
-        sedang;
-
-
-    document.getElementById(
-        "totalSukarMatrix"
-    ).textContent =
-        sukar;
-
-
-    document.getElementById(
-        "grandTotalMatrix"
-    ).textContent =
-        data.length;
-
-}
-
-
-/* =========================================================
-KELAYAKAN
-6 INDIKATOR FINAL
-========================================================= */
-
-function renderKelayakan(data){
-
-    const container =
-        document.getElementById(
-            "kelayakanBox"
-        );
-
-
-    if(!container){
-
-        return;
-
-    }
-
-
-    const total =
-        data.length;
-
-
-    if(
-        total === 0
-    ){
-
-        container.innerHTML = `
-
-            <div class="kelayakan-box">
-
-                <div class="kelayakan-status">
-
-                    ⚪ BELUM DAPAT DINILAI
-
-                </div>
-
-                <div class="kelayakan-deskripsi">
-
-                    Belum terdapat soal milik guru
-                    yang dapat dianalisis.
-
-                </div>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    const jumlah =
-        kategori =>
-
-            data.filter(
-                x =>
-                    x.kognitif.kategori ===
-                    kategori
-            ).length;
-
-
-    const lots =
-        jumlah(
-            "LOTS"
-        );
-
-
-    const mots =
-        jumlah(
-            "MOTS"
-        );
-
-
-    const hots =
-        jumlah(
-            "HOTS"
-        );
 
 
     const lotsMots =
-        lots +
-        mots;
+        data.filter(
+            x =>
+                x.level === "LOTS" ||
+                x.level === "MOTS"
+        ).length;
+
+
+    const hots =
+        data.filter(
+            x =>
+                x.level === "HOTS"
+        ).length;
 
 
     const literasi =
         data.filter(
             x =>
-                x.isLiterasi
+                x.literasi
         ).length;
 
 
     const mudah =
         data.filter(
             x =>
-                x.kesukaran.tingkat ===
-                "Mudah"
+                x.kesukaran === "Mudah"
         ).length;
 
 
     const sedang =
         data.filter(
             x =>
-                x.kesukaran.tingkat ===
-                "Sedang"
+                x.kesukaran === "Sedang"
         ).length;
 
 
     const sukar =
         data.filter(
             x =>
-                x.kesukaran.tingkat ===
-                "Sukar"
+                x.kesukaran === "Sukar"
         ).length;
 
 
-    /*
-     * =====================================================
-     * 6 INDIKATOR SAJA
-     * =====================================================
-     */
+    setText(
+        "totalSoal",
+        total
+    );
+
+    setText(
+        "totalLotsMots",
+        lotsMots
+    );
+
+    setText(
+        "totalHots",
+        hots
+    );
+
+    setText(
+        "totalLiterasi",
+        literasi
+    );
+
+    setText(
+        "totalMudah",
+        mudah
+    );
+
+    setText(
+        "totalSedang",
+        sedang
+    );
+
+    setText(
+        "totalSukar",
+        sukar
+    );
+
+
+    setText(
+        "persenLotsMots",
+        persen(
+            lotsMots,
+            total
+        )
+    );
+
+    setText(
+        "persenHots",
+        persen(
+            hots,
+            total
+        )
+    );
+
+    setText(
+        "persenLiterasi",
+        persen(
+            literasi,
+            total
+        )
+    );
+
+    setText(
+        "persenMudah",
+        persen(
+            mudah,
+            total
+        )
+    );
+
+    setText(
+        "persenSedang",
+        persen(
+            sedang,
+            total
+        )
+    );
+
+    setText(
+        "persenSukar",
+        persen(
+            sukar,
+            total
+        )
+    );
+
+}
+
+
+/* =========================================================
+   KELAYAKAN
+========================================================= */
+
+function renderKelayakan(
+    data
+){
+
+    const total =
+        data.length;
+
+
+    const lotsMots =
+        data.filter(
+            x =>
+                x.level === "LOTS" ||
+                x.level === "MOTS"
+        ).length;
+
+
+    const hots =
+        data.filter(
+            x =>
+                x.level === "HOTS"
+        ).length;
+
+
+    const literasi =
+        data.filter(
+            x =>
+                x.literasi
+        ).length;
+
+
+    const mudah =
+        data.filter(
+            x =>
+                x.kesukaran === "Mudah"
+        ).length;
+
+
+    const sedang =
+        data.filter(
+            x =>
+                x.kesukaran === "Sedang"
+        ).length;
+
 
     const okLOTSMOTS =
         lotsMots > 0;
@@ -5120,21 +3060,50 @@ function renderKelayakan(data){
         total === 25;
 
 
-    const indikatorUtama = [
+    const indikator = [
 
-        okLOTSMOTS,
-        okHOTS,
-        okLiterasi,
-        okMudah,
-        okSedang,
-        okJumlah
+        {
+            ok:okLOTSMOTS,
+            title:"LOTS / MOTS",
+            desc:"Minimal 1 soal C1–C3."
+        },
+
+        {
+            ok:okHOTS,
+            title:"HOTS",
+            desc:"Minimal 1 soal C4–C6."
+        },
+
+        {
+            ok:okLiterasi,
+            title:"LITERASI",
+            desc:"Minimal 1 soal dengan literasi HTML."
+        },
+
+        {
+            ok:okMudah,
+            title:"MUDAH",
+            desc:"Minimal 1 soal mudah."
+        },
+
+        {
+            ok:okSedang,
+            title:"SEDANG",
+            desc:"Minimal 1 soal sedang."
+        },
+
+        {
+            ok:okJumlah,
+            title:"JUMLAH 25",
+            desc:"100% hanya jika total tepat 25 soal."
+        }
 
     ];
 
 
     const memenuhi =
-        indikatorUtama.filter(
-            Boolean
+        indikator.filter(
+            x => x.ok
         ).length;
 
 
@@ -5142,409 +3111,142 @@ function renderKelayakan(data){
         memenuhi === 6;
 
 
-    /*
-     * Sukar sengaja tidak dimasukkan
-     * sebagai indikator.
-     */
-
-
-    const rekomendasi = [];
-
-
-    if(
-        !okLOTSMOTS
-    ){
-
-        rekomendasi.push(
-            "Belum ada soal LOTS/MOTS (C1–C3)."
+    const container =
+        document.getElementById(
+            "kelayakanContainer"
         );
-
-    }
-
-
-    if(
-        !okHOTS
-    ){
-
-        rekomendasi.push(
-            "Belum ada soal HOTS (C4–C6)."
-        );
-
-    }
-
-
-    if(
-        !okLiterasi
-    ){
-
-        rekomendasi.push(
-            "Belum ada soal literasi berdasarkan HTML pada kolom pertanyaan."
-        );
-
-    }
-
-
-    if(
-        !okMudah
-    ){
-
-        rekomendasi.push(
-            "Belum ada soal dengan tingkat kesukaran Mudah."
-        );
-
-    }
-
-
-    if(
-        !okSedang
-    ){
-
-        rekomendasi.push(
-            "Belum ada soal dengan tingkat kesukaran Sedang."
-        );
-
-    }
-
-
-    if(
-        !okJumlah
-    ){
-
-        rekomendasi.push(
-            `Jumlah soal saat ini ${total}. Target wajib tepat 25 soal.`
-        );
-
-    }
-
-
-    function indikator(
-        nama,
-        nilai,
-        target,
-        status
-    ){
-
-        return `
-
-            <div class="standar-item">
-
-                <div class="standar-header">
-
-                    <div class="standar-nama">
-                        ${nama}
-                    </div>
-
-                    <div class="standar-persen">
-                        ${nilai}
-                    </div>
-
-                </div>
-
-
-                <div class="standar-target">
-
-                    Target:
-                    ${target}
-
-                </div>
-
-
-                <div class="${
-                    status
-                        ? "standar-ok"
-                        : "standar-warning"
-                }">
-
-                    ${
-                        status
-                            ? "✅ Terpenuhi"
-                            : "❌ Belum Terpenuhi"
-                    }
-
-                </div>
-
-            </div>
-
-        `;
-
-    }
-
-
-    const statusClass =
-        layak
-            ? "kelayakan-layak"
-            : "kelayakan-tidak";
-
-
-    const statusText =
-        layak
-            ? "🟢 LAYAK DIUJIKAN"
-            : "🔴 TIDAK LAYAK DIUJIKAN";
-
-
-    let deskripsi;
-
-
-    if(
-        layak
-    ){
-
-        deskripsi = `
-
-            Naskah memenuhi
-            <b>6 dari 6 indikator</b> kelayakan.
-
-            <br><br>
-
-            Naskah dinyatakan
-            <b>LAYAK DIUJIKAN</b>.
-
-        `;
-
-    }else{
-
-        deskripsi = `
-
-            Naskah baru memenuhi
-            <b>${memenuhi} dari 6 indikator</b>.
-
-            <br><br>
-
-            Semua 6 indikator wajib terpenuhi
-            agar naskah dinyatakan
-            <b>LAYAK DIUJIKAN</b>.
-
-        `;
-
-    }
 
 
     container.innerHTML = `
 
-        <div class="kelayakan-box ${statusClass}">
+        <div class="
+            kelayakan
+            ${layak ? "layak" : "tidak-layak"}
+        ">
 
-            <div class="kelayakan-status">
+            <div class="kelayakan-header">
 
-                ${statusText}
+                <div class="kelayakan-title">
 
-            </div>
-
-
-            <div class="kelayakan-deskripsi">
-
-                ${deskripsi}
-
-            </div>
-
-
-            <div class="standar-grid">
-
-                ${indikator(
-                    "LOTS + MOTS",
-                    lotsMots,
-                    "Minimal 1 soal",
-                    okLOTSMOTS
-                )}
-
-                ${indikator(
-                    "HOTS",
-                    hots,
-                    "Minimal 1 soal",
-                    okHOTS
-                )}
-
-                ${indikator(
-                    "Literasi",
-                    literasi,
-                    "Minimal 1 soal",
-                    okLiterasi
-                )}
-
-                ${indikator(
-                    "Mudah",
-                    mudah,
-                    "Minimal 1 soal",
-                    okMudah
-                )}
-
-                ${indikator(
-                    "Sedang",
-                    sedang,
-                    "Minimal 1 soal",
-                    okSedang
-                )}
-
-                ${indikator(
-                    "Jumlah 25 Soal",
-                    total,
-                    "Tepat 25 soal",
-                    okJumlah
-                )}
-
-            </div>
-
-
-            <div class="rekomendasi-box">
-
-                <h4>
-                    📋 Kesimpulan & Rekomendasi
-                </h4>
-
-
-                ${
-                    rekomendasi.length
-
-                    ?
-
-                    `
-
-                    <ul>
-
-                        ${
-                            rekomendasi
-                                .map(
-                                    x =>
-                                        `<li>${escapeHTML(x)}</li>`
-                                )
-                                .join("")
-                        }
-
-                    </ul>
-
-                    `
-
-                    :
-
-                    `
-
-                    <p>
-
-                        ✅ Semua 6 indikator
-                        telah memenuhi standar.
-
-                    </p>
-
-                    `
-
-                }
-
-
-                <br>
-
-
-                <div>
-
-                    <span class="badge ${
-                        okHOTS
-                            ? "badge-ok"
-                            : "badge-warning"
-                    }">
-
-                        ${
-                            okHOTS
-                                ? "✅ HOTS"
-                                : "❌ HOTS"
-                        }
-
-                    </span>
-
-
-                    <span class="badge ${
-                        okLiterasi
-                            ? "badge-ok"
-                            : "badge-warning"
-                    }">
-
-                        ${
-                            okLiterasi
-                                ? "✅ Literasi"
-                                : "❌ Literasi"
-                        }
-
-                    </span>
-
-
-                    <span class="badge ${
-                        okLOTSMOTS
-                            ? "badge-ok"
-                            : "badge-warning"
-                    }">
-
-                        ${
-                            okLOTSMOTS
-                                ? "✅ LOTS/MOTS"
-                                : "❌ LOTS/MOTS"
-                        }
-
-                    </span>
-
-
-                    <span class="badge ${
-                        okMudah
-                            ? "badge-ok"
-                            : "badge-warning"
-                    }">
-
-                        ${
-                            okMudah
-                                ? "✅ Mudah"
-                                : "❌ Mudah"
-                        }
-
-                    </span>
-
-
-                    <span class="badge ${
-                        okSedang
-                            ? "badge-ok"
-                            : "badge-warning"
-                    }">
-
-                        ${
-                            okSedang
-                                ? "✅ Sedang"
-                                : "❌ Sedang"
-                        }
-
-                    </span>
-
-
-                    <span class="badge ${
-                        okJumlah
-                            ? "badge-ok"
-                            : "badge-warning"
-                    }">
-
-                        ${
-                            okJumlah
-                                ? "✅ 25 Soal"
-                                : "❌ Bukan 25 Soal"
-                        }
-
-                    </span>
+                    ${
+                        layak
+                        ?
+                        "✅ NASKAH LAYAK"
+                        :
+                        "⚠️ NASKAH BELUM LAYAK"
+                    }
 
                 </div>
 
 
-                <br>
+                <div class="kelayakan-score">
 
-
-                <div style="
-                    font-size:12px;
-                    color:#6b7280;
-                    line-height:1.6;
-                ">
-
-                    ℹ️ Tingkat Sukar:
-                    <b>${sukar}</b> soal.
-
-                    <br>
-
-                    Tingkat Sukar ditampilkan dalam
-                    analisis tetapi tidak menjadi
-                    indikator kelayakan.
+                    ${memenuhi} / 6 indikator terpenuhi
 
                 </div>
+
+            </div>
+
+
+            <div class="indikator-grid">
+
+                ${indikator.map(
+                    item => `
+
+                        <div class="
+                            indikator
+                            ${item.ok ? "ok" : "no"}
+                        ">
+
+                            <div class="indikator-head">
+
+                                <span>
+                                    ${item.ok ? "✅" : "❌"}
+                                </span>
+
+                                <span>
+                                    ${item.title}
+                                </span>
+
+                            </div>
+
+                            <div class="indikator-desc">
+
+                                ${item.desc}
+
+                            </div>
+
+                        </div>
+
+                    `
+                ).join("")}
+
+            </div>
+
+
+            <div class="rekomendasi">
+
+                <b>💡 Rekomendasi:</b>
+
+                <ul>
+
+                    ${
+                        !okLOTSMOTS
+                        ?
+                        "<li>Tambahkan minimal 1 soal C1–C3.</li>"
+                        :
+                        ""
+                    }
+
+                    ${
+                        !okHOTS
+                        ?
+                        "<li>Tambahkan minimal 1 soal C4–C6.</li>"
+                        :
+                        ""
+                    }
+
+                    ${
+                        !okLiterasi
+                        ?
+                        "<li>Tambahkan minimal 1 soal literasi pada HTML pertanyaan.</li>"
+                        :
+                        ""
+                    }
+
+                    ${
+                        !okMudah
+                        ?
+                        "<li>Tambahkan minimal 1 soal mudah.</li>"
+                        :
+                        ""
+                    }
+
+                    ${
+                        !okSedang
+                        ?
+                        "<li>Tambahkan minimal 1 soal sedang.</li>"
+                        :
+                        ""
+                    }
+
+                    ${
+                        !okJumlah
+                        ?
+                        "<li>Jumlah soal harus tepat 25 soal.</li>"
+                        :
+                        ""
+                    }
+
+                    ${
+                        layak
+                        ?
+                        "<li>Semua indikator utama telah terpenuhi.</li>"
+                        :
+                        ""
+                    }
+
+                </ul>
 
             </div>
 
@@ -5556,125 +3258,302 @@ function renderKelayakan(data){
 
 
 /* =========================================================
-SANITASI HTML UNTUK TAMPILAN
+   DIFFICULTY
 ========================================================= */
 
-function sanitasiHTML(value){
+function renderDifficulty(
+    data
+){
 
-    const wrapper =
-        document.createElement(
-            "div"
-        );
-
-
-    wrapper.innerHTML =
-        String(
-            value ?? ""
-        );
+    const total =
+        data.length;
 
 
-    wrapper
-        .querySelectorAll(
-            "script,style,noscript,iframe,object,embed,form"
-        )
-        .forEach(
-            el =>
-                el.remove()
-        );
+    const list = [
+
+        ["Mudah","Mudah"],
+
+        ["Sedang","Sedang"],
+
+        ["Sukar","Sukar"]
+
+    ];
 
 
-    wrapper
-        .querySelectorAll(
-            "*"
-        )
-        .forEach(
-            el=>{
+    document.getElementById(
+        "difficultyBars"
+    ).innerHTML =
 
-                [
-                    "onclick",
-                    "ondblclick",
-                    "onload",
-                    "onerror",
-                    "onmouseover",
-                    "onmouseout",
-                    "onmouseenter",
-                    "onmouseleave",
-                    "onfocus",
-                    "onblur",
-                    "onchange",
-                    "onsubmit"
-                ]
-                .forEach(
-                    attr =>
-                        el.removeAttribute(
-                            attr
-                        )
-                );
+        list.map(
+            ([nama,key]) => {
+
+                const jumlah =
+                    data.filter(
+                        x =>
+                            x.kesukaran === key
+                    ).length;
 
 
-                if(
-                    el.hasAttribute(
-                        "href"
-                    )
-                ){
+                return `
 
-                    const href =
-                        el.getAttribute(
-                            "href"
-                        );
+                    <div class="bar-row">
 
+                        <div class="bar-label">
 
-                    if(
-                        /^javascript:/i.test(
-                            href
-                        )
-                    ){
+                            <span>
+                                ${nama}
+                            </span>
 
-                        el.removeAttribute(
-                            "href"
-                        );
+                            <b>
+                                ${jumlah}
+                                (${persen(jumlah,total)})
+                            </b>
 
-                    }
+                        </div>
 
-                }
+                        <div class="bar-bg">
+
+                            <div
+                                class="bar-fill"
+                                style="
+                                    width:${lebarBar(jumlah,total)}%;
+                                "
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                `;
 
             }
-        );
-
-
-    return wrapper.innerHTML;
+        ).join("");
 
 }
 
 
 /* =========================================================
-RENDER QUESTIONS
+   COGNITIVE
 ========================================================= */
 
-function renderQuestions(data){
+function renderCognitive(
+    data
+){
 
-    const container =
-        document.getElementById(
-            "questionList"
-        );
+    const total =
+        data.length;
+
+
+    const list = [
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "C6"
+    ];
 
 
     document.getElementById(
-        "jumlahTampil"
-    ).textContent =
-        `${data.length} soal`;
+        "cognitiveBars"
+    ).innerHTML =
+
+        list.map(
+            c => {
+
+                const jumlah =
+                    data.filter(
+                        x =>
+                            x.kognitif === c
+                    ).length;
 
 
-    if(
-        !data.length
-    ){
+                return `
+
+                    <div class="bar-row">
+
+                        <div class="bar-label">
+
+                            <span>
+                                ${c}
+                            </span>
+
+                            <b>
+                                ${jumlah}
+                                (${persen(jumlah,total)})
+                            </b>
+
+                        </div>
+
+                        <div class="bar-bg">
+
+                            <div
+                                class="bar-fill"
+                                style="
+                                    width:${lebarBar(jumlah,total)}%;
+                                "
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+/* =========================================================
+   MATRIX
+========================================================= */
+
+function renderMatrix(
+    data
+){
+
+    const level =
+        ["C1","C2","C3","C4","C5","C6"];
+
+
+    const kesukaran =
+        ["Mudah","Sedang","Sukar"];
+
+
+    let html = `
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Kognitif
+                    </th>
+
+                    ${kesukaran.map(
+                        x =>
+                            `<th>${x}</th>`
+                    ).join("")}
+
+                    <th>
+                        Total
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+    `;
+
+
+    level.forEach(
+        c => {
+
+            let totalBaris = 0;
+
+
+            html += `
+
+                <tr>
+
+                    <td>
+                        ${c}
+                    </td>
+
+            `;
+
+
+            kesukaran.forEach(
+                k => {
+
+                    const jumlah =
+                        data.filter(
+                            x =>
+                                x.kognitif === c &&
+                                x.kesukaran === k
+                        ).length;
+
+
+                    totalBaris +=
+                        jumlah;
+
+
+                    html += `
+                        <td>
+                            ${jumlah}
+                        </td>
+                    `;
+
+                }
+            );
+
+
+            html += `
+
+                    <td>
+                        <b>
+                            ${totalBaris}
+                        </b>
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+    );
+
+
+    html += `
+
+            </tbody>
+
+        </table>
+
+    `;
+
+
+    document.getElementById(
+        "matrixContainer"
+    ).innerHTML =
+        html;
+
+}
+
+
+/* =========================================================
+   RENDER SOAL
+========================================================= */
+
+function renderQuestions(
+    data
+){
+
+    const container =
+        document.getElementById(
+            "questionContainer"
+        );
+
+
+    if(!data.length){
 
         container.innerHTML = `
 
             <div class="empty">
 
-                📭 Tidak ada soal milik Anda
-                yang sesuai dengan filter.
+                <h3>
+                    📭 Tidak ada soal
+                </h3>
+
+                <p>
+                    Tidak ada soal yang sesuai dengan filter.
+                </p>
 
             </div>
 
@@ -5685,471 +3564,338 @@ function renderQuestions(data){
     }
 
 
-    container.innerHTML =
-        "";
-
-
-    data.forEach(
-        item=>{
-
-            let badgeKategori;
-
-
-            if(
-                item.kognitif.kategori ===
-                "LOTS"
-            ){
-
-                badgeKategori = `
-
-                    <span class="badge badge-lots">
-                        LOTS
-                    </span>
-
-                `;
-
-            }else if(
-                item.kognitif.kategori ===
-                "MOTS"
-            ){
-
-                badgeKategori = `
-
-                    <span class="badge badge-mots">
-                        MOTS
-                    </span>
-
-                `;
-
-            }else{
-
-                badgeKategori = `
-
-                    <span class="badge badge-hots">
-                        HOTS
-                    </span>
-
-                `;
-
-            }
-
-
-            let badgeKesukaran;
-
-
-            if(
-                item.kesukaran.tingkat ===
-                "Mudah"
-            ){
-
-                badgeKesukaran = `
-
-                    <span class="badge badge-easy">
-                        Mudah
-                    </span>
-
-                `;
-
-            }else if(
-                item.kesukaran.tingkat ===
-                "Sedang"
-            ){
-
-                badgeKesukaran = `
-
-                    <span class="badge badge-medium">
-                        Sedang
-                    </span>
-
-                `;
-
-            }else{
-
-                badgeKesukaran = `
-
-                    <span class="badge badge-hard">
-                        Sukar
-                    </span>
-
-                `;
-
-            }
-
-
-            const badgeLiterasi =
-                item.isLiterasi
-
-                    ?
-
-                    `
-                    <span class="badge badge-literasi">
-                        Literasi
-                    </span>
-                    `
-
-                    :
-
-                    `
-                    <span class="badge badge-non">
-                        Non-Literasi
-                    </span>
-                    `;
-
-
-            const badgeLiterasiHOTS =
-                item.literasiHOTS
-
-                    ?
-
-                    `
-                    <span class="badge badge-literasi">
-                        Literasi HOTS
-                    </span>
-                    `
-
-                    :
-
-                    "";
-
-
-            /*
-             * HTML soal dirender sebagai HTML,
-             * bukan di-escape menjadi teks mentah.
-             */
-
-            const teksSoal =
-                sanitasiHTML(
-                    item.pertanyaan ||
-                    "(Soal tidak tersedia)"
-                );
-
-
-            let namaLiterasi =
-                "-";
-
-
-            let isiLiterasi =
-                "";
-
-
-            if(
-                item.literasi &&
-                item.literasi.data &&
-                item.literasi.data.isi_literasi
-            ){
-
-                namaLiterasi =
-                    escapeHTML(
-                        item.literasi.data.judul ||
-                        "Literasi / Stimulus"
-                    );
-
-
-                isiLiterasi =
-                    sanitasiHTML(
-                        item.literasi.data.isi_literasi
-                    );
-
-            }
-
-
-            let literasiBox =
-                "";
-
-
-            /*
-             * Tampilkan stimulus jika memang
-             * berhasil ditemukan dari HTML pertanyaan.
-             */
-
-            if(
-                item.isLiterasi &&
-                isiLiterasi
-            ){
-
-                literasiBox = `
-
-                    <div class="literasi-box">
-
-                        <div class="literasi-title">
-
-                            📖 ${namaLiterasi}
-
-                        </div>
-
-                        <div class="literasi-content">
-
-                            ${isiLiterasi}
-
-                        </div>
-
-                    </div>
-
-                `;
-
-            }
-
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-
-            card.className =
-                "question-card";
-
-
-            card.innerHTML = `
-
-                <div class="question-header">
-
-                    <div class="question-number">
-
-                        Soal No.
-                        ${escapeHTML(
-                            item.nomor
+    const judul =
+        ujianAktif
+        ?
+        (
+            daftarUjian.find(
+                x =>
+                    String(x.id) ===
+                    String(ujianAktif)
+            )
+        )
+        :
+        null;
+
+
+    container.innerHTML = `
+
+        <div class="soal-list-title">
+
+            📝 Daftar Soal yang Dianalisis
+
+            <span
+                style="
+                    color:#64748b;
+                    font-size:12px;
+                    font-weight:normal;
+                "
+            >
+                (${data.length} soal)
+
+            </span>
+
+        </div>
+
+        ${
+            judul
+            ?
+            `
+                <div
+                    style="
+                        background:#eff6ff;
+                        padding:10px;
+                        border-radius:8px;
+                        margin-bottom:15px;
+                        color:#1e40af;
+                        font-size:13px;
+                    "
+                >
+                    <b>
+                        ${escapeHtml(
+                            buatNamaUjian(
+                                judul
+                            )
                         )}
-
-                    </div>
-
-
-                    <div class="badges">
-
-                        <span class="badge badge-c">
-
-                            ${item.kognitif.level}
-                            -
-                            ${item.kognitif.nama}
-
-                        </span>
-
-
-                        ${badgeKategori}
-
-                        ${badgeKesukaran}
-
-                        ${badgeLiterasi}
-
-                        ${badgeLiterasiHOTS}
-
-                    </div>
-
+                    </b>
                 </div>
+            `
+            :
+            ""
+        }
+
+        ${data.map(
+            renderSatuSoal
+        ).join("")}
+
+    `;
+
+}
 
 
-                <div class="question-body">
+/* =========================================================
+   RENDER SATU SOAL
+========================================================= */
 
-                    ${literasiBox}
+function renderSatuSoal(
+    item
+){
 
-
-                    <div class="question-text">
-
-                        ${teksSoal}
-
-                    </div>
-
-
-                    <div class="analysis-grid">
-
-
-                        <div class="analysis-item">
-
-                            <div class="title">
-                                LEVEL KOGNITIF
-                            </div>
-
-                            <div class="value">
-
-                                ${item.kognitif.level}
-                                -
-                                ${item.kognitif.nama}
-
-                            </div>
-
-                        </div>
+    const nomor =
+        escapeHtml(
+            item.nomor
+        );
 
 
-                        <div class="analysis-item">
-
-                            <div class="title">
-                                KATEGORI
-                            </div>
-
-                            <div class="value">
-
-                                ${item.kognitif.kategori}
-
-                            </div>
-
-                        </div>
+    const pertanyaan =
+        escapeHtml(
+            item.pertanyaan || ""
+        );
 
 
-                        <div class="analysis-item">
+    return `
 
-                            <div class="title">
-                                LITERASI
-                            </div>
+        <div class="soal-item">
 
-                            <div class="value">
+            <div class="soal-header">
 
-                                ${
-                                    item.isLiterasi
-                                        ? "Ya"
-                                        : "Tidak"
-                                }
+                <div class="soal-left">
 
-                            </div>
+                    <span class="nomor">
+                        Soal ${nomor}
+                    </span>
 
-                        </div>
+                    <span class="badge badge-c">
+                        ${item.kognitif}
+                    </span>
 
-
-                        <div class="analysis-item">
-
-                            <div class="title">
-                                LITERASI HOTS
-                            </div>
-
-                            <div class="value">
-
-                                ${
-                                    item.literasiHOTS
-                                        ? "Ya"
-                                        : "Tidak"
-                                }
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="analysis-item">
-
-                            <div class="title">
-                                KESUKARAN
-                            </div>
-
-                            <div class="value">
-
-                                ${item.kesukaran.tingkat}
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="analysis-item">
-
-                            <div class="title">
-                                SKOR PREDIKSI
-                            </div>
-
-                            <div class="value">
-
-                                ${item.kesukaran.skor}/100
-
-                            </div>
-
-                        </div>
-
-
-                    </div>
-
-
-                    <div class="reason">
-
-                        <b>Alasan kognitif:</b>
-
-                        ${escapeHTML(
-                            item.kognitif.alasan
-                        )}
-
-                        <br><br>
-
-                        <b>Aturan kesukaran:</b>
-
-                        ${escapeHTML(
-                            item.kesukaran.alasan
-                        )}
-
-                        <br><br>
-
-                        <b>Literasi:</b>
-
+                    <span class="
+                        badge
                         ${
-                            item.isLiterasi
-                                ? "Ya — terdeteksi dari HTML soal.pertanyaan"
-                                : "Tidak"
+                            item.level === "HOTS"
+                            ?
+                            "badge-hots"
+                            :
+                            item.level === "MOTS"
+                            ?
+                            "badge-mots"
+                            :
+                            "badge-lots"
                         }
+                    ">
+                        ${item.level}
+                    </span>
 
-                    </div>
+                    <span class="
+                        badge
+                        ${
+                            item.kesukaran === "Sukar"
+                            ?
+                            "badge-sukar"
+                            :
+                            item.kesukaran === "Sedang"
+                            ?
+                            "badge-sedang"
+                            :
+                            "badge-mudah"
+                        }
+                    ">
+                        ${item.kesukaran}
+                    </span>
+
+                    <span class="
+                        badge
+                        ${
+                            item.literasi
+                            ?
+                            "badge-literasi"
+                            :
+                            "badge-tanpa"
+                        }
+                    ">
+                        ${
+                            item.literasi
+                            ?
+                            "📖 Literasi"
+                            :
+                            "Tanpa Literasi"
+                        }
+                    </span>
 
                 </div>
 
-            `;
+            </div>
 
 
-            container.appendChild(
-                card
-            );
+            ${
+                item.literasi
+                ?
+                `
+                    <div class="stimulus-box">
 
-        }
-    );
+                        <div class="stimulus-title">
+                            📖 Literasi / Stimulus
+                        </div>
+
+                        <div>
+                            ${escapeHtml(
+                                item.stimulus || ""
+                            )}
+                        </div>
+
+                    </div>
+                `
+                :
+                ""
+            }
+
+
+            <div class="pertanyaan">
+
+                ${pertanyaan}
+
+            </div>
+
+
+            <div class="meta">
+
+                <span class="badge badge-c">
+                    KKO: ${item.kognitif}
+                </span>
+
+                <span class="badge badge-${item.level === "HOTS" ? "hots" : item.level === "MOTS" ? "mots" : "lots"}">
+                    ${item.level}
+                </span>
+
+                <span class="badge badge-${item.kesukaran === "Sukar" ? "sukar" : item.kesukaran === "Sedang" ? "sedang" : "mudah"}">
+                    ${item.kesukaran}
+                </span>
+
+            </div>
+
+        </div>
+
+    `;
 
 }
 
 
 /* =========================================================
-ESCAPE HTML
+   UTILITAS
 ========================================================= */
 
-function escapeHTML(value){
+function setText(
+    id,
+    value
+){
 
-    return String(
-        value ?? ""
-    )
-    .replace(
-        /&/g,
-        "&amp;"
-    )
-    .replace(
-        /</g,
-        "&lt;"
-    )
-    .replace(
-        />/g,
-        "&gt;"
-    )
-    .replace(
-        /"/g,
-        "&quot;"
-    )
-    .replace(
-        /'/g,
-        "&#039;"
-    );
-
-}
+    const el =
+        document.getElementById(
+            id
+        );
 
 
-/* =========================================================
-START
-========================================================= */
+    if(el){
 
-document.addEventListener(
-    "DOMContentLoaded",
-    ()=>{
-
-        if(
-            cekLogin()
-        ){
-
-            loadData();
-
-        }
+        el.textContent =
+            value;
 
     }
-);
+
+}
+
+
+function persen(
+    jumlah,
+    total
+){
+
+    if(!total){
+
+        return "0%";
+
+    }
+
+
+    return (
+        (jumlah / total) *
+        100
+    ).toFixed(1) +
+    "%";
+
+}
+
+
+function lebarBar(
+    jumlah,
+    total
+){
+
+    if(!total){
+
+        return 0;
+
+    }
+
+
+    return Math.min(
+        100,
+        (jumlah / total) * 100
+    );
+
+}
+
+
+function escapeHtml(
+    value
+){
+
+    if(
+        value === null ||
+        value === undefined
+    ){
+
+        return "";
+
+    }
+
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+function kembaliDashboard(){
+
+    window.location.href =
+        "dashboard-guru.html";
+
+}
 
 </script>
 
