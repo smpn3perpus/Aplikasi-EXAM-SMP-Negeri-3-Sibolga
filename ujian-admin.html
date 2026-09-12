@@ -405,6 +405,7 @@ tr:hover td{
     font-weight:bold;
 }
 
+
 /* =====================================================
    SISWA PESERTA
 ===================================================== */
@@ -924,13 +925,43 @@ tr:hover td{
                             Pilih siswa dari kelas yang dipilih
                         </strong>
 
-                        <button
-                            type="button"
-                            onclick="pilihSemuaSiswa()">
+                        <div style="
+                            display:flex;
+                            gap:6px;
+                            flex-wrap:wrap;
+                            align-items:center;
+                        ">
 
-                            ☑ Pilih Semua Siswa
+                            <!-- FITUR BARU -->
+                            <button
+                                type="button"
+                                onclick="salinNamaSiswa()"
+                                style="
+                                    border:none;
+                                    background:#0ea5e9;
+                                    color:white;
+                                    padding:7px 10px;
+                                    border-radius:7px;
+                                    cursor:pointer;
+                                    font-size:11px;
+                                    font-weight:bold;
+                                ">
 
-                        </button>
+                                📋 Salin Nama Siswa
+
+                            </button>
+
+
+                            <!-- FITUR LAMA -->
+                            <button
+                                type="button"
+                                onclick="pilihSemuaSiswa()">
+
+                                ☑ Pilih Semua Siswa
+
+                            </button>
+
+                        </div>
 
                     </div>
 
@@ -2115,6 +2146,258 @@ function pilihSemuaSiswa(){
 function filterSiswa(){
 
     renderSiswaList();
+
+}
+
+
+/* =====================================================
+   SALIN NAMA SISWA
+   HANYA NAMA
+   SATU NAMA SATU BARIS
+===================================================== */
+
+async function salinNamaSiswa(){
+
+    if(!siswaTampil.length){
+
+        alert(
+            "Belum ada siswa yang tampil.\n\n" +
+            "Pilih kelas terlebih dahulu."
+        );
+
+        return;
+
+    }
+
+
+    /*
+       Ambil kata pencarian yang sedang
+       digunakan pada kotak pencarian.
+    */
+
+    const keyword =
+        document.getElementById(
+            "siswaSearch"
+        ).value
+        .toLowerCase()
+        .trim();
+
+
+    /*
+       Sama persis dengan filter
+       yang digunakan renderSiswaList().
+       
+       Jadi kalau sedang mencari
+       "Ahmad", hanya nama siswa
+       yang tampil berdasarkan pencarian
+       yang akan disalin.
+    */
+
+    const hasil =
+        siswaTampil.filter(
+            siswa=>{
+
+                if(!keyword)
+                    return true;
+
+
+                const nama =
+                    String(
+                        siswa.nama || ""
+                    ).toLowerCase();
+
+
+                const nisn =
+                    String(
+                        siswa.nisn || ""
+                    ).toLowerCase();
+
+
+                const kelas =
+                    String(
+                        siswa.kelas || ""
+                    ).toLowerCase();
+
+
+                return (
+                    nama.includes(keyword) ||
+                    nisn.includes(keyword) ||
+                    kelas.includes(keyword)
+                );
+
+            }
+        );
+
+
+    if(!hasil.length){
+
+        alert(
+            "Tidak ada siswa yang dapat disalin."
+        );
+
+        return;
+
+    }
+
+
+    /*
+       HANYA AMBIL NAMA.
+       Tidak mengambil:
+       - NISN
+       - kelas
+       - ID
+       - nomor urut
+       - checkbox
+    */
+
+    const daftarNama =
+        hasil
+        .map(
+            siswa =>
+                String(
+                    siswa.nama || ""
+                ).trim()
+        )
+        .filter(
+            nama =>
+                nama !== ""
+        );
+
+
+    if(!daftarNama.length){
+
+        alert(
+            "Tidak ada nama siswa yang dapat disalin."
+        );
+
+        return;
+
+    }
+
+
+    /*
+       SATU NAMA = SATU BARIS
+    */
+
+    const teks =
+        daftarNama.join("\n");
+
+
+    try{
+
+        /*
+           Cara utama untuk browser modern
+           seperti Chrome/Vercel HTTPS.
+        */
+
+        if(
+            navigator.clipboard &&
+            window.isSecureContext
+        ){
+
+            await navigator.clipboard.writeText(
+                teks
+            );
+
+        }
+
+        else{
+
+            /*
+               Fallback untuk browser yang
+               tidak menyediakan Clipboard API.
+            */
+
+            const textarea =
+                document.createElement(
+                    "textarea"
+                );
+
+
+            textarea.value =
+                teks;
+
+
+            textarea.style.position =
+                "fixed";
+
+
+            textarea.style.left =
+                "-9999px";
+
+
+            textarea.style.top =
+                "0";
+
+
+            textarea.style.opacity =
+                "0";
+
+
+            document.body.appendChild(
+                textarea
+            );
+
+
+            textarea.focus();
+
+            textarea.select();
+
+
+            textarea.setSelectionRange(
+                0,
+                textarea.value.length
+            );
+
+
+            const berhasil =
+                document.execCommand(
+                    "copy"
+                );
+
+
+            textarea.remove();
+
+
+            if(!berhasil){
+
+                throw new Error(
+                    "Browser tidak mengizinkan penyalinan otomatis."
+                );
+
+            }
+
+        }
+
+
+        showMessage(
+            "✅ " +
+            daftarNama.length +
+            " nama siswa berhasil disalin.",
+            "success"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "ERROR COPY NAMA SISWA:",
+            error
+        );
+
+
+        /*
+           Fallback terakhir:
+           tampilkan nama agar tetap
+           dapat disalin secara manual.
+        */
+
+        window.prompt(
+            "Salin nama siswa berikut:",
+            teks
+        );
+
+    }
 
 }
 
