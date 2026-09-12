@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -7,6 +8,11 @@
 <title>Bank Soal - RUANG EXAM</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- =====================================================
+     SHEETJS UNTUK IMPORT / EXPORT EXCEL
+===================================================== -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <style>
 *{
@@ -87,7 +93,8 @@ body{
 }
 
 input,
-select{
+select,
+textarea{
     width:100%;
     padding:11px 12px;
     border:1px solid #cbd5e1;
@@ -97,8 +104,14 @@ select{
     background:white;
 }
 
+textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
 input:focus,
-select:focus{
+select:focus,
+textarea:focus{
     border-color:#2563eb;
     box-shadow:0 0 0 2px rgba(37,99,235,.1);
 }
@@ -134,6 +147,16 @@ select:focus{
 
 .btn-warning{
     background:#f59e0b;
+    color:white;
+}
+
+.btn-danger{
+    background:#dc2626;
+    color:white;
+}
+
+.btn-info{
+    background:#0891b2;
     color:white;
 }
 
@@ -210,6 +233,112 @@ select:focus{
     background:#fee2e2;
     color:#991b1b;
     border:1px solid #fca5a5;
+}
+
+/* =====================================================
+   IMPORT
+===================================================== */
+
+.import-info{
+    background:#eff6ff;
+    border:1px solid #bfdbfe;
+    border-radius:10px;
+    padding:15px;
+    margin-bottom:15px;
+    line-height:1.7;
+}
+
+.import-info b{
+    color:#1e3a8a;
+}
+
+.import-format{
+    overflow:auto;
+    margin-top:12px;
+}
+
+.import-format table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:900px;
+}
+
+.import-format th,
+.import-format td{
+    border:1px solid #cbd5e1;
+    padding:8px;
+    font-size:12px;
+    text-align:left;
+}
+
+.import-format th{
+    background:#e2e8f0;
+    color:#334155;
+}
+
+.file-box{
+    border:2px dashed #93c5fd;
+    background:#f8fafc;
+    padding:25px;
+    border-radius:12px;
+    text-align:center;
+    margin-bottom:15px;
+}
+
+.file-box input{
+    max-width:500px;
+    margin:10px auto 0;
+}
+
+/* =====================================================
+   IMPORT PREVIEW
+===================================================== */
+
+.preview-wrap{
+    overflow:auto;
+    max-height:450px;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+}
+
+.preview-table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:1100px;
+}
+
+.preview-table th,
+.preview-table td{
+    border:1px solid #e2e8f0;
+    padding:8px;
+    font-size:12px;
+    vertical-align:top;
+}
+
+.preview-table th{
+    background:#1e3a8a;
+    color:white;
+    position:sticky;
+    top:0;
+    z-index:2;
+}
+
+.preview-table tr.valid{
+    background:#f0fdf4;
+}
+
+.preview-table tr.invalid{
+    background:#fef2f2;
+}
+
+.preview-error{
+    color:#b91c1c;
+    font-weight:bold;
+}
+
+.preview-ok{
+    color:#15803d;
+    font-weight:bold;
 }
 
 /* =====================================================
@@ -450,7 +579,7 @@ select:focus{
 }
 
 .modal-content{
-    max-width:850px;
+    max-width:1100px;
     margin:auto;
     background:white;
     border-radius:14px;
@@ -513,6 +642,7 @@ select:focus{
     border-top:1px solid #e2e8f0;
     display:flex;
     justify-content:flex-end;
+    gap:8px;
 }
 
 footer{
@@ -792,6 +922,31 @@ footer{
 
             <div class="toolbar-buttons">
 
+                <!-- BARU -->
+                <button
+                    class="btn btn-success"
+                    onclick="bukaImportSoal()"
+                >
+                    📥 Import Soal
+                </button>
+
+                <!-- BARU -->
+                <button
+                    class="btn btn-info"
+                    onclick="exportSoalExcel()"
+                >
+                    📤 Ekspor Excel
+                </button>
+
+                <!-- BARU -->
+                <button
+                    class="btn btn-warning"
+                    onclick="downloadTemplateExcel()"
+                >
+                    📋 Template Excel
+                </button>
+
+
                 <button
                     class="btn btn-success"
                     onclick="downloadSoalAdmin()"
@@ -920,6 +1075,326 @@ footer{
 </div>
 
 
+<!-- =====================================================
+     MODAL IMPORT SOAL
+===================================================== -->
+
+<div
+    id="importModal"
+    class="modal"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>
+                📥 Import Soal dari Excel
+            </h2>
+
+            <button
+                class="close"
+                onclick="tutupImportSoal()"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+            <div class="import-info">
+
+                <b>📌 Cara menggunakan Import Soal</b>
+
+                <br>
+
+                1. Pilih ujian terlebih dahulu.
+
+                <br>
+
+                2. Download <b>Template Excel</b>.
+
+                <br>
+
+                3. Isi soal pada Excel.
+
+                <br>
+
+                4. Upload kembali file Excel.
+
+                <br>
+
+                5. Periksa preview.
+
+                <br>
+
+                6. Klik <b>Simpan ke Bank Soal</b>.
+
+                <br><br>
+
+                <b>Catatan:</b>
+
+                Nomor soal yang sudah ada pada ujian
+                tidak akan ditimpa.
+
+            </div>
+
+
+            <div class="import-format">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>No</th>
+                            <th>Kolom</th>
+                            <th>Wajib</th>
+                            <th>Keterangan</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>1</td>
+                            <td>nomor</td>
+                            <td>Ya</td>
+                            <td>Nomor soal</td>
+                        </tr>
+
+                        <tr>
+                            <td>2</td>
+                            <td>pertanyaan</td>
+                            <td>Ya</td>
+                            <td>Isi pertanyaan</td>
+                        </tr>
+
+                        <tr>
+                            <td>3</td>
+                            <td>tipe</td>
+                            <td>Ya</td>
+                            <td>pilihan_ganda / esai / benar_salah</td>
+                        </tr>
+
+                        <tr>
+                            <td>4</td>
+                            <td>pilihan_a</td>
+                            <td>PG</td>
+                            <td>Pilihan A</td>
+                        </tr>
+
+                        <tr>
+                            <td>5</td>
+                            <td>pilihan_b</td>
+                            <td>PG</td>
+                            <td>Pilihan B</td>
+                        </tr>
+
+                        <tr>
+                            <td>6</td>
+                            <td>pilihan_c</td>
+                            <td>PG</td>
+                            <td>Pilihan C</td>
+                        </tr>
+
+                        <tr>
+                            <td>7</td>
+                            <td>pilihan_d</td>
+                            <td>PG</td>
+                            <td>Pilihan D</td>
+                        </tr>
+
+                        <tr>
+                            <td>8</td>
+                            <td>kunci_jawaban</td>
+                            <td>PG</td>
+                            <td>A / B / C / D</td>
+                        </tr>
+
+                        <tr>
+                            <td>9</td>
+                            <td>bobot</td>
+                            <td>Tidak</td>
+                            <td>Default 1</td>
+                        </tr>
+
+                        <tr>
+                            <td>10</td>
+                            <td>gambar_soal</td>
+                            <td>Tidak</td>
+                            <td>URL gambar</td>
+                        </tr>
+
+                        <tr>
+                            <td>11</td>
+                            <td>gambar_a</td>
+                            <td>Tidak</td>
+                            <td>URL gambar pilihan A</td>
+                        </tr>
+
+                        <tr>
+                            <td>12</td>
+                            <td>gambar_b</td>
+                            <td>Tidak</td>
+                            <td>URL gambar pilihan B</td>
+                        </tr>
+
+                        <tr>
+                            <td>13</td>
+                            <td>gambar_c</td>
+                            <td>Tidak</td>
+                            <td>URL gambar pilihan C</td>
+                        </tr>
+
+                        <tr>
+                            <td>14</td>
+                            <td>gambar_d</td>
+                            <td>Tidak</td>
+                            <td>URL gambar pilihan D</td>
+                        </tr>
+
+                        <tr>
+                            <td>15</td>
+                            <td>literasi_id</td>
+                            <td>Tidak</td>
+                            <td>ID literasi jika ada</td>
+                        </tr>
+
+                        <tr>
+                            <td>16</td>
+                            <td>teks_tertaut</td>
+                            <td>Tidak</td>
+                            <td>Ya/Tidak atau sesuai data</td>
+                        </tr>
+
+                        <tr>
+                            <td>17</td>
+                            <td>teks_mulai</td>
+                            <td>Tidak</td>
+                            <td>Nomor awal literasi</td>
+                        </tr>
+
+                        <tr>
+                            <td>18</td>
+                            <td>teks_sampai</td>
+                            <td>Tidak</td>
+                            <td>Nomor akhir literasi</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <div class="file-box">
+
+                <div style="font-size:35px;">
+                    📊
+                </div>
+
+                <b>
+                    Pilih file Excel
+                </b>
+
+                <br>
+
+                <input
+                    type="file"
+                    id="excelFile"
+                    accept=".xlsx,.xls,.csv"
+                    onchange="bacaFileExcel(event)"
+                >
+
+            </div>
+
+
+            <div
+                id="importPreview"
+                style="display:none;"
+            >
+
+                <div
+                    class="card-title"
+                    style="margin-top:10px;"
+                >
+                    👁️ Preview Soal
+                </div>
+
+
+                <div
+                    id="importSummary"
+                    class="import-info"
+                ></div>
+
+
+                <div class="preview-wrap">
+
+                    <table class="preview-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>No</th>
+                                <th>Pertanyaan</th>
+                                <th>Tipe</th>
+                                <th>A</th>
+                                <th>B</th>
+                                <th>C</th>
+                                <th>D</th>
+                                <th>Kunci</th>
+                                <th>Bobot</th>
+                                <th>Status</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody
+                            id="previewBody"
+                        ></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                class="btn btn-secondary"
+                onclick="tutupImportSoal()"
+            >
+                Batal
+            </button>
+
+
+            <button
+                id="btnSimpanImport"
+                class="btn btn-success"
+                onclick="simpanImportSoal()"
+                disabled
+            >
+                💾 Simpan ke Bank Soal
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
 <script>
 
 /* =========================================================
@@ -979,6 +1454,10 @@ let semuaLiterasi = [];
 let semuaLiterasiLegacy = [];
 
 let ujianTerpilih = null;
+
+/* IMPORT */
+let dataImport = [];
+let dataImportValid = [];
 
 
 /* =========================================================
@@ -1429,30 +1908,6 @@ async function loadData(){
         );
 
 
-        console.log(
-            "UJIAN:",
-            ujianTerpilih
-        );
-
-
-        console.log(
-            "SOAL:",
-            semuaSoal
-        );
-
-
-        console.log(
-            "LITERASI_SOAL:",
-            semuaLiterasi
-        );
-
-
-        console.log(
-            "LITERASI LEGACY:",
-            semuaLiterasiLegacy
-        );
-
-
     }catch(error){
 
         console.error(
@@ -1515,6 +1970,7 @@ async function loadSoal(){
                 pilihan_b,
                 pilihan_c,
                 pilihan_d,
+                kunci_jawaban,
                 bobot,
                 created_at,
                 gambar_url,
@@ -1628,7 +2084,7 @@ async function loadLiterasi(){
 
 
 /* =========================================================
-   LOAD LITERASI LAMA / TABEL LITERASI
+   LOAD LITERASI LAMA
 ========================================================= */
 
 async function loadLiterasiLegacy(){
@@ -1690,7 +2146,7 @@ async function loadLiterasiLegacy(){
 
 
 /* =========================================================
-   CARI LITERASI UNTUK SOAL
+   CARI LITERASI
 ========================================================= */
 
 function cariLiterasiUntukSoal(soal){
@@ -1701,13 +2157,6 @@ function cariLiterasiUntukSoal(soal){
 
     }
 
-
-    /*
-     * PRIORITAS 1
-     *
-     * Jika soal.literasi_id cocok
-     * dengan id literasi_soal
-     */
 
     if(soal.literasi_id){
 
@@ -1725,10 +2174,6 @@ function cariLiterasiUntukSoal(soal){
 
         }
 
-
-        /*
-         * Fallback ke tabel literasi
-         */
 
         const idLiterasiLegacy =
             semuaLiterasiLegacy.find(
@@ -1774,13 +2219,6 @@ function cariLiterasiUntukSoal(soal){
 
     }
 
-
-    /*
-     * PRIORITAS 2
-     *
-     * Jika soal mempunyai
-     * teks_mulai / teks_sampai
-     */
 
     const nomor =
         Number(
@@ -1987,12 +2425,6 @@ function renderSemua(){
     let html = "";
 
 
-    /*
-     * =====================================================
-     * FILTER TANPA LITERASI
-     * =====================================================
-     */
-
     if(filter === "tanpa"){
 
         let daftar =
@@ -2044,15 +2476,6 @@ function renderSemua(){
     }
 
 
-    /*
-     * =====================================================
-     * FILTER LITERASI / SEMUA
-     * =====================================================
-     */
-
-    const literasiYangDitampilkan = [];
-
-
     semuaLiterasi.forEach(
         literasi => {
 
@@ -2078,12 +2501,6 @@ function renderSemua(){
 
             }
 
-
-            /*
-             * Kalau pencarian tidak menemukan
-             * soal tetapi user mencari judul/isi
-             * literasi, tetap tampilkan literasinya.
-             */
 
             if(pencarian){
 
@@ -2126,21 +2543,11 @@ function renderSemua(){
                         daftarSoal
                     );
 
-                literasiYangDitampilkan.push(
-                    literasi.id
-                );
-
             }
 
         }
     );
 
-
-    /*
-     * =====================================================
-     * SOAL TANPA LITERASI
-     * =====================================================
-     */
 
     if(filter === "semua"){
 
@@ -2838,27 +3245,1361 @@ function tutupModal(){
 }
 
 
-window.addEventListener(
-    "click",
-    function(event){
+/* =========================================================
+   IMPORT MODAL
+========================================================= */
 
-        const modal =
-            document.getElementById(
-                "literasiModal"
+function bukaImportSoal(){
+
+    if(!ujianTerpilih){
+
+        alert(
+            "Silakan pilih ujian terlebih dahulu."
+        );
+
+        return;
+
+    }
+
+
+    dataImport = [];
+    dataImportValid = [];
+
+
+    document.getElementById(
+        "excelFile"
+    ).value = "";
+
+
+    document.getElementById(
+        "importPreview"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "btnSimpanImport"
+    ).disabled = true;
+
+
+    document.getElementById(
+        "importModal"
+    ).classList.add(
+        "show"
+    );
+
+}
+
+
+function tutupImportSoal(){
+
+    document.getElementById(
+        "importModal"
+    ).classList.remove(
+        "show"
+    );
+
+}
+
+
+/* =========================================================
+   BACA EXCEL
+========================================================= */
+
+async function bacaFileExcel(event){
+
+    const file =
+        event.target.files[0];
+
+
+    if(!file){
+
+        return;
+
+    }
+
+
+    if(
+        !window.XLSX
+    ){
+
+        alert(
+            "Library Excel belum berhasil dimuat."
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        tampilkanStatus(
+            "⏳ Membaca file Excel...",
+            "warning"
+        );
+
+
+        const arrayBuffer =
+            await file.arrayBuffer();
+
+
+        const workbook =
+            XLSX.read(
+                arrayBuffer,
+                {
+                    type:"array"
+                }
             );
 
 
-        if(
-            event.target ===
-            modal
-        ){
+        const namaSheet =
+            workbook.SheetNames[0];
 
-            tutupModal();
+
+        const worksheet =
+            workbook.Sheets[
+                namaSheet
+            ];
+
+
+        const rows =
+            XLSX.utils.sheet_to_json(
+                worksheet,
+                {
+                    defval:"",
+                    raw:false
+                }
+            );
+
+
+        if(!rows.length){
+
+            throw new Error(
+                "File Excel tidak memiliki data."
+            );
 
         }
 
+
+        dataImport =
+            rows.map(
+                normalisasiBarisImport
+            );
+
+
+        validasiDataImport();
+
+
+        document.getElementById(
+            "importPreview"
+        ).style.display =
+            "block";
+
+
+        renderPreviewImport();
+
+
+        tampilkanStatus(
+            "✅ File Excel berhasil dibaca.",
+            "success"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Import Excel error:",
+            error
+        );
+
+
+        alert(
+            "Gagal membaca Excel:\n\n" +
+            error.message
+        );
+
+
+        tampilkanStatus(
+            "❌ Gagal membaca Excel: " +
+            error.message,
+            "error"
+        );
+
     }
-);
+
+}
+
+
+/* =========================================================
+   NORMALISASI NAMA KOLOM
+========================================================= */
+
+function cariNilaiKolom(
+    row,
+    nama
+){
+
+    const keys =
+        Object.keys(row);
+
+
+    const target =
+        String(
+            nama
+        )
+        .toLowerCase()
+        .trim();
+
+
+    const key =
+        keys.find(
+            k =>
+                String(k)
+                    .toLowerCase()
+                    .trim()
+                ===
+                target
+        );
+
+
+    return key
+        ? row[key]
+        : "";
+
+}
+
+
+/* =========================================================
+   NORMALISASI BARIS
+========================================================= */
+
+function normalisasiBarisImport(row){
+
+    return {
+
+        nomor:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "nomor"
+                )
+            ).trim(),
+
+        pertanyaan:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "pertanyaan"
+                )
+            ).trim(),
+
+        tipe:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "tipe"
+                )
+            )
+            .trim()
+            .toLowerCase(),
+
+        pilihan_a:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "pilihan_a"
+                )
+            ).trim(),
+
+        pilihan_b:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "pilihan_b"
+                )
+            ).trim(),
+
+        pilihan_c:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "pilihan_c"
+                )
+            ).trim(),
+
+        pilihan_d:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "pilihan_d"
+                )
+            ).trim(),
+
+        kunci_jawaban:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "kunci_jawaban"
+                )
+            )
+            .trim()
+            .toUpperCase(),
+
+        bobot:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "bobot"
+                )
+            ).trim(),
+
+        gambar_soal:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "gambar_soal"
+                )
+            ).trim(),
+
+        gambar_url:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "gambar_url"
+                )
+            ).trim(),
+
+        gambar_a:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "gambar_a"
+                )
+            ).trim(),
+
+        gambar_b:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "gambar_b"
+                )
+            ).trim(),
+
+        gambar_c:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "gambar_c"
+                )
+            ).trim(),
+
+        gambar_d:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "gambar_d"
+                )
+            ).trim(),
+
+        teks_tertaut:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "teks_tertaut"
+                )
+            ).trim(),
+
+        teks_mulai:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "teks_mulai"
+                )
+            ).trim(),
+
+        teks_sampai:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "teks_sampai"
+                )
+            ).trim(),
+
+        literasi_id:
+            String(
+                cariNilaiKolom(
+                    row,
+                    "literasi_id"
+                )
+            ).trim(),
+
+        _error:[],
+        _valid:true
+
+    };
+
+}
+
+
+/* =========================================================
+   VALIDASI IMPORT
+========================================================= */
+
+function validasiDataImport(){
+
+    const nomorDatabase =
+        new Set(
+            semuaSoal.map(
+                soal =>
+                    String(
+                        soal.nomor
+                    ).trim()
+            )
+        );
+
+
+    const nomorFile =
+        new Set();
+
+
+    dataImport.forEach(
+        row => {
+
+            row._error = [];
+            row._valid = true;
+
+
+            /* NOMOR */
+
+            if(!row.nomor){
+
+                row._error.push(
+                    "Nomor kosong"
+                );
+
+            }else{
+
+                const nomor =
+                    Number(
+                        row.nomor
+                    );
+
+
+                if(
+                    !Number.isInteger(
+                        nomor
+                    ) ||
+                    nomor <= 0
+                ){
+
+                    row._error.push(
+                        "Nomor harus bilangan bulat > 0"
+                    );
+
+                }
+
+
+                if(
+                    nomorDatabase.has(
+                        String(
+                            row.nomor
+                        )
+                    )
+                ){
+
+                    row._error.push(
+                        "Nomor sudah ada di ujian ini"
+                    );
+
+                }
+
+
+                if(
+                    nomorFile.has(
+                        String(
+                            row.nomor
+                        )
+                    )
+                ){
+
+                    row._error.push(
+                        "Nomor duplikat dalam file"
+                    );
+
+                }
+
+
+                nomorFile.add(
+                    String(
+                        row.nomor
+                    )
+                );
+
+            }
+
+
+            /* PERTANYAAN */
+
+            if(!row.pertanyaan){
+
+                row._error.push(
+                    "Pertanyaan kosong"
+                );
+
+            }
+
+
+            /* TIPE */
+
+            const tipeValid =
+                [
+                    "pilihan_ganda",
+                    "esai",
+                    "benar_salah"
+                ];
+
+
+            if(
+                !tipeValid.includes(
+                    row.tipe
+                )
+            ){
+
+                row._error.push(
+                    "Tipe harus pilihan_ganda, esai, atau benar_salah"
+                );
+
+            }
+
+
+            /* PILIHAN GANDA */
+
+            if(
+                row.tipe ===
+                "pilihan_ganda"
+            ){
+
+                if(!row.pilihan_a)
+                    row._error.push(
+                        "Pilihan A kosong"
+                    );
+
+                if(!row.pilihan_b)
+                    row._error.push(
+                        "Pilihan B kosong"
+                    );
+
+                if(!row.pilihan_c)
+                    row._error.push(
+                        "Pilihan C kosong"
+                    );
+
+                if(!row.pilihan_d)
+                    row._error.push(
+                        "Pilihan D kosong"
+                    );
+
+
+                if(
+                    ![
+                        "A",
+                        "B",
+                        "C",
+                        "D"
+                    ].includes(
+                        row.kunci_jawaban
+                    )
+                ){
+
+                    row._error.push(
+                        "Kunci harus A/B/C/D"
+                    );
+
+                }
+
+            }
+
+
+            /* BENAR SALAH */
+
+            if(
+                row.tipe ===
+                "benar_salah"
+            ){
+
+                if(
+                    !row.kunci_jawaban
+                ){
+
+                    row._error.push(
+                        "Kunci benar/salah belum diisi"
+                    );
+
+                }
+
+            }
+
+
+            /* BOBOT */
+
+            if(
+                row.bobot &&
+                isNaN(
+                    Number(
+                        row.bobot
+                    )
+                )
+            ){
+
+                row._error.push(
+                    "Bobot harus angka"
+                );
+
+            }
+
+
+            if(
+                row._error.length
+            ){
+
+                row._valid = false;
+
+            }
+
+        }
+    );
+
+
+    dataImportValid =
+        dataImport.filter(
+            row =>
+                row._valid
+        );
+
+}
+
+
+/* =========================================================
+   RENDER PREVIEW IMPORT
+========================================================= */
+
+function renderPreviewImport(){
+
+    const body =
+        document.getElementById(
+            "previewBody"
+        );
+
+
+    body.innerHTML = "";
+
+
+    dataImport.forEach(
+        row => {
+
+            const tr =
+                document.createElement(
+                    "tr"
+                );
+
+
+            tr.className =
+                row._valid
+                ?
+                "valid"
+                :
+                "invalid";
+
+
+            tr.innerHTML = `
+
+                <td>
+                    ${escapeHtml(row.nomor)}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        row.pertanyaan
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        row.tipe
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        row.pilihan_a
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        row.pilihan_b
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        row.pilihan_c
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        row.pilihan_d
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        row.kunci_jawaban
+                    )}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        row.bobot || "1"
+                    )}
+                </td>
+
+                <td>
+
+                    ${
+                        row._valid
+
+                        ?
+
+                        `
+                            <span class="preview-ok">
+                                ✅ Siap
+                            </span>
+                        `
+
+                        :
+
+                        `
+                            <span class="preview-error">
+                                ❌
+                                ${escapeHtml(
+                                    row._error.join(
+                                        "; "
+                                    )
+                                )}
+                            </span>
+                        `
+                    }
+
+                </td>
+
+            `;
+
+
+            body.appendChild(
+                tr
+            );
+
+        }
+    );
+
+
+    document.getElementById(
+        "importSummary"
+    ).innerHTML = `
+
+        📊 Total baris:
+        <b>${dataImport.length}</b>
+
+        &nbsp; | &nbsp;
+
+        ✅ Valid:
+        <b>${dataImportValid.length}</b>
+
+        &nbsp; | &nbsp;
+
+        ❌ Bermasalah:
+        <b>${
+            dataImport.length -
+            dataImportValid.length
+        }</b>
+
+        <br><br>
+
+        ${
+            dataImportValid.length
+            ?
+
+            `
+                Soal yang valid siap
+                dimasukkan ke ujian
+                <b>
+                    ${escapeHtml(
+                        buatNamaUjian(
+                            ujianTerpilih
+                        )
+                    )}
+                </b>.
+            `
+
+            :
+
+            `
+                Tidak ada soal valid yang dapat disimpan.
+            `
+        }
+
+    `;
+
+
+    document.getElementById(
+        "btnSimpanImport"
+    ).disabled =
+        dataImportValid.length === 0;
+
+}
+
+
+/* =========================================================
+   SIMPAN IMPORT
+========================================================= */
+
+async function simpanImportSoal(){
+
+    if(!ujianTerpilih){
+
+        alert(
+            "Silakan pilih ujian."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        !dataImportValid.length
+    ){
+
+        alert(
+            "Tidak ada soal valid untuk disimpan."
+        );
+
+        return;
+
+    }
+
+
+    const konfirmasi =
+        confirm(
+            "Simpan " +
+            dataImportValid.length +
+            " soal ke ujian:\n\n" +
+            buatNamaUjian(
+                ujianTerpilih
+            ) +
+            "?\n\n" +
+            "Soal lama tidak akan dihapus."
+        );
+
+
+    if(!konfirmasi){
+
+        return;
+
+    }
+
+
+    const tombol =
+        document.getElementById(
+            "btnSimpanImport"
+        );
+
+
+    tombol.disabled = true;
+
+    tombol.textContent =
+        "⏳ Menyimpan...";
+
+
+    try{
+
+        const payload =
+            dataImportValid.map(
+                row => {
+
+                    const item = {
+
+                        ujian_id:
+                            ujianTerpilih.id,
+
+                        nomor:
+                            Number(
+                                row.nomor
+                            ),
+
+                        pertanyaan:
+                            row.pertanyaan,
+
+                        tipe:
+                            row.tipe,
+
+                        pilihan_a:
+                            row.pilihan_a ||
+                            null,
+
+                        pilihan_b:
+                            row.pilihan_b ||
+                            null,
+
+                        pilihan_c:
+                            row.pilihan_c ||
+                            null,
+
+                        pilihan_d:
+                            row.pilihan_d ||
+                            null,
+
+                        kunci_jawaban:
+                            row.kunci_jawaban ||
+                            null,
+
+                        bobot:
+                            row.bobot
+                            ?
+                            Number(
+                                row.bobot
+                            )
+                            :
+                            1,
+
+                        gambar_url:
+                            row.gambar_url ||
+                            null,
+
+                        gambar_soal:
+                            row.gambar_soal ||
+                            null,
+
+                        gambar_a:
+                            row.gambar_a ||
+                            null,
+
+                        gambar_b:
+                            row.gambar_b ||
+                            null,
+
+                        gambar_c:
+                            row.gambar_c ||
+                            null,
+
+                        gambar_d:
+                            row.gambar_d ||
+                            null,
+
+                        teks_tertaut:
+                            row.teks_tertaut ||
+                            null,
+
+                        teks_mulai:
+                            row.teks_mulai
+                            ?
+                            Number(
+                                row.teks_mulai
+                            )
+                            :
+                            null,
+
+                        teks_sampai:
+                            row.teks_sampai
+                            ?
+                            Number(
+                                row.teks_sampai
+                            )
+                            :
+                            null,
+
+                        literasi_id:
+                            row.literasi_id ||
+                            null
+
+                    };
+
+
+                    return item;
+
+                }
+            );
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("soal")
+                .insert(
+                    payload
+                )
+                .select();
+
+
+        if(error){
+
+            throw error;
+
+        }
+
+
+        alert(
+            "✅ Berhasil!\n\n" +
+            data.length +
+            " soal berhasil dimasukkan ke Bank Soal."
+        );
+
+
+        tampilkanStatus(
+            "✅ Berhasil mengimport " +
+            data.length +
+            " soal.",
+            "success"
+        );
+
+
+        tutupImportSoal();
+
+
+        await loadData();
+
+
+    }catch(error){
+
+        console.error(
+            "Gagal menyimpan import:",
+            error
+        );
+
+
+        alert(
+            "❌ Gagal menyimpan soal:\n\n" +
+            error.message
+        );
+
+
+        tampilkanStatus(
+            "❌ Gagal menyimpan soal: " +
+            error.message,
+            "error"
+        );
+
+
+        tombol.disabled = false;
+
+        tombol.textContent =
+            "💾 Simpan ke Bank Soal";
+
+    }
+
+}
+
+
+/* =========================================================
+   DOWNLOAD TEMPLATE EXCEL
+========================================================= */
+
+function downloadTemplateExcel(){
+
+    if(
+        !window.XLSX
+    ){
+
+        alert(
+            "Library Excel belum berhasil dimuat."
+        );
+
+        return;
+
+    }
+
+
+    const data = [
+
+        {
+
+            nomor:1,
+
+            pertanyaan:
+                "Contoh pertanyaan nomor 1",
+
+            tipe:
+                "pilihan_ganda",
+
+            pilihan_a:
+                "Jawaban A",
+
+            pilihan_b:
+                "Jawaban B",
+
+            pilihan_c:
+                "Jawaban C",
+
+            pilihan_d:
+                "Jawaban D",
+
+            kunci_jawaban:
+                "A",
+
+            bobot:1,
+
+            gambar_soal:"",
+
+            gambar_url:"",
+
+            gambar_a:"",
+
+            gambar_b:"",
+
+            gambar_c:"",
+
+            gambar_d:"",
+
+            teks_tertaut:"",
+
+            teks_mulai:"",
+
+            teks_sampai:"",
+
+            literasi_id:""
+
+        }
+
+    ];
+
+
+    const worksheet =
+        XLSX.utils.json_to_sheet(
+            data
+        );
+
+
+    const workbook =
+        XLSX.utils.book_new();
+
+
+    XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        "Soal"
+    );
+
+
+    const nama =
+        ujianTerpilih
+        ?
+        sanitasiNamaFile(
+            ujianTerpilih.judul ||
+            "Bank_Soal"
+        )
+        :
+        "Template_Bank_Soal";
+
+
+    XLSX.writeFile(
+        workbook,
+        nama +
+        "_TEMPLATE_IMPORT.xlsx"
+    );
+
+
+    tampilkanStatus(
+        "✅ Template Excel berhasil dibuat.",
+        "success"
+    );
+
+}
+
+
+/* =========================================================
+   EXPORT SOAL EXCEL
+========================================================= */
+
+function exportSoalExcel(){
+
+    if(!ujianTerpilih){
+
+        alert(
+            "Silakan pilih ujian terlebih dahulu."
+        );
+
+        return;
+
+    }
+
+
+    if(!semuaSoal.length){
+
+        alert(
+            "Tidak ada soal untuk diekspor."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        !window.XLSX
+    ){
+
+        alert(
+            "Library Excel belum berhasil dimuat."
+        );
+
+        return;
+
+    }
+
+
+    const data =
+        [...semuaSoal]
+            .sort(
+                (a,b) =>
+                    Number(a.nomor || 0) -
+                    Number(b.nomor || 0)
+            )
+            .map(
+                soal => ({
+
+                    nomor:
+                        soal.nomor,
+
+                    pertanyaan:
+                        soal.pertanyaan || "",
+
+                    tipe:
+                        soal.tipe || "",
+
+                    pilihan_a:
+                        soal.pilihan_a || "",
+
+                    pilihan_b:
+                        soal.pilihan_b || "",
+
+                    pilihan_c:
+                        soal.pilihan_c || "",
+
+                    pilihan_d:
+                        soal.pilihan_d || "",
+
+                    kunci_jawaban:
+                        soal.kunci_jawaban || "",
+
+                    bobot:
+                        soal.bobot ?? 1,
+
+                    gambar_soal:
+                        soal.gambar_soal || "",
+
+                    gambar_url:
+                        soal.gambar_url || "",
+
+                    gambar_a:
+                        soal.gambar_a || "",
+
+                    gambar_b:
+                        soal.gambar_b || "",
+
+                    gambar_c:
+                        soal.gambar_c || "",
+
+                    gambar_d:
+                        soal.gambar_d || "",
+
+                    teks_tertaut:
+                        soal.teks_tertaut || "",
+
+                    teks_mulai:
+                        soal.teks_mulai ?? "",
+
+                    teks_sampai:
+                        soal.teks_sampai ?? "",
+
+                    literasi_id:
+                        soal.literasi_id || ""
+
+                })
+            );
+
+
+    const worksheet =
+        XLSX.utils.json_to_sheet(
+            data
+        );
+
+
+    worksheet["!cols"] = [
+
+        {wch:8},
+        {wch:55},
+        {wch:20},
+        {wch:35},
+        {wch:35},
+        {wch:35},
+        {wch:35},
+        {wch:15},
+        {wch:10},
+        {wch:35},
+        {wch:35},
+        {wch:35},
+        {wch:35},
+        {wch:35},
+        {wch:35},
+        {wch:20},
+        {wch:15},
+        {wch:15},
+        {wch:40}
+
+    ];
+
+
+    const workbook =
+        XLSX.utils.book_new();
+
+
+    XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        "Bank Soal"
+    );
+
+
+    const judul =
+        ujianTerpilih.judul ||
+        "Bank_Soal";
+
+
+    const namaFile =
+        sanitasiNamaFile(
+            judul
+        ) +
+        "_BANK_SOAL.xlsx";
+
+
+    XLSX.writeFile(
+        workbook,
+        namaFile
+    );
+
+
+    tampilkanStatus(
+        "✅ " +
+        semuaSoal.length +
+        " soal berhasil diekspor ke Excel.",
+        "success"
+    );
+
+}
 
 
 /* =========================================================
@@ -3971,8 +5712,46 @@ function kembaliDashboard(){
 
 
 /* =========================================================
-   ESC MODAL
+   MODAL / ESC
 ========================================================= */
+
+window.addEventListener(
+    "click",
+    function(event){
+
+        const modalLiterasi =
+            document.getElementById(
+                "literasiModal"
+            );
+
+        const modalImport =
+            document.getElementById(
+                "importModal"
+            );
+
+
+        if(
+            event.target ===
+            modalLiterasi
+        ){
+
+            tutupModal();
+
+        }
+
+
+        if(
+            event.target ===
+            modalImport
+        ){
+
+            tutupImportSoal();
+
+        }
+
+    }
+);
+
 
 document.addEventListener(
     "keydown",
@@ -3985,6 +5764,8 @@ document.addEventListener(
 
             tutupModal();
 
+            tutupImportSoal();
+
         }
 
     }
@@ -3994,3 +5775,4 @@ document.addEventListener(
 
 </body>
 </html>
+```
