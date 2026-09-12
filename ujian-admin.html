@@ -68,7 +68,7 @@ body{
 }
 
 .container{
-    max-width:1400px;
+    max-width:1350px;
     margin:25px auto;
     padding:0 20px;
 }
@@ -176,7 +176,7 @@ body{
 table{
     width:100%;
     border-collapse:collapse;
-    min-width:1200px;
+    min-width:1250px;
 }
 
 th{
@@ -243,11 +243,10 @@ tr:hover td{
     font-weight:bold;
 }
 
-.peserta-count{
+.peserta-badge{
     display:inline-block;
-    margin-top:7px;
-    background:#f0fdf4;
-    color:#166534;
+    background:#ede9fe;
+    color:#6d28d9;
     border-radius:15px;
     padding:5px 9px;
     font-size:11px;
@@ -294,7 +293,7 @@ tr:hover td{
 .modal-box{
     background:white;
     width:100%;
-    max-width:760px;
+    max-width:720px;
     border-radius:18px;
     padding:25px;
     box-shadow:0 20px 60px rgba(0,0,0,.25);
@@ -341,44 +340,29 @@ tr:hover td{
     border-color:#2563eb;
 }
 
-.kelas-container,
-.siswa-container{
+.kelas-container{
     border:1px solid #cbd5e1;
     border-radius:10px;
     padding:12px;
+    max-height:230px;
+    overflow-y:auto;
     background:#f8fafc;
 }
 
-.kelas-container{
-    max-height:230px;
-    overflow-y:auto;
-}
-
-.siswa-container{
-    max-height:330px;
-    overflow-y:auto;
-    margin-top:5px;
-}
-
-.kelas-header,
-.siswa-header{
+.kelas-header{
     display:flex;
     justify-content:space-between;
     align-items:center;
     margin-bottom:10px;
     padding-bottom:10px;
     border-bottom:1px solid #e2e8f0;
-    gap:10px;
-    flex-wrap:wrap;
 }
 
-.kelas-header strong,
-.siswa-header strong{
+.kelas-header strong{
     font-size:12px;
 }
 
-.kelas-header button,
-.siswa-header button{
+.kelas-header button{
     border:none;
     background:#2563eb;
     color:white;
@@ -421,53 +405,91 @@ tr:hover td{
     font-weight:bold;
 }
 
-.siswa-tools{
+/* =====================================================
+   SISWA PESERTA
+===================================================== */
+
+.siswa-container{
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    padding:12px;
+    background:#f8fafc;
+}
+
+.siswa-header{
     display:flex;
-    gap:8px;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
     margin-bottom:10px;
+    padding-bottom:10px;
+    border-bottom:1px solid #e2e8f0;
+}
+
+.siswa-header strong{
+    font-size:12px;
+}
+
+.siswa-header button{
+    border:none;
+    background:#7c3aed;
+    color:white;
+    padding:7px 10px;
+    border-radius:7px;
+    cursor:pointer;
+    font-size:11px;
+    font-weight:bold;
 }
 
 .siswa-search{
-    flex:1;
+    margin-bottom:10px;
 }
 
 .siswa-search input{
     width:100%;
-    padding:9px 11px;
+    padding:10px 12px;
     border:1px solid #cbd5e1;
     border-radius:8px;
     outline:none;
 }
 
-.siswa-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
+.siswa-search input:focus{
+    border-color:#7c3aed;
+}
+
+.siswa-list{
+    max-height:280px;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
 }
 
 .siswa-item{
     display:flex;
-    align-items:flex-start;
-    gap:8px;
+    align-items:center;
+    gap:9px;
     background:white;
     border:1px solid #e2e8f0;
-    padding:10px;
-    border-radius:9px;
+    padding:9px 10px;
+    border-radius:8px;
     cursor:pointer;
 }
 
 .siswa-item:hover{
-    border-color:#93c5fd;
-    background:#eff6ff;
+    background:#f5f3ff;
+    border-color:#c4b5fd;
 }
 
 .siswa-item input{
-    margin-top:2px;
+    width:auto;
     cursor:pointer;
 }
 
-.siswa-detail{
+.siswa-info{
     flex:1;
+    min-width:0;
 }
 
 .siswa-nama{
@@ -476,16 +498,35 @@ tr:hover td{
     color:#0f172a;
 }
 
-.siswa-nisn{
-    margin-top:3px;
+.siswa-detail{
     font-size:10px;
     color:#64748b;
+    margin-top:3px;
 }
 
 .siswa-kelas{
-    margin-top:3px;
+    background:#e0f2fe;
+    color:#075985;
+    padding:4px 7px;
+    border-radius:12px;
     font-size:10px;
-    color:#2563eb;
+    font-weight:bold;
+}
+
+.siswa-empty{
+    text-align:center;
+    padding:25px 10px;
+    color:#64748b;
+    font-size:12px;
+}
+
+.siswa-selected-info{
+    margin-top:10px;
+    padding:9px;
+    background:#f5f3ff;
+    color:#6d28d9;
+    border-radius:8px;
+    font-size:11px;
     font-weight:bold;
 }
 
@@ -493,17 +534,6 @@ tr:hover td{
     margin-top:10px;
     font-size:12px;
     color:#475569;
-    line-height:1.5;
-}
-
-.siswa-selected-info{
-    margin-top:10px;
-    padding:9px;
-    background:#ecfdf5;
-    border-radius:8px;
-    color:#166534;
-    font-size:12px;
-    font-weight:bold;
 }
 
 .info{
@@ -516,21 +546,14 @@ tr:hover td{
     margin-bottom:18px;
 }
 
-.warning-info{
-    background:#fff7ed;
-    color:#9a3412;
-    padding:10px;
-    border-radius:8px;
-    font-size:11px;
-    line-height:1.5;
-    margin-top:10px;
-}
-
-.loading{
-    text-align:center;
-    padding:20px;
-    color:#64748b;
+.info-siswa{
+    background:#f5f3ff;
+    color:#5b21b6;
+    padding:11px;
+    border-radius:9px;
     font-size:12px;
+    line-height:1.5;
+    margin-top:12px;
 }
 
 .modal-buttons{
@@ -558,11 +581,6 @@ tr:hover td{
     padding:30px;
 }
 
-button:disabled{
-    opacity:.6;
-    cursor:not-allowed;
-}
-
 @media(max-width:800px){
 
     .summary{
@@ -579,10 +597,6 @@ button:disabled{
 
     .kelas-grid{
         grid-template-columns:repeat(2,1fr);
-    }
-
-    .siswa-grid{
-        grid-template-columns:1fr;
     }
 }
 
@@ -613,6 +627,11 @@ button:disabled{
     .kelas-grid{
         grid-template-columns:1fr 1fr;
     }
+
+    .siswa-header{
+        align-items:stretch;
+        flex-direction:column;
+    }
 }
 </style>
 </head>
@@ -623,7 +642,10 @@ button:disabled{
 
     <div>
         <h1>📝 DAFTAR UJIAN</h1>
-        <p>RUANG EXAM — SMP Negeri 3 Sibolga</p>
+
+        <p>
+            RUANG EXAM — SMP Negeri 3 Sibolga
+        </p>
     </div>
 
     <div class="header-buttons">
@@ -647,7 +669,10 @@ button:disabled{
 
 <main class="container">
 
-    <div id="message" class="message"></div>
+    <div
+        id="message"
+        class="message">
+    </div>
 
 
     <div class="summary">
@@ -693,10 +718,21 @@ button:disabled{
                 id="statusFilter"
                 onchange="filterUjian()">
 
-                <option value="">Semua Status</option>
-                <option value="draft">Draft</option>
-                <option value="aktif">Aktif</option>
-                <option value="selesai">Selesai</option>
+                <option value="">
+                    Semua Status
+                </option>
+
+                <option value="draft">
+                    Draft
+                </option>
+
+                <option value="aktif">
+                    Aktif
+                </option>
+
+                <option value="selesai">
+                    Selesai
+                </option>
 
             </select>
 
@@ -738,7 +774,9 @@ button:disabled{
             <tbody id="ujianBody">
 
                 <tr>
-                    <td colspan="11" class="empty">
+                    <td
+                        colspan="11"
+                        class="empty">
                         ⏳ Memuat data ujian...
                     </td>
                 </tr>
@@ -762,7 +800,7 @@ button:disabled{
 
 
 <!-- =====================================================
-     MODAL BUAT / EDIT UJIAN
+     MODAL
 ===================================================== -->
 
 <div
@@ -775,26 +813,17 @@ button:disabled{
             Buat Ujian
         </h2>
 
-
         <div class="info">
 
             Satu ujian dapat digunakan untuk
-            <strong>beberapa kelas</strong> dan
-            peserta dapat dibatasi hanya kepada
-            <strong>siswa tertentu</strong>.
-
-            <br><br>
-
-            Pilih kelas terlebih dahulu, kemudian
-            pilih siswa yang boleh mengikuti ujian.
+            <strong>beberapa kelas sekaligus</strong>.
+            Silakan centang semua kelas yang mengikuti ujian.
 
         </div>
 
 
         <div class="form-grid">
 
-
-            <!-- JUDUL -->
 
             <div class="form-group full">
 
@@ -810,8 +839,6 @@ button:disabled{
 
             </div>
 
-
-            <!-- MAPEL -->
 
             <div class="form-group">
 
@@ -830,7 +857,7 @@ button:disabled{
             </div>
 
 
-            <!-- KELAS -->
+            <!-- MULTI KELAS -->
 
             <div class="form-group full">
 
@@ -879,26 +906,27 @@ button:disabled{
             </div>
 
 
-            <!-- SISWA -->
+            <!-- =================================================
+                 PILIH SISWA
+            ================================================== -->
 
             <div class="form-group full">
 
                 <label>
-                    👥 Siswa yang Mengikuti Ujian
+                    Siswa yang Mengikuti Ujian
                 </label>
 
                 <div class="siswa-container">
 
                     <div class="siswa-header">
 
-                        <strong id="siswaHeaderText">
-                            Pilih kelas terlebih dahulu
+                        <strong>
+                            Pilih siswa dari kelas yang dipilih
                         </strong>
 
                         <button
                             type="button"
-                            onclick="pilihSemuaSiswa()"
-                            id="btnPilihSemuaSiswa">
+                            onclick="pilihSemuaSiswa()">
 
                             ☑ Pilih Semua Siswa
 
@@ -907,28 +935,22 @@ button:disabled{
                     </div>
 
 
-                    <div class="siswa-tools">
+                    <div class="siswa-search">
 
-                        <div class="siswa-search">
-
-                            <input
-                                type="text"
-                                id="siswaSearch"
-                                placeholder="🔍 Cari nama atau NISN..."
-                                oninput="filterSiswa()">
-
-                        </div>
+                        <input
+                            type="text"
+                            id="siswaSearch"
+                            placeholder="🔍 Cari nama atau NISN siswa..."
+                            oninput="filterSiswa()">
 
                     </div>
 
 
                     <div
                         id="siswaList"
-                        class="siswa-grid">
+                        class="siswa-list">
 
-                        <div
-                            class="loading"
-                            style="grid-column:1/-1">
+                        <div class="siswa-empty">
 
                             Pilih kelas terlebih dahulu.
 
@@ -941,25 +963,24 @@ button:disabled{
                         id="siswaSelectedInfo"
                         class="siswa-selected-info">
 
-                        0 siswa dipilih
+                        Belum ada siswa dipilih.
 
                     </div>
 
                 </div>
 
 
-                <div class="warning-info">
+                <div class="info-siswa">
 
-                    ⚠️ <strong>Penting:</strong>
-                    Siswa yang tidak dicentang tidak akan mendapatkan
-                    ujian ini pada akun mereka.
+                    💡 <strong>Peserta ujian:</strong>
+                    hanya siswa yang dicentang di atas yang dapat
+                    ditetapkan sebagai peserta ujian.
+                    Kelas digunakan untuk mempermudah penyaringan siswa.
 
                 </div>
 
             </div>
 
-
-            <!-- GURU -->
 
             <div class="form-group">
 
@@ -978,8 +999,6 @@ button:disabled{
             </div>
 
 
-            <!-- DURASI -->
-
             <div class="form-group">
 
                 <label>
@@ -996,8 +1015,6 @@ button:disabled{
             </div>
 
 
-            <!-- MULAI -->
-
             <div class="form-group">
 
                 <label>
@@ -1011,8 +1028,6 @@ button:disabled{
             </div>
 
 
-            <!-- SELESAI -->
-
             <div class="form-group">
 
                 <label>
@@ -1025,8 +1040,6 @@ button:disabled{
 
             </div>
 
-
-            <!-- STATUS -->
 
             <div class="form-group">
 
@@ -1067,7 +1080,6 @@ button:disabled{
 
             <button
                 class="btn save"
-                id="btnSimpan"
                 onclick="simpanUjian()">
 
                 💾 Simpan Ujian
@@ -1159,6 +1171,8 @@ let semuaUjianSiswa = [];
 
 let siswaTampil = [];
 
+let selectedSiswaIds = new Set();
+
 let editId = null;
 
 
@@ -1181,7 +1195,7 @@ function showMessage(text,type){
         message.textContent = "";
         message.className = "message";
 
-    },3500);
+    },4000);
 
 }
 
@@ -1200,7 +1214,21 @@ function hideMessage(){
 
 
 /* =====================================================
-   LOAD SEMUA DATA
+   NORMALISASI KELAS
+===================================================== */
+
+function normalisasiKelas(value){
+
+    return String(value || "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g,"");
+
+}
+
+
+/* =====================================================
+   LOAD DATA
 ===================================================== */
 
 async function loadSemuaData(){
@@ -1220,7 +1248,6 @@ async function loadSemuaData(){
     try{
 
         const [
-
             hasilUjian,
             hasilMapel,
             hasilKelas,
@@ -1228,13 +1255,11 @@ async function loadSemuaData(){
             hasilSiswa,
             hasilUjianKelas,
             hasilUjianSiswa
-
         ] = await Promise.all([
 
-
-            /* ===============================
+            /* =========================================
                UJIAN
-            =============================== */
+            ========================================= */
 
             supabaseClient
             .from("ujian")
@@ -1248,12 +1273,10 @@ async function loadSemuaData(){
                 tanggal_selesai,
                 status,
                 created_at,
-
                 mata_pelajaran (
                     id,
                     nama
                 ),
-
                 guru (
                     id,
                     nama,
@@ -1266,9 +1289,9 @@ async function loadSemuaData(){
             ),
 
 
-            /* ===============================
-               MAPEL
-            =============================== */
+            /* =========================================
+               MATA PELAJARAN
+            ========================================= */
 
             supabaseClient
             .from("mata_pelajaran")
@@ -1279,9 +1302,9 @@ async function loadSemuaData(){
             ),
 
 
-            /* ===============================
+            /* =========================================
                KELAS
-            =============================== */
+            ========================================= */
 
             supabaseClient
             .from("kelas")
@@ -1298,9 +1321,9 @@ async function loadSemuaData(){
             ),
 
 
-            /* ===============================
+            /* =========================================
                GURU
-            =============================== */
+            ========================================= */
 
             supabaseClient
             .from("guru")
@@ -1313,32 +1336,32 @@ async function loadSemuaData(){
             ),
 
 
-            /* ===============================
+            /* =========================================
                SISWA
-            =============================== */
+               
+               PENTING:
+               TIDAK menggunakan:
+               kelas(...)
+               atau kelas_id
+               
+               karena siswa menyimpan kelas
+               langsung di kolom siswa.kelas.
+            ========================================= */
 
             supabaseClient
             .from("siswa")
-            .select(`
-                id,
-                nama,
-                nisn,
-                kelas_id,
-                kelas (
-                    id,
-                    nama_kelas,
-                    tingkat
-                )
-            `)
+            .select(
+                "id,nama,nisn,kelas"
+            )
             .order(
                 "nama",
                 {ascending:true}
             ),
 
 
-            /* ===============================
-               UJIAN KELAS
-            =============================== */
+            /* =========================================
+               RELASI UJIAN - KELAS
+            ========================================= */
 
             supabaseClient
             .from("ujian_kelas")
@@ -1346,7 +1369,6 @@ async function loadSemuaData(){
                 id,
                 ujian_id,
                 kelas_id,
-
                 kelas (
                     id,
                     nama_kelas,
@@ -1355,17 +1377,15 @@ async function loadSemuaData(){
             `),
 
 
-            /* ===============================
-               UJIAN SISWA
-            =============================== */
+            /* =========================================
+               RELASI UJIAN - SISWA
+            ========================================= */
 
             supabaseClient
             .from("ujian_siswa")
-            .select(`
-                id,
-                ujian_id,
-                siswa_id
-            `)
+            .select(
+                "id,ujian_id,siswa_id"
+            )
 
         ]);
 
@@ -1422,10 +1442,12 @@ async function loadSemuaData(){
             semuaUjian
         );
 
-
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "ERROR LOAD DATA:",
+            error
+        );
 
         document.getElementById(
             "ujianBody"
@@ -1433,13 +1455,23 @@ async function loadSemuaData(){
             <tr>
                 <td colspan="11" class="empty">
                     ❌ Gagal memuat data ujian.
+                    <br>
+                    <small style="color:#dc2626">
+                        ${escapeHtml(
+                            error.message ||
+                            "Terjadi kesalahan."
+                        )}
+                    </small>
                 </td>
             </tr>
         `;
 
         showMessage(
             "Gagal mengambil data: " +
-            error.message,
+            (
+                error.message ||
+                "Terjadi kesalahan."
+            ),
             "error"
         );
 
@@ -1449,7 +1481,7 @@ async function loadSemuaData(){
 
 
 /* =====================================================
-   DROPDOWN
+   ISI DROPDOWN
 ===================================================== */
 
 function isiPilihan(){
@@ -1475,7 +1507,7 @@ function isiPilihan(){
     semuaMapel.forEach(item=>{
 
         mapel.innerHTML += `
-            <option value="${item.id}">
+            <option value="${escapeHtml(item.id)}">
                 ${escapeHtml(item.nama)}
             </option>
         `;
@@ -1493,7 +1525,7 @@ function isiPilihan(){
     semuaGuru.forEach(item=>{
 
         guru.innerHTML += `
-            <option value="${item.id}">
+            <option value="${escapeHtml(item.id)}">
                 ${escapeHtml(item.nama)}
                 ${
                     item.nip
@@ -1513,7 +1545,7 @@ function isiPilihan(){
 
 
 /* =====================================================
-   KELAS
+   ISI CHECKBOX KELAS
 ===================================================== */
 
 function isiKelas(selectedIds=[]){
@@ -1539,6 +1571,8 @@ function isiKelas(selectedIds=[]){
 
         updateSelectedInfo();
 
+        tampilkanSiswaBerdasarkanKelas();
+
         return;
 
     }
@@ -1552,7 +1586,6 @@ function isiKelas(selectedIds=[]){
                 ? "checked"
                 : "";
 
-
             return `
 
                 <label class="kelas-item">
@@ -1560,7 +1593,7 @@ function isiKelas(selectedIds=[]){
                     <input
                         type="checkbox"
                         name="kelasMulti"
-                        value="${item.id}"
+                        value="${escapeHtml(item.id)}"
                         ${checked}
                         onchange="kelasBerubah()">
 
@@ -1578,6 +1611,8 @@ function isiKelas(selectedIds=[]){
 
 
     updateSelectedInfo();
+
+    tampilkanSiswaBerdasarkanKelas();
 
 }
 
@@ -1608,7 +1643,7 @@ function pilihSemuaKelas(){
 
 
     const semuaSudahDipilih =
-        checkboxes.length &&
+        checkboxes.length > 0 &&
         Array.from(checkboxes)
         .every(
             cb => cb.checked
@@ -1623,9 +1658,7 @@ function pilihSemuaKelas(){
     });
 
 
-    updateSelectedInfo();
-
-    tampilkanSiswaBerdasarkanKelas();
+    kelasBerubah();
 
 }
 
@@ -1640,7 +1673,6 @@ function updateSelectedInfo(){
         document.querySelectorAll(
             'input[name="kelasMulti"]:checked'
         );
-
 
     const info =
         document.getElementById(
@@ -1667,7 +1699,8 @@ function updateSelectedInfo(){
 
             const kelas =
                 semuaKelas.find(
-                    k => k.id === cb.value
+                    k =>
+                        k.id === cb.value
                 );
 
             return kelas
@@ -1684,7 +1717,6 @@ function updateSelectedInfo(){
         " kelas dipilih: " +
         namaKelas.join(", ");
 
-
     info.style.color =
         "#166534";
 
@@ -1692,7 +1724,7 @@ function updateSelectedInfo(){
 
 
 /* =====================================================
-   KELAS TERPILIH
+   AMBIL KELAS TERPILIH
 ===================================================== */
 
 function getSelectedKelas(){
@@ -1714,7 +1746,7 @@ function getSelectedKelas(){
 
 function tampilkanSiswaBerdasarkanKelas(){
 
-    const kelasIds =
+    const selectedKelasIds =
         getSelectedKelas();
 
 
@@ -1724,27 +1756,17 @@ function tampilkanSiswaBerdasarkanKelas(){
         );
 
 
-    const header =
-        document.getElementById(
-            "siswaHeaderText"
-        );
-
-
-    if(!kelasIds.length){
+    if(!selectedKelasIds.length){
 
         siswaTampil = [];
 
-        header.textContent =
-            "Pilih kelas terlebih dahulu";
+        selectedSiswaIds =
+            new Set();
 
         container.innerHTML = `
-            <div
-                class="loading"
-                style="grid-column:1/-1">
-
-                📚 Pilih kelas terlebih dahulu
+            <div class="siswa-empty">
+                🏫 Pilih kelas terlebih dahulu
                 untuk menampilkan siswa.
-
             </div>
         `;
 
@@ -1755,20 +1777,74 @@ function tampilkanSiswaBerdasarkanKelas(){
     }
 
 
-    siswaTampil =
-        semuaSiswa.filter(
-            siswa =>
-                kelasIds.includes(
-                    siswa.kelas_id
+    const selectedKelas =
+        semuaKelas.filter(
+            k =>
+                selectedKelasIds.includes(
+                    k.id
                 )
         );
 
 
-    header.textContent =
-        siswaTampil.length +
-        " siswa dari " +
-        kelasIds.length +
-        " kelas";
+    const namaKelasDipilih =
+        selectedKelas.map(
+            k =>
+                normalisasiKelas(
+                    k.nama_kelas
+                )
+        );
+
+
+    /*
+       SISWA MENGGUNAKAN:
+       siswa.kelas
+
+       Contoh:
+       siswa.kelas = "9G"
+
+       kelas.nama_kelas = "9G"
+    */
+
+    siswaTampil =
+        semuaSiswa.filter(siswa=>{
+
+            const kelasSiswa =
+                normalisasiKelas(
+                    siswa.kelas
+                );
+
+
+            return namaKelasDipilih
+                .includes(
+                    kelasSiswa
+                );
+
+        });
+
+
+    /*
+       Hapus pilihan siswa yang
+       sekarang tidak lagi berada
+       pada kelas terpilih.
+    */
+
+    const idSiswaTampil =
+        new Set(
+            siswaTampil.map(
+                siswa => siswa.id
+            )
+        );
+
+
+    selectedSiswaIds =
+        new Set(
+            Array.from(
+                selectedSiswaIds
+            ).filter(
+                id =>
+                    idSiswaTampil.has(id)
+            )
+        );
 
 
     renderSiswaList();
@@ -1791,12 +1867,16 @@ function renderSiswaList(){
     if(!siswaTampil.length){
 
         container.innerHTML = `
-            <div
-                class="loading"
-                style="grid-column:1/-1">
+            <div class="siswa-empty">
 
-                👨‍🎓 Tidak ada siswa pada
-                kelas yang dipilih.
+                ⚠️ Tidak ada siswa
+                pada kelas yang dipilih.
+
+                <br><br>
+
+                Pastikan nilai
+                <strong>siswa.kelas</strong>
+                sama dengan nama kelas.
 
             </div>
         `;
@@ -1808,75 +1888,131 @@ function renderSiswaList(){
     }
 
 
-    const selectedIds =
-        getSelectedSiswa();
+    const keyword =
+        document.getElementById(
+            "siswaSearch"
+        ).value
+        .toLowerCase()
+        .trim();
+
+
+    const hasil =
+        siswaTampil.filter(
+            siswa=>{
+
+                if(!keyword)
+                    return true;
+
+
+                const nama =
+                    String(
+                        siswa.nama || ""
+                    ).toLowerCase();
+
+
+                const nisn =
+                    String(
+                        siswa.nisn || ""
+                    ).toLowerCase();
+
+
+                const kelas =
+                    String(
+                        siswa.kelas || ""
+                    ).toLowerCase();
+
+
+                return (
+                    nama.includes(keyword) ||
+                    nisn.includes(keyword) ||
+                    kelas.includes(keyword)
+                );
+
+            }
+        );
+
+
+    if(!hasil.length){
+
+        container.innerHTML = `
+            <div class="siswa-empty">
+
+                🔍 Siswa tidak ditemukan.
+
+            </div>
+        `;
+
+        updateSiswaSelectedInfo();
+
+        return;
+
+    }
 
 
     container.innerHTML =
-        siswaTampil.map(siswa=>{
+        hasil.map(siswa=>{
 
             const checked =
-                selectedIds.includes(
+                selectedSiswaIds.has(
                     siswa.id
                 )
                 ? "checked"
                 : "";
 
 
-            const namaKelas =
-                siswa.kelas
-                ? siswa.kelas.nama_kelas
-                : "-";
-
-
             return `
 
                 <label
                     class="siswa-item"
-                    data-search="
-                        ${escapeHtml(
-                            (
-                                siswa.nama || ""
-                            ).toLowerCase()
-                        )}
-                        ${escapeHtml(
-                            siswa.nisn || ""
-                        )}
-                        ${escapeHtml(
-                            namaKelas.toLowerCase()
-                        )}
-                    ">
+                    data-nama="${escapeHtml(
+                        siswa.nama || ""
+                    )}"
+                    data-nisn="${escapeHtml(
+                        siswa.nisn || ""
+                    )}">
 
                     <input
                         type="checkbox"
-                        name="siswaMulti"
-                        value="${siswa.id}"
+                        value="${escapeHtml(
+                            siswa.id
+                        )}"
                         ${checked}
-                        onchange="updateSiswaSelectedInfo()">
+                        onchange="ubahPilihanSiswa(
+                            '${escapeJs(siswa.id)}',
+                            this.checked
+                        )">
 
-                    <div class="siswa-detail">
+                    <div class="siswa-info">
 
                         <div class="siswa-nama">
+
                             ${escapeHtml(
-                                siswa.nama || "-"
+                                siswa.nama ||
+                                "Tanpa Nama"
                             )}
+
                         </div>
 
-                        <div class="siswa-nisn">
+                        <div class="siswa-detail">
+
                             NISN:
                             ${escapeHtml(
-                                siswa.nisn || "-"
+                                siswa.nisn ||
+                                "-"
                             )}
-                        </div>
 
-                        <div class="siswa-kelas">
-                            Kelas:
-                            ${escapeHtml(
-                                namaKelas
-                            )}
                         </div>
 
                     </div>
+
+                    <span class="siswa-kelas">
+
+                        ${escapeHtml(
+                            siswa.kelas ||
+                            "-"
+                        )}
+
+                    </span>
 
                 </label>
 
@@ -1891,21 +2027,44 @@ function renderSiswaList(){
 
 
 /* =====================================================
+   UBAH PILIHAN SISWA
+===================================================== */
+
+function ubahPilihanSiswa(
+    siswaId,
+    checked
+){
+
+    if(checked){
+
+        selectedSiswaIds.add(
+            siswaId
+        );
+
+    }else{
+
+        selectedSiswaIds.delete(
+            siswaId
+        );
+
+    }
+
+
+    updateSiswaSelectedInfo();
+
+}
+
+
+/* =====================================================
    PILIH SEMUA SISWA
 ===================================================== */
 
 function pilihSemuaSiswa(){
 
-    const checkboxes =
-        document.querySelectorAll(
-            'input[name="siswaMulti"]'
-        );
-
-
-    if(!checkboxes.length){
+    if(!siswaTampil.length){
 
         alert(
-            "Belum ada siswa yang dapat dipilih."
+            "Pilih kelas terlebih dahulu."
         );
 
         return;
@@ -1913,22 +2072,89 @@ function pilihSemuaSiswa(){
     }
 
 
-    const semuaSudahDipilih =
-        Array.from(checkboxes)
-        .every(
-            cb => cb.checked
+    const semuaTerpilih =
+        siswaTampil.every(
+            siswa =>
+                selectedSiswaIds.has(
+                    siswa.id
+                )
         );
 
 
-    checkboxes.forEach(cb=>{
+    if(semuaTerpilih){
 
-        cb.checked =
-            !semuaSudahDipilih;
+        siswaTampil.forEach(
+            siswa =>
+                selectedSiswaIds.delete(
+                    siswa.id
+                )
+        );
 
-    });
+    }else{
+
+        siswaTampil.forEach(
+            siswa =>
+                selectedSiswaIds.add(
+                    siswa.id
+                )
+
+        );
+
+    }
 
 
-    updateSiswaSelectedInfo();
+    renderSiswaList();
+
+}
+
+
+/* =====================================================
+   FILTER SISWA
+===================================================== */
+
+function filterSiswa(){
+
+    renderSiswaList();
+
+}
+
+
+/* =====================================================
+   INFO SISWA TERPILIH
+===================================================== */
+
+function updateSiswaSelectedInfo(){
+
+    const info =
+        document.getElementById(
+            "siswaSelectedInfo"
+        );
+
+
+    const jumlah =
+        selectedSiswaIds.size;
+
+
+    if(!jumlah){
+
+        info.textContent =
+            "⚠️ Belum ada siswa dipilih.";
+
+        info.style.color =
+            "#dc2626";
+
+        return;
+
+    }
+
+
+    info.textContent =
+        "✅ " +
+        jumlah +
+        " siswa dipilih sebagai peserta ujian.";
+
+    info.style.color =
+        "#6d28d9";
 
 }
 
@@ -1940,97 +2166,8 @@ function pilihSemuaSiswa(){
 function getSelectedSiswa(){
 
     return Array.from(
-        document.querySelectorAll(
-            'input[name="siswaMulti"]:checked'
-        )
-    ).map(
-        checkbox => checkbox.value
+        selectedSiswaIds
     );
-
-}
-
-
-/* =====================================================
-   INFO SISWA
-===================================================== */
-
-function updateSiswaSelectedInfo(){
-
-    const checked =
-        document.querySelectorAll(
-            'input[name="siswaMulti"]:checked'
-        );
-
-
-    const info =
-        document.getElementById(
-            "siswaSelectedInfo"
-        );
-
-
-    info.textContent =
-        "👥 " +
-        checked.length +
-        " siswa dipilih";
-
-
-    if(!checked.length){
-
-        info.style.background =
-            "#fef2f2";
-
-        info.style.color =
-            "#991b1b";
-
-    }else{
-
-        info.style.background =
-            "#ecfdf5";
-
-        info.style.color =
-            "#166534";
-
-    }
-
-}
-
-
-/* =====================================================
-   FILTER SISWA
-===================================================== */
-
-function filterSiswa(){
-
-    const keyword =
-        document.getElementById(
-            "siswaSearch"
-        ).value
-        .toLowerCase()
-        .trim();
-
-
-    const items =
-        document.querySelectorAll(
-            ".siswa-item"
-        );
-
-
-    items.forEach(item=>{
-
-        const search =
-            (
-                item.dataset.search ||
-                ""
-            ).toLowerCase();
-
-
-        item.style.display =
-            !keyword ||
-            search.includes(keyword)
-            ? "flex"
-            : "none";
-
-    });
 
 }
 
@@ -2051,7 +2188,8 @@ function updateSummary(){
         "totalDraft"
     ).textContent =
         semuaUjian.filter(
-            u => u.status === "draft"
+            u =>
+                u.status === "draft"
         ).length;
 
 
@@ -2059,7 +2197,8 @@ function updateSummary(){
         "totalAktif"
     ).textContent =
         semuaUjian.filter(
-            u => u.status === "aktif"
+            u =>
+                u.status === "aktif"
         ).length;
 
 
@@ -2067,17 +2206,20 @@ function updateSummary(){
         "totalSelesai"
     ).textContent =
         semuaUjian.filter(
-            u => u.status === "selesai"
+            u =>
+                u.status === "selesai"
         ).length;
 
 }
 
 
 /* =====================================================
-   KELAS UJIAN
+   KELAS UNTUK UJIAN
 ===================================================== */
 
-function getKelasUntukUjian(ujianId){
+function getKelasUntukUjian(
+    ujianId
+){
 
     return semuaUjianKelas
         .filter(
@@ -2093,10 +2235,12 @@ function getKelasUntukUjian(ujianId){
 
 
 /* =====================================================
-   JUMLAH PESERTA UJIAN
+   JUMLAH SISWA UNTUK UJIAN
 ===================================================== */
 
-function getJumlahPeserta(ujianId){
+function getJumlahSiswaUntukUjian(
+    ujianId
+){
 
     return semuaUjianSiswa.filter(
         item =>
@@ -2138,192 +2282,223 @@ function tampilkanUjian(data){
 
 
     body.innerHTML =
-        data.map((ujian,index)=>{
+        data.map(
+            (ujian,index)=>{
 
-            const status =
-                ujian.status || "draft";
-
-
-            let statusText =
-                "Draft";
+                const status =
+                    ujian.status ||
+                    "draft";
 
 
-            if(status === "aktif")
-                statusText = "Aktif";
+                let statusText =
+                    "Draft";
 
 
-            if(status === "selesai")
-                statusText = "Selesai";
+                if(
+                    status === "aktif"
+                )
+                    statusText =
+                        "Aktif";
 
 
-            const kelas =
-                getKelasUntukUjian(
-                    ujian.id
-                );
+                if(
+                    status === "selesai"
+                )
+                    statusText =
+                        "Selesai";
 
 
-            const jumlahPeserta =
-                getJumlahPeserta(
-                    ujian.id
-                );
+                const kelas =
+                    getKelasUntukUjian(
+                        ujian.id
+                    );
 
 
-            const kelasHtml =
-                kelas.length
-                ? `
-                    <div class="kelas-list">
-
-                        ${
-                            kelas.map(k=>`
-
-                                <span
-                                    class="kelas-badge">
-
-                                    ${escapeHtml(
-                                        k.nama_kelas
-                                    )}
-
-                                </span>
-
-                            `).join("")
-                        }
-
-                    </div>
-                  `
-                :
-                  `
-                    <span
-                        style="color:#dc2626">
-
-                        Belum ada kelas
-
-                    </span>
-                  `;
+                const jumlahPeserta =
+                    getJumlahSiswaUntukUjian(
+                        ujian.id
+                    );
 
 
-            return `
-
-                <tr>
-
-                    <td>
-                        ${index + 1}
-                    </td>
-
-
-                    <td>
-                        <strong>
-                            ${escapeHtml(
-                                ujian.judul || "-"
-                            )}
-                        </strong>
-                    </td>
-
-
-                    <td>
-                        ${
-                            ujian.mata_pelajaran
-                            ? escapeHtml(
-                                ujian
-                                .mata_pelajaran
-                                .nama
-                              )
-                            : "-"
-                        }
-                    </td>
-
-
-                    <td>
-                        ${kelasHtml}
-                    </td>
-
-
-                    <td>
-
-                        <span
-                            class="peserta-count">
-
-                            👥
-                            ${jumlahPeserta}
-                            siswa
-
-                        </span>
-
-                    </td>
-
-
-                    <td>
-                        ${
-                            ujian.guru
-                            ? escapeHtml(
-                                ujian.guru.nama
-                              )
-                            : "-"
-                        }
-                    </td>
-
-
-                    <td>
-                        ${ujian.durasi_menit || 0}
-                        menit
-                    </td>
-
-
-                    <td>
-                        ${formatTanggal(
-                            ujian.tanggal_mulai
-                        )}
-                    </td>
-
-
-                    <td>
-                        ${formatTanggal(
-                            ujian.tanggal_selesai
-                        )}
-                    </td>
-
-
-                    <td>
-
-                        <span
-                            class="badge ${status}">
-
-                            ${statusText}
-
-                        </span>
-
-                    </td>
-
-
-                    <td>
-
-                        <div class="action">
-
-                            <button
-                                class="edit"
-                                onclick="editUjian('${ujian.id}')">
-
-                                ✏️ Edit
-
-                            </button>
-
-
-                            <button
-                                class="delete"
-                                onclick="hapusUjian('${ujian.id}')">
-
-                                🗑️ Hapus
-
-                            </button>
-
+                const kelasHtml =
+                    kelas.length
+                    ? `
+                        <div class="kelas-list">
+                            ${
+                                kelas.map(
+                                    k=>`
+                                    <span class="kelas-badge">
+                                        ${escapeHtml(
+                                            k.nama_kelas
+                                        )}
+                                    </span>
+                                `
+                                ).join("")
+                            }
                         </div>
+                      `
+                    : `
+                        <span
+                            style="color:#dc2626">
 
-                    </td>
+                            Belum ada kelas
 
-                </tr>
+                        </span>
+                      `;
 
-            `;
 
-        }).join("");
+                return `
+
+                    <tr>
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+
+                        <td>
+
+                            <strong>
+
+                                ${escapeHtml(
+                                    ujian.judul ||
+                                    "-"
+                                )}
+
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            ${
+                                ujian.mata_pelajaran
+                                ? escapeHtml(
+                                    ujian
+                                    .mata_pelajaran
+                                    .nama
+                                  )
+                                : "-"
+                            }
+
+                        </td>
+
+
+                        <td>
+
+                            ${kelasHtml}
+
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="peserta-badge">
+
+                                👥
+                                ${jumlahPeserta}
+                                siswa
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            ${
+                                ujian.guru
+                                ? escapeHtml(
+                                    ujian.guru.nama
+                                  )
+                                : "-"
+                            }
+
+                        </td>
+
+
+                        <td>
+
+                            ${
+                                ujian.durasi_menit ||
+                                0
+                            }
+                            menit
+
+                        </td>
+
+
+                        <td>
+
+                            ${formatTanggal(
+                                ujian.tanggal_mulai
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            ${formatTanggal(
+                                ujian.tanggal_selesai
+                            )}
+
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="badge ${status}">
+
+                                ${statusText}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="action">
+
+                                <button
+                                    class="edit"
+                                    onclick="editUjian(
+                                        '${escapeJs(
+                                            ujian.id
+                                        )}'
+                                    )">
+
+                                    ✏️ Edit
+
+                                </button>
+
+
+                                <button
+                                    class="delete"
+                                    onclick="hapusUjian(
+                                        '${escapeJs(
+                                            ujian.id
+                                        )}'
+                                    )">
+
+                                    🗑️ Hapus
+
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        ).join("");
 
 }
 
@@ -2349,41 +2524,55 @@ function filterUjian(){
 
 
     const hasil =
-        semuaUjian.filter(ujian=>{
+        semuaUjian.filter(
+            ujian=>{
 
-            const cocokJudul =
-                !keyword ||
-                (
-                    ujian.judul || ""
-                )
-                .toLowerCase()
-                .includes(keyword);
-
-
-            const cocokStatus =
-                !status ||
-                ujian.status === status;
-
-
-            return
-                cocokJudul &&
-                cocokStatus;
-
-        });
+                const cocokJudul =
+                    !keyword ||
+                    (
+                        ujian.judul ||
+                        ""
+                    )
+                    .toLowerCase()
+                    .includes(
+                        keyword
+                    );
 
 
-    tampilkanUjian(hasil);
+                const cocokStatus =
+                    !status ||
+                    ujian.status ===
+                    status;
+
+
+                return
+                    cocokJudul &&
+                    cocokStatus;
+
+            }
+        );
+
+
+    tampilkanUjian(
+        hasil
+    );
 
 }
 
 
 /* =====================================================
-   BUKA TAMBAH
+   TAMBAH UJIAN
 ===================================================== */
 
 function bukaTambah(){
 
     editId = null;
+
+    selectedSiswaIds =
+        new Set();
+
+
+    siswaTampil = [];
 
 
     document.getElementById(
@@ -2424,7 +2613,8 @@ function bukaTambah(){
 
     document.getElementById(
         "status"
-    ).value = "draft";
+    ).value =
+        "draft";
 
 
     document.getElementById(
@@ -2433,23 +2623,6 @@ function bukaTambah(){
 
 
     isiKelas([]);
-
-
-    siswaTampil = [];
-
-
-    document.getElementById(
-        "siswaList"
-    ).innerHTML = `
-        <div
-            class="loading"
-            style="grid-column:1/-1">
-
-            📚 Pilih kelas terlebih dahulu
-            untuk menampilkan siswa.
-
-        </div>
-    `;
 
 
     updateSiswaSelectedInfo();
@@ -2490,6 +2663,10 @@ async function editUjian(id){
     editId = id;
 
 
+    /* =========================================
+       KELAS
+    ========================================= */
+
     const kelasTerpilih =
         semuaUjianKelas
         .filter(
@@ -2502,7 +2679,11 @@ async function editUjian(id){
         );
 
 
-    const siswaTerpilih =
+    /* =========================================
+       SISWA PESERTA
+    ========================================= */
+
+    const pesertaTerpilih =
         semuaUjianSiswa
         .filter(
             item =>
@@ -2511,6 +2692,12 @@ async function editUjian(id){
         .map(
             item =>
                 item.siswa_id
+        );
+
+
+    selectedSiswaIds =
+        new Set(
+            pesertaTerpilih
         );
 
 
@@ -2529,19 +2716,22 @@ async function editUjian(id){
     document.getElementById(
         "mataPelajaran"
     ).value =
-        ujian.mata_pelajaran_id || "";
+        ujian.mata_pelajaran_id ||
+        "";
 
 
     document.getElementById(
         "guru"
     ).value =
-        ujian.guru_id || "";
+        ujian.guru_id ||
+        "";
 
 
     document.getElementById(
         "durasi"
     ).value =
-        ujian.durasi_menit || 60;
+        ujian.durasi_menit ||
+        60;
 
 
     document.getElementById(
@@ -2563,7 +2753,8 @@ async function editUjian(id){
     document.getElementById(
         "status"
     ).value =
-        ujian.status || "draft";
+        ujian.status ||
+        "draft";
 
 
     document.getElementById(
@@ -2574,28 +2765,6 @@ async function editUjian(id){
     isiKelas(
         kelasTerpilih
     );
-
-
-    tampilkanSiswaBerdasarkanKelas();
-
-
-    /*
-       Setelah daftar siswa dirender,
-       centang siswa yang sudah tersimpan.
-    */
-
-    document
-    .querySelectorAll(
-        'input[name="siswaMulti"]'
-    )
-    .forEach(cb=>{
-
-        cb.checked =
-            siswaTerpilih.includes(
-                cb.value
-            );
-
-    });
 
 
     updateSiswaSelectedInfo();
@@ -2667,9 +2836,9 @@ async function simpanUjian(){
         getSelectedSiswa();
 
 
-    /* ===============================
+    /* =========================================
        VALIDASI
-    =============================== */
+    ========================================= */
 
     if(!judul){
 
@@ -2730,7 +2899,8 @@ async function simpanUjian(){
         tanggalMulai &&
         tanggalSelesai &&
         new Date(tanggalSelesai)
-        <= new Date(tanggalMulai)
+        <=
+        new Date(tanggalMulai)
     ){
 
         alert(
@@ -2776,33 +2946,27 @@ async function simpanUjian(){
     };
 
 
-    const tombol =
-        document.getElementById(
-            "btnSimpan"
-        );
-
-
-    tombol.disabled = true;
-
-    tombol.textContent =
-        "⏳ Menyimpan...";
-
-
     try{
 
-        let ujianId = editId;
+        let ujianId =
+            editId;
 
 
-        /* =================================================
+        /* =========================================
            BUAT UJIAN BARU
-        ================================================= */
+        ========================================= */
 
         if(!editId){
 
-            const {data,error} =
+            const {
+                data,
+                error
+            } =
                 await supabaseClient
                 .from("ujian")
-                .insert(payload)
+                .insert(
+                    payload
+                )
                 .select("id")
                 .single();
 
@@ -2815,11 +2979,11 @@ async function simpanUjian(){
                 data.id;
 
 
-            /* ===============================
+            /* =====================================
                SIMPAN KELAS
-            =============================== */
+            ===================================== */
 
-            const kelasRows =
+            const rowsKelas =
                 kelasIds.map(
                     kelasId => ({
 
@@ -2834,12 +2998,13 @@ async function simpanUjian(){
 
 
             const {
-                error:kelasError
+                error:
+                kelasError
             } =
                 await supabaseClient
                 .from("ujian_kelas")
                 .insert(
-                    kelasRows
+                    rowsKelas
                 );
 
 
@@ -2858,11 +3023,11 @@ async function simpanUjian(){
             }
 
 
-            /* ===============================
+            /* =====================================
                SIMPAN SISWA
-            =============================== */
+            ===================================== */
 
-            const siswaRows =
+            const rowsSiswa =
                 siswaIds.map(
                     siswaId => ({
 
@@ -2877,16 +3042,22 @@ async function simpanUjian(){
 
 
             const {
-                error:siswaError
+                error:
+                siswaError
             } =
                 await supabaseClient
                 .from("ujian_siswa")
                 .insert(
-                    siswaRows
+                    rowsSiswa
                 );
 
 
             if(siswaError){
+
+                /*
+                   Hapus relasi kelas dan ujian
+                   apabila penyimpanan peserta gagal.
+                */
 
                 await supabaseClient
                 .from("ujian_kelas")
@@ -2923,18 +3094,22 @@ async function simpanUjian(){
         }
 
 
-        /* =================================================
+        /* =========================================
            EDIT UJIAN
-        ================================================= */
+        ========================================= */
 
         else{
 
-            /* UPDATE UJIAN */
+            /* UPDATE DATA UJIAN */
 
-            const {error} =
+            const {
+                error
+            } =
                 await supabaseClient
                 .from("ujian")
-                .update(payload)
+                .update(
+                    payload
+                )
                 .eq(
                     "id",
                     editId
@@ -2945,12 +3120,13 @@ async function simpanUjian(){
                 throw error;
 
 
-            /* ===============================
+            /* =====================================
                HAPUS KELAS LAMA
-            =============================== */
+            ===================================== */
 
             const {
-                error:deleteKelasError
+                error:
+                deleteKelasError
             } =
                 await supabaseClient
                 .from("ujian_kelas")
@@ -2965,11 +3141,11 @@ async function simpanUjian(){
                 throw deleteKelasError;
 
 
-            /* ===============================
-               SIMPAN KELAS BARU
-            =============================== */
+            /* =====================================
+               MASUKKAN KELAS BARU
+            ===================================== */
 
-            const kelasRows =
+            const rowsKelas =
                 kelasIds.map(
                     kelasId => ({
 
@@ -2984,12 +3160,13 @@ async function simpanUjian(){
 
 
             const {
-                error:insertKelasError
+                error:
+                insertKelasError
             } =
                 await supabaseClient
                 .from("ujian_kelas")
                 .insert(
-                    kelasRows
+                    rowsKelas
                 );
 
 
@@ -2997,12 +3174,13 @@ async function simpanUjian(){
                 throw insertKelasError;
 
 
-            /* ===============================
+            /* =====================================
                HAPUS PESERTA LAMA
-            =============================== */
+            ===================================== */
 
             const {
-                error:deleteSiswaError
+                error:
+                deleteSiswaError
             } =
                 await supabaseClient
                 .from("ujian_siswa")
@@ -3017,11 +3195,11 @@ async function simpanUjian(){
                 throw deleteSiswaError;
 
 
-            /* ===============================
+            /* =====================================
                SIMPAN PESERTA BARU
-            =============================== */
+            ===================================== */
 
-            const siswaRows =
+            const rowsSiswa =
                 siswaIds.map(
                     siswaId => ({
 
@@ -3036,12 +3214,13 @@ async function simpanUjian(){
 
 
             const {
-                error:insertSiswaError
+                error:
+                insertSiswaError
             } =
                 await supabaseClient
                 .from("ujian_siswa")
                 .insert(
-                    siswaRows
+                    rowsSiswa
                 );
 
 
@@ -3052,7 +3231,7 @@ async function simpanUjian(){
             showMessage(
                 "Ujian berhasil diperbarui. " +
                 siswaIds.length +
-                " siswa menjadi peserta.",
+                " siswa ditetapkan sebagai peserta.",
                 "success"
             );
 
@@ -3061,25 +3240,25 @@ async function simpanUjian(){
 
         tutupModal();
 
+
         await loadSemuaData();
 
 
     }catch(error){
 
-        console.error(error);
-
-        alert(
-            "Gagal menyimpan ujian:\n\n" +
-            error.message
+        console.error(
+            "ERROR SIMPAN:",
+            error
         );
 
 
-    }finally{
-
-        tombol.disabled = false;
-
-        tombol.textContent =
-            "💾 Simpan Ujian";
+        alert(
+            "Gagal menyimpan ujian:\n\n" +
+            (
+                error.message ||
+                "Terjadi kesalahan."
+            )
+        );
 
     }
 
@@ -3104,7 +3283,9 @@ async function hapusUjian(id){
 
 
     const jumlahPeserta =
-        getJumlahPeserta(id);
+        getJumlahSiswaUntukUjian(
+            id
+        );
 
 
     const yakin =
@@ -3115,8 +3296,7 @@ async function hapusUjian(id){
             "Peserta: " +
             jumlahPeserta +
             " siswa\n\n" +
-            "Semua hubungan kelas dan peserta " +
-            "pada ujian ini juga akan dihapus."
+            "Data hubungan kelas dan peserta ujian akan dihapus."
         );
 
 
@@ -3126,10 +3306,13 @@ async function hapusUjian(id){
 
     try{
 
-        /* PESERTA */
+        /* =========================================
+           HAPUS PESERTA
+        ========================================= */
 
         const {
-            error:siswaError
+            error:
+            siswaError
         } =
             await supabaseClient
             .from("ujian_siswa")
@@ -3144,10 +3327,13 @@ async function hapusUjian(id){
             throw siswaError;
 
 
-        /* KELAS */
+        /* =========================================
+           HAPUS RELASI KELAS
+        ========================================= */
 
         const {
-            error:kelasError
+            error:
+            kelasError
         } =
             await supabaseClient
             .from("ujian_kelas")
@@ -3162,9 +3348,13 @@ async function hapusUjian(id){
             throw kelasError;
 
 
-        /* UJIAN */
+        /* =========================================
+           HAPUS UJIAN
+        ========================================= */
 
-        const {error} =
+        const {
+            error
+        } =
             await supabaseClient
             .from("ujian")
             .delete()
@@ -3189,11 +3379,18 @@ async function hapusUjian(id){
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "ERROR HAPUS:",
+            error
+        );
+
 
         alert(
             "Gagal menghapus ujian:\n\n" +
-            error.message
+            (
+                error.message ||
+                "Terjadi kesalahan."
+            )
         );
 
     }
@@ -3213,6 +3410,9 @@ function tutupModal(){
         "none";
 
     editId = null;
+
+    selectedSiswaIds =
+        new Set();
 
 }
 
@@ -3277,7 +3477,10 @@ function toDatetimeLocal(value){
 
     return local
         .toISOString()
-        .slice(0,16);
+        .slice(
+            0,
+            16
+        );
 
 }
 
@@ -3314,7 +3517,38 @@ function escapeHtml(value){
 
 
 /* =====================================================
-   KEMBALI
+   ESCAPE JAVASCRIPT
+===================================================== */
+
+function escapeJs(value){
+
+    return String(value)
+        .replace(
+            /\\/g,
+            "\\\\"
+        )
+        .replace(
+            /'/g,
+            "\\'"
+        )
+        .replace(
+            /"/g,
+            '\\"'
+        )
+        .replace(
+            /\n/g,
+            "\\n"
+        )
+        .replace(
+            /\r/g,
+            "\\r"
+        );
+
+}
+
+
+/* =====================================================
+   KEMBALI DASHBOARD
 ===================================================== */
 
 function kembaliDashboard(){
@@ -3335,7 +3569,9 @@ document
     "click",
     function(e){
 
-        if(e.target === this){
+        if(
+            e.target === this
+        ){
 
             tutupModal();
 
