@@ -1605,10 +1605,6 @@ body{
 <body>
 
 
-<!-- =====================================================
-     HEADER
-===================================================== -->
-
 <header class="header">
 
     <div class="header-left">
@@ -1676,10 +1672,6 @@ body{
 </header>
 
 
-<!-- =====================================================
-     MAIN
-===================================================== -->
-
 <main class="container">
 
 
@@ -1688,10 +1680,6 @@ body{
         class="message">
     </div>
 
-
-    <!-- =================================================
-         DAFTAR UJIAN
-    ================================================== -->
 
     <section id="homeArea">
 
@@ -1723,10 +1711,6 @@ body{
 
     </section>
 
-
-    <!-- =================================================
-         EXAM AREA
-    ================================================== -->
 
     <section id="examArea">
 
@@ -1858,10 +1842,6 @@ body{
     </section>
 
 
-    <!-- =================================================
-         RESULT
-    ================================================== -->
-
     <section
         id="resultBox"
         class="result-box">
@@ -1902,10 +1882,6 @@ body{
 </main>
 
 
-<!-- =====================================================
-     TOKEN MODAL
-===================================================== -->
-
 <div
     id="tokenModal"
     class="token-modal">
@@ -1929,6 +1905,8 @@ body{
             class="token-input"
             type="text"
             autocomplete="off"
+            autocapitalize="characters"
+            spellcheck="false"
             maxlength="50"
             placeholder="MASUKKAN TOKEN">
 
@@ -1958,10 +1936,6 @@ body{
 
 </div>
 
-
-<!-- =====================================================
-     FULLSCREEN WARNING
-===================================================== -->
 
 <div
     id="fullscreenWarning"
@@ -1993,6 +1967,8 @@ body{
             class="fullscreen-token"
             type="text"
             autocomplete="off"
+            autocapitalize="characters"
+            spellcheck="false"
             maxlength="50"
             placeholder="TOKEN UJIAN">
 
@@ -2009,10 +1985,6 @@ body{
 
 </div>
 
-
-<!-- =====================================================
-     FOOTER
-===================================================== -->
 
 <footer class="footer">
 
@@ -2075,7 +2047,6 @@ let kelasSiswaAktif = {
     nama:null
 };
 
-
 let semuaUjian = [];
 
 let semuaSoal = [];
@@ -2104,20 +2075,50 @@ let tokenUjianAktif = null;
 
 
 /* =====================================================
-   FUNGSI HASH UNTUK ACAK SOAL
+   NORMALISASI TOKEN
 ===================================================== */
 
 /*
-   Pengacakan dibuat berdasarkan:
+   Token dibersihkan dengan cara yang sama baik dari
+   input siswa maupun dari database.
 
-   NISN + ID UJIAN
+   Yang dilakukan:
 
-   Artinya:
-   - siswa A mendapat urutan berbeda
-   - siswa B mendapat urutan berbeda
-   - refresh halaman tidak mengubah urutan
-   - nomor asli soal tetap tidak berubah
+   1. Mengubah nilai menjadi string.
+   2. Unicode dinormalisasi.
+   3. Spasi biasa dihapus.
+   4. Karakter spasi tersembunyi dihapus.
+   5. Huruf diubah menjadi uppercase.
+
+   Contoh:
+
+   " ab12cd "
+   "AB12CD"
+   "AB 12 CD"
+   "ＡＢ１２ＣＤ"
+
+   akan diperlakukan sebagai token yang sama
+   setelah normalisasi Unicode.
 */
+
+function normalisasiToken(value){
+
+    return String(
+        value ?? ""
+    )
+    .normalize("NFKC")
+    .replace(
+        /[\s\u200B-\u200D\uFEFF]/g,
+        ""
+    )
+    .toUpperCase();
+
+}
+
+
+/* =====================================================
+   ACAK HASH
+===================================================== */
 
 function hashSeed(text){
 
@@ -2418,6 +2419,84 @@ async function cekSudahUjian(
         };
 
     }
+
+}
+
+
+/* =====================================================
+   AMBIL UJIAN TERBARU
+===================================================== */
+
+/*
+   Fungsi ini sengaja mengambil data ujian TERBARU
+   berdasarkan ID ujian.
+
+   Jadi token yang digunakan siswa bukan token lama
+   yang tersimpan di variabel daftar ujian.
+*/
+
+async function ambilUjianTerbaru(
+    ujianId
+){
+
+    if(!ujianId){
+
+        throw new Error(
+            "ID ujian tidak ditemukan."
+        );
+
+    }
+
+
+    const result =
+        await supabaseClient
+        .from("ujian")
+        .select(`
+            id,
+            judul,
+            mata_pelajaran_id,
+            kelas_id,
+            guru_id,
+            durasi_menit,
+            tanggal_mulai,
+            tanggal_selesai,
+            status,
+            status_kontrol,
+            token,
+            waktu_mulai_aktif,
+            waktu_terpakai_detik,
+            created_at
+        `)
+        .eq(
+            "id",
+            ujianId
+        )
+        .limit(1)
+        .maybeSingle();
+
+
+    if(result.error){
+
+        console.error(
+            "AMBIL UJIAN TERBARU:",
+            result.error
+        );
+
+        throw result.error;
+
+    }
+
+
+    if(!result.data){
+
+        throw new Error(
+            "Data ujian tidak ditemukan."
+        );
+
+    }
+
+
+    return result.data;
 
 }
 
@@ -3285,10 +3364,6 @@ async function tampilkanDaftarUjian(){
     }
 
 
-    /*
-       CEK STATUS HASIL SEMUA UJIAN
-    */
-
     const hasilPengecekan =
         await Promise.all(
             semuaUjian.map(
@@ -3312,11 +3387,6 @@ async function tampilkanDaftarUjian(){
             )
         );
 
-
-    /*
-       Jika ada error pengecekan,
-       jangan menganggap siswa belum ujian.
-    */
 
     const adaError =
         hasilPengecekan.some(
@@ -3640,10 +3710,6 @@ async function bukaTokenModal(
     }
 
 
-    /*
-       CEK LAGI SEBELUM TOKEN
-    */
-
     const cek =
         await cekSudahUjian(
             ujian.id
@@ -3696,9 +3762,13 @@ async function bukaTokenModal(
     setTimeout(
         () => {
 
-            document.getElementById(
-                "tokenInput"
-            ).focus();
+            const input =
+                document.getElementById(
+                    "tokenInput"
+                );
+
+
+            input.focus();
 
         },
         100
@@ -3727,12 +3797,16 @@ function tutupTokenModal(){
 
 
 /* =====================================================
-   PROSES TOKEN
+   PROSES TOKEN MASUK
 ===================================================== */
 
 async function prosesTokenMasuk(){
 
     if(!ujianAktif){
+
+        alert(
+            "Data ujian tidak aktif. Silakan pilih ujian kembali."
+        );
 
         return;
 
@@ -3745,12 +3819,17 @@ async function prosesTokenMasuk(){
         );
 
 
-    const token =
-        input.value
-        .trim();
+    /*
+       NORMALISASI INPUT SISWA
+    */
+
+    const tokenInput =
+        normalisasiToken(
+            input.value
+        );
 
 
-    if(!token){
+    if(!tokenInput){
 
         alert(
             "Masukkan token ujian."
@@ -3763,11 +3842,38 @@ async function prosesTokenMasuk(){
     }
 
 
+    /*
+       Cegah klik berkali-kali ketika request
+       sedang berjalan.
+    */
+
+    const tombol =
+        document.querySelector(
+            ".token-submit"
+        );
+
+
+    const teksTombol =
+        tombol
+        ? tombol.textContent
+        : "";
+
+
+    if(tombol){
+
+        tombol.disabled = true;
+
+        tombol.textContent =
+            "Memverifikasi...";
+
+    }
+
+
     try{
 
-        /*
-           CEK HASIL TERLEBIH DAHULU
-        */
+        /* =========================================
+           CEK SUDAH UJIAN
+        ========================================= */
 
         const cekHasil =
             await cekSudahUjian(
@@ -3777,9 +3883,16 @@ async function prosesTokenMasuk(){
 
         if(cekHasil.error){
 
+            console.error(
+                "ERROR CEK HASIL SEBELUM TOKEN:",
+                cekHasil.error
+            );
+
+
             alert(
                 "Tidak dapat memeriksa status ujian.\n\n" +
-                "Silakan coba lagi atau hubungi Admin."
+                "Kemungkinan koneksi/database sedang bermasalah.\n\n" +
+                "Silakan coba lagi."
             );
 
             return;
@@ -3805,43 +3918,44 @@ async function prosesTokenMasuk(){
         }
 
 
+        /* =========================================
+           AMBIL DATA TERBARU DARI DATABASE
+        ========================================= */
+
+        const dataUjian =
+            await ambilUjianTerbaru(
+                ujianAktif.id
+            );
+
+
+        /* =========================================
+           TOKEN DATABASE
+        ========================================= */
+
+        const tokenDatabase =
+            normalisasiToken(
+                dataUjian.token
+            );
+
+
         /*
-           AMBIL DATA TERBARU
+           TOKEN TIDAK BOLEH KOSONG
         */
 
-        const result =
-            await supabaseClient
-            .from("ujian")
-            .select(`
-                id,
-                judul,
-                mata_pelajaran_id,
-                durasi_menit,
-                tanggal_mulai,
-                tanggal_selesai,
-                status,
-                status_kontrol,
-                token,
-                waktu_mulai_aktif
-            `)
-            .eq(
-                "id",
-                ujianAktif.id
-            )
-            .maybeSingle();
+        if(!tokenDatabase){
 
+            console.error(
+                "TOKEN DATABASE KOSONG:",
+                {
+                    ujian_id:dataUjian.id,
+                    judul:dataUjian.judul
+                }
+            );
 
-        if(result.error){
-
-            throw result.error;
-
-        }
-
-
-        if(!result.data){
 
             alert(
-                "Ujian tidak ditemukan."
+                "Token ujian belum tersedia di database.\n\n" +
+                "Silakan hubungi Admin/Guru."
             );
 
             return;
@@ -3849,24 +3963,34 @@ async function prosesTokenMasuk(){
         }
 
 
-        const dataUjian =
-            result.data;
+        /* =========================================
+           PERBANDINGAN TOKEN
+        ========================================= */
+
+        const tokenCocok =
+            tokenDatabase ===
+            tokenInput;
 
 
-        /*
-           CEK TOKEN
-        */
+        if(!tokenCocok){
 
-        if(
-            String(
-                dataUjian.token || ""
-            ).trim() !==
-            token
-        ){
+            console.warn(
+                "TOKEN TIDAK COCOK",
+                {
+                    ujian_id:dataUjian.id,
+                    panjangInput:
+                        tokenInput.length,
+                    panjangDatabase:
+                        tokenDatabase.length
+                }
+            );
+
 
             alert(
-                "❌ Token ujian salah."
+                "❌ Token ujian salah.\n\n" +
+                "Periksa kembali token yang diberikan Guru/Admin."
             );
+
 
             input.select();
 
@@ -3876,7 +4000,8 @@ async function prosesTokenMasuk(){
 
 
         /*
-           CEK STATUS TERBARU
+           TOKEN BENAR.
+           BARU SEKARANG CEK STATUS UJIAN TERBARU.
         */
 
         const status =
@@ -3888,9 +4013,10 @@ async function prosesTokenMasuk(){
         if(!status.canStart){
 
             alert(
-                "Ujian belum dapat dimulai.\n\n" +
+                "Token benar, tetapi ujian belum dapat dimulai.\n\n" +
                 status.text
             );
+
 
             tutupTokenModal();
 
@@ -3901,10 +4027,9 @@ async function prosesTokenMasuk(){
         }
 
 
-        /*
-           CEK SEKALI LAGI
-           SEBELUM BENAR-BENAR MASUK
-        */
+        /* =========================================
+           CEK TERAKHIR SEBELUM MASUK
+        ========================================= */
 
         const cekHasilAkhir =
             await cekSudahUjian(
@@ -3914,9 +4039,16 @@ async function prosesTokenMasuk(){
 
         if(cekHasilAkhir.error){
 
+            console.error(
+                "CEK HASIL AKHIR:",
+                cekHasilAkhir.error
+            );
+
+
             alert(
-                "Tidak dapat memeriksa status ujian.\n\n" +
-                "Ujian belum dimulai."
+                "Token benar, tetapi sistem tidak dapat memastikan status ujian.\n\n" +
+                "Ujian belum dimulai.\n\n" +
+                "Silakan coba lagi."
             );
 
             return;
@@ -3930,6 +4062,7 @@ async function prosesTokenMasuk(){
                 "🔒 Ujian ini sudah pernah Anda kerjakan."
             );
 
+
             tutupTokenModal();
 
             await loadUjian();
@@ -3939,6 +4072,10 @@ async function prosesTokenMasuk(){
         }
 
 
+        /*
+           SIMPAN DATA UJIAN TERBARU
+        */
+
         ujianAktif =
             {
                 ...ujianAktif,
@@ -3947,8 +4084,12 @@ async function prosesTokenMasuk(){
 
 
         tokenUjianAktif =
-            dataUjian.token;
+            tokenDatabase;
 
+
+        /*
+           TUTUP MODAL
+        */
 
         tutupTokenModal();
 
@@ -3974,10 +4115,26 @@ async function prosesTokenMasuk(){
             error
         );
 
+
         alert(
-            "Gagal memverifikasi token:\n\n" +
-            error.message
+            "Gagal memverifikasi token.\n\n" +
+            (
+                error.message ||
+                "Terjadi kesalahan."
+            )
         );
+
+    }finally{
+
+        if(tombol){
+
+            tombol.disabled = false;
+
+            tombol.textContent =
+                teksTombol ||
+                "Masuk Ujian";
+
+        }
 
     }
 
@@ -4153,14 +4310,6 @@ async function muatSoalUjian(){
         semuaSoal =
             soalResult.data || [];
 
-
-        /* =================================================
-           PENTING:
-           ACAK SETELAH SOAL DIAMBIL.
-
-           NOMOR ASLI SOAL TIDAK DIUBAH.
-           HANYA URUTAN ARRAY YANG DIACAK.
-        ================================================= */
 
         acakSoalUntukSiswa();
 
@@ -4362,15 +4511,10 @@ function buatNomorSoal(){
                         ]
                     ).trim() !== "";
 
-                /*
-                   NOMOR YANG DITAMPILKAN
-                   ADALAH NOMOR URUT EXAM.
-
-                   BUKAN nomor dari Bank Soal.
-                */
 
                 const nomorTampil =
                     index + 1;
+
 
                 return `
 
@@ -4432,33 +4576,16 @@ function tampilkanSoal(index){
         semuaSoal[index];
 
 
-    /*
-       PENTING:
-
-       soal.nomor tetap nomor asli database.
-       Jadi walaupun urutannya acak:
-       5, 2, 8, 1, 7
-
-       pencarian literasi berdasarkan nomor
-       tetap benar.
-    */
-
-   /*
-   NOMOR EXAM SELALU BERURUT
-   SESUAI POSISI SOAL SETELAH ACAK.
-
-   Nomor asli Bank Soal tidak ditampilkan.
-*/
-
-const nomorTampil =
-    index + 1;
+    const nomorTampil =
+        index + 1;
 
 
-document.getElementById(
-    "questionLabel"
-).textContent =
-    "Soal " +
-    nomorTampil;
+    document.getElementById(
+        "questionLabel"
+    ).textContent =
+        "Soal " +
+        nomorTampil;
+
 
     document.getElementById(
         "questionType"
@@ -4476,10 +4603,6 @@ document.getElementById(
 
     let html = "";
 
-
-    /* =========================================
-       LITERASI
-    ========================================= */
 
     const literasi =
         cariLiterasiUntukSoalSiswa(
@@ -4544,10 +4667,6 @@ document.getElementById(
     }
 
 
-    /* =========================================
-       GAMBAR SOAL
-    ========================================= */
-
     const gambarSoal =
         soal.gambar_soal ||
         soal.gambar_url ||
@@ -4573,10 +4692,6 @@ document.getElementById(
     }
 
 
-    /* =========================================
-       PERTANYAAN
-    ========================================= */
-
     html += `
 
         <div class="question-text">
@@ -4590,10 +4705,6 @@ document.getElementById(
 
     `;
 
-
-    /* =========================================
-       PILIHAN
-    ========================================= */
 
     const tipe =
         String(
@@ -5268,11 +5379,6 @@ async function kirimUjian(
     }
 
 
-    /*
-       Jangan langsung mengunci permanen sebelum
-       pengecekan database selesai.
-    */
-
     sudahDikirim = true;
 
 
@@ -5286,15 +5392,6 @@ async function kirimUjian(
 
 
     try{
-
-        /*
-           =================================================
-           PENGECEKAN TERAKHIR SEBELUM SIMPAN
-           =================================================
-
-           Ini penting agar siswa tidak bisa mempunyai
-           dua hasil walaupun membuka dua tab / perangkat.
-        */
 
         const cekTerakhir =
             await cekSudahUjian(
@@ -5358,10 +5455,6 @@ async function kirimUjian(
 
         let totalBobotBenar = 0;
 
-
-        /* =========================================
-           HITUNG NILAI
-        ========================================= */
 
         semuaSoal.forEach(
             soal => {
@@ -5451,10 +5544,6 @@ async function kirimUjian(
         );
 
 
-        /* =========================================
-           HITUNG NILAI
-        ========================================= */
-
         let nilai = 0;
 
 
@@ -5517,10 +5606,6 @@ async function kirimUjian(
             ) / 100;
 
 
-        /* =========================================
-           NORMALISASI NISN
-        ========================================= */
-
         const nisnSiswa =
             String(
                 siswaAktif?.nisn ||
@@ -5539,10 +5624,6 @@ async function kirimUjian(
 
         }
 
-
-        /* =========================================
-           DATA HASIL
-        ========================================= */
 
         const dataHasil = {
 
@@ -5593,10 +5674,6 @@ async function kirimUjian(
         };
 
 
-        /* =========================================
-           SIMPAN HASIL
-        ========================================= */
-
         const result =
             await supabaseClient
             .from("hasil_ujian")
@@ -5606,14 +5683,6 @@ async function kirimUjian(
 
 
         if(result.error){
-
-            /*
-               23505 =
-               duplicate unique constraint.
-
-               Jika Admin sudah membuat unique index,
-               dua submit bersamaan akan ditolak database.
-            */
 
             if(
                 result.error.code ===
@@ -5632,10 +5701,6 @@ async function kirimUjian(
 
         }
 
-
-        /* =========================================
-           KELUAR FULLSCREEN
-        ========================================= */
 
         await keluarFullscreen();
 
@@ -5879,7 +5944,7 @@ document.addEventListener(
 
 
 /* =====================================================
-   VERIFIKASI TOKEN SAAT KELUAR FULLSCREEN
+   VERIFIKASI TOKEN FULLSCREEN
 ===================================================== */
 
 async function verifikasiTokenKeluar(){
@@ -5897,11 +5962,17 @@ async function verifikasiTokenKeluar(){
         );
 
 
-    const token =
-        input.value.trim();
+    /*
+       TOKEN FULLSCREEN JUGA DINORMALISASI
+    */
+
+    const tokenInput =
+        normalisasiToken(
+            input.value
+        );
 
 
-    if(!token){
+    if(!tokenInput){
 
         alert(
             "Masukkan token ujian."
@@ -5914,32 +5985,51 @@ async function verifikasiTokenKeluar(){
     }
 
 
+    const tombol =
+        document.querySelector(
+            ".fullscreen-btn"
+        );
+
+
+    const teksTombol =
+        tombol
+        ? tombol.textContent
+        : "";
+
+
+    if(tombol){
+
+        tombol.disabled = true;
+
+        tombol.textContent =
+            "Memverifikasi...";
+
+    }
+
+
     try{
 
-        const result =
-            await supabaseClient
-            .from("ujian")
-            .select(
-                "id,token,status,status_kontrol,tanggal_mulai,tanggal_selesai"
-            )
-            .eq(
-                "id",
+        /*
+           AMBIL DATA TOKEN TERBARU
+        */
+
+        const dataUjian =
+            await ambilUjianTerbaru(
                 ujianAktif.id
-            )
-            .maybeSingle();
+            );
 
 
-        if(result.error){
+        const tokenDatabase =
+            normalisasiToken(
+                dataUjian.token
+            );
 
-            throw result.error;
 
-        }
-
-
-        if(!result.data){
+        if(!tokenDatabase){
 
             alert(
-                "Ujian tidak ditemukan."
+                "Token ujian tidak tersedia.\n\n" +
+                "Hubungi Guru/Admin."
             );
 
             return;
@@ -5948,11 +6038,8 @@ async function verifikasiTokenKeluar(){
 
 
         if(
-            String(
-                result.data.token ||
-                ""
-            ).trim() !==
-            token
+            tokenDatabase !==
+            tokenInput
         ){
 
             alert(
@@ -5966,11 +6053,16 @@ async function verifikasiTokenKeluar(){
         }
 
 
+        /*
+           Token benar.
+           Cek status terbaru.
+        */
+
         const status =
             statusUjian(
                 {
                     ...ujianAktif,
-                    ...result.data
+                    ...dataUjian
                 }
             );
 
@@ -5987,6 +6079,22 @@ async function verifikasiTokenKeluar(){
         }
 
 
+        /*
+           Update data ujian aktif dengan
+           data terbaru dari database.
+        */
+
+        ujianAktif =
+            {
+                ...ujianAktif,
+                ...dataUjian
+            };
+
+
+        tokenUjianAktif =
+            tokenDatabase;
+
+
         input.value = "";
 
 
@@ -5996,13 +6104,30 @@ async function verifikasiTokenKeluar(){
     }catch(error){
 
         console.error(
+            "FULLSCREEN TOKEN ERROR:",
             error
         );
 
+
         alert(
             "Gagal memverifikasi token:\n\n" +
-            error.message
+            (
+                error.message ||
+                "Terjadi kesalahan."
+            )
         );
+
+    }finally{
+
+        if(tombol){
+
+            tombol.disabled = false;
+
+            tombol.textContent =
+                teksTombol ||
+                "🔐 Verifikasi & Kembali ke Ujian";
+
+        }
 
     }
 
@@ -6023,11 +6148,6 @@ function cariLiterasiUntukSoalSiswa(
 
     }
 
-
-    /* =========================================
-       PRIORITAS 1:
-       literasi_id
-    ========================================= */
 
     if(
         soal.literasi_id
@@ -6090,14 +6210,6 @@ function cariLiterasiUntukSoalSiswa(
     }
 
 
-    /* =========================================
-       PRIORITAS 2:
-       RANGE MODERN
-
-       NOMOR SOAL ASLI DIGUNAKAN DI SINI.
-       Jadi pengacakan tidak merusak literasi.
-    ========================================= */
-
     const nomor =
         Number(
             soal.nomor
@@ -6156,11 +6268,6 @@ function cariLiterasiUntukSoalSiswa(
 
     }
 
-
-    /* =========================================
-       PRIORITAS 3:
-       TEKS TERTAUT
-    ========================================= */
 
     if(
         soal.teks_tertaut
