@@ -562,6 +562,7 @@ tr:hover td{
     justify-content:flex-end;
     gap:10px;
     margin-top:22px;
+    flex-wrap:wrap;
 }
 
 .cancel{
@@ -581,6 +582,86 @@ tr:hover td{
     line-height:1.6;
     padding:30px;
 }
+
+
+/* =====================================================
+   MODAL TEMPEL NAMA SISWA
+===================================================== */
+
+.tempel-textarea{
+    width:100%;
+    min-height:250px;
+    resize:vertical;
+    padding:12px;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    outline:none;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:13px;
+    line-height:1.6;
+}
+
+.tempel-textarea:focus{
+    border-color:#0ea5e9;
+}
+
+.hasil-tempel{
+    margin-top:12px;
+    display:none;
+    padding:12px;
+    border-radius:9px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    font-size:12px;
+    line-height:1.6;
+}
+
+.hasil-cocok{
+    padding:10px;
+    background:#dcfce7;
+    color:#166534;
+    border-radius:8px;
+    margin-bottom:10px;
+}
+
+.hasil-tidak-cocok{
+    padding:10px;
+    background:#fee2e2;
+    color:#991b1b;
+    border-radius:8px;
+    margin-bottom:10px;
+}
+
+.hasil-daftar{
+    margin-top:8px;
+    padding-left:15px;
+    line-height:1.7;
+}
+
+.hasil-preview{
+    padding:10px;
+    background:#eff6ff;
+    color:#1e40af;
+    border-radius:8px;
+}
+
+.hasil-preview-list{
+    margin-top:7px;
+    max-height:150px;
+    overflow-y:auto;
+    padding-left:15px;
+}
+
+.btn-tempel{
+    background:#0ea5e9 !important;
+    color:white !important;
+}
+
+.btn-terapkan{
+    background:#16a34a !important;
+    color:white !important;
+}
+
 
 @media(max-width:800px){
 
@@ -633,6 +714,15 @@ tr:hover td{
         align-items:stretch;
         flex-direction:column;
     }
+
+    .siswa-header > div{
+        width:100%;
+    }
+
+    .siswa-header button{
+        flex:1;
+    }
+
 }
 </style>
 </head>
@@ -801,7 +891,7 @@ tr:hover td{
 
 
 <!-- =====================================================
-     MODAL
+     MODAL BUAT / EDIT UJIAN
 ===================================================== -->
 
 <div
@@ -932,22 +1022,13 @@ tr:hover td{
                             align-items:center;
                         ">
 
-                            <!-- FITUR BARU -->
+                            <!-- FITUR TEMPEL NAMA -->
                             <button
                                 type="button"
-                                onclick="salinNamaSiswa()"
-                                style="
-                                    border:none;
-                                    background:#0ea5e9;
-                                    color:white;
-                                    padding:7px 10px;
-                                    border-radius:7px;
-                                    cursor:pointer;
-                                    font-size:11px;
-                                    font-weight:bold;
-                                ">
+                                class="btn-tempel"
+                                onclick="bukaTempelNamaSiswa()">
 
-                                📋 Salin Nama Siswa
+                                📥 Tempel Nama Siswa
 
                             </button>
 
@@ -1124,6 +1205,99 @@ tr:hover td{
 </div>
 
 
+<!-- =====================================================
+     MODAL TEMPEL NAMA SISWA
+===================================================== -->
+
+<div
+    class="modal"
+    id="modalTempelSiswa">
+
+    <div
+        class="modal-box"
+        style="max-width:650px;">
+
+        <h2>
+            📥 Tempel Nama Siswa
+        </h2>
+
+        <div class="info">
+
+            Tempel daftar nama siswa di bawah ini.
+
+            <br><br>
+
+            <strong>Aturan:</strong>
+            satu nama per baris.
+            Nomor, tanda bullet, dan emoji akan dibersihkan otomatis.
+
+            <br><br>
+
+            <strong>Penting:</strong>
+            nama akan dicocokkan dengan data siswa
+            yang sudah ada di database pada kelas yang dipilih.
+
+        </div>
+
+
+        <textarea
+            id="tempelNamaSiswa"
+            class="tempel-textarea"
+            placeholder="Contoh:
+
+1. ABDUL RASYID HAYKAL
+2. FAOSTINUS HALAWA
+3. KHOLILAH AULIA ILMI WASDIANTO
+4. FANNY AZHARARI PILIANG
+5. JUWITA MAHARANI SIMAMORA"></textarea>
+
+
+        <div
+            id="hasilTempelSiswa"
+            class="hasil-tempel">
+        </div>
+
+
+        <div class="modal-buttons">
+
+            <button
+                class="btn cancel"
+                type="button"
+                onclick="tutupTempelNamaSiswa()">
+
+                Batal
+
+            </button>
+
+
+            <button
+                class="btn btn-tempel"
+                type="button"
+                onclick="prosesTempelNamaSiswa()">
+
+                🔎 Cocokkan Nama
+
+            </button>
+
+
+            <button
+                class="btn btn-terapkan"
+                type="button"
+                id="btnTerapkanNamaSiswa"
+                onclick="terapkanNamaSiswa()"
+                style="display:none;">
+
+                ✅ Terapkan Peserta
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
 <script>
 
 /* =====================================================
@@ -1208,6 +1382,15 @@ let editId = null;
 
 
 /* =====================================================
+   DATA TEMPel NAMA
+===================================================== */
+
+let hasilNamaSiswaCocok = [];
+
+let hasilNamaSiswaTidakCocok = [];
+
+
+/* =====================================================
    PESAN
 ===================================================== */
 
@@ -1224,7 +1407,9 @@ function showMessage(text,type){
     setTimeout(()=>{
 
         message.textContent = "";
-        message.className = "message";
+
+        message.className =
+            "message";
 
     },4000);
 
@@ -1369,12 +1554,9 @@ async function loadSemuaData(){
 
             /* =========================================
                SISWA
-               
+
                PENTING:
-               TIDAK menggunakan:
-               kelas(...)
-               atau kelas_id
-               
+               TIDAK menggunakan kelas(...)
                karena siswa menyimpan kelas
                langsung di kolom siswa.kelas.
             ========================================= */
@@ -1705,6 +1887,7 @@ function updateSelectedInfo(){
             'input[name="kelasMulti"]:checked'
         );
 
+
     const info =
         document.getElementById(
             "selectedInfo"
@@ -1747,6 +1930,7 @@ function updateSelectedInfo(){
         checked.length +
         " kelas dipilih: " +
         namaKelas.join(", ");
+
 
     info.style.color =
         "#166534";
@@ -1794,12 +1978,16 @@ function tampilkanSiswaBerdasarkanKelas(){
         selectedSiswaIds =
             new Set();
 
+
         container.innerHTML = `
             <div class="siswa-empty">
+
                 🏫 Pilih kelas terlebih dahulu
                 untuk menampilkan siswa.
+
             </div>
         `;
+
 
         updateSiswaSelectedInfo();
 
@@ -1826,16 +2014,6 @@ function tampilkanSiswaBerdasarkanKelas(){
         );
 
 
-    /*
-       SISWA MENGGUNAKAN:
-       siswa.kelas
-
-       Contoh:
-       siswa.kelas = "9G"
-
-       kelas.nama_kelas = "9G"
-    */
-
     siswaTampil =
         semuaSiswa.filter(siswa=>{
 
@@ -1852,12 +2030,6 @@ function tampilkanSiswaBerdasarkanKelas(){
 
         });
 
-
-    /*
-       Hapus pilihan siswa yang
-       sekarang tidak lagi berada
-       pada kelas terpilih.
-    */
 
     const idSiswaTampil =
         new Set(
@@ -1911,6 +2083,7 @@ function renderSiswaList(){
 
             </div>
         `;
+
 
         updateSiswaSelectedInfo();
 
@@ -1972,6 +2145,7 @@ function renderSiswaList(){
 
             </div>
         `;
+
 
         updateSiswaSelectedInfo();
 
@@ -2151,17 +2325,244 @@ function filterSiswa(){
 
 
 /* =====================================================
-   SALIN NAMA SISWA
-   HANYA NAMA
-   SATU NAMA SATU BARIS
+   NORMALISASI NAMA SISWA
 ===================================================== */
 
-async function salinNamaSiswa(){
+function normalisasiNamaSiswa(value){
 
-    if(!siswaTampil.length){
+    return String(value || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(
+            /[\u0300-\u036f]/g,
+            ""
+        )
+        .replace(
+            /[^a-z0-9]/g,
+            ""
+        )
+        .trim();
+
+}
+
+
+/* =====================================================
+   BERSIHKAN SATU BARIS NAMA
+===================================================== */
+
+function bersihkanSatuNama(value){
+
+    let nama =
+        String(value || "")
+        .trim();
+
+
+    if(!nama)
+        return "";
+
+
+    /*
+       Hapus bullet dan simbol daftar
+       di awal nama.
+    */
+
+    nama =
+        nama.replace(
+            /^[\s•*·▪◦●○◆◇►▸\-–—]+/,
+            ""
+        )
+        .trim();
+
+
+    /*
+       Hapus nomor di awal.
+       Contoh:
+       1. Ahmad
+       2) Ahmad
+       3 Ahmad
+       4.Ahmad
+    */
+
+    nama =
+        nama.replace(
+            /^\d+\s*[\.\)\-:]\s*/,
+            ""
+        )
+        .trim();
+
+
+    /*
+       Hapus emoji.
+    */
+
+    try{
+
+        nama =
+            nama.replace(
+                /[\p{Extended_Pictographic}\p{Emoji_Presentation}]/gu,
+                ""
+            )
+            .trim();
+
+    }catch(error){
+
+        /*
+           Fallback browser lama.
+        */
+
+        nama =
+            nama.replace(
+                /[\u{1F300}-\u{1FAFF}]/gu,
+                ""
+            )
+            .trim();
+
+    }
+
+
+    /*
+       Bersihkan spasi berlebihan.
+    */
+
+    nama =
+        nama.replace(
+            /\s+/g,
+            " "
+        )
+        .trim();
+
+
+    return nama;
+
+}
+
+
+/* =====================================================
+   AMBIL DAFTAR NAMA DARI TEKS
+===================================================== */
+
+function ambilDaftarNamaDariTeks(teks){
+
+    if(!teks)
+        return [];
+
+
+    /*
+       Normalisasi line break.
+    */
+
+    teks =
+        String(teks)
+        .replace(
+            /\r\n/g,
+            "\n"
+        )
+        .replace(
+            /\r/g,
+            "\n"
+        );
+
+
+    /*
+       Menangani kasus:
+       Indah14. Alif azka
+
+       menjadi:
+       Indah
+       Alif azka
+    */
+
+    teks =
+        teks.replace(
+            /([A-Za-zÀ-ÿ])\s+(\d+)\s*[\.\)]\s*/g,
+            "$1\n"
+        );
+
+
+    const baris =
+        teks.split("\n");
+
+
+    const hasil = [];
+
+
+    baris.forEach(baris=>{
+
+        let nama =
+            bersihkanSatuNama(
+                baris
+            );
+
+
+        if(!nama)
+            return;
+
+
+        /*
+           Hapus nomor yang mungkin
+           masih menempel di depan.
+        */
+
+        nama =
+            nama.replace(
+                /^\d+\s*/,
+                ""
+            )
+            .trim();
+
+
+        if(nama)
+            hasil.push(nama);
+
+    });
+
+
+    /*
+       Hilangkan nama duplikat.
+    */
+
+    const sudahAda =
+        new Set();
+
+
+    return hasil.filter(nama=>{
+
+        const key =
+            normalisasiNamaSiswa(
+                nama
+            );
+
+
+        if(!key)
+            return false;
+
+
+        if(sudahAda.has(key))
+            return false;
+
+
+        sudahAda.add(key);
+
+        return true;
+
+    });
+
+}
+
+
+/* =====================================================
+   BUKA MODAL TEMPEL NAMA
+===================================================== */
+
+function bukaTempelNamaSiswa(){
+
+    const selectedKelasIds =
+        getSelectedKelas();
+
+
+    if(!selectedKelasIds.length){
 
         alert(
-            "Belum ada siswa yang tampil.\n\n" +
             "Pilih kelas terlebih dahulu."
         );
 
@@ -2170,69 +2571,71 @@ async function salinNamaSiswa(){
     }
 
 
-    /*
-       Ambil kata pencarian yang sedang
-       digunakan pada kotak pencarian.
-    */
+    document.getElementById(
+        "tempelNamaSiswa"
+    ).value = "";
 
-    const keyword =
+
+    document.getElementById(
+        "hasilTempelSiswa"
+    ).innerHTML = "";
+
+
+    document.getElementById(
+        "hasilTempelSiswa"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "btnTerapkanNamaSiswa"
+    ).style.display =
+        "none";
+
+
+    hasilNamaSiswaCocok = [];
+
+    hasilNamaSiswaTidakCocok = [];
+
+
+    document.getElementById(
+        "modalTempelSiswa"
+    ).style.display =
+        "flex";
+
+}
+
+
+/* =====================================================
+   TUTUP MODAL TEMPEL
+===================================================== */
+
+function tutupTempelNamaSiswa(){
+
+    document.getElementById(
+        "modalTempelSiswa"
+    ).style.display =
+        "none";
+
+}
+
+
+/* =====================================================
+   PROSES TEMPEL DAN COCOKKAN
+===================================================== */
+
+function prosesTempelNamaSiswa(){
+
+    const teks =
         document.getElementById(
-            "siswaSearch"
-        ).value
-        .toLowerCase()
-        .trim();
+            "tempelNamaSiswa"
+        ).value;
 
 
-    /*
-       Sama persis dengan filter
-       yang digunakan renderSiswaList().
-       
-       Jadi kalau sedang mencari
-       "Ahmad", hanya nama siswa
-       yang tampil berdasarkan pencarian
-       yang akan disalin.
-    */
-
-    const hasil =
-        siswaTampil.filter(
-            siswa=>{
-
-                if(!keyword)
-                    return true;
-
-
-                const nama =
-                    String(
-                        siswa.nama || ""
-                    ).toLowerCase();
-
-
-                const nisn =
-                    String(
-                        siswa.nisn || ""
-                    ).toLowerCase();
-
-
-                const kelas =
-                    String(
-                        siswa.kelas || ""
-                    ).toLowerCase();
-
-
-                return (
-                    nama.includes(keyword) ||
-                    nisn.includes(keyword) ||
-                    kelas.includes(keyword)
-                );
-
-            }
-        );
-
-
-    if(!hasil.length){
+    if(!teks.trim()){
 
         alert(
-            "Tidak ada siswa yang dapat disalin."
+            "Silakan paste daftar nama siswa terlebih dahulu."
         );
 
         return;
@@ -2240,34 +2643,16 @@ async function salinNamaSiswa(){
     }
 
 
-    /*
-       HANYA AMBIL NAMA.
-       Tidak mengambil:
-       - NISN
-       - kelas
-       - ID
-       - nomor urut
-       - checkbox
-    */
-
     const daftarNama =
-        hasil
-        .map(
-            siswa =>
-                String(
-                    siswa.nama || ""
-                ).trim()
-        )
-        .filter(
-            nama =>
-                nama !== ""
+        ambilDaftarNamaDariTeks(
+            teks
         );
 
 
     if(!daftarNama.length){
 
         alert(
-            "Tidak ada nama siswa yang dapat disalin."
+            "Tidak ada nama siswa yang dapat dibaca."
         );
 
         return;
@@ -2276,128 +2661,330 @@ async function salinNamaSiswa(){
 
 
     /*
-       SATU NAMA = SATU BARIS
+       Ambil kelas yang dipilih.
     */
 
-    const teks =
-        daftarNama.join("\n");
+    const selectedKelasIds =
+        getSelectedKelas();
 
 
-    try{
+    if(!selectedKelasIds.length){
 
-        /*
-           Cara utama untuk browser modern
-           seperti Chrome/Vercel HTTPS.
-        */
+        alert(
+            "Pilih kelas terlebih dahulu."
+        );
 
-        if(
-            navigator.clipboard &&
-            window.isSecureContext
-        ){
+        tutupTempelNamaSiswa();
 
-            await navigator.clipboard.writeText(
-                teks
-            );
+        return;
 
-        }
+    }
 
-        else{
 
-            /*
-               Fallback untuk browser yang
-               tidak menyediakan Clipboard API.
-            */
+    const selectedKelas =
+        semuaKelas.filter(
+            kelas =>
+                selectedKelasIds.includes(
+                    kelas.id
+                )
+        );
 
-            const textarea =
-                document.createElement(
-                    "textarea"
+
+    const namaKelasDipilih =
+        selectedKelas.map(
+            kelas =>
+                normalisasiKelas(
+                    kelas.nama_kelas
+                )
+        );
+
+
+    /*
+       Hanya siswa dari kelas terpilih
+       yang boleh dicocokkan.
+    */
+
+    const siswaDalamKelas =
+        semuaSiswa.filter(
+            siswa => {
+
+                const kelasSiswa =
+                    normalisasiKelas(
+                        siswa.kelas
+                    );
+
+
+                return namaKelasDipilih.includes(
+                    kelasSiswa
+                );
+
+            }
+        );
+
+
+    /*
+       Index berdasarkan nama.
+    */
+
+    const indexSiswa =
+        new Map();
+
+
+    siswaDalamKelas.forEach(
+        siswa => {
+
+            const key =
+                normalisasiNamaSiswa(
+                    siswa.nama
                 );
 
 
-            textarea.value =
-                teks;
+            if(key){
 
-
-            textarea.style.position =
-                "fixed";
-
-
-            textarea.style.left =
-                "-9999px";
-
-
-            textarea.style.top =
-                "0";
-
-
-            textarea.style.opacity =
-                "0";
-
-
-            document.body.appendChild(
-                textarea
-            );
-
-
-            textarea.focus();
-
-            textarea.select();
-
-
-            textarea.setSelectionRange(
-                0,
-                textarea.value.length
-            );
-
-
-            const berhasil =
-                document.execCommand(
-                    "copy"
-                );
-
-
-            textarea.remove();
-
-
-            if(!berhasil){
-
-                throw new Error(
-                    "Browser tidak mengizinkan penyalinan otomatis."
+                indexSiswa.set(
+                    key,
+                    siswa
                 );
 
             }
 
         }
+    );
 
 
-        showMessage(
-            "✅ " +
-            daftarNama.length +
-            " nama siswa berhasil disalin.",
-            "success"
+    hasilNamaSiswaCocok = [];
+
+    hasilNamaSiswaTidakCocok = [];
+
+
+    daftarNama.forEach(
+        nama => {
+
+            const key =
+                normalisasiNamaSiswa(
+                    nama
+                );
+
+
+            const siswa =
+                indexSiswa.get(
+                    key
+                );
+
+
+            if(siswa){
+
+                hasilNamaSiswaCocok.push({
+
+                    namaPaste:
+                        nama,
+
+                    siswa:
+                        siswa
+
+                });
+
+            }else{
+
+                hasilNamaSiswaTidakCocok.push(
+                    nama
+                );
+
+            }
+
+        }
+    );
+
+
+    tampilkanHasilTempelNamaSiswa();
+
+}
+
+
+/* =====================================================
+   TAMPILKAN HASIL TEMPEL
+===================================================== */
+
+function tampilkanHasilTempelNamaSiswa(){
+
+    const box =
+        document.getElementById(
+            "hasilTempelSiswa"
         );
 
 
-    }catch(error){
-
-        console.error(
-            "ERROR COPY NAMA SISWA:",
-            error
-        );
+    const jumlahCocok =
+        hasilNamaSiswaCocok.length;
 
 
-        /*
-           Fallback terakhir:
-           tampilkan nama agar tetap
-           dapat disalin secara manual.
-        */
+    const jumlahTidakCocok =
+        hasilNamaSiswaTidakCocok.length;
 
-        window.prompt(
-            "Salin nama siswa berikut:",
-            teks
-        );
+
+    let html = `
+
+        <div class="hasil-cocok">
+
+            ✅ <strong>
+                ${jumlahCocok}
+            </strong>
+            nama ditemukan dalam database.
+
+        </div>
+
+    `;
+
+
+    if(jumlahTidakCocok){
+
+        html += `
+
+            <div class="hasil-tidak-cocok">
+
+                ⚠️ <strong>
+                    ${jumlahTidakCocok}
+                </strong>
+                nama tidak ditemukan.
+
+                <div class="hasil-daftar">
+
+                    ${
+                        hasilNamaSiswaTidakCocok
+                        .map(
+                            nama =>
+                                "• " +
+                                escapeHtml(
+                                    nama
+                                )
+                        )
+                        .join("<br>")
+                    }
+
+                </div>
+
+            </div>
+
+        `;
 
     }
+
+
+    if(jumlahCocok){
+
+        html += `
+
+            <div class="hasil-preview">
+
+                <strong>
+                    Siswa yang akan dipilih:
+                </strong>
+
+                <div class="hasil-preview-list">
+
+                    ${
+                        hasilNamaSiswaCocok
+                        .map(
+                            item =>
+                                "• " +
+                                escapeHtml(
+                                    item.siswa.nama
+                                )
+                        )
+                        .join("<br>")
+                    }
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    box.innerHTML =
+        html;
+
+
+    box.style.display =
+        "block";
+
+
+    document.getElementById(
+        "btnTerapkanNamaSiswa"
+    ).style.display =
+        jumlahCocok
+        ? "inline-block"
+        : "none";
+
+}
+
+
+/* =====================================================
+   TERAPKAN NAMA SISWA
+===================================================== */
+
+function terapkanNamaSiswa(){
+
+    if(!hasilNamaSiswaCocok.length){
+
+        alert(
+            "Tidak ada nama siswa yang cocok."
+        );
+
+        return;
+
+    }
+
+
+    let jumlahBaru = 0;
+
+
+    hasilNamaSiswaCocok.forEach(
+        item => {
+
+            const siswaId =
+                item.siswa.id;
+
+
+            if(
+                !selectedSiswaIds.has(
+                    siswaId
+                )
+            ){
+
+                selectedSiswaIds.add(
+                    siswaId
+                );
+
+                jumlahBaru++;
+
+            }
+
+        }
+    );
+
+
+    /*
+       Tampilkan checkbox yang sudah
+       terpilih.
+    */
+
+    renderSiswaList();
+
+
+    updateSiswaSelectedInfo();
+
+
+    tutupTempelNamaSiswa();
+
+
+    showMessage(
+        "✅ " +
+        jumlahBaru +
+        " siswa berhasil ditambahkan sebagai peserta.",
+        "success"
+    );
 
 }
 
@@ -2435,6 +3022,7 @@ function updateSiswaSelectedInfo(){
         "✅ " +
         jumlah +
         " siswa dipilih sebagai peserta ujian.";
+
 
     info.style.color =
         "#6d28d9";
@@ -2510,7 +3098,8 @@ function getKelasUntukUjian(
                 item.ujian_id === ujianId
         )
         .map(
-            item => item.kelas
+            item =>
+                item.kelas
         )
         .filter(Boolean);
 
@@ -2946,10 +3535,6 @@ async function editUjian(id){
     editId = id;
 
 
-    /* =========================================
-       KELAS
-    ========================================= */
-
     const kelasTerpilih =
         semuaUjianKelas
         .filter(
@@ -2961,10 +3546,6 @@ async function editUjian(id){
                 item.kelas_id
         );
 
-
-    /* =========================================
-       SISWA PESERTA
-    ========================================= */
 
     const pesertaTerpilih =
         semuaUjianSiswa
@@ -3337,11 +3918,6 @@ async function simpanUjian(){
 
             if(siswaError){
 
-                /*
-                   Hapus relasi kelas dan ujian
-                   apabila penyimpanan peserta gagal.
-                */
-
                 await supabaseClient
                 .from("ujian_kelas")
                 .delete()
@@ -3382,8 +3958,6 @@ async function simpanUjian(){
         ========================================= */
 
         else{
-
-            /* UPDATE DATA UJIAN */
 
             const {
                 error
@@ -3692,7 +4266,9 @@ function tutupModal(){
     ).style.display =
         "none";
 
+
     editId = null;
+
 
     selectedSiswaIds =
         new Set();
@@ -3857,6 +4433,24 @@ document
         ){
 
             tutupModal();
+
+        }
+
+    }
+);
+
+
+document
+.getElementById("modalTempelSiswa")
+.addEventListener(
+    "click",
+    function(e){
+
+        if(
+            e.target === this
+        ){
+
+            tutupTempelNamaSiswa();
 
         }
 
