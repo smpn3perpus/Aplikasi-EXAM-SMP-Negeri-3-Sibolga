@@ -854,8 +854,8 @@ tr:hover td{
 <header class="header">
 
     <div>
-        <h1>📚 BANK SOAL GURU</h1>
-        <p>RUANG EXAM — SMP Negeri 3 Sibolga • Bank Soal Guru (hanya ujian Anda)</p>
+        <h1>📚 BANK SOAL</h1>
+        <p>RUANG EXAM — SMP Negeri 3 Sibolga • Bank Soal</p>
     </div>
 
     <div class="header-buttons">
@@ -1789,6 +1789,7 @@ const supabaseClient =
 
 let currentUser = null;
 let guruId = null;
+let adminMode = false;
 
 (function cekLoginGuru(){
 
@@ -1824,15 +1825,17 @@ let guruId = null;
         currentUser.idGuru ||
         null;
 
-    // Halaman guru menggunakan identitas guru, bukan pemeriksaan role.
-    if(!guruId){
-        console.error("Bank Soal Guru: guru_id tidak ditemukan.", currentUser);
-        alert("Akun guru tidak memiliki ID guru yang valid. Silakan login kembali.");
-        window.location.replace("guru.html");
-        return;
-    }
+    /*
+       TIDAK menggunakan role.
+       Jika sesi mempunyai guru_id, halaman bekerja sebagai Guru dan
+       hanya menampilkan ujian milik guru tersebut.
+       Jika sesi tidak mempunyai guru_id, halaman dianggap sebagai Admin
+       sehingga tidak dipaksa mempunyai guru_id.
+    */
+    adminMode = !guruId;
 
     console.log("Bank Soal — guruId:", guruId);
+    console.log("Bank Soal — adminMode:", adminMode);
 
 })();
 
@@ -1915,16 +1918,8 @@ async function loadSemuaData(){
 
     try{
 
-        if(!guruId){
-
-            throw new Error(
-                "ID guru tidak ditemukan pada sesi login."
-            );
-
-        }
-
-        const {data,error} =
-            await supabaseClient
+        let query =
+            supabaseClient
             .from("ujian")
             .select(`
                 id,
@@ -1951,8 +1946,15 @@ async function loadSemuaData(){
                     nama,
                     nip
                 )
-            `)
-            .eq("guru_id",guruId)
+            `);
+
+        // Guru: hanya ujian miliknya. Admin: semua ujian.
+        if(guruId && !adminMode){
+            query = query.eq("guru_id",guruId);
+        }
+
+        const {data,error} =
+            await query
             .order("created_at",{ascending:false});
 
         if(error) throw error;
@@ -2811,8 +2813,8 @@ function editSoal(id){
         return;
     }
 
-    if(!ujianTerpilih || String(ujianTerpilih.guru_id) !== String(guruId) || String(soal.ujian_id) !== String(ujianTerpilih.id)){
-        alert("Anda hanya dapat mengedit soal dari ujian yang dibuat oleh Anda sendiri.");
+    if(!adminMode && (!ujianTerpilih || String(ujianTerpilih.guru_id) !== String(guruId) || String(soal.ujian_id) !== String(ujianTerpilih.id))){
+        alert("Anda hanya dapat mengedit soal dari ujian milik Anda sendiri.");
         return;
     }
 
@@ -3074,8 +3076,10 @@ async function uploadGambar(file,jenis){
         .toString(36)
         .substring(2,10)}.${extension}`;
 
+    const folderPengguna = guruId || "admin";
+
     const path =
-        `${guruId}/${jenis}/${namaFile}`;
+        `${folderPengguna}/${jenis}/${namaFile}`;
 
     const {error} =
         await supabaseClient
@@ -3503,7 +3507,7 @@ async function hapusSoal(id){
 
     if(!soal) return;
 
-    if(!ujianTerpilih || String(ujianTerpilih.guru_id) !== String(guruId) || String(soal.ujian_id) !== String(ujianTerpilih.id)){
+    if(!adminMode && (!ujianTerpilih || String(ujianTerpilih.guru_id) !== String(guruId) || String(soal.ujian_id) !== String(ujianTerpilih.id))){
         alert("Akses ditolak. Anda hanya dapat menghapus soal dari ujian milik Anda sendiri.");
         return;
     }
@@ -3970,7 +3974,7 @@ async function simpanLiterasi(){
         return;
     }
 
-    if(String(ujianTerpilih.guru_id) !== String(guruId)){
+    if(!adminMode && String(ujianTerpilih.guru_id) !== String(guruId)){
         alert("Akses ditolak. Literasi hanya dapat dibuat atau diubah pada ujian milik Anda sendiri.");
         return;
     }
@@ -4208,7 +4212,7 @@ async function hapusLiterasi(id){
 
     if(!literasi) return;
 
-    if(!ujianTerpilih || String(ujianTerpilih.guru_id) !== String(guruId) || String(literasi.ujian_id) !== String(ujianTerpilih.id)){
+    if(!adminMode && (!ujianTerpilih || String(ujianTerpilih.guru_id) !== String(guruId) || String(literasi.ujian_id) !== String(ujianTerpilih.id))){
         alert("Akses ditolak. Anda hanya dapat menghapus literasi dari ujian milik Anda sendiri.");
         return;
     }
@@ -4954,10 +4958,10 @@ document
    LOAD AWAL
 ===================================================== */
 
-if(currentUser && guruId){
+if(currentUser){
     loadSemuaData();
 }else{
-    console.warn("Bank Soal tidak memuat data karena sesi Guru belum valid.");
+    console.warn("Bank Soal tidak memuat data karena sesi login belum valid.");
 }
 
 
