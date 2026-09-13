@@ -1,0 +1,2821 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>Rapor PTS - RUANG EXAM</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f1f5f9;
+    color:#0f172a;
+    min-height:100vh;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.header{
+    background:linear-gradient(
+        135deg,
+        #14532d,
+        #15803d,
+        #16a34a
+    );
+
+    color:white;
+
+    padding:20px 30px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    flex-wrap:wrap;
+
+    box-shadow:
+        0 5px 20px rgba(0,0,0,.18);
+}
+
+.header-title h1{
+    font-size:25px;
+    margin-bottom:5px;
+}
+
+.header-title p{
+    font-size:13px;
+    opacity:.9;
+}
+
+.header-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    border:none;
+    border-radius:9px;
+    padding:10px 15px;
+    cursor:pointer;
+    font-weight:bold;
+    font-size:13px;
+}
+
+.btn-back{
+    background:white;
+    color:#166534;
+}
+
+.btn-back:hover{
+    background:#dcfce7;
+}
+
+.btn-print{
+    background:#2563eb;
+    color:white;
+}
+
+.btn-print:hover{
+    background:#1d4ed8;
+}
+
+/* =====================================================
+   CONTAINER
+===================================================== */
+
+.container{
+    max-width:1250px;
+    margin:28px auto;
+    padding:0 20px;
+}
+
+/* =====================================================
+   PANEL
+===================================================== */
+
+.panel{
+    background:white;
+    border-radius:18px;
+    padding:23px;
+    margin-bottom:20px;
+
+    box-shadow:
+        0 4px 18px rgba(15,23,42,.07);
+}
+
+.panel-title{
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+.panel-subtitle{
+    color:#64748b;
+    font-size:13px;
+    margin-bottom:20px;
+}
+
+/* =====================================================
+   FORM
+===================================================== */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:15px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.form-group label{
+    font-size:13px;
+    font-weight:bold;
+    color:#334155;
+}
+
+.form-group input,
+.form-group select{
+    width:100%;
+    height:43px;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:9px;
+
+    padding:0 12px;
+
+    font-size:14px;
+
+    outline:none;
+
+    background:white;
+}
+
+.form-group input:focus,
+.form-group select:focus{
+    border-color:#16a34a;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(22,163,74,.10);
+}
+
+/* =====================================================
+   ACTION BAR
+===================================================== */
+
+.action-bar{
+    margin-top:20px;
+
+    display:flex;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+}
+
+.btn-save{
+    background:#16a34a;
+    color:white;
+}
+
+.btn-save:hover{
+    background:#15803d;
+}
+
+.btn-preview{
+    background:#7c3aed;
+    color:white;
+}
+
+.btn-preview:hover{
+    background:#6d28d9;
+}
+
+.btn-clear{
+    background:#64748b;
+    color:white;
+}
+
+.btn-clear:hover{
+    background:#475569;
+}
+
+/* =====================================================
+   INFO SISWA
+===================================================== */
+
+.student-info{
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:12px;
+
+    margin-top:20px;
+}
+
+.info-box{
+    background:#f8fafc;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:10px;
+
+    padding:13px;
+}
+
+.info-box small{
+    display:block;
+
+    color:#64748b;
+
+    font-size:11px;
+
+    margin-bottom:4px;
+}
+
+.info-box strong{
+    font-size:14px;
+}
+
+/* =====================================================
+   TABLE
+===================================================== */
+
+.table-wrapper{
+    width:100%;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:850px;
+}
+
+thead th{
+    background:#166534;
+    color:white;
+
+    padding:12px 10px;
+
+    font-size:12px;
+
+    border:1px solid #14532d;
+}
+
+tbody td{
+    padding:10px;
+
+    border:1px solid #e2e8f0;
+
+    font-size:13px;
+
+    vertical-align:middle;
+}
+
+tbody tr:nth-child(even){
+    background:#f8fafc;
+}
+
+tbody tr:hover{
+    background:#f0fdf4;
+}
+
+.nomor{
+    width:55px;
+    text-align:center;
+}
+
+.nilai-input{
+    width:100px;
+
+    height:38px;
+
+    border:
+        1px solid #cbd5e1;
+
+    border-radius:7px;
+
+    padding:0 10px;
+
+    text-align:center;
+
+    font-weight:bold;
+
+    font-size:14px;
+}
+
+.nilai-input:focus{
+    outline:none;
+
+    border-color:#16a34a;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(22,163,74,.10);
+}
+
+.predikat{
+    display:inline-flex;
+
+    min-width:38px;
+
+    justify-content:center;
+
+    padding:5px 9px;
+
+    border-radius:6px;
+
+    font-weight:bold;
+
+    background:#dcfce7;
+
+    color:#166534;
+}
+
+.keterangan{
+    color:#475569;
+}
+
+/* =====================================================
+   EMPTY
+===================================================== */
+
+.empty{
+    padding:40px 20px;
+
+    text-align:center;
+
+    color:#64748b;
+}
+
+.empty-icon{
+    font-size:42px;
+    margin-bottom:10px;
+}
+
+/* =====================================================
+   LOADING
+===================================================== */
+
+.loading{
+    padding:30px;
+
+    text-align:center;
+
+    color:#64748b;
+}
+
+/* =====================================================
+   ALERT
+===================================================== */
+
+.alert{
+    display:none;
+
+    padding:13px 15px;
+
+    border-radius:10px;
+
+    margin-bottom:18px;
+
+    font-size:13px;
+
+    line-height:1.5;
+}
+
+.alert.show{
+    display:block;
+}
+
+.alert.success{
+    background:#dcfce7;
+    color:#166534;
+    border:1px solid #86efac;
+}
+
+.alert.error{
+    background:#fee2e2;
+    color:#991b1b;
+    border:1px solid #fca5a5;
+}
+
+.alert.info{
+    background:#dbeafe;
+    color:#1e40af;
+    border:1px solid #93c5fd;
+}
+
+/* =====================================================
+   PREVIEW
+===================================================== */
+
+.preview{
+    display:none;
+}
+
+.preview.show{
+    display:block;
+}
+
+.preview-paper{
+    background:white;
+
+    width:100%;
+
+    max-width:900px;
+
+    margin:auto;
+
+    padding:45px;
+
+    border:
+        1px solid #d1d5db;
+
+    box-shadow:
+        0 5px 20px rgba(0,0,0,.08);
+}
+
+.school-header{
+    text-align:center;
+
+    border-bottom:
+        3px double #111827;
+
+    padding-bottom:15px;
+
+    margin-bottom:18px;
+}
+
+.school-header h1{
+    font-size:20px;
+    margin-bottom:4px;
+}
+
+.school-header h2{
+    font-size:18px;
+    margin-bottom:5px;
+}
+
+.school-header p{
+    font-size:12px;
+}
+
+.report-title{
+    text-align:center;
+
+    font-weight:bold;
+
+    font-size:17px;
+
+    margin:18px 0;
+}
+
+.identity-table{
+    width:100%;
+    min-width:0;
+
+    border:none;
+
+    margin-bottom:20px;
+}
+
+.identity-table td{
+    border:none;
+
+    padding:4px 0;
+
+    font-size:13px;
+}
+
+.identity-table td:nth-child(1){
+    width:110px;
+}
+
+.identity-table td:nth-child(3){
+    width:110px;
+}
+
+.identity-table td:nth-child(2){
+    width:auto;
+}
+
+.identity-table td:nth-child(4){
+    width:auto;
+}
+
+.preview-table{
+    width:100%;
+    min-width:0;
+
+    border-collapse:collapse;
+}
+
+.preview-table th,
+.preview-table td{
+    border:1px solid #111827;
+
+    padding:8px;
+
+    font-size:12px;
+}
+
+.preview-table th{
+    text-align:center;
+    background:#f1f5f9;
+}
+
+.preview-table .center{
+    text-align:center;
+}
+
+.signature{
+    margin-top:45px;
+
+    display:grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:40px;
+
+    font-size:13px;
+}
+
+.signature-box{
+    text-align:center;
+}
+
+.signature-space{
+    height:75px;
+}
+
+.preview-footer{
+    text-align:center;
+
+    margin-top:25px;
+
+    color:#64748b;
+
+    font-size:10px;
+}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer{
+    text-align:center;
+
+    color:#94a3b8;
+
+    font-size:12px;
+
+    line-height:1.6;
+
+    padding:30px 10px;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:1000px){
+
+    .form-grid{
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .student-info{
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:650px){
+
+    .header{
+        padding:18px;
+    }
+
+    .container{
+        padding:0 12px;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .student-info{
+        grid-template-columns:1fr;
+    }
+
+    .panel{
+        padding:17px;
+    }
+
+    .preview-paper{
+        padding:20px;
+    }
+
+    .signature{
+        grid-template-columns:1fr;
+    }
+
+}
+
+/* =====================================================
+   PRINT
+===================================================== */
+
+@media print{
+
+    body{
+        background:white;
+    }
+
+    .header,
+    .container > .panel,
+    .footer,
+    .alert{
+        display:none !important;
+    }
+
+    .container{
+        max-width:none;
+        margin:0;
+        padding:0;
+    }
+
+    .preview{
+        display:block !important;
+    }
+
+    .preview-paper{
+        border:none;
+        box-shadow:none;
+        max-width:none;
+        padding:0;
+    }
+
+    @page{
+        size:A4;
+        margin:15mm;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="header">
+
+    <div class="header-title">
+
+        <h1>
+            📋 RAPOR PTS
+        </h1>
+
+        <p>
+            RUANG EXAM — SMP Negeri 3 Sibolga
+        </p>
+
+    </div>
+
+    <div class="header-actions">
+
+        <button
+            class="btn btn-back"
+            onclick="kembaliAdmin()">
+
+            ← Dashboard Admin
+
+        </button>
+
+        <button
+            class="btn btn-print"
+            onclick="cetakRapor()">
+
+            🖨 Cetak Rapor
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- =====================================================
+     CONTENT
+===================================================== -->
+
+<main class="container">
+
+
+    <!-- ALERT -->
+
+    <div
+        id="alert"
+        class="alert">
+
+    </div>
+
+
+    <!-- =================================================
+         PENGATURAN RAPOR
+    ================================================== -->
+
+    <section class="panel">
+
+        <div class="panel-title">
+            Pengaturan Rapor PTS
+        </div>
+
+        <div class="panel-subtitle">
+            Pilih tahun pelajaran, semester, kelas,
+            dan peserta didik.
+        </div>
+
+
+        <div class="form-grid">
+
+
+            <!-- TAHUN -->
+
+            <div class="form-group">
+
+                <label>
+                    Tahun Pelajaran
+                </label>
+
+                <input
+                    type="text"
+                    id="tahunPelajaran"
+                    value="2026/2027"
+                    placeholder="Contoh: 2026/2027">
+
+            </div>
+
+
+            <!-- SEMESTER -->
+
+            <div class="form-group">
+
+                <label>
+                    Semester
+                </label>
+
+                <select id="semester">
+
+                    <option value="Ganjil">
+                        Ganjil
+                    </option>
+
+                    <option value="Genap">
+                        Genap
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- KELAS -->
+
+            <div class="form-group">
+
+                <label>
+                    Kelas
+                </label>
+
+                <select
+                    id="kelasSelect"
+                    onchange="pilihKelas()">
+
+                    <option value="">
+                        Memuat kelas...
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- SISWA -->
+
+            <div class="form-group">
+
+                <label>
+                    Peserta Didik
+                </label>
+
+                <select
+                    id="siswaSelect"
+                    onchange="pilihSiswa()"
+                    disabled>
+
+                    <option value="">
+                        Pilih kelas terlebih dahulu
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- INFO SISWA -->
+
+        <div
+            id="studentInfo"
+            class="student-info"
+            style="display:none;">
+
+            <div class="info-box">
+
+                <small>
+                    Nama Peserta Didik
+                </small>
+
+                <strong id="infoNama">
+                    -
+                </strong>
+
+            </div>
+
+            <div class="info-box">
+
+                <small>
+                    NISN
+                </small>
+
+                <strong id="infoNisn">
+                    -
+                </strong>
+
+            </div>
+
+            <div class="info-box">
+
+                <small>
+                    Kelas
+                </small>
+
+                <strong id="infoKelas">
+                    -
+                </strong>
+
+            </div>
+
+            <div class="info-box">
+
+                <small>
+                    Semester
+                </small>
+
+                <strong id="infoSemester">
+                    -
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTION -->
+
+        <div class="action-bar">
+
+            <button
+                class="btn btn-save"
+                onclick="simpanNilai()">
+
+                💾 Simpan Nilai PTS
+
+            </button>
+
+            <button
+                class="btn btn-preview"
+                onclick="buatPreview()">
+
+                👁 Preview Rapor
+
+            </button>
+
+            <button
+                class="btn btn-clear"
+                onclick="resetForm()">
+
+                ↻ Reset
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         NILAI
+    ================================================== -->
+
+    <section class="panel">
+
+        <div class="panel-title">
+            Nilai Penilaian Tengah Semester
+        </div>
+
+        <div class="panel-subtitle">
+            Masukkan nilai setiap mata pelajaran
+            dengan rentang 0–100.
+        </div>
+
+
+        <div
+            id="loadingNilai"
+            class="loading">
+
+            Pilih peserta didik untuk menampilkan
+            mata pelajaran.
+
+        </div>
+
+
+        <div
+            id="tableNilaiWrapper"
+            class="table-wrapper"
+            style="display:none;">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th class="nomor">
+                            No
+                        </th>
+
+                        <th>
+                            Mata Pelajaran
+                        </th>
+
+                        <th>
+                            Nilai PTS
+                        </th>
+
+                        <th>
+                            Predikat
+                        </th>
+
+                        <th>
+                            Keterangan
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="nilaiBody">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- =================================================
+         PREVIEW
+    ================================================== -->
+
+    <section
+        id="previewSection"
+        class="preview">
+
+        <div class="preview-paper">
+
+            <div class="school-header">
+
+                <h1>
+                    PEMERINTAH KOTA SIBOLGA
+                </h1>
+
+                <h2>
+                    SMP NEGERI 3 SIBOLGA
+                </h2>
+
+                <p>
+                    RAPOR PENILAIAN TENGAH SEMESTER
+                </p>
+
+            </div>
+
+
+            <div class="report-title">
+
+                LAPORAN HASIL PENILAIAN
+                TENGAH SEMESTER
+
+            </div>
+
+
+            <table class="identity-table">
+
+                <tr>
+
+                    <td>
+                        Nama
+                    </td>
+
+                    <td>
+                        :
+                        <span id="previewNama">
+                            -
+                        </span>
+                    </td>
+
+                    <td>
+                        Kelas
+                    </td>
+
+                    <td>
+                        :
+                        <span id="previewKelas">
+                            -
+                        </span>
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        NISN
+                    </td>
+
+                    <td>
+                        :
+                        <span id="previewNisn">
+                            -
+                        </span>
+                    </td>
+
+                    <td>
+                        Semester
+                    </td>
+
+                    <td>
+                        :
+                        <span id="previewSemester">
+                            -
+                        </span>
+                    </td>
+
+                </tr>
+
+
+                <tr>
+
+                    <td>
+                        Tahun Pelajaran
+                    </td>
+
+                    <td colspan="3">
+                        :
+                        <span id="previewTahun">
+                            -
+                        </span>
+                    </td>
+
+                </tr>
+
+            </table>
+
+
+            <table class="preview-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th style="width:50px;">
+                            No
+                        </th>
+
+                        <th>
+                            Mata Pelajaran
+                        </th>
+
+                        <th style="width:100px;">
+                            Nilai
+                        </th>
+
+                        <th style="width:100px;">
+                            Predikat
+                        </th>
+
+                        <th>
+                            Keterangan
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody
+                    id="previewBody">
+
+                </tbody>
+
+            </table>
+
+
+            <div class="signature">
+
+                <div class="signature-box">
+
+                    Mengetahui,<br>
+                    Kepala Sekolah
+
+                    <div class="signature-space"></div>
+
+                    <strong>
+                        ______________________________
+                    </strong>
+
+                    <br>
+
+                    NIP. ___________________________
+
+                </div>
+
+
+                <div class="signature-box">
+
+                    Sibolga, __________________ 2026<br>
+                    Wali Kelas
+
+                    <div class="signature-space"></div>
+
+                    <strong>
+                        ______________________________
+                    </strong>
+
+                    <br>
+
+                    NIP. ___________________________
+
+                </div>
+
+            </div>
+
+
+            <div class="preview-footer">
+
+                RUANG EXAM Online<br>
+
+                Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="footer">
+
+    RUANG EXAM Online<br>
+
+    Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+</footer>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE
+===================================================== */
+
+const SUPABASE_URL =
+    "https://sztfucrmjexoalyiwwnq.supabase.co";
+
+
+/*
+========================================================
+ GANTI HANYA NILAI DI BAWAH INI DENGAN ANON KEY
+ YANG SAMA DENGAN FILE RUANG EXAM ANDA.
+========================================================
+*/
+
+const SUPABASE_ANON_KEY =
+    "ISI_DENGAN_ANON_KEY_RUANG_EXAM_ANDA";
+
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+
+
+/* =====================================================
+   GLOBAL
+===================================================== */
+
+let semuaKelas = [];
+
+let semuaSiswa = [];
+
+let semuaMapel = [];
+
+let semuaNilai = [];
+
+let siswaTerpilih = null;
+
+
+/* =====================================================
+   CEK SESSION
+===================================================== */
+
+const sessionRaw =
+    localStorage.getItem("exam_user");
+
+
+if(!sessionRaw){
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================================
+   INIT
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function(){
+
+        await loadKelas();
+
+        await loadMataPelajaran();
+
+    }
+);
+
+
+/* =====================================================
+   ALERT
+===================================================== */
+
+function showAlert(
+    message,
+    type="info"
+){
+
+    const el =
+        document.getElementById("alert");
+
+    el.textContent =
+        message;
+
+    el.className =
+        "alert show " + type;
+
+    setTimeout(
+        function(){
+
+            el.className =
+                "alert";
+
+        },
+        4000
+    );
+
+}
+
+
+/* =====================================================
+   LOAD KELAS
+===================================================== */
+
+async function loadKelas(){
+
+    const select =
+        document.getElementById(
+            "kelasSelect"
+        );
+
+    select.innerHTML =
+        `<option value="">
+            Memuat kelas...
+        </option>`;
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("kelas")
+            .select("*")
+            .order(
+                "nama_kelas",
+                {
+                    ascending:true
+                }
+            );
+
+
+    if(error){
+
+        console.error(error);
+
+        select.innerHTML =
+            `<option value="">
+                Gagal memuat kelas
+            </option>`;
+
+        showAlert(
+            "Gagal mengambil data kelas: " +
+            error.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    semuaKelas =
+        data || [];
+
+
+    select.innerHTML =
+        `<option value="">
+            -- Pilih Kelas --
+        </option>`;
+
+
+    semuaKelas.forEach(
+        function(kelas){
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                kelas.id;
+
+            option.textContent =
+                kelas.nama_kelas ||
+                kelas.nama ||
+                "-";
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   LOAD MATA PELAJARAN
+===================================================== */
+
+async function loadMataPelajaran(){
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("mata_pelajaran")
+            .select("*");
+
+
+    if(error){
+
+        console.error(error);
+
+        showAlert(
+            "Gagal mengambil mata pelajaran: " +
+            error.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    semuaMapel =
+        data || [];
+
+
+    semuaMapel.sort(
+        function(a,b){
+
+            const namaA =
+                getNamaMapel(a)
+                    .toLowerCase();
+
+            const namaB =
+                getNamaMapel(b)
+                    .toLowerCase();
+
+            return namaA.localeCompare(
+                namaB,
+                "id"
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   NAMA MAPEL
+===================================================== */
+
+function getNamaMapel(mapel){
+
+    return (
+        mapel.nama_mata_pelajaran ||
+        mapel.nama_mapel ||
+        mapel.nama ||
+        mapel.mata_pelajaran ||
+        mapel.mapel ||
+        "-"
+    );
+
+}
+
+
+/* =====================================================
+   PILIH KELAS
+===================================================== */
+
+async function pilihKelas(){
+
+    const kelasId =
+        document.getElementById(
+            "kelasSelect"
+        ).value;
+
+
+    const siswaSelect =
+        document.getElementById(
+            "siswaSelect"
+        );
+
+
+    siswaSelect.innerHTML =
+        `<option value="">
+            Memuat siswa...
+        </option>`;
+
+
+    siswaSelect.disabled =
+        true;
+
+
+    document.getElementById(
+        "studentInfo"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "tableNilaiWrapper"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "loadingNilai"
+    ).style.display =
+        "block";
+
+
+    if(!kelasId){
+
+        siswaSelect.innerHTML =
+            `<option value="">
+                Pilih kelas terlebih dahulu
+            </option>`;
+
+        return;
+
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("siswa")
+            .select("*")
+            .eq(
+                "kelas_id",
+                kelasId
+            )
+            .order(
+                "nama",
+                {
+                    ascending:true
+                }
+            );
+
+
+    if(error){
+
+        console.error(error);
+
+        siswaSelect.innerHTML =
+            `<option value="">
+                Gagal memuat siswa
+            </option>`;
+
+        showAlert(
+            "Gagal mengambil data siswa: " +
+            error.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    semuaSiswa =
+        data || [];
+
+
+    siswaSelect.innerHTML =
+        `<option value="">
+            -- Pilih Peserta Didik --
+        </option>`;
+
+
+    semuaSiswa.forEach(
+        function(siswa){
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                siswa.id;
+
+            option.textContent =
+                (
+                    siswa.nama ||
+                    "-"
+                ) +
+                " — NISN " +
+                (
+                    siswa.nisn ||
+                    "-"
+                );
+
+            siswaSelect.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    siswaSelect.disabled =
+        false;
+
+
+    document.getElementById(
+        "loadingNilai"
+    ).textContent =
+        "Pilih peserta didik untuk menampilkan nilai.";
+
+}
+
+
+/* =====================================================
+   PILIH SISWA
+===================================================== */
+
+async function pilihSiswa(){
+
+    const siswaId =
+        document.getElementById(
+            "siswaSelect"
+        ).value;
+
+
+    if(!siswaId){
+
+        siswaTerpilih =
+            null;
+
+        document.getElementById(
+            "studentInfo"
+        ).style.display =
+            "none";
+
+        document.getElementById(
+            "tableNilaiWrapper"
+        ).style.display =
+            "none";
+
+        document.getElementById(
+            "loadingNilai"
+        ).style.display =
+            "block";
+
+        document.getElementById(
+            "loadingNilai"
+        ).textContent =
+            "Pilih peserta didik untuk menampilkan nilai.";
+
+        return;
+
+    }
+
+
+    siswaTerpilih =
+        semuaSiswa.find(
+            function(siswa){
+
+                return String(
+                    siswa.id
+                ) === String(
+                    siswaId
+                );
+
+            }
+        );
+
+
+    if(!siswaTerpilih){
+
+        showAlert(
+            "Data siswa tidak ditemukan.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    tampilkanInfoSiswa();
+
+    await loadNilaiSiswa();
+
+}
+
+
+/* =====================================================
+   INFO SISWA
+===================================================== */
+
+function tampilkanInfoSiswa(){
+
+    const kelasId =
+        siswaTerpilih.kelas_id;
+
+
+    const kelas =
+        semuaKelas.find(
+            function(item){
+
+                return String(
+                    item.id
+                ) === String(
+                    kelasId
+                );
+
+            }
+        );
+
+
+    document.getElementById(
+        "infoNama"
+    ).textContent =
+        siswaTerpilih.nama ||
+        "-";
+
+
+    document.getElementById(
+        "infoNisn"
+    ).textContent =
+        siswaTerpilih.nisn ||
+        "-";
+
+
+    document.getElementById(
+        "infoKelas"
+    ).textContent =
+        kelas
+            ? (
+                kelas.nama_kelas ||
+                kelas.nama ||
+                "-"
+            )
+            : "-";
+
+
+    document.getElementById(
+        "infoSemester"
+    ).textContent =
+        document.getElementById(
+            "semester"
+        ).value;
+
+
+    document.getElementById(
+        "studentInfo"
+    ).style.display =
+        "grid";
+
+}
+
+
+/* =====================================================
+   LOAD NILAI SISWA
+===================================================== */
+
+async function loadNilaiSiswa(){
+
+    if(!siswaTerpilih){
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "loadingNilai"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "loadingNilai"
+    ).textContent =
+        "Memuat nilai...";
+
+
+    document.getElementById(
+        "tableNilaiWrapper"
+    ).style.display =
+        "none";
+
+
+    const tahun =
+        document.getElementById(
+            "tahunPelajaran"
+        ).value.trim();
+
+
+    const semester =
+        document.getElementById(
+            "semester"
+        ).value;
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from("nilai_pts")
+            .select("*")
+            .eq(
+                "siswa_id",
+                siswaTerpilih.id
+            )
+            .eq(
+                "tahun_pelajaran",
+                tahun
+            )
+            .eq(
+                "semester",
+                semester
+            );
+
+
+    if(error){
+
+        /*
+         * Jika tabel belum dibuat,
+         * tampilkan pesan yang jelas.
+         */
+
+        console.error(error);
+
+        if(
+            error.message &&
+            error.message
+                .toLowerCase()
+                .includes("nilai_pts")
+        ){
+
+            showAlert(
+                "Tabel nilai_pts belum dibuat di Supabase. Gunakan SQL yang saya berikan setelah kode ini.",
+                "error"
+            );
+
+        }else{
+
+            showAlert(
+                "Gagal mengambil nilai: " +
+                error.message,
+                "error"
+            );
+
+        }
+
+
+        semuaNilai = [];
+
+    }else{
+
+        semuaNilai =
+            data || [];
+
+    }
+
+
+    renderTabelNilai();
+
+}
+
+
+/* =====================================================
+   RENDER TABEL NILAI
+===================================================== */
+
+function renderTabelNilai(){
+
+    const body =
+        document.getElementById(
+            "nilaiBody"
+        );
+
+
+    body.innerHTML =
+        "";
+
+
+    if(
+        !semuaMapel ||
+        semuaMapel.length === 0
+    ){
+
+        document.getElementById(
+            "loadingNilai"
+        ).innerHTML =
+            `
+            <div class="empty">
+
+                <div class="empty-icon">
+                    📚
+                </div>
+
+                Belum ada mata pelajaran
+                pada database.
+
+            </div>
+            `;
+
+        document.getElementById(
+            "loadingNilai"
+        ).style.display =
+            "block";
+
+        document.getElementById(
+            "tableNilaiWrapper"
+        ).style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    semuaMapel.forEach(
+        function(mapel,index){
+
+            const nilaiData =
+                semuaNilai.find(
+                    function(item){
+
+                        return String(
+                            item.mata_pelajaran_id
+                        ) === String(
+                            mapel.id
+                        );
+
+                    }
+                );
+
+
+            const nilai =
+                nilaiData &&
+                nilaiData.nilai !== null &&
+                nilaiData.nilai !== undefined
+                    ? nilaiData.nilai
+                    : "";
+
+
+            const predikat =
+                hitungPredikat(
+                    nilai
+                );
+
+
+            const keterangan =
+                hitungKeterangan(
+                    nilai
+                );
+
+
+            const tr =
+                document.createElement(
+                    "tr"
+                );
+
+
+            tr.innerHTML =
+                `
+
+                <td class="nomor">
+                    ${index + 1}
+                </td>
+
+                <td>
+                    <strong>
+                        ${escapeHtml(
+                            getNamaMapel(
+                                mapel
+                            )
+                        )}
+                    </strong>
+                </td>
+
+                <td style="text-align:center;">
+
+                    <input
+                        type="number"
+                        class="nilai-input"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        data-mapel-id="${mapel.id}"
+                        value="${nilai}"
+                        oninput="ubahNilai(this)"
+                        placeholder="0–100">
+
+                </td>
+
+                <td style="text-align:center;">
+
+                    <span
+                        class="predikat"
+                        id="predikat-${mapel.id}">
+
+                        ${predikat}
+
+                    </span>
+
+                </td>
+
+                <td
+                    class="keterangan"
+                    id="keterangan-${mapel.id}">
+
+                    ${keterangan}
+
+                </td>
+
+                `;
+
+
+            body.appendChild(
+                tr
+            );
+
+        }
+    );
+
+
+    document.getElementById(
+        "loadingNilai"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "tableNilaiWrapper"
+    ).style.display =
+        "block";
+
+}
+
+
+/* =====================================================
+   UBAH NILAI
+===================================================== */
+
+function ubahNilai(input){
+
+    let nilai =
+        input.value;
+
+
+    if(nilai === ""){
+
+        updatePredikat(
+            input.dataset.mapelId,
+            ""
+        );
+
+        return;
+
+    }
+
+
+    nilai =
+        Number(nilai);
+
+
+    if(nilai < 0){
+
+        input.value =
+            0;
+
+        nilai =
+            0;
+
+    }
+
+
+    if(nilai > 100){
+
+        input.value =
+            100;
+
+        nilai =
+            100;
+
+    }
+
+
+    updatePredikat(
+        input.dataset.mapelId,
+        nilai
+    );
+
+}
+
+
+/* =====================================================
+   UPDATE PREDIKAT
+===================================================== */
+
+function updatePredikat(
+    mapelId,
+    nilai
+){
+
+    const predikatEl =
+        document.getElementById(
+            "predikat-" +
+            mapelId
+        );
+
+
+    const keteranganEl =
+        document.getElementById(
+            "keterangan-" +
+            mapelId
+        );
+
+
+    predikatEl.textContent =
+        hitungPredikat(
+            nilai
+        );
+
+
+    keteranganEl.textContent =
+        hitungKeterangan(
+            nilai
+        );
+
+}
+
+
+/* =====================================================
+   PREDIKAT
+===================================================== */
+
+function hitungPredikat(nilai){
+
+    if(
+        nilai === "" ||
+        nilai === null ||
+        nilai === undefined
+    ){
+
+        return "-";
+
+    }
+
+
+    nilai =
+        Number(nilai);
+
+
+    if(nilai >= 90){
+
+        return "A";
+
+    }
+
+    if(nilai >= 80){
+
+        return "B";
+
+    }
+
+    if(nilai >= 70){
+
+        return "C";
+
+    }
+
+    return "D";
+
+}
+
+
+/* =====================================================
+   KETERANGAN
+===================================================== */
+
+function hitungKeterangan(nilai){
+
+    if(
+        nilai === "" ||
+        nilai === null ||
+        nilai === undefined
+    ){
+
+        return "Belum diisi";
+
+    }
+
+
+    nilai =
+        Number(nilai);
+
+
+    if(nilai >= 90){
+
+        return "Sangat Baik";
+
+    }
+
+    if(nilai >= 80){
+
+        return "Baik";
+
+    }
+
+    if(nilai >= 70){
+
+        return "Cukup";
+
+    }
+
+    return "Perlu Bimbingan";
+
+}
+
+
+/* =====================================================
+   SIMPAN NILAI
+===================================================== */
+
+async function simpanNilai(){
+
+    if(!siswaTerpilih){
+
+        showAlert(
+            "Pilih peserta didik terlebih dahulu.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const tahun =
+        document.getElementById(
+            "tahunPelajaran"
+        ).value.trim();
+
+
+    const semester =
+        document.getElementById(
+            "semester"
+        ).value;
+
+
+    if(!tahun){
+
+        showAlert(
+            "Tahun pelajaran harus diisi.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const inputs =
+        document.querySelectorAll(
+            ".nilai-input"
+        );
+
+
+    if(inputs.length === 0){
+
+        showAlert(
+            "Belum ada mata pelajaran.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const dataSimpan = [];
+
+
+    for(
+        const input of inputs
+    ){
+
+        const mapelId =
+            input.dataset.mapelId;
+
+
+        const nilaiText =
+            input.value.trim();
+
+
+        if(nilaiText === ""){
+
+            continue;
+
+        }
+
+
+        const nilai =
+            Number(nilaiText);
+
+
+        if(
+            Number.isNaN(nilai) ||
+            nilai < 0 ||
+            nilai > 100
+        ){
+
+            showAlert(
+                "Nilai harus berada antara 0 sampai 100.",
+                "error"
+            );
+
+            input.focus();
+
+            return;
+
+        }
+
+
+        dataSimpan.push({
+
+            siswa_id:
+                siswaTerpilih.id,
+
+            mata_pelajaran_id:
+                mapelId,
+
+            tahun_pelajaran:
+                tahun,
+
+            semester:
+                semester,
+
+            nilai:
+                nilai,
+
+            predikat:
+                hitungPredikat(
+                    nilai
+                ),
+
+            keterangan:
+                hitungKeterangan(
+                    nilai
+                ),
+
+            updated_at:
+                new Date()
+                    .toISOString()
+
+        });
+
+    }
+
+
+    if(dataSimpan.length === 0){
+
+        showAlert(
+            "Belum ada nilai yang diisi.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    showAlert(
+        "Menyimpan nilai...",
+        "info"
+    );
+
+
+    const {
+        error
+    } =
+        await supabaseClient
+            .from("nilai_pts")
+            .upsert(
+                dataSimpan,
+                {
+                    onConflict:
+                        "siswa_id,mata_pelajaran_id,tahun_pelajaran,semester"
+                }
+            );
+
+
+    if(error){
+
+        console.error(error);
+
+        showAlert(
+            "Gagal menyimpan nilai: " +
+            error.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    showAlert(
+        "Nilai PTS berhasil disimpan.",
+        "success"
+    );
+
+
+    await loadNilaiSiswa();
+
+}
+
+
+/* =====================================================
+   PREVIEW
+===================================================== */
+
+function buatPreview(){
+
+    if(!siswaTerpilih){
+
+        showAlert(
+            "Pilih peserta didik terlebih dahulu.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const tahun =
+        document.getElementById(
+            "tahunPelajaran"
+        ).value;
+
+
+    const semester =
+        document.getElementById(
+            "semester"
+        ).value;
+
+
+    const kelas =
+        semuaKelas.find(
+            function(item){
+
+                return String(
+                    item.id
+                ) === String(
+                    siswaTerpilih.kelas_id
+                );
+
+            }
+        );
+
+
+    const namaKelas =
+        kelas
+            ? (
+                kelas.nama_kelas ||
+                kelas.nama ||
+                "-"
+            )
+            : "-";
+
+
+    document.getElementById(
+        "previewNama"
+    ).textContent =
+        siswaTerpilih.nama ||
+        "-";
+
+
+    document.getElementById(
+        "previewNisn"
+    ).textContent =
+        siswaTerpilih.nisn ||
+        "-";
+
+
+    document.getElementById(
+        "previewKelas"
+    ).textContent =
+        namaKelas;
+
+
+    document.getElementById(
+        "previewSemester"
+    ).textContent =
+        semester;
+
+
+    document.getElementById(
+        "previewTahun"
+    ).textContent =
+        tahun;
+
+
+    const body =
+        document.getElementById(
+            "previewBody"
+        );
+
+
+    body.innerHTML =
+        "";
+
+
+    const inputs =
+        document.querySelectorAll(
+            ".nilai-input"
+        );
+
+
+    semuaMapel.forEach(
+        function(mapel,index){
+
+            const input =
+                Array.from(
+                    inputs
+                ).find(
+                    function(el){
+
+                        return String(
+                            el.dataset.mapelId
+                        ) === String(
+                            mapel.id
+                        );
+
+                    }
+                );
+
+
+            const nilai =
+                input
+                    ? input.value
+                    : "";
+
+
+            const tr =
+                document.createElement(
+                    "tr"
+                );
+
+
+            tr.innerHTML =
+                `
+
+                <td class="center">
+                    ${index + 1}
+                </td>
+
+                <td>
+                    ${escapeHtml(
+                        getNamaMapel(
+                            mapel
+                        )
+                    )}
+                </td>
+
+                <td class="center">
+                    ${
+                        nilai === ""
+                            ? "-"
+                            : nilai
+                    }
+                </td>
+
+                <td class="center">
+                    ${hitungPredikat(
+                        nilai
+                    )}
+                </td>
+
+                <td>
+                    ${hitungKeterangan(
+                        nilai
+                    )}
+                </td>
+
+                `;
+
+
+            body.appendChild(
+                tr
+            );
+
+        }
+    );
+
+
+    document.getElementById(
+        "previewSection"
+    ).classList.add(
+        "show"
+    );
+
+
+    document.getElementById(
+        "previewSection"
+    ).scrollIntoView({
+        behavior:"smooth"
+    });
+
+}
+
+
+/* =====================================================
+   CETAK
+===================================================== */
+
+function cetakRapor(){
+
+    if(!siswaTerpilih){
+
+        showAlert(
+            "Pilih siswa dan buat preview terlebih dahulu.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    buatPreview();
+
+
+    setTimeout(
+        function(){
+
+            window.print();
+
+        },
+        400
+    );
+
+}
+
+
+/* =====================================================
+   RESET
+===================================================== */
+
+function resetForm(){
+
+    document.getElementById(
+        "kelasSelect"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "siswaSelect"
+    ).innerHTML =
+        `<option value="">
+            Pilih kelas terlebih dahulu
+        </option>`;
+
+
+    document.getElementById(
+        "siswaSelect"
+    ).disabled =
+        true;
+
+
+    siswaTerpilih =
+        null;
+
+
+    semuaSiswa =
+        [];
+
+
+    semuaNilai =
+        [];
+
+
+    document.getElementById(
+        "studentInfo"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "tableNilaiWrapper"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "loadingNilai"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "loadingNilai"
+    ).textContent =
+        "Pilih peserta didik untuk menampilkan mata pelajaran.";
+
+
+    document.getElementById(
+        "previewSection"
+    ).classList.remove(
+        "show"
+    );
+
+}
+
+
+/* =====================================================
+   KEMBALI ADMIN
+===================================================== */
+
+function kembaliAdmin(){
+
+    window.location.href =
+        "admin.html";
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(text){
+
+    if(text === null ||
+       text === undefined){
+
+        return "";
+
+    }
+
+
+    return String(text)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+</script>
+
+</body>
+</html>
