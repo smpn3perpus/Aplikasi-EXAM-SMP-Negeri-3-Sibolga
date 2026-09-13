@@ -855,7 +855,7 @@ tr:hover td{
 
     <div>
         <h1>📚 BANK SOAL GURU</h1>
-        <p>RUANG EXAM — SMP Negeri 3 Sibolga</p>
+        <p>RUANG EXAM — SMP Negeri 3 Sibolga • Bank Soal Guru (hanya ujian Anda)</p>
     </div>
 
     <div class="header-buttons">
@@ -1815,33 +1815,22 @@ let guruId = null;
         return;
     }
 
-    const role = String(
-        currentUser.role ??
-        currentUser.rolename ??
-        currentUser.user_role ??
-        currentUser.tipe ??
-        currentUser.jenis ??
-        ""
-    ).trim().toLowerCase();
-
-    console.log("Bank Soal — sesi:", currentUser);
-    console.log("Bank Soal — role:", role);
-
-    if(role !== "guru"){
-        console.warn("Bank Soal: role bukan guru.", currentUser.role);
-        alert("Halaman Bank Soal Guru hanya dapat dibuka oleh akun Guru.");
-        window.location.replace("guru.html");
-        return;
-    }
+    console.log("Bank Soal Guru — sesi:", currentUser);
 
     guruId =
         currentUser.guru_id ||
         currentUser.guruId ||
         currentUser.id_guru ||
         currentUser.idGuru ||
-        currentUser.id ||
-        currentUser.user_id ||
         null;
+
+    // Halaman guru menggunakan identitas guru, bukan pemeriksaan role.
+    if(!guruId){
+        console.error("Bank Soal Guru: guru_id tidak ditemukan.", currentUser);
+        alert("Akun guru tidak memiliki ID guru yang valid. Silakan login kembali.");
+        window.location.replace("guru.html");
+        return;
+    }
 
     console.log("Bank Soal — guruId:", guruId);
 
@@ -2822,6 +2811,11 @@ function editSoal(id){
         return;
     }
 
+    if(!ujianTerpilih || String(ujianTerpilih.guru_id) !== String(guruId) || String(soal.ujian_id) !== String(ujianTerpilih.id)){
+        alert("Anda hanya dapat mengedit soal dari ujian yang dibuat oleh Anda sendiri.");
+        return;
+    }
+
     editId = id;
 
     document.getElementById("modalTitle").textContent =
@@ -3509,6 +3503,11 @@ async function hapusSoal(id){
 
     if(!soal) return;
 
+    if(!ujianTerpilih || String(ujianTerpilih.guru_id) !== String(guruId) || String(soal.ujian_id) !== String(ujianTerpilih.id)){
+        alert("Akses ditolak. Anda hanya dapat menghapus soal dari ujian milik Anda sendiri.");
+        return;
+    }
+
     const yakin =
         confirm(
             "Hapus soal nomor " +
@@ -3971,6 +3970,19 @@ async function simpanLiterasi(){
         return;
     }
 
+    if(String(ujianTerpilih.guru_id) !== String(guruId)){
+        alert("Akses ditolak. Literasi hanya dapat dibuat atau diubah pada ujian milik Anda sendiri.");
+        return;
+    }
+
+    if(editLiterasiId){
+        const literasiEdit = semuaLiterasi.find(l => String(l.id) === String(editLiterasiId));
+        if(!literasiEdit || String(literasiEdit.ujian_id) !== String(ujianTerpilih.id)){
+            alert("Akses ditolak. Literasi tersebut bukan bagian dari ujian Anda.");
+            return;
+        }
+    }
+
     const judul =
         document.getElementById(
             "literasiJudul"
@@ -4195,6 +4207,11 @@ async function hapusLiterasi(id){
         );
 
     if(!literasi) return;
+
+    if(!ujianTerpilih || String(ujianTerpilih.guru_id) !== String(guruId) || String(literasi.ujian_id) !== String(ujianTerpilih.id)){
+        alert("Akses ditolak. Anda hanya dapat menghapus literasi dari ujian milik Anda sendiri.");
+        return;
+    }
 
     const yakin =
         confirm(
