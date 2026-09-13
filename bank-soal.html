@@ -8,11 +8,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- KaTeX: dukungan matematika -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script>
-
 <style>
 
 *{
@@ -699,30 +694,6 @@ tr:hover td{
     margin-top:8px;
 }
 
-.math-mode-note{
-    margin-top:7px;
-    padding:8px 10px;
-    border-radius:8px;
-    background:#ecfeff;
-    border:1px solid #a5f3fc;
-    color:#155e75;
-    font-size:11px;
-    line-height:1.5;
-}
-
-.katex-display{
-    overflow-x:auto;
-    overflow-y:hidden;
-    padding:4px 0;
-}
-
-.preview-question-text .katex,
-.preview-option .katex,
-.preview-literasi-text .katex,
-td .katex{
-    font-size:1.05em;
-}
-
 .preview-type{
     display:inline-block;
     font-size:10px;
@@ -1393,11 +1364,20 @@ td .katex{
                                        accept="image/*"
                                        onchange="previewImage('C')">
 
-                                <div id="previewC"
-                                     class="option-preview"></div>
+                                <div class="option-upload">
 
-                                <div id="currentC"
-                                     class="option-current">
+                                    <input type="file"
+                                           id="gambarC"
+                                           accept="image/*"
+                                           onchange="previewImage('C')">
+
+                                    <div id="previewC"
+                                         class="option-preview"></div>
+
+                                    <div id="currentC"
+                                         class="option-current">
+                                    </div>
+
                                 </div>
 
                             </div>
@@ -1804,53 +1784,68 @@ const supabaseClient =
 
 
 /* =====================================================
-   CEK LOGIN
+   CEK LOGIN — AMAN
 ===================================================== */
-
-const sessionRaw =
-    localStorage.getItem("exam_user");
-
-if(!sessionRaw){
-
-    window.location.href = "login.html";
-
-}
 
 let currentUser = null;
+let guruId = null;
 
-try{
+(function cekLoginGuru(){
 
-    currentUser =
-        JSON.parse(sessionRaw);
+    const sessionRaw = localStorage.getItem("exam_user");
 
-    if(
-        !currentUser ||
-        currentUser.role !== "guru"
-    ){
-
-        localStorage.removeItem("exam_user");
-
-        window.location.href = "login.html";
+    if(!sessionRaw){
+        console.warn("Bank Soal: exam_user tidak ditemukan.");
+        window.location.replace("login.html");
+        return;
     }
 
-}catch(error){
+    try{
+        currentUser = JSON.parse(sessionRaw);
+    }catch(error){
+        console.error("Bank Soal: sesi login rusak.", error);
+        localStorage.removeItem("exam_user");
+        window.location.replace("login.html");
+        return;
+    }
 
-    localStorage.removeItem("exam_user");
+    if(!currentUser || typeof currentUser !== "object"){
+        localStorage.removeItem("exam_user");
+        window.location.replace("login.html");
+        return;
+    }
 
-    window.location.href = "login.html";
-}
+    const role = String(
+        currentUser.role ??
+        currentUser.rolename ??
+        currentUser.user_role ??
+        currentUser.tipe ??
+        currentUser.jenis ??
+        ""
+    ).trim().toLowerCase();
 
+    console.log("Bank Soal — sesi:", currentUser);
+    console.log("Bank Soal — role:", role);
 
-/* =====================================================
-   ID GURU
-===================================================== */
+    if(role !== "guru"){
+        console.warn("Bank Soal: role bukan guru.", currentUser.role);
+        alert("Halaman Bank Soal Guru hanya dapat dibuka oleh akun Guru.");
+        window.location.replace("guru.html");
+        return;
+    }
 
-let guruId =
-    currentUser.guru_id ||
-    currentUser.guruId ||
-    currentUser.id ||
-    currentUser.user_id ||
-    null;
+    guruId =
+        currentUser.guru_id ||
+        currentUser.guruId ||
+        currentUser.id_guru ||
+        currentUser.idGuru ||
+        currentUser.id ||
+        currentUser.user_id ||
+        null;
+
+    console.log("Bank Soal — guruId:", guruId);
+
+})();
 
 
 /* =====================================================
@@ -2186,61 +2181,6 @@ function tampilkanInfoUjian(){
 
 
 /* =====================================================
-   LOAD SOAL — SEMUA DATA TANPA TERPOTONG LIMIT
-===================================================== */
-
-async function ambilSemuaSoal(ujianId){
-
-    const semua = [];
-    const pageSize = 1000;
-    let from = 0;
-
-    while(true){
-
-        const {data,error} =
-            await supabaseClient
-            .from("soal")
-            .select(`
-                id,
-                ujian_id,
-                nomor,
-                pertanyaan,
-                tipe,
-                pilihan_a,
-                pilihan_b,
-                pilihan_c,
-                pilihan_d,
-                kunci_jawaban,
-                bobot,
-                gambar_url,
-                gambar_soal,
-                gambar_a,
-                gambar_b,
-                gambar_c,
-                gambar_d,
-                teks_tertaut,
-                teks_mulai,
-                teks_sampai,
-                literasi_id,
-                created_at
-            `)
-            .eq("ujian_id",ujianId)
-            .order("nomor",{ascending:true})
-            .range(from, from + pageSize - 1);
-
-        if(error) throw error;
-
-        const batch = data || [];
-        semua.push(...batch);
-
-        if(batch.length < pageSize) break;
-        from += pageSize;
-    }
-
-    return semua;
-}
-
-/* =====================================================
    LOAD SOAL
 ===================================================== */
 
@@ -2258,11 +2198,34 @@ async function loadSoal(){
 
     try{
 
-        const data = await ambilSemuaSoal(ujianTerpilih.id);
+        const {data,error} =
+            await supabaseClient
+            .from("soal")
+            .select(`
+                id,
+                ujian_id,
+                nomor,
+                pertanyaan,
+                tipe,
+                pilihan_a,
+                pilihan_b,
+                pilihan_c,
+                pilihan_d,
+                kunci_jawaban,
+                bobot,
+                gambar_soal,
+                gambar_a,
+                gambar_b,
+                gambar_c,
+                gambar_d,
+                created_at
+            `)
+            .eq("ujian_id",ujianTerpilih.id)
+            .order("nomor",{ascending:true});
 
-        semuaSoal = (data || []).sort(
-            (a,b) => Number(a.nomor || 0) - Number(b.nomor || 0)
-        );
+        if(error) throw error;
+
+        semuaSoal = data || [];
 
         soalTampil = [...semuaSoal];
 
@@ -2350,23 +2313,20 @@ async function loadLiterasi(){
    CARI LITERASI UNTUK NOMOR SOAL
 ===================================================== */
 
-function cariLiterasiUntukNomor(nomor,soal=null){
-
-    if(soal && soal.literasi_id){
-
-        const byId = semuaLiterasi.find(
-            l => String(l.id) === String(soal.literasi_id)
-        );
-
-        if(byId) return byId;
-    }
+function cariLiterasiUntukNomor(nomor){
 
     return semuaLiterasi.find(literasi => {
 
-        const mulai = Number(literasi.nomor_mulai);
-        const selesai = Number(literasi.nomor_selesai);
+        const mulai =
+            Number(literasi.nomor_mulai);
 
-        return nomor >= mulai && nomor <= selesai;
+        const selesai =
+            Number(literasi.nomor_selesai);
+
+        return (
+            nomor >= mulai &&
+            nomor <= selesai
+        );
 
     }) || null;
 }
@@ -2621,8 +2581,6 @@ function tampilkanSoal(data){
             `;
 
         }).join("");
-
-    renderMathIn(body);
 }
 
 
@@ -4308,39 +4266,6 @@ function tutupDaftarLiterasi(){
 
 
 /* =====================================================
-   RENDER MATEMATIKA KATEX
-===================================================== */
-
-function renderMathIn(root){
-
-    if(!root) return;
-
-    const run = () => {
-
-        if(typeof renderMathInElement !== "function") return;
-
-        try{
-            renderMathInElement(root,{
-                delimiters:[
-                    {left:"$$",right:"$$",display:true},
-                    {left:"\\[",right:"\\]",display:true},
-                    {left:"$",right:"$",display:false},
-                    {left:"\\(",right:"\\)",display:false}
-                ],
-                throwOnError:false,
-                strict:false,
-                trust:false
-            });
-        }catch(error){
-            console.warn("KaTeX render:",error);
-        }
-    };
-
-    if(typeof renderMathInElement === "function") run();
-    else setTimeout(run,250);
-}
-
-/* =====================================================
    MATEMATIKA
 ===================================================== */
 
@@ -4451,20 +4376,14 @@ function bukaPreviewSoal(){
             "previewContent"
         );
 
-    const semuaSoalUrut = [...semuaSoal].sort(
-        (a,b) => Number(a.nomor || 0) - Number(b.nomor || 0)
-    );
-
     content.innerHTML =
         buatPreviewSoal(
-            semuaSoalUrut
+            semuaSoal
         );
 
     document.getElementById(
         "modalPreview"
     ).style.display = "flex";
-
-    renderMathIn(content);
 }
 
 
@@ -4486,10 +4405,9 @@ function previewSatuSoal(id){
     ).textContent =
         `${ujianTerpilih.judul || "Ujian"} — Preview Soal Nomor ${soal.nomor}`;
 
-    const previewContent =
-        document.getElementById("previewContent");
-
-    previewContent.innerHTML =
+    document.getElementById(
+        "previewContent"
+    ).innerHTML =
         buatPreviewSoal(
             [soal]
         );
@@ -4497,8 +4415,6 @@ function previewSatuSoal(id){
     document.getElementById(
         "modalPreview"
     ).style.display = "flex";
-
-    renderMathIn(previewContent);
 }
 
 
@@ -4525,8 +4441,7 @@ function buatPreviewSoal(data){
 
         const literasi =
             cariLiterasiUntukNomor(
-                Number(soal.nomor),
-                soal
+                Number(soal.nomor)
             );
 
         /*
@@ -4831,9 +4746,6 @@ function downloadSoalUtuh(){
 <head>
 <meta charset="UTF-8">
 <title>${escapeHtml(judul)}</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css">
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"><\/script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"><\/script>
 <style>
 body{font-family:Arial,sans-serif;margin:40px;color:#111;line-height:1.7}
 h1{text-align:center;font-size:22px;margin-bottom:5px}
@@ -4856,7 +4768,7 @@ h1{text-align:center;font-size:22px;margin-bottom:5px}
 
     semuaSoal.forEach(soal => {
 
-        const literasi = cariLiterasiUntukNomor(Number(soal.nomor),soal);
+        const literasi = cariLiterasiUntukNomor(Number(soal.nomor));
 
         if(literasi &&
            (!literasiTerakhir || literasiTerakhir.id !== literasi.id)){
@@ -4891,23 +4803,6 @@ h1{text-align:center;font-size:22px;margin-bottom:5px}
     });
 
     html += `<div class="footer">RUANG EXAM Online<br>Dibuat oleh Mr. Rahmat Batubara, S.T.P</div>
-<script>
-document.addEventListener("DOMContentLoaded",function(){
-    if(typeof renderMathInElement === "function"){
-        renderMathInElement(document.body,{
-            delimiters:[
-                {left:"$$",right:"$$",display:true},
-                {left:"\\[",right:"\\]",display:true},
-                {left:"$",right:"$",display:false},
-                {left:"\\(",right:"\\)",display:false}
-            ],
-            throwOnError:false,
-            strict:false,
-            trust:false
-        });
-    }
-});
-<\/script>
 </body>
 </html>`;
 
@@ -5042,7 +4937,12 @@ document
    LOAD AWAL
 ===================================================== */
 
-loadSemuaData();
+if(currentUser && guruId){
+    loadSemuaData();
+}else{
+    console.warn("Bank Soal tidak memuat data karena sesi Guru belum valid.");
+}
+
 
 </script>
 
