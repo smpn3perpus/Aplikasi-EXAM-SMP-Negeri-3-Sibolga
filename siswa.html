@@ -432,8 +432,6 @@ body{
 }
 
 
-/* STATUS SUDAH UJIAN */
-
 .status-already{
     background:#fee2e2;
 
@@ -1951,7 +1949,7 @@ body{
             Anda Keluar dari Fullscreen
         </h2>
 
-        <p>
+        <p id="fullscreenWarningText">
 
             Untuk melanjutkan ujian,
             masukkan kembali token ujian.
@@ -2075,31 +2073,387 @@ let tokenUjianAktif = null;
 
 
 /* =====================================================
-   NORMALISASI TOKEN
+   AUTOSAVE / PEMULIHAN
 ===================================================== */
 
-/*
-   Token dibersihkan dengan cara yang sama baik dari
-   input siswa maupun dari database.
+const AUTOSAVE_TABLE =
+    "jawaban_ujian";
 
-   Yang dilakukan:
 
-   1. Mengubah nilai menjadi string.
-   2. Unicode dinormalisasi.
-   3. Spasi biasa dihapus.
-   4. Karakter spasi tersembunyi dihapus.
-   5. Huruf diubah menjadi uppercase.
+const PENALTI_FULLSCREEN_DETIK =
+    5 * 60;
 
-   Contoh:
 
-   " ab12cd "
-   "AB12CD"
-   "AB 12 CD"
-   "ＡＢ１２ＣＤ"
+let autosaveEssayTimers = {};
 
-   akan diperlakukan sebagai token yang sama
-   setelah normalisasi Unicode.
-*/
+let autosaveSedangBerjalan = false;
+
+let pelanggaranSedangDiproses = false;
+
+let waktuPelanggaranTerakhir = 0;
+
+
+/* =====================================================
+   KEY LOCAL STORAGE
+===================================================== */
+
+function ambilNisnAktif(){
+
+    return String(
+        siswaAktif?.nisn ||
+        examUser?.nisn ||
+        examUser?.username ||
+        examUser?.no_induk ||
+        ""
+    ).trim();
+
+}
+
+
+function keyJawabanLocal(){
+
+    if(
+        !ujianAktif ||
+        !ambilNisnAktif()
+    ){
+
+        return null;
+
+    }
+
+
+    return (
+        "ruang_exam_jawaban_" +
+        String(
+            ujianAktif.id
+        ) +
+        "_" +
+        ambilNisnAktif()
+    );
+
+}
+
+
+function keySesiUjian(){
+
+    if(
+        !ujianAktif ||
+        !ambilNisnAktif()
+    ){
+
+        return null;
+
+    }
+
+
+    return (
+        "ruang_exam_sesi_" +
+        String(
+            ujianAktif.id
+        ) +
+        "_" +
+        ambilNisnAktif()
+    );
+
+}
+
+
+/* =====================================================
+   SIMPAN BACKUP LOCAL
+===================================================== */
+
+function simpanBackupLocal(){
+
+    const key =
+        keyJawabanLocal();
+
+
+    if(!key){
+
+        return;
+
+    }
+
+
+    try{
+
+        localStorage.setItem(
+            key,
+            JSON.stringify({
+                updated_at:
+                    new Date().toISOString(),
+                jawaban:
+                    jawabanSiswa
+            })
+        );
+
+    }catch(error){
+
+        console.warn(
+            "BACKUP LOCAL GAGAL:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   BACA BACKUP LOCAL
+===================================================== */
+
+function bacaBackupLocal(){
+
+    const key =
+        keyJawabanLocal();
+
+
+    if(!key){
+
+        return {};
+
+    }
+
+
+    try{
+
+        const raw =
+            localStorage.getItem(
+                key
+            );
+
+
+        if(!raw){
+
+            return {};
+
+        }
+
+
+        const data =
+            JSON.parse(
+                raw
+            );
+
+
+        if(
+            data &&
+            data.jawaban
+        ){
+
+            return data.jawaban;
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "BACA BACKUP LOCAL GAGAL:",
+            error
+        );
+
+    }
+
+
+    return {};
+
+}
+
+
+/* =====================================================
+   SIMPAN SESI UJIAN
+===================================================== */
+
+function simpanSesiUjian(){
+
+    const key =
+        keySesiUjian();
+
+
+    if(!key){
+
+        return;
+
+    }
+
+
+    try{
+
+        const data = {
+
+            ujian_id:
+                ujianAktif?.id ||
+                null,
+
+            nisn:
+                ambilNisnAktif(),
+
+            waktu_mulai:
+                waktuMulaiExam
+                ? waktuMulaiExam.toISOString()
+                : new Date().toISOString(),
+
+            durasi_detik:
+                Number(
+                    ujianAktif?.durasi_menit ||
+                    60
+                ) * 60,
+
+            penalti_detik:
+                Number(
+                    window.__penaltiUjianDetik ||
+                    0
+                ),
+
+            terakhir_disimpan:
+                new Date().toISOString()
+
+        };
+
+
+        localStorage.setItem(
+            key,
+            JSON.stringify(
+                data
+            )
+        );
+
+    }catch(error){
+
+        console.warn(
+            "SIMPAN SESI GAGAL:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   BACA SESI UJIAN
+===================================================== */
+
+function bacaSesiUjian(){
+
+    const key =
+        keySesiUjian();
+
+
+    if(!key){
+
+        return null;
+
+    }
+
+
+    try{
+
+        const raw =
+            localStorage.getItem(
+                key
+            );
+
+
+        if(!raw){
+
+            return null;
+
+        }
+
+
+        return JSON.parse(
+            raw
+        );
+
+    }catch(error){
+
+        console.warn(
+            "BACA SESI GAGAL:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+/* =====================================================
+   HAPUS SESI UJIAN
+===================================================== */
+
+function hapusSesiUjian(){
+
+    const key =
+        keySesiUjian();
+
+
+    if(!key){
+
+        return;
+
+    }
+
+
+    try{
+
+        localStorage.removeItem(
+            key
+        );
+
+    }catch(error){
+
+        console.warn(
+            "HAPUS SESI GAGAL:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   HAPUS BACKUP LOCAL
+===================================================== */
+
+function hapusBackupLocal(){
+
+    const key =
+        keyJawabanLocal();
+
+
+    if(!key){
+
+        return;
+
+    }
+
+
+    try{
+
+        localStorage.removeItem(
+            key
+        );
+
+    }catch(error){
+
+        console.warn(
+            "HAPUS BACKUP LOCAL:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   NORMALISASI TOKEN
+===================================================== */
 
 function normalisasiToken(value){
 
@@ -2210,13 +2564,7 @@ function acakSoalUntukSiswa(){
 
 
     const nisn =
-        String(
-            siswaAktif?.nisn ||
-            examUser?.nisn ||
-            examUser?.username ||
-            examUser?.no_induk ||
-            ""
-        ).trim();
+        ambilNisnAktif();
 
 
     if(!nisn){
@@ -2296,13 +2644,7 @@ async function cekSudahUjian(
 
 
     const nisn =
-        String(
-            siswaAktif?.nisn ||
-            examUser?.nisn ||
-            examUser?.username ||
-            examUser?.no_induk ||
-            ""
-        ).trim();
+        ambilNisnAktif();
 
 
     if(!nisn){
@@ -2427,14 +2769,6 @@ async function cekSudahUjian(
    AMBIL UJIAN TERBARU
 ===================================================== */
 
-/*
-   Fungsi ini sengaja mengambil data ujian TERBARU
-   berdasarkan ID ujian.
-
-   Jadi token yang digunakan siswa bukan token lama
-   yang tersimpan di variabel daftar ujian.
-*/
-
 async function ambilUjianTerbaru(
     ujianId
 ){
@@ -2502,6 +2836,439 @@ async function ambilUjianTerbaru(
 
 
 /* =====================================================
+   AUTOSAVE SATU JAWABAN
+===================================================== */
+
+async function autosaveJawaban(
+    soalId,
+    jawaban
+){
+
+    if(
+        !ujianAktif ||
+        !soalId
+    ){
+
+        return;
+
+    }
+
+
+    const nisn =
+        ambilNisnAktif();
+
+
+    if(!nisn){
+
+        return;
+
+    }
+
+
+    simpanBackupLocal();
+
+
+    const data = {
+
+        ujian_id:
+            ujianAktif.id,
+
+        soal_id:
+            soalId,
+
+        nisn:
+            nisn,
+
+        siswa_id:
+            siswaAktif?.id ||
+            examUser?.siswa_id ||
+            null,
+
+        jawaban:
+            jawaban === null ||
+            jawaban === undefined
+            ? ""
+            : String(jawaban),
+
+        waktu_update:
+            new Date().toISOString()
+
+    };
+
+
+    try{
+
+        const result =
+            await supabaseClient
+            .from(AUTOSAVE_TABLE)
+            .upsert(
+                data,
+                {
+                    onConflict:
+                        "ujian_id,soal_id,nisn"
+                }
+            );
+
+
+        if(result.error){
+
+            console.error(
+                "AUTOSAVE JAWABAN:",
+                result.error
+            );
+
+            return false;
+
+        }
+
+
+        return true;
+
+    }catch(error){
+
+        console.error(
+            "AUTOSAVE EXCEPTION:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/* =====================================================
+   AUTOSAVE SEMUA JAWABAN
+===================================================== */
+
+async function sinkronkanSemuaJawaban(){
+
+    if(
+        !ujianAktif ||
+        !semuaSoal.length
+    ){
+
+        return true;
+
+    }
+
+
+    const nisn =
+        ambilNisnAktif();
+
+
+    if(!nisn){
+
+        return false;
+
+    }
+
+
+    simpanBackupLocal();
+
+
+    const rows =
+        semuaSoal.map(
+            soal => ({
+
+                ujian_id:
+                    ujianAktif.id,
+
+                soal_id:
+                    soal.id,
+
+                nisn:
+                    nisn,
+
+                siswa_id:
+                    siswaAktif?.id ||
+                    examUser?.siswa_id ||
+                    null,
+
+                jawaban:
+                    jawabanSiswa[
+                        soal.id
+                    ] === undefined ||
+                    jawabanSiswa[
+                        soal.id
+                    ] === null
+                    ? ""
+                    : String(
+                        jawabanSiswa[
+                            soal.id
+                        ]
+                    ),
+
+                waktu_update:
+                    new Date().toISOString()
+
+            })
+        );
+
+
+    try{
+
+        const result =
+            await supabaseClient
+            .from(AUTOSAVE_TABLE)
+            .upsert(
+                rows,
+                {
+                    onConflict:
+                        "ujian_id,soal_id,nisn"
+                }
+            );
+
+
+        if(result.error){
+
+            console.error(
+                "SINKRON SEMUA JAWABAN:",
+                result.error
+            );
+
+            return false;
+
+        }
+
+
+        return true;
+
+    }catch(error){
+
+        console.error(
+            "SINKRON SEMUA EXCEPTION:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/* =====================================================
+   MUAT JAWABAN TERSIMPAN
+===================================================== */
+
+async function muatJawabanTersimpan(){
+
+    if(
+        !ujianAktif
+    ){
+
+        return;
+
+    }
+
+
+    /*
+       1. Ambil backup local terlebih dahulu.
+    */
+
+    const backup =
+        bacaBackupLocal();
+
+
+    if(
+        backup &&
+        typeof backup === "object"
+    ){
+
+        Object.assign(
+            jawabanSiswa,
+            backup
+        );
+
+    }
+
+
+    /*
+       2. Ambil dari Supabase.
+    */
+
+    const nisn =
+        ambilNisnAktif();
+
+
+    if(!nisn){
+
+        return;
+
+    }
+
+
+    try{
+
+        const result =
+            await supabaseClient
+            .from(AUTOSAVE_TABLE)
+            .select(`
+                soal_id,
+                jawaban,
+                waktu_update
+            `)
+            .eq(
+                "ujian_id",
+                ujianAktif.id
+            )
+            .eq(
+                "nisn",
+                nisn
+            );
+
+
+        if(result.error){
+
+            console.warn(
+                "LOAD AUTOSAVE:",
+                result.error
+            );
+
+            /*
+               Backup local tetap dipakai.
+            */
+
+            return;
+
+        }
+
+
+        const data =
+            result.data || [];
+
+
+        data.forEach(
+            row => {
+
+                if(
+                    row.soal_id
+                ){
+
+                    jawabanSiswa[
+                        row.soal_id
+                    ] =
+                        row.jawaban ?? "";
+
+                }
+
+            }
+        );
+
+
+        /*
+           Simpan kembali gabungan ke local.
+        */
+
+        simpanBackupLocal();
+
+
+    }catch(error){
+
+        console.warn(
+            "MUAT JAWABAN TERSIMPAN:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   HAPUS AUTOSAVE SETELAH SELESAI
+===================================================== */
+
+async function hapusAutosaveDatabase(){
+
+    if(
+        !ujianAktif ||
+        !ambilNisnAktif()
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        const result =
+            await supabaseClient
+            .from(AUTOSAVE_TABLE)
+            .delete()
+            .eq(
+                "ujian_id",
+                ujianAktif.id
+            )
+            .eq(
+                "nisn",
+                ambilNisnAktif()
+            );
+
+
+        if(result.error){
+
+            console.warn(
+                "HAPUS AUTOSAVE:",
+                result.error
+            );
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "HAPUS AUTOSAVE EXCEPTION:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   SIMPAN JAWABAN + BACKUP
+===================================================== */
+
+function simpanJawabanDanAutosave(
+    soalId,
+    jawaban
+){
+
+    jawabanSiswa[
+        soalId
+    ] =
+        jawaban;
+
+
+    /*
+       Backup local dilakukan SEBELUM request database.
+       Jadi walaupun internet putus, jawaban tetap ada.
+    */
+
+    simpanBackupLocal();
+
+
+    /*
+       Autosave ke database tidak mengganggu tampilan.
+    */
+
+    autosaveJawaban(
+        soalId,
+        jawaban
+    );
+
+
+    simpanSesiUjian();
+
+}
+
+
+/* =====================================================
    DOM READY
 ===================================================== */
 
@@ -2510,6 +3277,8 @@ document.addEventListener(
     async function(){
 
         setupKeyboard();
+
+        setupVisibilityProtection();
 
         await loadSiswaDanUjian();
 
@@ -3819,10 +4588,6 @@ async function prosesTokenMasuk(){
         );
 
 
-    /*
-       NORMALISASI INPUT SISWA
-    */
-
     const tokenInput =
         normalisasiToken(
             input.value
@@ -3841,11 +4606,6 @@ async function prosesTokenMasuk(){
 
     }
 
-
-    /*
-       Cegah klik berkali-kali ketika request
-       sedang berjalan.
-    */
 
     const tombol =
         document.querySelector(
@@ -3870,10 +4630,6 @@ async function prosesTokenMasuk(){
 
 
     try{
-
-        /* =========================================
-           CEK SUDAH UJIAN
-        ========================================= */
 
         const cekHasil =
             await cekSudahUjian(
@@ -3918,29 +4674,17 @@ async function prosesTokenMasuk(){
         }
 
 
-        /* =========================================
-           AMBIL DATA TERBARU DARI DATABASE
-        ========================================= */
-
         const dataUjian =
             await ambilUjianTerbaru(
                 ujianAktif.id
             );
 
 
-        /* =========================================
-           TOKEN DATABASE
-        ========================================= */
-
         const tokenDatabase =
             normalisasiToken(
                 dataUjian.token
             );
 
-
-        /*
-           TOKEN TIDAK BOLEH KOSONG
-        */
 
         if(!tokenDatabase){
 
@@ -3962,10 +4706,6 @@ async function prosesTokenMasuk(){
 
         }
 
-
-        /* =========================================
-           PERBANDINGAN TOKEN
-        ========================================= */
 
         const tokenCocok =
             tokenDatabase ===
@@ -3999,11 +4739,6 @@ async function prosesTokenMasuk(){
         }
 
 
-        /*
-           TOKEN BENAR.
-           BARU SEKARANG CEK STATUS UJIAN TERBARU.
-        */
-
         const status =
             statusUjian(
                 dataUjian
@@ -4026,10 +4761,6 @@ async function prosesTokenMasuk(){
 
         }
 
-
-        /* =========================================
-           CEK TERAKHIR SEBELUM MASUK
-        ========================================= */
 
         const cekHasilAkhir =
             await cekSudahUjian(
@@ -4072,10 +4803,6 @@ async function prosesTokenMasuk(){
         }
 
 
-        /*
-           SIMPAN DATA UJIAN TERBARU
-        */
-
         ujianAktif =
             {
                 ...ujianAktif,
@@ -4087,23 +4814,11 @@ async function prosesTokenMasuk(){
             tokenDatabase;
 
 
-        /*
-           TUTUP MODAL
-        */
-
         tutupTokenModal();
 
 
-        /*
-           MASUK FULLSCREEN
-        */
-
         await masukFullscreen();
 
-
-        /*
-           MULAI UJIAN
-        */
 
         await mulaiUjian();
 
@@ -4142,7 +4857,7 @@ async function prosesTokenMasuk(){
 
 
 /* =====================================================
-   MULAI UJIAN
+   MULAI / LANJUTKAN UJIAN
 ===================================================== */
 
 async function mulaiUjian(){
@@ -4161,19 +4876,97 @@ async function mulaiUjian(){
     soalAktifIndex = 0;
 
 
-    waktuMulaiExam =
-        new Date();
+    /*
+       CEK APAKAH ADA SESI SEBELUMNYA.
+       Ini mencegah refresh mengembalikan timer
+       menjadi durasi penuh.
+    */
+
+    const sesi =
+        bacaSesiUjian();
 
 
-    const durasi =
+    let durasiDetik =
         Number(
             ujianAktif.durasi_menit ||
             60
+        ) * 60;
+
+
+    if(
+        sesi &&
+        sesi.waktu_mulai &&
+        sesi.ujian_id &&
+        String(sesi.ujian_id) ===
+        String(ujianAktif.id)
+    ){
+
+        waktuMulaiExam =
+            new Date(
+                sesi.waktu_mulai
+            );
+
+
+        durasiDetik =
+            Number(
+                sesi.durasi_detik ||
+                durasiDetik
+            );
+
+
+        window.__penaltiUjianDetik =
+            Number(
+                sesi.penalti_detik ||
+                0
+            );
+
+    }else{
+
+        waktuMulaiExam =
+            new Date();
+
+
+        window.__penaltiUjianDetik =
+            0;
+
+
+        simpanSesiUjian();
+
+    }
+
+
+    /*
+       Hitung waktu berdasarkan waktu nyata,
+       bukan sekadar countdown.
+    */
+
+    const sekarang =
+        Date.now();
+
+
+    const mulaiMs =
+        waktuMulaiExam.getTime();
+
+
+    const elapsed =
+        Math.floor(
+            (
+                sekarang -
+                mulaiMs
+            ) / 1000
         );
 
 
     sisaDetik =
-        durasi * 60;
+        Math.max(
+            0,
+            durasiDetik -
+            elapsed -
+            Number(
+                window.__penaltiUjianDetik ||
+                0
+            )
+        );
 
 
     document.getElementById(
@@ -4217,6 +5010,43 @@ async function mulaiUjian(){
     if(!semuaSoal.length){
 
         await keluarFullscreen();
+
+        return;
+
+    }
+
+
+    /*
+       Muat jawaban dari database/localStorage
+       SEBELUM menampilkan soal.
+    */
+
+    await muatJawabanTersimpan();
+
+
+    buatNomorSoal();
+
+    tampilkanSoal(
+        soalAktifIndex
+    );
+
+
+    if(
+        sisaDetik <= 0
+    ){
+
+        updateTimer();
+
+
+        alert(
+            "⏰ Waktu ujian telah habis."
+        );
+
+
+        await kirimUjian(
+            true
+        );
+
 
         return;
 
@@ -4314,10 +5144,6 @@ async function muatSoalUjian(){
         acakSoalUntukSiswa();
 
 
-        /* =========================================
-           LITERASI MODERN
-        ========================================= */
-
         const modernResult =
             await supabaseClient
             .from("literasi_soal")
@@ -4361,10 +5187,6 @@ async function muatSoalUjian(){
         semuaLiterasiModern =
             modernResult.data || [];
 
-
-        /* =========================================
-           LITERASI LEGACY
-        ========================================= */
 
         const legacyResult =
             await supabaseClient
@@ -5110,10 +5932,10 @@ function pilihJawaban(
     jawaban
 ){
 
-    jawabanSiswa[
-        soalId
-    ] =
-        jawaban;
+    simpanJawabanDanAutosave(
+        soalId,
+        jawaban
+    );
 
 
     tampilkanSoal(
@@ -5124,7 +5946,7 @@ function pilihJawaban(
 
 
 /* =====================================================
-   ESSAY
+   ESSAY + AUTOSAVE DEBOUNCE
 ===================================================== */
 
 function simpanJawabanEssay(
@@ -5136,6 +5958,56 @@ function simpanJawabanEssay(
         soalId
     ] =
         value;
+
+
+    /*
+       Backup browser langsung.
+    */
+
+    simpanBackupLocal();
+
+
+    /*
+       Simpan sesi timer.
+    */
+
+    simpanSesiUjian();
+
+
+    /*
+       Tunggu 700 ms setelah siswa berhenti mengetik
+       sebelum mengirim ke database.
+    */
+
+    if(
+        autosaveEssayTimers[
+            soalId
+        ]
+    ){
+
+        clearTimeout(
+            autosaveEssayTimers[
+                soalId
+            ]
+        );
+
+    }
+
+
+    autosaveEssayTimers[
+        soalId
+    ] =
+        setTimeout(
+            () => {
+
+                autosaveJawaban(
+                    soalId,
+                    value
+                );
+
+            },
+            700
+        );
 
 }
 
@@ -5239,7 +6111,46 @@ function mulaiTimer(){
                 }
 
 
-                sisaDetik--;
+                /*
+                   Hitung ulang berdasarkan waktu nyata.
+                   Ini membuat timer lebih tahan terhadap
+                   refresh/background HP.
+                */
+
+                if(waktuMulaiExam){
+
+                    const durasiDetik =
+                        Number(
+                            ujianAktif?.durasi_menit ||
+                            60
+                        ) * 60;
+
+
+                    const elapsed =
+                        Math.floor(
+                            (
+                                Date.now() -
+                                waktuMulaiExam.getTime()
+                            ) / 1000
+                        );
+
+
+                    sisaDetik =
+                        Math.max(
+                            0,
+                            durasiDetik -
+                            elapsed -
+                            Number(
+                                window.__penaltiUjianDetik ||
+                                0
+                            )
+                        );
+
+                }else{
+
+                    sisaDetik--;
+
+                }
 
 
                 if(
@@ -5339,6 +6250,563 @@ function updateTimer(){
 
 
 /* =====================================================
+   PENALTI FULLSCREEN
+===================================================== */
+
+function beriPenaltiFullscreen(
+    alasan
+){
+
+    if(
+        !ujianAktif ||
+        sudahDikirim ||
+        document.getElementById(
+            "examArea"
+        ).style.display === "none"
+    ){
+
+        return;
+
+    }
+
+
+    const sekarang =
+        Date.now();
+
+
+    /*
+       fullscreenchange + visibilitychange + blur
+       bisa terjadi hampir bersamaan.
+       Jangan hitung sebagai tiga pelanggaran.
+    */
+
+    if(
+        sekarang -
+        waktuPelanggaranTerakhir <
+        2000
+    ){
+
+        return;
+
+    }
+
+
+    waktuPelanggaranTerakhir =
+        sekarang;
+
+
+    window.__penaltiUjianDetik =
+        Number(
+            window.__penaltiUjianDetik ||
+            0
+        ) +
+        PENALTI_FULLSCREEN_DETIK;
+
+
+    /*
+       Kurangi waktu ujian 5 menit.
+    */
+
+    sisaDetik =
+        Math.max(
+            0,
+            sisaDetik -
+            PENALTI_FULLSCREEN_DETIK
+        );
+
+
+    simpanSesiUjian();
+
+    simpanBackupLocal();
+
+    updateTimer();
+
+
+    const warningText =
+        document.getElementById(
+            "fullscreenWarningText"
+        );
+
+
+    if(warningText){
+
+        warningText.innerHTML = `
+
+            <strong style="color:#dc2626;">
+                ⚠️ PENALTI 5 MENIT DITERAPKAN
+            </strong>
+
+            <br><br>
+
+            Sistem mendeteksi Anda keluar dari
+            Full Screen
+            ${
+                alasan
+                ? "(" +
+                  escapeHtml(
+                      alasan
+                  ) +
+                  ")"
+                : ""
+            }.
+
+            <br><br>
+
+            <strong>
+                Waktu ujian Anda dikurangi 5 menit.
+            </strong>
+
+            <br>
+
+            Untuk melanjutkan, masukkan kembali
+            token ujian.
+
+        `;
+
+    }
+
+
+    document.getElementById(
+        "fullscreenWarning"
+    ).style.display =
+        "flex";
+
+
+    setTimeout(
+        () => {
+
+            const input =
+                document.getElementById(
+                    "fullscreenToken"
+                );
+
+
+            if(input){
+
+                input.focus();
+
+            }
+
+        },
+        100
+    );
+
+
+    if(
+        sisaDetik <= 0
+    ){
+
+        setTimeout(
+            () => {
+
+                if(
+                    !sudahDikirim
+                ){
+
+                    alert(
+                        "⏰ Waktu ujian habis karena penalti."
+                    );
+
+                    kirimUjian(
+                        true
+                    );
+
+                }
+
+            },
+            300
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   FULLSCREEN
+===================================================== */
+
+async function masukFullscreen(){
+
+    try{
+
+        if(
+            !document.fullscreenElement
+        ){
+
+            await document
+                .documentElement
+                .requestFullscreen();
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Fullscreen tidak tersedia:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   KELUAR FULLSCREEN
+===================================================== */
+
+async function keluarFullscreen(){
+
+    try{
+
+        if(
+            document.fullscreenElement
+        ){
+
+            await document.exitFullscreen();
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Keluar fullscreen:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   FULLSCREEN CHANGE
+===================================================== */
+
+document.addEventListener(
+    "fullscreenchange",
+    function(){
+
+        if(
+            ujianAktif &&
+            !sudahDikirim &&
+            document.getElementById(
+                "examArea"
+            ).style.display !== "none"
+        ){
+
+            if(
+                !document.fullscreenElement
+            ){
+
+                beriPenaltiFullscreen(
+                    "Full Screen ditutup"
+                );
+
+            }else{
+
+                /*
+                   Kalau kembali fullscreen,
+                   warning ditutup.
+                */
+
+                document.getElementById(
+                    "fullscreenWarning"
+                ).style.display =
+                    "none";
+
+            }
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   DETEKSI PINDAH APLIKASI / TAB / PANGGILAN
+===================================================== */
+
+function setupVisibilityProtection(){
+
+    document.addEventListener(
+        "visibilitychange",
+        function(){
+
+            if(
+                document.hidden &&
+                ujianAktif &&
+                !sudahDikirim &&
+                document.getElementById(
+                    "examArea"
+                ).style.display !== "none"
+            ){
+
+                /*
+                   Simpan jawaban secepat mungkin
+                   sebelum halaman menjadi background.
+                */
+
+                simpanBackupLocal();
+
+                simpanSesiUjian();
+
+
+                /*
+                   Catat pelanggaran.
+                */
+
+                beriPenaltiFullscreen(
+                    "Meninggalkan halaman ujian"
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+       BLUR digunakan sebagai lapisan tambahan.
+       Tidak langsung menghukum jika terjadi terlalu
+       dekat dengan fullscreenchange/visibilitychange.
+    */
+
+    window.addEventListener(
+        "blur",
+        function(){
+
+            if(
+                ujianAktif &&
+                !sudahDikirim &&
+                document.getElementById(
+                    "examArea"
+                ).style.display !== "none"
+            ){
+
+                simpanBackupLocal();
+
+                simpanSesiUjian();
+
+
+                setTimeout(
+                    () => {
+
+                        if(
+                            ujianAktif &&
+                            !sudahDikirim &&
+                            !document.hasFocus()
+                        ){
+
+                            beriPenaltiFullscreen(
+                                "Jendela/aplikasi kehilangan fokus"
+                            );
+
+                        }
+
+                    },
+                    250
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   VERIFIKASI TOKEN FULLSCREEN
+===================================================== */
+
+async function verifikasiTokenKeluar(){
+
+    if(!ujianAktif){
+
+        return;
+
+    }
+
+
+    const input =
+        document.getElementById(
+            "fullscreenToken"
+        );
+
+
+    const tokenInput =
+        normalisasiToken(
+            input.value
+        );
+
+
+    if(!tokenInput){
+
+        alert(
+            "Masukkan token ujian."
+        );
+
+        input.focus();
+
+        return;
+
+    }
+
+
+    const tombol =
+        document.querySelector(
+            ".fullscreen-btn"
+        );
+
+
+    const teksTombol =
+        tombol
+        ? tombol.textContent
+        : "";
+
+
+    if(tombol){
+
+        tombol.disabled = true;
+
+        tombol.textContent =
+            "Memverifikasi...";
+
+    }
+
+
+    try{
+
+        const dataUjian =
+            await ambilUjianTerbaru(
+                ujianAktif.id
+            );
+
+
+        const tokenDatabase =
+            normalisasiToken(
+                dataUjian.token
+            );
+
+
+        if(!tokenDatabase){
+
+            alert(
+                "Token ujian tidak tersedia.\n\n" +
+                "Hubungi Guru/Admin."
+            );
+
+            return;
+
+        }
+
+
+        if(
+            tokenDatabase !==
+            tokenInput
+        ){
+
+            alert(
+                "❌ Token salah."
+            );
+
+            input.select();
+
+            return;
+
+        }
+
+
+        const status =
+            statusUjian(
+                {
+                    ...ujianAktif,
+                    ...dataUjian
+                }
+            );
+
+
+        if(!status.canStart){
+
+            alert(
+                "Ujian tidak dapat dilanjutkan.\n\n" +
+                status.text
+            );
+
+            return;
+
+        }
+
+
+        ujianAktif =
+            {
+                ...ujianAktif,
+                ...dataUjian
+            };
+
+
+        tokenUjianAktif =
+            tokenDatabase;
+
+
+        input.value = "";
+
+
+        await masukFullscreen();
+
+
+        /*
+           Jika browser berhasil kembali fullscreen,
+           warning akan ditutup melalui fullscreenchange.
+        */
+
+        if(
+            document.fullscreenElement
+        ){
+
+            document.getElementById(
+                "fullscreenWarning"
+            ).style.display =
+                "none";
+
+        }
+
+    }catch(error){
+
+        console.error(
+            "FULLSCREEN TOKEN ERROR:",
+            error
+        );
+
+
+        alert(
+            "Gagal memverifikasi token:\n\n" +
+            (
+                error.message ||
+                "Terjadi kesalahan."
+            )
+        );
+
+    }finally{
+
+        if(tombol){
+
+            tombol.disabled = false;
+
+            tombol.textContent =
+                teksTombol ||
+                "🔐 Verifikasi & Kembali ke Ujian";
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
    KIRIM UJIAN
 ===================================================== */
 
@@ -5373,6 +6841,44 @@ async function kirimUjian(
         if(!yakin){
 
             return;
+
+        }
+
+    }
+
+
+    /*
+       Backup local terlebih dahulu.
+    */
+
+    simpanBackupLocal();
+
+
+    /*
+       Sinkronisasi semua jawaban sebelum mengirim hasil.
+    */
+
+    const autosaveBerhasil =
+        await sinkronkanSemuaJawaban();
+
+
+    if(!autosaveBerhasil){
+
+        if(!otomatis){
+
+            const lanjut =
+                confirm(
+                    "Sebagian jawaban belum berhasil disinkronkan ke database.\n\n" +
+                    "Jawaban tetap tersimpan di browser sementara.\n\n" +
+                    "Tetap kumpulkan ujian?"
+                );
+
+
+            if(!lanjut){
+
+                return;
+
+            }
 
         }
 
@@ -5415,6 +6921,11 @@ async function kirimUjian(
 
 
             sudahDikirim = true;
+
+
+            hapusSesiUjian();
+
+            hapusBackupLocal();
 
 
             alert(
@@ -5607,13 +7118,7 @@ async function kirimUjian(
 
 
         const nisnSiswa =
-            String(
-                siswaAktif?.nisn ||
-                examUser?.nisn ||
-                examUser?.username ||
-                examUser?.no_induk ||
-                ""
-            ).trim();
+            ambilNisnAktif();
 
 
         if(!nisnSiswa){
@@ -5702,6 +7207,19 @@ async function kirimUjian(
         }
 
 
+        /*
+           HASIL SUDAH BERHASIL DISIMPAN.
+           Baru sekarang autosave boleh dibersihkan.
+        */
+
+        await hapusAutosaveDatabase();
+
+
+        hapusSesiUjian();
+
+        hapusBackupLocal();
+
+
         await keluarFullscreen();
 
 
@@ -5722,9 +7240,23 @@ async function kirimUjian(
         sudahDikirim = false;
 
 
+        /*
+           Jawaban TETAP disimpan di localStorage.
+           Jadi kalau penyimpanan hasil gagal,
+           jawaban tidak hilang.
+        */
+
+        simpanBackupLocal();
+
+        simpanSesiUjian();
+
+
         alert(
             "Gagal menyimpan hasil ujian:\n\n" +
-            error.message
+            error.message +
+            "\n\n" +
+            "Jawaban Anda tetap disimpan sementara. " +
+            "Silakan coba kumpulkan kembali."
         );
 
     }
@@ -5822,6 +7354,10 @@ async function kembaliDaftarUjian(){
     sudahDikirim = false;
 
 
+    window.__penaltiUjianDetik =
+        0;
+
+
     await loadUjian();
 
 
@@ -5829,307 +7365,6 @@ async function kembaliDaftarUjian(){
         0,
         0
     );
-
-}
-
-
-/* =====================================================
-   FULLSCREEN
-===================================================== */
-
-async function masukFullscreen(){
-
-    try{
-
-        if(
-            !document.fullscreenElement
-        ){
-
-            await document
-                .documentElement
-                .requestFullscreen();
-
-        }
-
-    }catch(error){
-
-        console.warn(
-            "Fullscreen tidak tersedia:",
-            error
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   KELUAR FULLSCREEN
-===================================================== */
-
-async function keluarFullscreen(){
-
-    try{
-
-        if(
-            document.fullscreenElement
-        ){
-
-            await document.exitFullscreen();
-
-        }
-
-    }catch(error){
-
-        console.warn(
-            "Keluar fullscreen:",
-            error
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   FULLSCREEN CHANGE
-===================================================== */
-
-document.addEventListener(
-    "fullscreenchange",
-    function(){
-
-        if(
-            ujianAktif &&
-            !sudahDikirim &&
-            document.getElementById(
-                "examArea"
-            ).style.display !== "none"
-        ){
-
-            if(
-                !document.fullscreenElement
-            ){
-
-                document.getElementById(
-                    "fullscreenWarning"
-                ).style.display =
-                    "flex";
-
-
-                setTimeout(
-                    () => {
-
-                        document.getElementById(
-                            "fullscreenToken"
-                        ).focus();
-
-                    },
-                    100
-                );
-
-            }else{
-
-                document.getElementById(
-                    "fullscreenWarning"
-                ).style.display =
-                    "none";
-
-            }
-
-        }
-
-    }
-);
-
-
-/* =====================================================
-   VERIFIKASI TOKEN FULLSCREEN
-===================================================== */
-
-async function verifikasiTokenKeluar(){
-
-    if(!ujianAktif){
-
-        return;
-
-    }
-
-
-    const input =
-        document.getElementById(
-            "fullscreenToken"
-        );
-
-
-    /*
-       TOKEN FULLSCREEN JUGA DINORMALISASI
-    */
-
-    const tokenInput =
-        normalisasiToken(
-            input.value
-        );
-
-
-    if(!tokenInput){
-
-        alert(
-            "Masukkan token ujian."
-        );
-
-        input.focus();
-
-        return;
-
-    }
-
-
-    const tombol =
-        document.querySelector(
-            ".fullscreen-btn"
-        );
-
-
-    const teksTombol =
-        tombol
-        ? tombol.textContent
-        : "";
-
-
-    if(tombol){
-
-        tombol.disabled = true;
-
-        tombol.textContent =
-            "Memverifikasi...";
-
-    }
-
-
-    try{
-
-        /*
-           AMBIL DATA TOKEN TERBARU
-        */
-
-        const dataUjian =
-            await ambilUjianTerbaru(
-                ujianAktif.id
-            );
-
-
-        const tokenDatabase =
-            normalisasiToken(
-                dataUjian.token
-            );
-
-
-        if(!tokenDatabase){
-
-            alert(
-                "Token ujian tidak tersedia.\n\n" +
-                "Hubungi Guru/Admin."
-            );
-
-            return;
-
-        }
-
-
-        if(
-            tokenDatabase !==
-            tokenInput
-        ){
-
-            alert(
-                "❌ Token salah."
-            );
-
-            input.select();
-
-            return;
-
-        }
-
-
-        /*
-           Token benar.
-           Cek status terbaru.
-        */
-
-        const status =
-            statusUjian(
-                {
-                    ...ujianAktif,
-                    ...dataUjian
-                }
-            );
-
-
-        if(!status.canStart){
-
-            alert(
-                "Ujian tidak dapat dilanjutkan.\n\n" +
-                status.text
-            );
-
-            return;
-
-        }
-
-
-        /*
-           Update data ujian aktif dengan
-           data terbaru dari database.
-        */
-
-        ujianAktif =
-            {
-                ...ujianAktif,
-                ...dataUjian
-            };
-
-
-        tokenUjianAktif =
-            tokenDatabase;
-
-
-        input.value = "";
-
-
-        await masukFullscreen();
-
-
-    }catch(error){
-
-        console.error(
-            "FULLSCREEN TOKEN ERROR:",
-            error
-        );
-
-
-        alert(
-            "Gagal memverifikasi token:\n\n" +
-            (
-                error.message ||
-                "Terjadi kesalahan."
-            )
-        );
-
-    }finally{
-
-        if(tombol){
-
-            tombol.disabled = false;
-
-            tombol.textContent =
-                teksTombol ||
-                "🔐 Verifikasi & Kembali ke Ujian";
-
-        }
-
-    }
 
 }
 
@@ -6802,10 +8037,46 @@ window.addEventListener(
             !sudahDikirim
         ){
 
+            /*
+               Jangan mencoba await Supabase di sini.
+               Browser tidak menjamin request async selesai.
+
+               Tetapi backup local sudah dilakukan setiap
+               perubahan jawaban.
+            */
+
+            simpanBackupLocal();
+
+            simpanSesiUjian();
+
+
             e.preventDefault();
 
             e.returnValue =
                 "";
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   PAGEHIDE
+===================================================== */
+
+window.addEventListener(
+    "pagehide",
+    function(){
+
+        if(
+            ujianAktif &&
+            !sudahDikirim
+        ){
+
+            simpanBackupLocal();
+
+            simpanSesiUjian();
 
         }
 
