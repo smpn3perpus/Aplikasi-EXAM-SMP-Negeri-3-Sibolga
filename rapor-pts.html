@@ -2230,21 +2230,100 @@ async function loadHasilUjian(){
 }
 
 /* LENGKAPI NAMA MAPEL DARI TABEL UJIAN */
+function nilaiTeksMapel(v){
+    const t=String(v??"").trim();
+    if(!t) return "";
+    const kosong=["-","—","–","null","undefined","tanpa mata pelajaran","tanpa mapel"];
+    return kosong.includes(t.toLowerCase()) ? "" : t;
+}
+
+function ambilMapelDariObjek(obj){
+    if(!obj) return "";
+    const kandidat=[
+        obj.mata_pelajaran,
+        obj.nama_mapel,
+        obj.nama_mata_pelajaran,
+        obj.mata_pelajaran_nama,
+        obj.mapel,
+        obj.namaMapel,
+        obj.subject,
+        obj.subject_name
+    ];
+    for(const v of kandidat){
+        const t=nilaiTeksMapel(v);
+        if(t) return t;
+    }
+    return "";
+}
+
+function teksUjianBukanMapel(v){
+    const t=nilaiTeksMapel(v);
+    if(!t) return "";
+    const generic=/^(mid|mid semester|midsemester|pts|pas|pat|uas|uts|ujian|ujian mid|ujian pts|try out|tryout|simulasi|asesmen|assessment)$/i;
+    return generic.test(t) ? "" : t;
+}
+
 async function lengkapiNamaMapel(data){
     const hasil=Array.isArray(data)?data.map(x=>({...x})):[];
     const ids=[...new Set(hasil.map(x=>x.ujian_id).filter(Boolean).map(String))];
-    if(!ids.length) return hasil;
-    let res=await supabaseClient.from("ujian").select("id,nama_ujian,mata_pelajaran").in("id",ids);
-    if(res.error) res=await supabaseClient.from("ujian").select("id,nama_ujian").in("id",ids);
-    if(res.error){ console.warn("Nama mapel dari tabel ujian tidak dapat dibaca:",res.error.message); return hasil; }
-    const byId=new Map((res.data||[]).map(u=>[String(u.id),u]));
+
+    /* Jika hasil_ujian sudah menyimpan mapel, gunakan langsung. */
+    const masihKosong=hasil.filter(x=>!nilaiTeksMapel(x.mata_pelajaran));
+    if(!ids.length && !masihKosong.length) return hasil;
+
+    let ujianRows=[];
+    if(ids.length){
+        let res=await supabaseClient.from("ujian").select("*").in("id",ids);
+        if(res.error){
+            res=await supabaseClient.from("ujian").select("id,nama_ujian,mata_pelajaran").in("id",ids);
+        }
+        if(!res.error) ujianRows=res.data||[];
+        else console.warn("Data ujian tidak dapat dibaca:",res.error.message);
+    }
+
+    const byId=new Map(ujianRows.map(u=>[String(u.id),u]));
+
+    /* Referensi mata_pelajaran dipakai sebagai fallback bila tabel ujian memakai ID mapel. */
+    let refMapel=[];
+    const mapelIds=[...new Set(ujianRows.flatMap(u=>[
+        u.mata_pelajaran_id,u.mapel_id,u.id_mata_pelajaran,u.mataPelajaranId
+    ]).filter(Boolean).map(String))];
+    if(mapelIds.length){
+        const r=await supabaseClient.from("mata_pelajaran").select("*").in("id",mapelIds);
+        if(!r.error) refMapel=r.data||[];
+    }
+    const refById=new Map(refMapel.map(m=>[String(m.id),m]));
+
+    /* Jika tidak ada ID, ambil daftar mapel yang tersedia dan cocokkan dengan nama ujian. */
+    if(!refMapel.length){
+        const r=await supabaseClient.from("mata_pelajaran").select("*");
+        if(!r.error) refMapel=r.data||[];
+    }
+    const semuaNamaMapel=[...new Set(refMapel.map(ambilMapelDariObjek).filter(Boolean))];
+
     return hasil.map(item=>{
-        if(String(item.mata_pelajaran||"").trim()) return item;
+        let mapel=nilaiTeksMapel(item.mata_pelajaran);
         const u=byId.get(String(item.ujian_id||""));
-        if(!u) return item;
-        const mapel=String(u.mata_pelajaran||"").trim();
-        const namaUjian=String(u.nama_ujian||"").trim();
-        return {...item,mata_pelajaran:mapel||namaUjian||"Tanpa Mata Pelajaran",nama_ujian:namaUjian};
+        const namaUjian=nilaiTeksMapel(u?.nama_ujian||u?.judul_ujian||u?.nama);
+
+        if(!mapel && u){
+            mapel=ambilMapelDariObjek(u);
+            if(!mapel){
+                const mid=u.mata_pelajaran_id||u.mapel_id||u.id_mata_pelajaran||u.mataPelajaranId;
+                if(mid && refById.has(String(mid))) mapel=ambilMapelDariObjek(refById.get(String(mid)));
+            }
+        }
+
+        /* Cocokkan nama mapel yang muncul di nama ujian/jenis ujian. */
+        if(!mapel){
+            const teks=[namaUjian,item.jenis_ujian].map(nilaiTeksMapel).filter(Boolean).join(" ").toLowerCase();
+            mapel=semuaNamaMapel.find(m=>teks.includes(String(m).toLowerCase()))||"";
+        }
+
+        /* Fallback terakhir: jenis_ujian/nama_ujian hanya jika memang bukan label umum. */
+        if(!mapel) mapel=teksUjianBukanMapel(item.jenis_ujian)||teksUjianBukanMapel(namaUjian)||"";
+
+        return {...item,mata_pelajaran:mapel,nama_ujian:namaUjian||item.nama_ujian||""};
     });
 }
 
@@ -2368,13 +2447,10 @@ function pilihHasilTerbaru(
     data.forEach(
         item=>{
 
-            const mapel =
-                String(
-                    item.mata_pelajaran ||
-                    "Tanpa Mata Pelajaran"
-                )
-                .trim()
-                .toLowerCase();
+            const namaMapel = nilaiTeksMapel(item.mata_pelajaran);
+            const mapel = namaMapel
+                ? namaMapel.toLowerCase()
+                : `__ujian__${String(item.ujian_id||item.id||Math.random()).toLowerCase()}`;
 
 
             if(!map.has(mapel)){
@@ -2894,7 +2970,7 @@ function buatRaporHtml(siswa, hasil, lengkap=true){
     const ordered=urutkanHasil(hasilUntukTampilan(hasil||[]), siswa?.kelas);
     const rows=ordered.map((item,i)=>{
         const nilai=Number(item.nilai); const p=Number.isFinite(nilai)?getPredikat(nilai):null;
-        return `<tr><td style="text-align:center">${i+1}</td><td><strong>${escapeHtml(item.mata_pelajaran||"-")}</strong></td><td style="text-align:center;font-weight:bold">${formatNilai(nilai)}</td><td style="text-align:center">${p?p.huruf:"-"}</td><td style="text-align:center">${p?escapeHtml(p.keterangan):"-"}</td><td>${p?escapeHtml(p.deskripsi):"-"}</td></tr>`;
+        return `<tr><td style="text-align:center;border:1px solid #111;padding:7px">${i+1}</td><td style="border:1px solid #111;padding:7px"><strong>${escapeHtml(item.mata_pelajaran||"Belum terdeteksi")}</strong></td><td style="text-align:center;font-weight:bold;border:1px solid #111;padding:7px">${formatNilai(nilai)}</td><td style="text-align:center;border:1px solid #111;padding:7px">${p?p.huruf:"-"}</td><td style="text-align:center;border:1px solid #111;padding:7px">${p?escapeHtml(p.keterangan):"-"}</td><td style="border:1px solid #111;padding:7px">${p?escapeHtml(p.deskripsi):"-"}</td></tr>`;
     }).join("");
     const vals=ordered.map(x=>Number(x.nilai)).filter(Number.isFinite); const rata=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;
     const a=ambilAbsensiSiswa(siswa); const catatan=ambilCatatanSiswa(siswa);
@@ -2902,7 +2978,7 @@ function buatRaporHtml(siswa, hasil, lengkap=true){
     return `<div class="rapor-print-page" style="font-family:Arial,sans-serif;color:#111;background:#fff;padding:10px;">
       <div style="text-align:center;border-bottom:2px solid #111;padding:0 90px 12px; margin-bottom:18px;position:relative;min-height:82px">${logo}<h2 style="margin:0 0 5px;font-size:18px">LAPORAN HASIL UJIAN MID SEMESTER</h2><h3 style="margin:0 0 5px;font-size:16px">SMP NEGERI 3 SIBOLGA</h3><div style="font-weight:bold">TAHUN PELAJARAN 2026/2027</div></div>
       <table style="width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px"><tr><td><b>Nama</b></td><td>: ${escapeHtml(siswa?.nama||"-")}</td><td><b>NISN</b></td><td>: ${escapeHtml(siswa?.nisn||"-")}</td></tr><tr><td><b>Kelas</b></td><td>: ${escapeHtml(siswa?.kelas||"-")}</td><td><b>Semester</b></td><td>: ${peng.semester==="1"?"Semester 1":"Semester 2"}</td></tr><tr><td><b>Tanggal</b></td><td colspan="3">: ${escapeHtml(formatTanggalIndonesia(peng.tanggal))}</td></tr></table>
-      <table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="background:#eee"><th>No</th><th>Mata Pelajaran</th><th>Nilai</th><th>Huruf</th><th>Keterangan</th><th>Deskripsi</th></tr></thead><tbody>${rows||`<tr><td colspan="6" style="padding:15px;text-align:center">Belum ada nilai.</td></tr>`}</tbody></table>
+      <table style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #111"><thead><tr style="background:#eee"><th style="border:1px solid #111;padding:7px">No</th><th style="border:1px solid #111;padding:7px">Mata Pelajaran</th><th style="border:1px solid #111;padding:7px">Nilai</th><th style="border:1px solid #111;padding:7px">Huruf</th><th style="border:1px solid #111;padding:7px">Keterangan</th><th style="border:1px solid #111;padding:7px">Deskripsi</th></tr></thead><tbody>${rows||`<tr><td colspan="6" style="padding:15px;text-align:center;border:1px solid #111">Belum ada nilai.</td></tr>`}</tbody></table>
       <div style="margin-top:12px;text-align:right;font-size:13px"><b>Rata-rata: ${rata.toFixed(2)}</b></div>
       <table style="width:100%;border-collapse:collapse;margin-top:18px;font-size:12px"><tr><th colspan="4" style="border:1px solid #111;padding:7px;background:#eee">KEHADIRAN</th></tr><tr><td style="border:1px solid #111;padding:7px;text-align:center">Sakit</td><td style="border:1px solid #111;padding:7px;text-align:center">${a.sakit}</td><td style="border:1px solid #111;padding:7px;text-align:center">Izin</td><td style="border:1px solid #111;padding:7px;text-align:center">${a.izin}</td></tr><tr><td style="border:1px solid #111;padding:7px;text-align:center">Alpa</td><td style="border:1px solid #111;padding:7px;text-align:center">${a.alpa}</td><td style="border:1px solid #111;padding:7px;text-align:center">Jumlah</td><td style="border:1px solid #111;padding:7px;text-align:center">${a.sakit+a.izin+a.alpa}</td></tr></table>
       <div style="margin-top:16px;border:1px solid #111;padding:10px;font-size:12px;min-height:65px"><b>Catatan Wali Kelas</b><div style="margin-top:8px;white-space:pre-wrap">${escapeHtml(catatan||"-")}</div></div>
