@@ -334,6 +334,11 @@ td.nilai.kosong{
     text-align:center;
 }
 
+.predikat-kosong{
+    background:#f1f5f9;
+    color:#94a3b8;
+}
+
 .summary-box{
     margin-top:20px;
     display:grid;
@@ -564,6 +569,7 @@ td.nilai.kosong{
 
 @media print{
     body{background:white}
+
     .header,
     .info,
     .filter-box,
@@ -574,6 +580,7 @@ td.nilai.kosong{
     .footer{
         display:none !important;
     }
+
     .container{
         max-width:none;
         margin:0;
@@ -660,15 +667,16 @@ onclick="document.getElementById('inputImportAbsensi').click()">
 
 <div class="info">
 
-<strong>📊 Nilai Rapor Diambil dari Ujian MID</strong>
+<strong>📊 Nilai Rapor Diambil dari Nilai Ujian</strong>
 <br>
-Sistem hanya menggunakan hasil ujian yang teridentifikasi sebagai
-<strong>MID / MID Semester / UTS / PTS</strong>.
+Sistem mengambil nilai dari data <strong>hasil_ujian</strong> yang sudah ada.
 <br>
-<strong>Try Out, Tryout, Simulasi, latihan, dan ujian percobaan tidak digunakan.</strong>
+<strong>Tidak mencari atau membutuhkan ujian MID.</strong>
 <br>
-Jika satu mata pelajaran mempunyai beberapa hasil MID, sistem mengambil
-<strong>hasil terbaru yang aktif</strong>.
+<strong>Try Out, Tryout, Simulasi, latihan, percobaan, dan ujian coba tidak digunakan.</strong>
+<br>
+Jika satu mata pelajaran mempunyai beberapa hasil ujian, sistem mengambil
+<strong>hasil terbaru</strong>.
 <br>
 Nilai yang diedit atau dihapus dari rapor hanya tersimpan di browser ini dan
 <strong>tidak mengubah hasil_ujian</strong>.
@@ -701,7 +709,7 @@ Setiap rapor mempunyai maksimal <strong>11 slot mata pelajaran</strong>.
 
 <div class="form-group">
 <label>Sumber Nilai</label>
-<input type="text" value="Ujian MID" readonly>
+<input type="text" value="Nilai Ujian" readonly>
 </div>
 
 <div class="form-group">
@@ -923,7 +931,7 @@ Data asli di <strong>hasil_ujian</strong> tetap aman.
 <div class="stat">
 <div class="stat-icon">📝</div>
 <div id="totalUjian" class="stat-number">0</div>
-<div class="stat-label">Ujian MID</div>
+<div class="stat-label">Nilai Ujian</div>
 </div>
 
 <div class="stat">
@@ -949,7 +957,7 @@ id="reportLogoImg"
 style="display:none;width:78px;height:78px;object-fit:contain;position:absolute;left:10px;top:0"
 >
 
-<h2>LAPORAN HASIL UJIAN MID SEMESTER</h2>
+<h2>LAPORAN HASIL UJIAN SEMESTER</h2>
 <h3>SMP NEGERI 3 SIBOLGA</h3>
 <p><strong>TAHUN PELAJARAN 2026/2027</strong></p>
 <p>RUANG EXAM</p>
@@ -1003,7 +1011,7 @@ style="display:none;width:78px;height:78px;object-fit:contain;position:absolute;
 
 <tr>
 <td colspan="6" class="empty">
-👨‍🎓 Pilih kelas dan siswa untuk melihat nilai MID.
+👨‍🎓 Pilih kelas dan siswa untuk melihat nilai ujian.
 </td>
 </tr>
 
@@ -1083,7 +1091,7 @@ onclick="simpanDataRaporTambahan()">
 
 <h2>LEGER NILAI SATU KELAS</h2>
 <p id="legerSubtitle">SMP NEGERI 3 SIBOLGA</p>
-<small>Nilai Ujian MID</small>
+<small>Nilai Ujian</small>
 
 <div class="filter-actions" style="justify-content:center">
 
@@ -1231,10 +1239,14 @@ JSON.parse(
 localStorage.getItem("rapor_pts_hapus_nilai")||"{}"
 );
 
+let slotMapelRapor=
+JSON.parse(
+localStorage.getItem("rapor_pts_slot_mapel")||"{}"
+);
+
 
 /* =========================================================
    11 MAPEL CADANGAN
-   Dipakai hanya jika slot/mapel memang kosong.
 ========================================================= */
 
 const DAFTAR_MAPEL_DEFAULT=[
@@ -1287,6 +1299,14 @@ return String(value||"")
 
 }
 
+function tampilkanKelas(value){
+
+const k=normalisasiKelas(value);
+
+return k||"-";
+
+}
+
 function nilaiTeksMapel(v){
 
 const t=String(v??"").trim();
@@ -1294,7 +1314,11 @@ const t=String(v??"").trim();
 if(!t)return "";
 
 const kosong=[
-"-","—","–","null","undefined",
+"-",
+"—",
+"–",
+"null",
+"undefined",
 "tanpa mata pelajaran",
 "tanpa mapel"
 ];
@@ -1305,19 +1329,10 @@ return t;
 
 }
 
-function formatNilai(n){
-
-const v=Number(n);
-
-return Number.isFinite(v)
-?v.toFixed(2)
-:"-";
-
-}
-
 
 /* =========================================================
-   MID
+   SUMBER NILAI UJIAN
+   TIDAK ADA LAGI LOGIKA MID
 ========================================================= */
 
 function teksUjian(item){
@@ -1334,24 +1349,33 @@ item?.ujian_nama
 
 }
 
-function adalahUjianMID(item){
+
+/*
+   Yang dikeluarkan dari rapor hanya ujian percobaan,
+   Try Out, simulasi, latihan, dan sejenisnya.
+
+   Semua hasil ujian lainnya boleh menjadi sumber nilai.
+*/
+
+function adalahNilaiRapor(item){
 
 const teks=teksUjian(item).toLowerCase();
 
-if(!teks)return false;
+if(!teks)return true;
 
-if(
-/(try\s*out|tryout|simulasi|latihan|percobaan|ujian\s*coba)/i
-.test(teks)
-){
-return false;
-}
+const polaDilarang=
+[
+"try out",
+"tryout",
+"simulasi",
+"latihan",
+"percobaan",
+"ujian coba",
+"uji coba"
+];
 
-return(
-/\bmid\b/i.test(teks)||
-/midsemester/i.test(teks)||
-/\buts\b/i.test(teks)||
-/\bpts\b/i.test(teks)
+return !polaDilarang.some(
+p=>teks.includes(p)
 );
 
 }
@@ -1601,7 +1625,7 @@ const a=ambilAbsensiSiswa(s);
 return{
 NISN:s.nisn||"",
 Nama:s.nama||"",
-Kelas:s.kelas||kelas,
+Kelas:tampilkanKelas(s.kelas||kelas),
 Sakit:a.sakit,
 Izin:a.izin,
 Alpa:a.alpa
@@ -1620,7 +1644,7 @@ wb,ws,"Absensi"
 
 XLSX.writeFile(
 wb,
-`Absensi-${kelas}.xlsx`
+`Absensi-${tampilkanKelas(kelas)}.xlsx`
 );
 
 }
@@ -1761,7 +1785,8 @@ out.nilai=editNilaiRapor[id].nilai;
 if(
 Object.prototype.hasOwnProperty.call(
 editMapelRapor,id
-)&&
+)
+&&
 editMapelRapor[id]
 ){
 
@@ -1790,11 +1815,16 @@ localStorage.setItem(
 JSON.stringify(hapusNilaiRapor)
 );
 
+localStorage.setItem(
+"rapor_pts_slot_mapel",
+JSON.stringify(slotMapelRapor)
+);
+
 }
 
 
 /* =========================================================
-   KUNCI SLOT KOSONG
+   SLOT KOSONG
 ========================================================= */
 
 function kunciSlotKosong(index){
@@ -1808,38 +1838,15 @@ index
 
 }
 
+function ambilSlotMapelSiswa(index){
 
-/* =========================================================
-   DAFTAR 11 BARIS
-========================================================= */
+if(!siswaTerpilih)return "";
 
-function dataRapor11Baris(hasil){
+const key=kunciSiswaTambahan(siswaTerpilih);
 
-const sumber=
-hasilUntukTampilan(hasil||[])
-.filter(x=>adalahUjianMID(x));
-
-/*
-   Ambil hanya satu nilai terbaru
-   untuk setiap mapel yang memiliki nama.
-*/
-const bernama=[];
-const tanpaNama=[];
-
-sumber.forEach(item=>{
-
-const mapel=nilaiTeksMapel(
-item.mata_pelajaran
+return nilaiTeksMapel(
+slotMapelRapor?.[key]?.[String(index)]||""
 );
-
-if(mapel){
-bern amaDummy=mapel;
-bern amaDummy;
-}else{
-tanpaNama.push(item);
-}
-
-});
 
 }
 
@@ -1848,15 +1855,36 @@ tanpaNama.push(item);
    PILIH HASIL TERBARU
 ========================================================= */
 
+function tanggalHasil(item){
+
+const daftar=[
+item?.created_at,
+item?.waktu_selesai,
+item?.waktu_mulai
+];
+
+for(const x of daftar){
+
+const t=new Date(x||0).getTime();
+
+if(Number.isFinite(t)&&t>0)return t;
+
+}
+
+return 0;
+
+}
+
 function pilihHasilTerbaru(data){
 
 const map=new Map();
+const tanpaMapel=[];
 
 (data||[])
 .filter(
 item=>
 !isHasilDihapus(item)&&
-adalahUjianMID(item)
+adalahNilaiRapor(item)
 )
 .forEach(item=>{
 
@@ -1865,18 +1893,9 @@ const itemTampil=terapkanEditItem(item);
 const namaMapel=
 nilaiTeksMapel(itemTampil.mata_pelajaran);
 
-/*
-   HASIL TANPA MAPEL TIDAK DIBUANG.
-   Nanti akan dipetakan ke slot kosong.
-*/
-
 if(!namaMapel){
 
-const key="__TANPA_MAPEL__"+String(
-item.id||Math.random()
-);
-
-map.set(key,item);
+tanpaMapel.push(item);
 return;
 
 }
@@ -1892,19 +1911,10 @@ return;
 
 const lama=map.get(key);
 
-const tanggalLama=new Date(
-lama.created_at||
-lama.waktu_selesai||
-0
-).getTime();
-
-const tanggalBaru=new Date(
-item.created_at||
-item.waktu_selesai||
-0
-).getTime();
-
-if(tanggalBaru>=tanggalLama){
+if(
+tanggalHasil(item)>=
+tanggalHasil(lama)
+){
 
 map.set(key,item);
 
@@ -1912,47 +1922,17 @@ map.set(key,item);
 
 });
 
-return Array.from(map.values());
+return[
+...Array.from(map.values()),
+...tanpaMapel
+];
 
 }
 
 
 /* =========================================================
-   NORMALISASI HASIL UNTUK 11 SLOT
+   DATA RAPOR 11 BARIS
 ========================================================= */
-
-function buat11SlotRapor(hasil){
-
-const sumber=pilihHasilTerbaru(hasil);
-
-const bernama=[];
-const tanpaNama=[];
-
-sumber.forEach(item=>{
-
-const x=terapkanEditItem(item);
-
-const nama=nilaiTeksMapel(
-x.mata_pelajaran
-);
-
-if(nama){
-bern amaDummy=nama;
-bern amaDummy;
-}else{
-tanpaNama.push(item);
-}
-
-});
-
-}
-
-
-/*
-   Fungsi utama 11 slot.
-   Dibuat terpisah agar Preview, tampilan,
-   Cetak dan Download selalu sama.
-*/
 
 function getRaporRows(hasil){
 
@@ -1962,12 +1942,14 @@ const rows=[];
 const namaDipakai=new Set();
 
 /* -----------------------------------------
-   1. Masukkan hasil yang sudah punya mapel
+   1. HASIL YANG SUDAH MEMPUNYAI MAPEL
 ----------------------------------------- */
 
-for(const item of sumber){
+for(const raw of sumber){
 
-const x=terapkanEditItem(item);
+if(rows.length>=11)break;
+
+const x=terapkanEditItem(raw);
 
 const nama=nilaiTeksMapel(
 x.mata_pelajaran
@@ -1989,14 +1971,15 @@ sourceId:String(x.id||"")
 
 }
 
+
 /* -----------------------------------------
-   2. Hasil yang tidak punya mapel
-      diberi mapel cadangan yang belum dipakai.
+   2. HASIL TANPA MAPEL
 ----------------------------------------- */
 
 const kosongSumber=sumber.filter(
-item=>!nilaiTeksMapel(
-terapkanEditItem(item).mata_pelajaran
+raw=>
+!nilaiTeksMapel(
+terapkanEditItem(raw).mata_pelajaran
 )
 );
 
@@ -2004,11 +1987,17 @@ for(const raw of kosongSumber){
 
 if(rows.length>=11)break;
 
+const x=terapkanEditItem(raw);
+
 let kandidat="";
 
 for(const nama of DAFTAR_MAPEL_DEFAULT){
 
-if(!namaDipakai.has(nama.toLowerCase())){
+if(
+!namaDipakai.has(
+nama.toLowerCase()
+)
+){
 
 kandidat=nama;
 break;
@@ -2017,17 +2006,13 @@ break;
 
 }
 
-if(!kandidat){
-
-kandidat="Mata Pelajaran";
-
-}
-
-namaDipakai.add(kandidat.toLowerCase());
-
-const x=terapkanEditItem(raw);
+if(!kandidat)continue;
 
 x.mata_pelajaran=kandidat;
+
+namaDipakai.add(
+kandidat.toLowerCase()
+);
 
 rows.push({
 type:"hasil",
@@ -2037,8 +2022,42 @@ sourceId:String(raw.id||"")
 
 }
 
+
 /* -----------------------------------------
-   3. Isi slot kosong dengan nama mapel
+   3. SLOT MAPEL YANG SUDAH DIATUR MANUAL
+----------------------------------------- */
+
+for(let i=0;i<11&&rows.length<11;i++){
+
+const manual=ambilSlotMapelSiswa(i);
+
+if(!manual)continue;
+
+if(
+namaDipakai.has(
+manual.toLowerCase()
+)
+)continue;
+
+namaDipakai.add(
+manual.toLowerCase()
+);
+
+rows.push({
+type:"kosong",
+item:{
+mata_pelajaran:manual,
+nilai:null
+},
+sourceId:"",
+slotIndex:i
+});
+
+}
+
+
+/* -----------------------------------------
+   4. ISI DENGAN DAFTAR MAPEL DEFAULT
 ----------------------------------------- */
 
 for(const nama of DAFTAR_MAPEL_DEFAULT){
@@ -2051,7 +2070,9 @@ nama.toLowerCase()
 )
 )continue;
 
-namaDipakai.add(nama.toLowerCase());
+namaDipakai.add(
+nama.toLowerCase()
+);
 
 rows.push({
 type:"kosong",
@@ -2064,10 +2085,9 @@ sourceId:""
 
 }
 
+
 /* -----------------------------------------
-   4. Jika daftar default habis,
-      isi slot dengan nama generik yang
-      tetap bisa diedit.
+   5. PASTIKAN TEPAT 11 BARIS
 ----------------------------------------- */
 
 let n=1;
@@ -2088,8 +2108,9 @@ n++;
 
 }
 
+
 /* -----------------------------------------
-   5. Terapkan urutan yang disimpan.
+   6. URUTAN MAPEL
 ----------------------------------------- */
 
 return urutkanRowsRapor(rows).slice(0,11);
@@ -2102,36 +2123,31 @@ function urutkanRowsRapor(rows){
 const p=ambilPengaturan();
 const order=p.urutan||[];
 
+if(!order.length)return rows;
+
 return [...rows].sort((a,b)=>{
 
-const aa=order.findIndex(
-x=>
-String(x).toLowerCase()===
-String(
+const namaA=String(
 a.item?.mata_pelajaran||""
-).toLowerCase()
+).toLowerCase();
+
+const namaB=String(
+b.item?.mata_pelajaran||""
+).toLowerCase();
+
+const aa=order.findIndex(
+x=>String(x).toLowerCase()===namaA
 );
 
 const bb=order.findIndex(
-x=>
-String(x).toLowerCase()===
-String(
-b.item?.mata_pelajaran||""
-).toLowerCase()
+x=>String(x).toLowerCase()===namaB
 );
 
-if(aa>=0||bb>=0){
+if(aa<0&&bb<0)return 0;
+if(aa<0)return 1;
+if(bb<0)return -1;
 
-return(
-aa<0?999:aa
-)-
-(
-bb<0?999:bb
-);
-
-}
-
-return 0;
+return aa-bb;
 
 });
 
@@ -2206,12 +2222,16 @@ deskripsi:
 function buatBarisRaporDOM(row,index){
 
 const item=row?.item||{};
-const nama=nilaiTeksMapel(
+
+const nama=
+nilaiTeksMapel(
 item.mata_pelajaran
-)||"Mata Pelajaran";
+)||
+`Mata Pelajaran ${index+1}`;
 
 const nilai=Number(item.nilai);
 const valid=Number.isFinite(nilai);
+
 const p=getPredikat(nilai);
 
 return`
@@ -2229,13 +2249,7 @@ ${escapeHtml(nama)}
 </td>
 
 <td class="nilai ${valid?"":"kosong"}">
-
-${
-valid
-?nilai.toFixed(2)
-:"-"
-}
-
+${valid?nilai.toFixed(2):"-"}
 </td>
 
 <td class="center">
@@ -2244,11 +2258,7 @@ valid
 valid?"":"predikat-kosong"
 }">
 
-${
-valid
-?p.huruf
-:"-"
-}
+${valid?p.huruf:"-"}
 
 </span>
 
@@ -2259,7 +2269,9 @@ ${valid?escapeHtml(p.keterangan):"-"}
 </td>
 
 <td>
-${valid?escapeHtml(p.deskripsi):"Nilai belum tersedia."}
+${valid
+?escapeHtml(p.deskripsi)
+:"Nilai belum tersedia."}
 </td>
 
 </tr>
@@ -2308,11 +2320,7 @@ const nilai=rows
 .map(x=>Number(x.item?.nilai))
 .filter(Number.isFinite);
 
-const jumlah=rows.filter(
-x=>nilaiTeksMapel(
-x.item?.mata_pelajaran
-)
-).length;
+const jumlah=rows.length;
 
 const rata=nilai.length
 ?nilai.reduce((a,b)=>a+b,0)/nilai.length
@@ -2364,6 +2372,7 @@ nilaiTeksMapel(item.mata_pelajaran)||
 `Mata Pelajaran ${i+1}`;
 
 const nilai=Number(item.nilai);
+
 const asli=sourceId
 ?Number(
 semuaHasil.find(
@@ -2473,9 +2482,15 @@ const rows=[
 )
 ];
 
+const keySiswa=
+kunciSiswaTambahan(siswaTerpilih);
+
+if(!slotMapelRapor[keySiswa]){
+slotMapelRapor[keySiswa]={};
+}
+
 rows.forEach(row=>{
 
-const id=row.dataset.editId;
 const sourceId=row.dataset.sourceId;
 const index=Number(row.dataset.slotIndex);
 
@@ -2489,12 +2504,19 @@ const nilaiText=row.querySelector(
 
 if(sourceId){
 
+if(nilaiText===""){
+
 editNilaiRapor[sourceId]={
-nilai:
-nilaiText===""
-?null
-:Number(nilaiText)
+nilai:null
 };
+
+}else{
+
+editNilaiRapor[sourceId]={
+nilai:Number(nilaiText)
+};
+
+}
 
 if(mapel){
 editMapelRapor[sourceId]=mapel;
@@ -2504,32 +2526,8 @@ delete editMapelRapor[sourceId];
 
 }else{
 
-/*
-   Slot kosong tidak punya record database.
-   Disimpan sebagai pengaturan nama slot.
-*/
-
-const key=
-kunciSiswaTambahan(siswaTerpilih);
-
-const allSlots=
-JSON.parse(
-localStorage.getItem(
-"rapor_pts_slot_mapel"
-)||"{}"
-);
-
-if(!allSlots[key]){
-allSlots[key]={};
-}
-
-allSlots[key][String(index)]=
+slotMapelRapor[keySiswa][String(index)]=
 mapel||"";
-
-localStorage.setItem(
-"rapor_pts_slot_mapel",
-JSON.stringify(allSlots)
-);
 
 }
 
@@ -2537,19 +2535,7 @@ JSON.stringify(allSlots)
 
 simpanEditStorage();
 
-hasilSiswa=pilihHasilTerbaru(
-semuaHasil.filter(
-x=>
-String(x.nisn||"").trim()===
-String(siswaTerpilih.nisn||"").trim()&&
-(
-!x.kelas||
-normalisasiKelas(x.kelas)===
-normalisasiKelas(siswaTerpilih.kelas)
-)&&
-adalahUjianMID(x)
-)
-);
+muatHasilSiswaTerpilih();
 
 tampilkanRapor();
 
@@ -2591,21 +2577,10 @@ hapusNilaiRapor[String(id)]=true;
 
 simpanEditStorage();
 
-hasilSiswa=pilihHasilTerbaru(
-semuaHasil.filter(
-x=>
-String(x.nisn||"").trim()===
-String(siswaTerpilih.nisn||"").trim()&&
-(
-!x.kelas||
-normalisasiKelas(x.kelas)===
-normalisasiKelas(siswaTerpilih.kelas)
-)&&
-adalahUjianMID(x)
-)
-);
+muatHasilSiswaTerpilih();
 
 tampilkanRapor();
+
 bukaEditNilai();
 
 showMessage(
@@ -2640,16 +2615,14 @@ delete hapusNilaiRapor[id];
 
 });
 
+const keySiswa=
+kunciSiswaTambahan(siswaTerpilih);
+
+delete slotMapelRapor[keySiswa];
+
 simpanEditStorage();
 
-hasilSiswa=pilihHasilTerbaru(
-semuaHasil.filter(
-x=>
-String(x.nisn||"").trim()===
-String(siswaTerpilih.nisn||"").trim()&&
-adalahUjianMID(x)
-)
-);
+muatHasilSiswaTerpilih();
 
 tampilkanRapor();
 bukaEditNilai();
@@ -2671,7 +2644,7 @@ async function loadDataAwal(){
 try{
 
 showMessage(
-"⏳ Memuat kelas dan hasil ujian MID...",
+"⏳ Memuat kelas dan nilai ujian...",
 "info"
 );
 
@@ -2730,7 +2703,8 @@ semuaKelas.forEach(k=>{
 const option=document.createElement("option");
 
 option.value=k.nama_kelas;
-option.textContent=k.nama_kelas;
+option.textContent=
+tampilkanKelas(k.nama_kelas);
 
 select.appendChild(option);
 
@@ -2832,8 +2806,15 @@ if(error)throw error;
 const lengkap=
 await lengkapiNamaMapel(data||[]);
 
+/*
+   PENTING:
+   Tidak lagi memakai adalahUjianMID().
+   Semua nilai ujian dipakai kecuali Try Out,
+   simulasi, latihan, dan ujian percobaan.
+*/
+
 semuaHasil=
-lengkap.filter(adalahUjianMID);
+lengkap.filter(adalahNilaiRapor);
 
 }
 
@@ -2854,8 +2835,7 @@ obj.mata_pelajaran_nama,
 obj.mapel,
 obj.namaMapel,
 obj.subject,
-obj.subject_name,
-obj.nama
+obj.subject_name
 ];
 
 for(const v of kandidat){
@@ -2890,7 +2870,7 @@ let ujianRows=[];
 
 if(ids.length){
 
-let res=
+const res=
 await supabaseClient
 .from("ujian")
 .select("*")
@@ -3037,6 +3017,40 @@ item.nama_ujian||
 
 
 /* =========================================================
+   HASIL SISWA TERPILIH
+========================================================= */
+
+function muatHasilSiswaTerpilih(){
+
+if(!siswaTerpilih){
+
+hasilSiswa=[];
+return;
+
+}
+
+const nisn=String(
+siswaTerpilih.nisn||""
+).trim();
+
+const kelas=normalisasiKelas(
+siswaTerpilih.kelas
+);
+
+hasilSiswa=semuaHasil.filter(
+x=>
+String(x.nisn||"").trim()===nisn&&
+(
+!x.kelas||
+normalisasiKelas(x.kelas)===kelas
+)&&
+adalahNilaiRapor(x)
+);
+
+}
+
+
+/* =========================================================
    KELAS / SISWA
 ========================================================= */
 
@@ -3090,25 +3104,7 @@ s=>String(s.id)===String(siswaId)
 
 if(!siswaTerpilih)return;
 
-const nisn=String(
-siswaTerpilih.nisn||""
-).trim();
-
-const kelas=normalisasiKelas(
-siswaTerpilih.kelas
-);
-
-hasilSiswa=pilihHasilTerbaru(
-semuaHasil.filter(
-x=>
-String(x.nisn||"").trim()===nisn&&
-(
-!x.kelas||
-normalisasiKelas(x.kelas)===kelas
-)&&
-adalahUjianMID(x)
-)
-);
+muatHasilSiswaTerpilih();
 
 tampilkanIdentitas();
 tampilkanRapor();
@@ -3116,14 +3112,14 @@ tampilkanRapor();
 if(!hasilSiswa.length){
 
 showMessage(
-"Belum ditemukan hasil ujian MID untuk "+siswaTerpilih.nama+".",
+"Belum ditemukan nilai ujian untuk "+siswaTerpilih.nama+".",
 "info"
 );
 
 }else{
 
 showMessage(
-"Nilai MID untuk "+siswaTerpilih.nama+" berhasil ditampilkan.",
+`Nilai ujian untuk ${siswaTerpilih.nama} berhasil ditampilkan.`,
 "success"
 );
 
@@ -3148,7 +3144,7 @@ document.getElementById("reportMeta")
 
 const nama=siswaTerpilih.nama||"-";
 const nisn=siswaTerpilih.nisn||"-";
-const kelas=siswaTerpilih.kelas||"-";
+const kelas=tampilkanKelas(siswaTerpilih.kelas);
 const semester=
 document.getElementById("filterSemester").value;
 
@@ -3476,7 +3472,7 @@ document.getElementById("raporBody").innerHTML=`
 <td colspan="6" class="empty">
 
 👨‍🎓 Pilih kelas dan siswa
-untuk melihat nilai MID.
+untuk melihat nilai ujian.
 
 </td>
 
@@ -3489,8 +3485,6 @@ untuk melihat nilai MID.
 
 /* =========================================================
    HTML RAPOR CANONICAL
-   INI SATU-SATUNYA RENDERER
-   UNTUK PREVIEW / CETAK / DOWNLOAD
 ========================================================= */
 
 function buatRaporHtml(siswa,hasil){
@@ -3514,6 +3508,10 @@ const rata=nilai.length
 
 const a=ambilAbsensiSiswa(siswa);
 const catatan=ambilCatatanSiswa(siswa);
+
+const kelas=tampilkanKelas(
+siswa?.kelas
+);
 
 const logo=logoSekolah
 ?`
@@ -3554,7 +3552,7 @@ min-height:82px;
 ${logo}
 
 <h2 style="margin:0 0 5px;font-size:18px">
-LAPORAN HASIL UJIAN MID SEMESTER
+LAPORAN HASIL UJIAN SEMESTER
 </h2>
 
 <h3 style="margin:0 0 5px;font-size:16px">
@@ -3599,7 +3597,7 @@ ${escapeHtml(siswa?.nisn||"-")}
 
 <td>
 :
-${escapeHtml(siswa?.kelas||"-")}
+${escapeHtml(kelas)}
 </td>
 
 <td><b>Semester</b></td>
@@ -4175,7 +4173,7 @@ await lengkapiNamaMapel(data||[]);
 
 return{
 siswa,
-hasil:lengkap.filter(adalahUjianMID)
+hasil:lengkap.filter(adalahNilaiRapor)
 };
 
 }
@@ -4212,17 +4210,15 @@ const rowsByStudent=new Map();
 
 siswa.forEach(st=>{
 
+const hs=aktif.filter(
+x=>
+String(x.nisn).trim()===
+String(st.nisn).trim()
+);
+
 rowsByStudent.set(
 String(st.nisn),
-getRaporRows(
-pilihHasilTerbaru(
-aktif.filter(
-x=>
-String(x.nisn)===
-String(st.nisn)
-)
-)
-)
+getRaporRows(hs)
 );
 
 });
@@ -4244,7 +4240,7 @@ r.item?.mata_pelajaran
 
 document.getElementById("legerSubtitle")
 .textContent=
-"SMP NEGERI 3 SIBOLGA — Kelas "+kelas;
+"SMP NEGERI 3 SIBOLGA — Kelas "+tampilkanKelas(kelas);
 
 document.getElementById("legerHead").innerHTML=`
 
@@ -4396,7 +4392,7 @@ table,
 
 XLSX.writeFile(
 wb,
-`Leger-${kelas}.xlsx`
+`Leger-${tampilkanKelas(kelas)}.xlsx`
 );
 
 }
@@ -4437,12 +4433,10 @@ let pages="";
 
 for(const st of siswa){
 
-const hs=pilihHasilTerbaru(
-hasil.filter(
+const hs=hasil.filter(
 x=>
-String(x.nisn)===
-String(st.nisn)
-)
+String(x.nisn).trim()===
+String(st.nisn).trim()
 );
 
 pages+=buatRaporHtml(st,hs);
@@ -4464,7 +4458,7 @@ const html=`
 <meta charset="UTF-8">
 
 <title>
-Rapor Kelas ${escapeHtml(kelas)}
+Rapor Kelas ${escapeHtml(tampilkanKelas(kelas))}
 </title>
 
 <style>
@@ -4507,11 +4501,13 @@ const url=URL.createObjectURL(blob);
 const a=document.createElement("a");
 
 a.href=url;
-a.download=`Rapor-Kelas-${kelas}.html`;
+a.download=
+`Rapor-Kelas-${tampilkanKelas(kelas)}.html`;
 
 document.body.appendChild(a);
 
 a.click();
+
 a.remove();
 
 URL.revokeObjectURL(url);
