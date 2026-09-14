@@ -966,23 +966,18 @@ td.nilai.kosong{
 <div class="info">
 
     <strong>
-        📊 Sinkronisasi Nilai Ujian 14–18 September 2026
+        📊 Sinkronisasi Nilai Ujian PTS / MID
     </strong>
 
     <br>
 
-    Nilai rapor diambil langsung dari tabel
-    <strong>hasil_ujian</strong> pada kolom <strong>nilai</strong>.
-
+    Nilai rapor diambil langsung dari tabel <strong>hasil_ujian</strong> pada kolom <strong>nilai</strong>.
     <br>
-
-    <strong>Periode nilai: 14 September 2026 sampai 18 September 2026.</strong>
-    Semua jenis ujian yang dikerjakan dalam periode tersebut dapat masuk.
-
+    Sistem hanya mengambil hasil ujian yang teridentifikasi sebagai <strong>PTS / MID</strong>, bukan Try Out.
     <br>
-
-    Nilai sebelum 14 September dan setelah 18 September tidak ikut disinkronkan.
-    Jika satu mata pelajaran memiliki lebih dari satu hasil, nilai terbaru digunakan.
+    Jika satu mata pelajaran memiliki lebih dari satu hasil PTS/MID, nilai terbaru digunakan.
+    <br>
+    Admin dapat mengatur urutan mata pelajaran, tanggal rapor, dan data wali kelas.
 
     <br>
 
@@ -1060,7 +1055,7 @@ td.nilai.kosong{
         <div class="form-group">
 
             <label>
-                Periode Nilai
+                Jenis Nilai
             </label>
 
             <input
@@ -1118,8 +1113,24 @@ td.nilai.kosong{
 
     </div>
 
+    <div class="filter-actions" style="margin-top:12px">
+        <button class="btn action-secondary" onclick="bukaPengaturanRapor()">⚙️ Pengaturan Rapor</button>
+        <button class="btn btn-leger" onclick="simpanUrutanMapel()">💾 Simpan Urutan Mapel</button>
+    </div>
+
 </section>
 
+<section id="pengaturanRapor" class="filter-box" style="display:none">
+    <div class="filter-title">⚙️ Pengaturan Rapor</div>
+    <div class="filter-grid">
+        <div class="form-group"><label>Tanggal Rapor</label><input id="tanggalRapor" type="date"></div>
+        <div class="form-group"><label>Wali Kelas</label><input id="namaWaliKelas" placeholder="Nama wali kelas"></div>
+        <div class="form-group"><label>NIP Wali Kelas</label><input id="nipWaliKelas" placeholder="NIP wali kelas"></div>
+        <div class="form-group"><label>Semester</label><select id="semesterPengaturan"><option value="1">Semester 1</option><option value="2">Semester 2</option></select></div>
+    </div>
+    <div style="margin-top:15px"><label style="font-weight:bold;font-size:12px;color:#475569">Urutan Mata Pelajaran</label><div id="daftarUrutanMapel" style="margin-top:8px"></div></div>
+    <div class="filter-actions"><button class="btn btn-sync" onclick="simpanPengaturanRapor()">💾 Simpan Pengaturan</button><button class="btn btn-danger" onclick="tutupPengaturanRapor()">Tutup</button></div>
+</section>
 
 <!-- =====================================================
      IDENTITAS SISWA
@@ -1247,7 +1258,7 @@ td.nilai.kosong{
         </div>
 
         <div class="stat-label">
-            Ujian 14–18 September 2026
+            Ujian PTS / MID
         </div>
 
     </div>
@@ -1463,7 +1474,7 @@ td.nilai.kosong{
                 <tr>
 
                     <td
-                        colspan="8"
+                        colspan="9"
                         class="empty">
 
                         👨‍🎓 Pilih kelas dan siswa
@@ -1544,7 +1555,7 @@ td.nilai.kosong{
     <div class="legger-title">
         <h2>LEGER NILAI SATU KELAS</h2>
         <p id="legerSubtitle">SMP NEGERI 3 SIBOLGA</p>
-        <small>Periode nilai 14–18 September 2026</small>
+        <small>Nilai PTS / MID</small>
     </div>
     <div class="legger-wrap">
         <table class="legger-table">
@@ -2040,6 +2051,8 @@ async function loadHasilUjian(){
    KELAS BERUBAH
 ===================================================== */
 
+function muatPengaturanKelas(kelas){const all=JSON.parse(localStorage.getItem("rapor_pts_pengaturan")||"{}");const p=all[kelas]||{};if(document.getElementById("tanggalRapor"))document.getElementById("tanggalRapor").value=p.tanggal||new Date().toISOString().slice(0,10);if(document.getElementById("namaWaliKelas"))document.getElementById("namaWaliKelas").value=p.wali||"";if(document.getElementById("nipWaliKelas"))document.getElementById("nipWaliKelas").value=p.nip||"";if(document.getElementById("semesterPengaturan"))document.getElementById("semesterPengaturan").value=p.semester||"1";}
+
 async function kelasBerubah(){
 
     const namaKelas =
@@ -2133,17 +2146,16 @@ function siswaBerubah(){
    CEK APAKAH JENIS UJIAN ADALAH PTS
 ===================================================== */
 
-function dalamPeriodeNilai(item){
-    const akhir = item?.created_at || item?.waktu_selesai || item?.waktu_mulai;
-    if(!akhir) return false;
-    const t = new Date(akhir).getTime();
-    const mulai = new Date("2026-09-14T00:00:00").getTime();
-    const selesai = new Date("2026-09-18T23:59:59.999").getTime();
-    return Number.isFinite(t) && t >= mulai && t <= selesai;
+function adalahUjianPtsMid(item){
+    const teks=[item?.jenis_ujian,item?.nama_ujian,item?.judul_ujian,item?.ujian_nama,item?.nama].filter(Boolean).join(" ").toLowerCase();
+    const namaMapel=String(item?.mata_pelajaran||"").toLowerCase();
+    // Hanya PTS/MID; Try Out sengaja dikecualikan.
+    if(/try\s*out|tryout|simulasi/.test(teks)) return false;
+    return /\bpts\b|penilaian tengah semester|mid semester|midterm|\bmid\b/.test(teks);
 }
 
 function getJenisUjianDisplay(item){
-    return item?.jenis_ujian || item?.nama_ujian || item?.judul_ujian || item?.ujian_nama || "Ujian";
+    return item?.jenis_ujian || item?.nama_ujian || item?.judul_ujian || item?.ujian_nama || "PTS / MID";
 }
 
 /* =====================================================
@@ -2166,14 +2178,14 @@ async function sinkronkanNilai(){
             .order("created_at",{ascending:false});
         if(error) throw error;
 
-        const periode=(data||[]).filter(dalamPeriodeNilai);
+        const periode=(data||[]).filter(adalahUjianPtsMid);
         hasilSiswa=pilihHasilTerbaru(periode.filter(x=>String(x.nisn)===String(siswaTerpilih.nisn)));
         semuaHasil=semuaHasil.filter(x=>String(x.nisn)!==String(siswaTerpilih.nisn)).concat(data||[]);
         tampilkanIdentitas();
         tampilkanRapor();
 
         if(!hasilSiswa.length){
-            showMessage("Tidak ditemukan nilai ujian untuk siswa "+siswaTerpilih.nama+" pada tanggal 14–18 September 2026.","info");
+            showMessage("Tidak ditemukan nilai ujian untuk siswa "+siswaTerpilih.nama+" pada PTS / MID.","info");
         }else{
             showMessage("Nilai ujian periode 14–18 September 2026 berhasil disinkronkan.","success");
         }
@@ -2391,7 +2403,7 @@ function tampilkanRapor(){
             <tr>
 
                 <td
-                    colspan="8"
+                    colspan="9"
                     class="empty">
 
                     📭 Belum ada nilai ujian pada periode 14–18 September 2026
@@ -2649,35 +2661,13 @@ function updateStatistikRapor(){
    PREDIKAT
 ===================================================== */
 
-function getPredikat(
-    nilai
-){
-
-    if(nilai >= 90){
-
-        return "A";
-
-    }
-
-
-    if(nilai >= 80){
-
-        return "B";
-
-    }
-
-
-    if(nilai >= 70){
-
-        return "C";
-
-    }
-
-
-    return "D";
-
+function getPredikat(nilai){
+    nilai=Number(nilai);
+    if(nilai>=90) return {huruf:"A",keterangan:"Mahir",deskripsi:"Mampu bernalar kritis dan memecahkan masalah kompleks secara mandiri."};
+    if(nilai>=80) return {huruf:"B",keterangan:"Cakap",deskripsi:"Mampu mengaplikasikan pengetahuan dalam konteks yang beragam."};
+    if(nilai>=70) return {huruf:"C",keterangan:"Layak",deskripsi:"Paham konsep dasar atau tugas minimum, tetapi terbatas pada konteks sederhana."};
+    return {huruf:"D",keterangan:"Perlu Bimbingan",deskripsi:"Belum paham konsep dasar dan membutuhkan bimbingan intensif."};
 }
-
 
 /* =====================================================
    RESET TAMPILAN
@@ -2716,7 +2706,7 @@ function resetTampilanRapor(){
         <tr>
 
             <td
-                colspan="8"
+                colspan="9"
                 class="empty">
 
                 👨‍🎓 Pilih kelas dan siswa untuk melihat nilai ujian.
@@ -2739,40 +2729,32 @@ function formatNilai(n){
 }
 
 function buatRaporHtml(siswa, hasil, lengkap=true){
-    const rows=(hasil||[]).map((item,i)=>{
-        const nilai=Number(item.nilai);
-        return `<tr>
-            <td style="text-align:center">${i+1}</td>
-            <td><strong>${escapeHtml(item.mata_pelajaran||"-")}</strong></td>
-            <td style="text-align:center">${escapeHtml(getJenisUjianDisplay(item))}</td>
-            <td style="text-align:center">${Number(item.jumlah_soal)||0}</td>
-            <td style="text-align:center">${Number(item.jumlah_benar)||0}</td>
-            <td style="text-align:center">${Number(item.jumlah_salah)||0}</td>
-            <td style="text-align:center;font-weight:bold">${formatNilai(nilai)}</td>
-            <td style="text-align:center;font-weight:bold">${Number.isFinite(nilai)?getPredikat(nilai):"-"}</td>
-        </tr>`;
+    const peng=ambilPengaturan();
+    const ordered=urutkanHasil(hasil||[], siswa?.kelas);
+    const rows=ordered.map((item,i)=>{
+        const nilai=Number(item.nilai); const p=Number.isFinite(nilai)?getPredikat(nilai):null;
+        return `<tr><td style="text-align:center">${i+1}</td><td><strong>${escapeHtml(item.mata_pelajaran||"-")}</strong></td><td style="text-align:center;font-weight:bold">${formatNilai(nilai)}</td><td style="text-align:center">${p?p.huruf:"-"}</td><td style="text-align:center">${p?escapeHtml(p.keterangan):"-"}</td><td>${p?escapeHtml(p.deskripsi):"-"}</td></tr>`;
     }).join("");
-    const avg=(hasil||[]).map(x=>Number(x.nilai)).filter(Number.isFinite);
-    const rata=avg.length?avg.reduce((a,b)=>a+b,0)/avg.length:0;
+    const vals=ordered.map(x=>Number(x.nilai)).filter(Number.isFinite); const rata=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;
     return `<div class="rapor-print-page" style="font-family:Arial,sans-serif;color:#111;background:#fff;padding:10px;">
-        <div style="text-align:center;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:18px">
-            <h2 style="margin:0 0 5px">LAPORAN HASIL PENILAIAN</h2>
-            <h3 style="margin:0 0 5px">SMP NEGERI 3 SIBOLGA</h3>
-            <div>RUANG EXAM</div>
-        </div>
-        <table style="width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px">
-            <tr><td style="width:100px"><b>Nama</b></td><td>: ${escapeHtml(siswa?.nama||"-")}</td><td style="width:100px"><b>NISN</b></td><td>: ${escapeHtml(siswa?.nisn||"-")}</td></tr>
-            <tr><td><b>Kelas</b></td><td>: ${escapeHtml(siswa?.kelas||"-")}</td><td><b>Semester</b></td><td>: ${document.getElementById("filterSemester")?.value==="1"?"Semester 1":"Semester 2"}</td></tr>
-            <tr><td><b>Periode</b></td><td colspan="3">: 14–18 September 2026</td></tr>
-        </table>
-        <table style="width:100%;border-collapse:collapse;font-size:11px">
-            <thead><tr style="background:#eee"><th style="border:1px solid #111;padding:7px">No</th><th style="border:1px solid #111;padding:7px">Mata Pelajaran</th><th style="border:1px solid #111;padding:7px">Jenis Ujian</th><th style="border:1px solid #111;padding:7px">Soal</th><th style="border:1px solid #111;padding:7px">Benar</th><th style="border:1px solid #111;padding:7px">Salah</th><th style="border:1px solid #111;padding:7px">Nilai</th><th style="border:1px solid #111;padding:7px">Predikat</th></tr></thead>
-            <tbody>${rows || `<tr><td colspan="8" style="border:1px solid #111;padding:15px;text-align:center">Belum ada nilai.</td></tr>`}</tbody>
-        </table>
-        <div style="margin-top:15px;text-align:right;font-size:13px"><b>Rata-rata: ${rata.toFixed(2)}</b></div>
-        <div style="margin-top:40px;text-align:center;font-size:11px">Dibuat oleh Mr. Rahmat Batubara, S.T.P</div>
+      <div style="text-align:center;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:18px"><h2 style="margin:0 0 5px">LAPORAN HASIL PENILAIAN TENGAH SEMESTER</h2><h3 style="margin:0 0 5px">SMP NEGERI 3 SIBOLGA</h3><div>RUANG EXAM</div></div>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px"><tr><td><b>Nama</b></td><td>: ${escapeHtml(siswa?.nama||"-")}</td><td><b>NISN</b></td><td>: ${escapeHtml(siswa?.nisn||"-")}</td></tr><tr><td><b>Kelas</b></td><td>: ${escapeHtml(siswa?.kelas||"-")}</td><td><b>Semester</b></td><td>: ${peng.semester==="1"?"Semester 1":"Semester 2"}</td></tr><tr><td><b>Tanggal</b></td><td colspan="3">: ${escapeHtml(formatTanggalIndonesia(peng.tanggal))}</td></tr></table>
+      <table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="background:#eee"><th>No</th><th>Mata Pelajaran</th><th>Nilai</th><th>Huruf</th><th>Keterangan</th><th>Deskripsi</th></tr></thead><tbody>${rows||`<tr><td colspan="6" style="padding:15px;text-align:center">Belum ada nilai PTS/MID.</td></tr>`}</tbody></table>
+      <div style="margin-top:12px;text-align:right;font-size:13px"><b>Rata-rata: ${rata.toFixed(2)}</b></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:45px;font-size:12px;text-align:center"><div><p>Mengetahui,</p><p>Orang Tua/Wali</p><br><br><p>(________________________)</p></div><div><p>Sibolga, ${escapeHtml(formatTanggalIndonesia(peng.tanggal))}</p><p>Wali Kelas</p><br><br><p><b>${escapeHtml(peng.wali||"-")}</b><br>NIP. ${escapeHtml(peng.nip||"-")}</p></div></div>
+      <div style="margin-top:35px;text-align:center;font-size:12px"><p>Mengetahui,</p><p>Kepala SMP Negeri 3 Sibolga</p><br><br><p><b>Syahrul Mahyuddin Siregar, M.Pd</b><br>NIP. 197708042009031002</p></div>
+      <div style="margin-top:30px;text-align:center;font-size:10px">Dibuat oleh Mr. Rahmat Batubara, S.T.P</div>
     </div>`;
 }
+
+function ambilPengaturan(){
+    const kelas=document.getElementById("filterKelas")?.value||"";
+    const all=JSON.parse(localStorage.getItem("rapor_pts_pengaturan")||"{}");
+    const x=all[kelas]||{};
+    return {tanggal:document.getElementById("tanggalRapor")?.value||x.tanggal||new Date().toISOString().slice(0,10),wali:document.getElementById("namaWaliKelas")?.value||x.wali||"",nip:document.getElementById("nipWaliKelas")?.value||x.nip||"",semester:document.getElementById("filterSemester")?.value||x.semester||"1",urutan:x.urutan||[]};
+}
+function formatTanggalIndonesia(t){if(!t)return "-";const d=new Date(t+"T00:00:00");return d.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"});}
+function urutkanHasil(hasil,kelas){const p=ambilPengaturan();const order=p.urutan||[];return [...hasil].sort((a,b)=>{const aa=order.findIndex(x=>String(x).toLowerCase()===String(a.mata_pelajaran||"").toLowerCase());const bb=order.findIndex(x=>String(x).toLowerCase()===String(b.mata_pelajaran||"").toLowerCase());if(aa>=0||bb>=0)return (aa<0?999:aa)-(bb<0?999:bb);return String(a.mata_pelajaran||"").localeCompare(String(b.mata_pelajaran||""),"id");});}
 
 function previewRapor(){
     if(!siswaTerpilih || !hasilSiswa.length){ alert("Pilih siswa dan pastikan nilai sudah tersedia."); return; }
@@ -2794,7 +2776,7 @@ async function ambilSemuaNilaiKelas(namaKelas){
     if(!nisns.length) return {siswa:siswa||[],hasil:[]};
     const {data,error}=await supabaseClient.from("hasil_ujian").select("id,siswa_id,ujian_id,nama_siswa,nisn,kelas,jenis_ujian,mata_pelajaran,jumlah_soal,jumlah_benar,jumlah_salah,nilai,status,waktu_mulai,waktu_selesai,created_at").in("nisn",nisns).order("created_at",{ascending:false});
     if(error) throw error;
-    const hasil=(data||[]).filter(dalamPeriodeNilai);
+    const hasil=(data||[]).filter(adalahUjianPtsMid);
     return {siswa:siswa||[],hasil};
 }
 
@@ -2803,7 +2785,7 @@ async function tampilkanLegerKelas(){
     if(!kelas){alert("Pilih kelas terlebih dahulu.");return;}
     try{
         const {siswa,hasil}=await ambilSemuaNilaiKelas(kelas);
-        const mapel=[...new Set(hasil.map(x=>x.mata_pelajaran||"Tanpa Mata Pelajaran"))].sort((a,b)=>a.localeCompare(b,"id"));
+        const mapel=urutkanNamaMapel([...new Set(hasil.map(x=>x.mata_pelajaran||"Tanpa Mata Pelajaran"))], kelas);
         document.getElementById("legerSubtitle").textContent="SMP NEGERI 3 SIBOLGA — Kelas "+kelas;
         document.getElementById("legerHead").innerHTML=`<tr><th>No</th><th>Nama Siswa</th><th>NISN</th>${mapel.map(m=>`<th>${escapeHtml(m)}</th>`).join("")}<th>Rata-rata</th></tr>`;
         document.getElementById("legerBody").innerHTML=siswa.map((st,i)=>{
@@ -2830,10 +2812,19 @@ async function downloadRaporSatuKelas(){
         }
         const html=`<!doctype html><html lang="id"><head><meta charset="UTF-8"><title>Rapor Kelas ${escapeHtml(kelas)}</title><style>body{margin:25px;font-family:Arial}@media print{body{margin:10mm}.rapor-print-page{page-break-inside:avoid}}</style></head><body>${pages||"Belum ada siswa."}</body></html>`;
         const blob=new Blob([html],{type:"text/html;charset=utf-8"});
-        const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=`Rapor-Kelas-${kelas}-14-18-September-2026.html`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=`Rapor-Kelas-${kelas}-PTS-MID.html`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
         showMessage("Rapor satu kelas berhasil dibuat untuk di-download.","success");
     }catch(e){console.error(e);showMessage("Gagal membuat rapor satu kelas: "+e.message,"error");}
 }
+
+function urutkanNamaMapel(mapel,kelas){const p=ambilPengaturan();const order=p.urutan||[];return [...mapel].sort((a,b)=>{const aa=order.findIndex(x=>String(x).toLowerCase()===String(a).toLowerCase());const bb=order.findIndex(x=>String(x).toLowerCase()===String(b).toLowerCase());if(aa>=0||bb>=0)return (aa<0?999:aa)-(bb<0?999:bb);return String(a).localeCompare(String(b),"id");});}
+function bukaPengaturanRapor(){const kelas=document.getElementById("filterKelas").value;if(!kelas){alert("Pilih kelas terlebih dahulu.");return;}const p=ambilPengaturan();document.getElementById("tanggalRapor").value=p.tanggal;document.getElementById("namaWaliKelas").value=p.wali;document.getElementById("nipWaliKelas").value=p.nip;document.getElementById("semesterPengaturan").value=p.semester;const names=urutkanNamaMapel([...new Set(hasilSiswa.map(x=>x.mata_pelajaran).filter(Boolean))],kelas);document.getElementById("daftarUrutanMapel").innerHTML=names.map((m,i)=>`<div draggable="true" data-mapel="${escapeHtml(m)}" style="display:flex;align-items:center;gap:8px;background:#f8fafc;border:1px solid #e2e8f0;padding:9px;border-radius:8px;margin:5px 0;cursor:grab"><span>☰</span><b>${i+1}.</b><span>${escapeHtml(m)}</span></div>`).join("");document.getElementById("pengaturanRapor").style.display="block";}
+function tutupPengaturanRapor(){document.getElementById("pengaturanRapor").style.display="none";}
+function simpanUrutanMapel(){simpanPengaturanRapor();}
+document.addEventListener("dragstart",e=>{if(e.target.matches("#daftarUrutanMapel [data-mapel]"))e.dataTransfer.setData("text/plain",e.target.dataset.mapel);});
+document.addEventListener("dragover",e=>{if(e.target.closest("#daftarUrutanMapel [data-mapel]"))e.preventDefault();});
+document.addEventListener("drop",e=>{const target=e.target.closest("#daftarUrutanMapel [data-mapel]");if(!target)return;e.preventDefault();const id=e.dataTransfer.getData("text/plain");const source=[...document.querySelectorAll("#daftarUrutanMapel [data-mapel]")].find(x=>x.dataset.mapel===id);if(source&&source!==target)target.parentNode.insertBefore(source,target);[...document.querySelectorAll("#daftarUrutanMapel [data-mapel]")].forEach((x,i)=>x.querySelector("b").textContent=(i+1)+".");});
+function simpanPengaturanRapor(){const kelas=document.getElementById("filterKelas").value;if(!kelas)return;const all=JSON.parse(localStorage.getItem("rapor_pts_pengaturan")||"{}");const urutan=[...document.querySelectorAll("#daftarUrutanMapel [data-mapel]")].map(x=>x.dataset.mapel);all[kelas]={tanggal:document.getElementById("tanggalRapor").value,wali:document.getElementById("namaWaliKelas").value.trim(),nip:document.getElementById("nipWaliKelas").value.trim(),semester:document.getElementById("semesterPengaturan").value,urutan};localStorage.setItem("rapor_pts_pengaturan",JSON.stringify(all));document.getElementById("filterSemester").value=all[kelas].semester;tampilkanRapor();showMessage("Pengaturan rapor berhasil disimpan untuk kelas "+kelas,"success");}
 
 /* =====================================================
    CETAK RAPOR
@@ -2855,7 +2846,7 @@ function cetakRapor(){
     if(!hasilSiswa.length){
 
         alert(
-            "Belum ada nilai ujian periode 14–18 September 2026 yang dapat dicetak."
+            "Belum ada nilai ujian PTS / MID yang dapat dicetak."
         );
 
         return;
