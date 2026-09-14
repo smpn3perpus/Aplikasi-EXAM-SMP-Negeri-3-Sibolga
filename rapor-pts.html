@@ -758,6 +758,62 @@ td.nilai.kosong{
 }
 
 /* =====================================================
+   PREVIEW / LEGER / RAPOR SATU KELAS
+===================================================== */
+.action-secondary{
+    background:#0f766e;
+    color:white;
+}
+.btn-leger{
+    background:#7c3aed;
+    color:white;
+}
+.btn-download-class{
+    background:#0891b2;
+    color:white;
+}
+.preview-modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    background:rgba(15,23,42,.72);
+    padding:20px;
+    overflow:auto;
+}
+.preview-modal.show{display:block;}
+.preview-dialog{
+    background:white;
+    max-width:1000px;
+    margin:0 auto;
+    border-radius:14px;
+    min-height:90vh;
+    padding:24px;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+.preview-toolbar{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-bottom:15px;
+    flex-wrap:wrap;
+}
+.legger-box{
+    display:none;
+    background:white;
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 4px 18px rgba(15,23,42,.07);
+}
+.legger-title{text-align:center;margin-bottom:15px;}
+.legger-table{width:100%;min-width:900px;border-collapse:collapse;}
+.legger-table th,.legger-table td{border:1px solid #cbd5e1;padding:7px;font-size:11px;}
+.legger-table th{background:#ede9fe;color:#4c1d95;text-align:center;}
+.legger-table td.center{text-align:center;}
+.legger-wrap{overflow:auto;}
+
+/* =====================================================
    RESPONSIVE
 ===================================================== */
 
@@ -862,6 +918,30 @@ td.nilai.kosong{
 
         </button>
 
+        <button
+            class="btn action-secondary"
+            onclick="previewRapor()">
+
+            👁️ Preview Rapor
+
+        </button>
+
+        <button
+            class="btn btn-leger"
+            onclick="tampilkanLegerKelas()">
+
+            📊 Leger 1 Kelas
+
+        </button>
+
+        <button
+            class="btn btn-download-class"
+            onclick="downloadRaporSatuKelas()">
+
+            📥 Download Rapor 1 Kelas
+
+        </button>
+
     </div>
 
 </header>
@@ -886,18 +966,23 @@ td.nilai.kosong{
 <div class="info">
 
     <strong>
-        📊 Sinkronisasi Nilai MID / PTS
+        📊 Sinkronisasi Nilai Ujian 14–18 September 2026
     </strong>
 
     <br>
 
     Nilai rapor diambil langsung dari tabel
-    <strong>hasil_ujian</strong> pada kolom
-    <strong>nilai</strong> dan <strong>hanya hasil ujian MID / PTS</strong> yang digunakan.
+    <strong>hasil_ujian</strong> pada kolom <strong>nilai</strong>.
 
     <br>
 
-    <strong>Try Out, Tryout, Simulasi, dan Latihan tidak ikut disinkronkan.</strong>
+    <strong>Periode nilai: 14 September 2026 sampai 18 September 2026.</strong>
+    Semua jenis ujian yang dikerjakan dalam periode tersebut dapat masuk.
+
+    <br>
+
+    Nilai sebelum 14 September dan setelah 18 September tidak ikut disinkronkan.
+    Jika satu mata pelajaran memiliki lebih dari satu hasil, nilai terbaru digunakan.
 
     <br>
 
@@ -970,22 +1055,18 @@ td.nilai.kosong{
         </div>
 
 
-        <!-- JENIS UJIAN -->
+        <!-- PERIODE NILAI -->
 
         <div class="form-group">
 
             <label>
-                Jenis Ujian
+                Periode Nilai
             </label>
 
-            <select
-                id="filterJenis">
-
-                <option value="PTS">
-                    MID / PTS
-                </option>
-
-            </select>
+            <input
+                type="text"
+                value="14–18 September 2026"
+                readonly>
 
         </div>
 
@@ -1166,7 +1247,7 @@ td.nilai.kosong{
         </div>
 
         <div class="stat-label">
-            Ujian MID / PTS
+            Ujian 14–18 September 2026
         </div>
 
     </div>
@@ -1223,7 +1304,7 @@ td.nilai.kosong{
     <div class="report-header">
 
         <h2>
-            LAPORAN HASIL PENILAIAN TENGAH SEMESTER
+            LAPORAN HASIL UJIAN
         </h2>
 
         <h3>
@@ -1456,8 +1537,38 @@ td.nilai.kosong{
 
 </section>
 
+<!-- =====================================================
+     LEGER SATU KELAS
+===================================================== -->
+<section id="legerBox" class="leger-box">
+    <div class="legger-title">
+        <h2>LEGER NILAI SATU KELAS</h2>
+        <p id="legerSubtitle">SMP NEGERI 3 SIBOLGA</p>
+        <small>Periode nilai 14–18 September 2026</small>
+    </div>
+    <div class="legger-wrap">
+        <table class="legger-table">
+            <thead id="legerHead"></thead>
+            <tbody id="legerBody"></tbody>
+        </table>
+    </div>
+</section>
+
 </main>
 
+
+<!-- =====================================================
+     PREVIEW RAPOR
+===================================================== -->
+<div id="previewModal" class="preview-modal" onclick="if(event.target===this) tutupPreview()">
+    <div class="preview-dialog">
+        <div class="preview-toolbar">
+            <button class="btn btn-print" onclick="printPreview()">🖨️ Cetak Preview</button>
+            <button class="btn btn-danger" onclick="tutupPreview()">✕ Tutup</button>
+        </div>
+        <div id="previewContent"></div>
+    </div>
+</div>
 
 <!-- =====================================================
      FOOTER
@@ -2022,35 +2133,17 @@ function siswaBerubah(){
    CEK APAKAH JENIS UJIAN ADALAH PTS
 ===================================================== */
 
-function isUjianPTS(
-    jenis
-){
+function dalamPeriodeNilai(item){
+    const akhir = item?.created_at || item?.waktu_selesai || item?.waktu_mulai;
+    if(!akhir) return false;
+    const t = new Date(akhir).getTime();
+    const mulai = new Date("2026-09-14T00:00:00").getTime();
+    const selesai = new Date("2026-09-18T23:59:59.999").getTime();
+    return Number.isFinite(t) && t >= mulai && t <= selesai;
+}
 
-    if(!jenis){
-        return false;
-    }
-
-    const teks =
-        String(jenis)
-        .toLowerCase()
-        .trim()
-        .replace(/[_-]+/g," ")
-        .replace(/\s+/g," ");
-
-    /*
-     * Hanya MID / PTS yang boleh masuk ke Rapor PTS.
-     * TRY OUT, TRYOUT, SIMULASI dan LATIHAN ditolak.
-     */
-    if(/\btry\s*out\b|\btryout\b|\bsimulasi\b|\blatihan\b/i.test(teks)){
-        return false;
-    }
-
-    return (
-        /\bpts\b/i.test(teks) ||
-        /\bmid\b/i.test(teks) ||
-        /tengah semester/i.test(teks) ||
-        /penilaian tengah/i.test(teks)
-    );
+function getJenisUjianDisplay(item){
+    return item?.jenis_ujian || item?.nama_ujian || item?.judul_ujian || item?.ujian_nama || "Ujian";
 }
 
 /* =====================================================
@@ -2058,198 +2151,39 @@ function isUjianPTS(
 ===================================================== */
 
 async function sinkronkanNilai(){
-
     if(!siswaTerpilih){
-
-        showMessage(
-            "Silakan pilih siswa terlebih dahulu.",
-            "error"
-        );
-
+        showMessage("Silakan pilih siswa terlebih dahulu.","error");
         return;
-
     }
-
-
-    const tombol =
-        document.querySelector(
-            ".btn-sync"
-        );
-
-
-    const teksAsli =
-        tombol
-        ? tombol.textContent
-        : "";
-
-
-    if(tombol){
-
-        tombol.disabled =
-            true;
-
-        tombol.textContent =
-            "⏳ Sinkronisasi...";
-
-    }
-
-
+    const tombol=document.querySelector(".btn-sync");
+    const teksAsli=tombol?tombol.textContent:"";
+    if(tombol){ tombol.disabled=true; tombol.textContent="⏳ Sinkronisasi..."; }
     try{
-
-        /*
-         * Ambil ulang hasil ujian langsung
-         * dari database supaya nilai terbaru
-         * selalu digunakan.
-         */
-
-        const {
-            data,
-            error
-        } =
-            await supabaseClient
+        const {data,error}=await supabaseClient
             .from("hasil_ujian")
-            .select(`
-                id,
-                siswa_id,
-                ujian_id,
-                nama_siswa,
-                nisn,
-                kelas,
-                jenis_ujian,
-                mata_pelajaran,
-                jumlah_soal,
-                jumlah_benar,
-                jumlah_salah,
-                nilai,
-                status,
-                waktu_mulai,
-                waktu_selesai,
-                created_at
-            `)
-            .eq(
-                "nisn",
-                siswaTerpilih.nisn
-            )
-            .order(
-                "created_at",
-                {
-                    ascending:false
-                }
-            );
+            .select(`id,siswa_id,ujian_id,nama_siswa,nisn,kelas,jenis_ujian,mata_pelajaran,jumlah_soal,jumlah_benar,jumlah_salah,nilai,status,waktu_mulai,waktu_selesai,created_at`)
+            .eq("nisn",siswaTerpilih.nisn)
+            .order("created_at",{ascending:false});
+        if(error) throw error;
 
-
-        if(error){
-
-            throw error;
-
-        }
-
-
-        semuaHasil =
-            semuaHasil.filter(
-                x =>
-                    String(x.nisn) !==
-                    String(
-                        siswaTerpilih.nisn
-                    )
-            )
-            .concat(
-                data || []
-            );
-
-
-        /*
-         * Hanya ambil hasil ujian
-         * yang termasuk MID / PTS.
-         */
-
-        hasilSiswa =
-            (data || [])
-            .filter(
-                x =>
-                    isUjianPTS(
-                        x.jenis_ujian
-                    )
-            );
-
-
-        /*
-         * Pastikan hanya siswa yang sama.
-         * NISN menjadi pencocokan utama.
-         */
-
-        hasilSiswa =
-            hasilSiswa.filter(
-                x =>
-                    String(x.nisn) ===
-                    String(
-                        siswaTerpilih.nisn
-                    )
-            );
-
-
-        /*
-         * Jika ada hasil ganda untuk mapel
-         * yang sama, gunakan hasil terbaru.
-         */
-
-        hasilSiswa =
-            pilihHasilTerbaru(
-                hasilSiswa
-            );
-
-
+        const periode=(data||[]).filter(dalamPeriodeNilai);
+        hasilSiswa=pilihHasilTerbaru(periode.filter(x=>String(x.nisn)===String(siswaTerpilih.nisn)));
+        semuaHasil=semuaHasil.filter(x=>String(x.nisn)!==String(siswaTerpilih.nisn)).concat(data||[]);
         tampilkanIdentitas();
-
         tampilkanRapor();
 
-
         if(!hasilSiswa.length){
-
-            showMessage(
-                "Tidak ditemukan hasil ujian MID/PTS untuk siswa " +
-                siswaTerpilih.nama +
-                ".",
-                "info"
-            );
-
+            showMessage("Tidak ditemukan nilai ujian untuk siswa "+siswaTerpilih.nama+" pada tanggal 14–18 September 2026.","info");
         }else{
-
-            showMessage(
-                "Nilai MID/PTS berhasil disinkronkan dari hasil ujian.",
-                "success"
-            );
-
+            showMessage("Nilai ujian periode 14–18 September 2026 berhasil disinkronkan.","success");
         }
-
-
     }catch(error){
-
         console.error(error);
-
-        showMessage(
-            "Gagal sinkronisasi nilai: " +
-            error.message,
-            "error"
-        );
-
+        showMessage("Gagal sinkronisasi nilai: "+error.message,"error");
     }finally{
-
-        if(tombol){
-
-            tombol.disabled =
-                false;
-
-            tombol.textContent =
-                teksAsli ||
-                "🔄 Sinkronkan Nilai";
-
-        }
-
+        if(tombol){ tombol.disabled=false; tombol.textContent=teksAsli||"🔄 Sinkronkan Nilai"; }
     }
-
 }
-
 
 /* =====================================================
    PILIH HASIL TERBARU
@@ -2460,13 +2394,12 @@ function tampilkanRapor(){
                     colspan="8"
                     class="empty">
 
-                    📭 Belum ada nilai MID/PTS
+                    📭 Belum ada nilai ujian pada periode 14–18 September 2026
                     untuk siswa ini.
 
                     <br><br>
 
-                    Pastikan siswa telah
-                    mengikuti ujian MID/PTS.
+                    Pastikan siswa telah mengikuti ujian pada periode tersebut.
 
                 </td>
 
@@ -2786,8 +2719,7 @@ function resetTampilanRapor(){
                 colspan="8"
                 class="empty">
 
-                👨‍🎓 Pilih kelas dan siswa
-                untuk melihat nilai PTS.
+                👨‍🎓 Pilih kelas dan siswa untuk melihat nilai ujian.
 
             </td>
 
@@ -2797,6 +2729,111 @@ function resetTampilanRapor(){
 
 }
 
+
+/* =====================================================
+   DATA RAPOR HTML / PREVIEW / LEGER
+===================================================== */
+function formatNilai(n){
+    const v=Number(n);
+    return Number.isFinite(v)?v.toFixed(2):"-";
+}
+
+function buatRaporHtml(siswa, hasil, lengkap=true){
+    const rows=(hasil||[]).map((item,i)=>{
+        const nilai=Number(item.nilai);
+        return `<tr>
+            <td style="text-align:center">${i+1}</td>
+            <td><strong>${escapeHtml(item.mata_pelajaran||"-")}</strong></td>
+            <td style="text-align:center">${escapeHtml(getJenisUjianDisplay(item))}</td>
+            <td style="text-align:center">${Number(item.jumlah_soal)||0}</td>
+            <td style="text-align:center">${Number(item.jumlah_benar)||0}</td>
+            <td style="text-align:center">${Number(item.jumlah_salah)||0}</td>
+            <td style="text-align:center;font-weight:bold">${formatNilai(nilai)}</td>
+            <td style="text-align:center;font-weight:bold">${Number.isFinite(nilai)?getPredikat(nilai):"-"}</td>
+        </tr>`;
+    }).join("");
+    const avg=(hasil||[]).map(x=>Number(x.nilai)).filter(Number.isFinite);
+    const rata=avg.length?avg.reduce((a,b)=>a+b,0)/avg.length:0;
+    return `<div class="rapor-print-page" style="font-family:Arial,sans-serif;color:#111;background:#fff;padding:10px;">
+        <div style="text-align:center;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:18px">
+            <h2 style="margin:0 0 5px">LAPORAN HASIL PENILAIAN</h2>
+            <h3 style="margin:0 0 5px">SMP NEGERI 3 SIBOLGA</h3>
+            <div>RUANG EXAM</div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px">
+            <tr><td style="width:100px"><b>Nama</b></td><td>: ${escapeHtml(siswa?.nama||"-")}</td><td style="width:100px"><b>NISN</b></td><td>: ${escapeHtml(siswa?.nisn||"-")}</td></tr>
+            <tr><td><b>Kelas</b></td><td>: ${escapeHtml(siswa?.kelas||"-")}</td><td><b>Semester</b></td><td>: ${document.getElementById("filterSemester")?.value==="1"?"Semester 1":"Semester 2"}</td></tr>
+            <tr><td><b>Periode</b></td><td colspan="3">: 14–18 September 2026</td></tr>
+        </table>
+        <table style="width:100%;border-collapse:collapse;font-size:11px">
+            <thead><tr style="background:#eee"><th style="border:1px solid #111;padding:7px">No</th><th style="border:1px solid #111;padding:7px">Mata Pelajaran</th><th style="border:1px solid #111;padding:7px">Jenis Ujian</th><th style="border:1px solid #111;padding:7px">Soal</th><th style="border:1px solid #111;padding:7px">Benar</th><th style="border:1px solid #111;padding:7px">Salah</th><th style="border:1px solid #111;padding:7px">Nilai</th><th style="border:1px solid #111;padding:7px">Predikat</th></tr></thead>
+            <tbody>${rows || `<tr><td colspan="8" style="border:1px solid #111;padding:15px;text-align:center">Belum ada nilai.</td></tr>`}</tbody>
+        </table>
+        <div style="margin-top:15px;text-align:right;font-size:13px"><b>Rata-rata: ${rata.toFixed(2)}</b></div>
+        <div style="margin-top:40px;text-align:center;font-size:11px">Dibuat oleh Mr. Rahmat Batubara, S.T.P</div>
+    </div>`;
+}
+
+function previewRapor(){
+    if(!siswaTerpilih || !hasilSiswa.length){ alert("Pilih siswa dan pastikan nilai sudah tersedia."); return; }
+    document.getElementById("previewContent").innerHTML=buatRaporHtml(siswaTerpilih,hasilSiswa);
+    document.getElementById("previewModal").classList.add("show");
+}
+function tutupPreview(){ document.getElementById("previewModal").classList.remove("show"); }
+function printPreview(){
+    const content=document.getElementById("previewContent").innerHTML;
+    const w=window.open("","_blank","width=1100,height=800");
+    w.document.write(`<!doctype html><html><head><title>Preview Rapor</title><style>body{margin:30px;font-family:Arial}@media print{body{margin:10mm}}</style></head><body>${content}</body></html>`);
+    w.document.close(); w.focus(); w.print();
+}
+
+async function ambilSemuaNilaiKelas(namaKelas){
+    const {data:siswa,error:errSiswa}=await supabaseClient.from("siswa").select("id,nama,nisn,kelas").eq("kelas",namaKelas).order("nama",{ascending:true});
+    if(errSiswa) throw errSiswa;
+    const nisns=(siswa||[]).map(x=>x.nisn).filter(Boolean);
+    if(!nisns.length) return {siswa:siswa||[],hasil:[]};
+    const {data,error}=await supabaseClient.from("hasil_ujian").select("id,siswa_id,ujian_id,nama_siswa,nisn,kelas,jenis_ujian,mata_pelajaran,jumlah_soal,jumlah_benar,jumlah_salah,nilai,status,waktu_mulai,waktu_selesai,created_at").in("nisn",nisns).order("created_at",{ascending:false});
+    if(error) throw error;
+    const hasil=(data||[]).filter(dalamPeriodeNilai);
+    return {siswa:siswa||[],hasil};
+}
+
+async function tampilkanLegerKelas(){
+    const kelas=document.getElementById("filterKelas").value;
+    if(!kelas){alert("Pilih kelas terlebih dahulu.");return;}
+    try{
+        const {siswa,hasil}=await ambilSemuaNilaiKelas(kelas);
+        const mapel=[...new Set(hasil.map(x=>x.mata_pelajaran||"Tanpa Mata Pelajaran"))].sort((a,b)=>a.localeCompare(b,"id"));
+        document.getElementById("legerSubtitle").textContent="SMP NEGERI 3 SIBOLGA — Kelas "+kelas;
+        document.getElementById("legerHead").innerHTML=`<tr><th>No</th><th>Nama Siswa</th><th>NISN</th>${mapel.map(m=>`<th>${escapeHtml(m)}</th>`).join("")}<th>Rata-rata</th></tr>`;
+        document.getElementById("legerBody").innerHTML=siswa.map((st,i)=>{
+            const perMapel=pilihHasilTerbaru(hasil.filter(x=>String(x.nisn)===String(st.nisn)));
+            const by=new Map(perMapel.map(x=>[String(x.mata_pelajaran||"").toLowerCase(),x]));
+            const vals=perMapel.map(x=>Number(x.nilai)).filter(Number.isFinite);
+            const rata=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
+            return `<tr><td class="center">${i+1}</td><td>${escapeHtml(st.nama||"-")}</td><td class="center">${escapeHtml(st.nisn||"-")}</td>${mapel.map(m=>{const x=by.get(String(m).toLowerCase());return `<td class="center">${x?formatNilai(x.nilai):"-"}</td>`}).join("")}<td class="center"><b>${rata===null?"-":rata.toFixed(2)}</b></td></tr>`;
+        }).join("") || `<tr><td colspan="${mapel.length+4}" class="center">Belum ada data.</td></tr>`;
+        document.getElementById("legerBox").style.display="block";
+        document.getElementById("legerBox").scrollIntoView({behavior:"smooth"});
+    }catch(e){console.error(e);showMessage("Gagal memuat leger: "+e.message,"error");}
+}
+
+async function downloadRaporSatuKelas(){
+    const kelas=document.getElementById("filterKelas").value;
+    if(!kelas){alert("Pilih kelas terlebih dahulu.");return;}
+    try{
+        const {siswa,hasil}=await ambilSemuaNilaiKelas(kelas);
+        let pages="";
+        for(const st of siswa){
+            const hs=pilihHasilTerbaru(hasil.filter(x=>String(x.nisn)===String(st.nisn)));
+            pages+=buatRaporHtml(st,hs)+`<div style="page-break-after:always"></div>`;
+        }
+        const html=`<!doctype html><html lang="id"><head><meta charset="UTF-8"><title>Rapor Kelas ${escapeHtml(kelas)}</title><style>body{margin:25px;font-family:Arial}@media print{body{margin:10mm}.rapor-print-page{page-break-inside:avoid}}</style></head><body>${pages||"Belum ada siswa."}</body></html>`;
+        const blob=new Blob([html],{type:"text/html;charset=utf-8"});
+        const url=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=url; a.download=`Rapor-Kelas-${kelas}-14-18-September-2026.html`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        showMessage("Rapor satu kelas berhasil dibuat untuk di-download.","success");
+    }catch(e){console.error(e);showMessage("Gagal membuat rapor satu kelas: "+e.message,"error");}
+}
 
 /* =====================================================
    CETAK RAPOR
@@ -2818,7 +2855,7 @@ function cetakRapor(){
     if(!hasilSiswa.length){
 
         alert(
-            "Belum ada nilai MID/PTS yang dapat dicetak."
+            "Belum ada nilai ujian periode 14–18 September 2026 yang dapat dicetak."
         );
 
         return;
