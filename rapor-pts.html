@@ -1383,24 +1383,16 @@ function adalahNilaiRapor(item){
    IDENTITAS TAMBAHAN
 ========================================================= */
 
-function kunciMapel(value){
+function kunciSiswaTambahan(siswa){
 
-    const s=String(value||"")
-        .toLowerCase()
-        .replace(/\s+/g," ")
-        .trim();
-
-    if(
-        s==="pendidikan jasmani dan olahraga" ||
-        s==="pendidikan jasmani, olahraga dan kesehatan" ||
-        s==="pendidikan jasmani, olahraga, dan kesehatan"
-    ){
-        return "pendidikan jasmani olahraga kesehatan";
-    }
-
-    return s;
+    return(
+        normalisasiKelas(siswa?.kelas||"")+
+        "||"+
+        String(siswa?.nisn||"").trim()
+    );
 
 }
+
 function ambilAbsensiSiswa(siswa){
 
     const x=dataAbsensiRapor[
