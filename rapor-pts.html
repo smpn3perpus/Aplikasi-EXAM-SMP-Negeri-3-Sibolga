@@ -9,6 +9,7 @@
 <title>Rapor PTS - Admin | RUANG EXAM</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 
 <style>
 
@@ -825,7 +826,21 @@ td.nilai.kosong{
 .edit-table input{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:7px;}
 .edit-table input[type=number]{text-align:center;}
 .edit-help{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;padding:12px;border-radius:10px;margin-bottom:14px;font-size:12px;line-height:1.6;}
+
 .edit-toolbar{display:flex;justify-content:flex-end;gap:8px;margin-top:15px;flex-wrap:wrap;}
+.attendance-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:15px;margin-top:18px;}
+.attendance-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.attendance-item{background:white;border:1px solid #e2e8f0;border-radius:10px;padding:12px;}
+.attendance-item label{display:block;font-size:12px;font-weight:bold;color:#475569;margin-bottom:6px;}
+.attendance-item input{width:100%;}
+.note-box{margin-top:12px;}
+.note-box label{display:block;font-size:12px;font-weight:bold;color:#475569;margin-bottom:6px;}
+.note-box textarea{width:100%;min-height:85px;border:1px solid #cbd5e1;border-radius:9px;padding:10px;resize:vertical;font-family:inherit;}
+.logo-preview{display:flex;align-items:center;gap:12px;margin-top:8px;}
+.logo-preview img{width:70px;height:70px;object-fit:contain;border:1px dashed #cbd5e1;border-radius:8px;background:#fff;}
+.import-help{font-size:12px;color:#64748b;line-height:1.6;margin-top:8px;}
+@media(max-width:700px){.attendance-grid{grid-template-columns:1fr;}}
+
 
 /* =====================================================
    RESPONSIVE
@@ -955,6 +970,10 @@ td.nilai.kosong{
             📥 Download Rapor 1 Kelas
 
         </button>
+
+        <button class="btn" style="background:#16a34a;color:white" onclick="bukaModalAbsensi()">📋 Absensi</button>
+        <button class="btn" style="background:#ea580c;color:white" onclick="document.getElementById('inputImportAbsensi').click()">📥 Impor Absensi</button>
+        <button class="btn" style="background:#2563eb;color:white" onclick="eksporAbsensi()">📤 Ekspor Absensi</button>
 
     </div>
 
@@ -1107,6 +1126,7 @@ td.nilai.kosong{
         <button class="btn action-secondary" onclick="bukaPengaturanRapor()">⚙️ Pengaturan Rapor</button>
         <button class="btn btn-leger" onclick="simpanUrutanMapel()">💾 Simpan Urutan Mapel</button>
         <button class="btn" style="background:#f59e0b;color:white" onclick="bukaEditNilai()">✏️ Edit Nilai & Mapel</button>
+        <button class="btn" style="background:#9333ea;color:white" onclick="simpanDataRaporTambahan()">💾 Simpan Absensi & Catatan</button>
     </div>
 
 </section>
@@ -1118,6 +1138,11 @@ td.nilai.kosong{
         <div class="form-group"><label>Wali Kelas</label><input id="namaWaliKelas" placeholder="Nama wali kelas"></div>
         <div class="form-group"><label>NIP Wali Kelas</label><input id="nipWaliKelas" placeholder="NIP wali kelas"></div>
         <div class="form-group"><label>Semester</label><select id="semesterPengaturan"><option value="1">Semester 1</option><option value="2">Semester 2</option></select></div>
+    </div>
+    <div style="margin-top:14px;padding:14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px">
+        <label style="font-weight:bold;font-size:12px;color:#475569">Logo Sekolah</label>
+        <input id="inputLogoSekolah" type="file" accept="image/png,image/jpeg,image/webp" onchange="ubahLogoSekolah(event)" style="margin-top:7px">
+        <div class="logo-preview"><img id="logoPreviewImg" alt="Logo sekolah" style="display:none"><span id="logoPreviewText" style="font-size:12px;color:#64748b">Belum ada logo. Logo akan tampil pada rapor.</span></div>
     </div>
     <div style="margin-top:15px"><label style="font-weight:bold;font-size:12px;color:#475569">Urutan Mata Pelajaran</label><div id="daftarUrutanMapel" style="margin-top:8px"></div></div>
     <div class="filter-actions"><button class="btn btn-sync" onclick="simpanPengaturanRapor()">💾 Simpan Pengaturan</button><button class="btn btn-danger" onclick="tutupPengaturanRapor()">Tutup</button></div>
@@ -1329,15 +1354,19 @@ td.nilai.kosong{
     id="reportBox"
     class="report-box">
 
-    <div class="report-header">
+    <div class="report-header" style="position:relative">
+
+        <img id="reportLogoImg" alt="Logo Sekolah" style="display:none;width:78px;height:78px;object-fit:contain;position:absolute;left:10px;top:0">
 
         <h2>
-            LAPORAN HASIL UJIAN
+            LAPORAN HASIL UJIAN MID SEMESTER
         </h2>
 
         <h3>
             SMP NEGERI 3 SIBOLGA
         </h3>
+
+        <p><strong>TAHUN PELAJARAN 2026/2027</strong></p>
 
         <p>
             RUANG EXAM
@@ -1507,6 +1536,19 @@ td.nilai.kosong{
 
     </div>
 
+    <div id="dataTambahanRapor" class="attendance-box" style="display:none">
+        <div style="font-weight:bold;color:#14532d;margin-bottom:10px">📋 Kehadiran & Catatan Wali Kelas</div>
+        <div class="attendance-grid">
+            <div class="attendance-item"><label>Sakit</label><input id="inputSakit" type="number" min="0" step="1" value="0"></div>
+            <div class="attendance-item"><label>Izin</label><input id="inputIzin" type="number" min="0" step="1" value="0"></div>
+            <div class="attendance-item"><label>Alpa</label><input id="inputAlpa" type="number" min="0" step="1" value="0"></div>
+        </div>
+        <div class="note-box">
+            <label>Catatan Wali Kelas</label>
+            <textarea id="inputCatatanWali" placeholder="Tuliskan catatan perkembangan, sikap, kedisiplinan, atau pesan wali kelas..."></textarea>
+        </div>
+        <div class="filter-actions"><button class="btn" style="background:#16a34a;color:white" onclick="simpanDataRaporTambahan()">💾 Simpan Data Siswa</button></div>
+    </div>
 
     <!-- SUMMARY -->
 
@@ -1573,6 +1615,9 @@ td.nilai.kosong{
         <h2>LEGER NILAI SATU KELAS</h2>
         <p id="legerSubtitle">SMP NEGERI 3 SIBOLGA</p>
         <small>Nilai Ujian</small>
+        <div class="filter-actions" style="justify-content:center">
+            <button class="btn btn-download-class" onclick="downloadLegerKelas()">📥 Download Leger</button>
+        </div>
     </div>
     <div class="legger-wrap">
         <table class="legger-table">
@@ -1584,6 +1629,8 @@ td.nilai.kosong{
 
 </main>
 
+
+<input id="inputImportAbsensi" type="file" accept=".xlsx,.xls,.csv" style="display:none" onchange="imporAbsensi(event)">
 
 <!-- =====================================================
      PREVIEW RAPOR
@@ -1688,6 +1735,9 @@ let semuaHasil = [];
 let hasilSiswa = [];
 
 let siswaTerpilih = null;
+let logoSekolah = localStorage.getItem("rapor_pts_logo") || "";
+let dataAbsensiRapor = JSON.parse(localStorage.getItem("rapor_pts_absensi") || "{}");
+let dataCatatanWali = JSON.parse(localStorage.getItem("rapor_pts_catatan") || "{}");
 
 /* Edit rapor disimpan lokal agar nilai sumber hasil_ujian tetap aman */
 let editNilaiRapor = JSON.parse(localStorage.getItem("rapor_pts_edit_nilai") || "{}");
@@ -1749,6 +1799,99 @@ function escapeHtml(value){
 
 }
 
+function kunciSiswaTambahan(siswa){
+    return normalisasiKelas(siswa?.kelas || "") + "||" + String(siswa?.nisn || "").trim();
+}
+function ambilAbsensiSiswa(siswa){
+    const x=dataAbsensiRapor[kunciSiswaTambahan(siswa)] || {};
+    return {sakit:Number(x.sakit)||0,izin:Number(x.izin)||0,alpa:Number(x.alpa)||0};
+}
+function ambilCatatanSiswa(siswa){return String(dataCatatanWali[kunciSiswaTambahan(siswa)] || "");}
+function simpanTambahanStorage(){
+    localStorage.setItem("rapor_pts_absensi",JSON.stringify(dataAbsensiRapor));
+    localStorage.setItem("rapor_pts_catatan",JSON.stringify(dataCatatanWali));
+}
+function muatTambahanSiswa(){
+    if(!siswaTerpilih)return;
+    const a=ambilAbsensiSiswa(siswaTerpilih);
+    document.getElementById("inputSakit").value=a.sakit;
+    document.getElementById("inputIzin").value=a.izin;
+    document.getElementById("inputAlpa").value=a.alpa;
+    document.getElementById("inputCatatanWali").value=ambilCatatanSiswa(siswaTerpilih);
+    document.getElementById("dataTambahanRapor").style.display="block";
+}
+function simpanDataRaporTambahan(){
+    if(!siswaTerpilih){alert("Pilih siswa terlebih dahulu.");return;}
+    const key=kunciSiswaTambahan(siswaTerpilih);
+    dataAbsensiRapor[key]={sakit:Math.max(0,Number(document.getElementById("inputSakit").value)||0),izin:Math.max(0,Number(document.getElementById("inputIzin").value)||0),alpa:Math.max(0,Number(document.getElementById("inputAlpa").value)||0)};
+    dataCatatanWali[key]=document.getElementById("inputCatatanWali").value.trim();
+    simpanTambahanStorage();
+    tampilkanRapor();
+    showMessage("Absensi dan catatan wali kelas berhasil disimpan.","success");
+}
+function ubahLogoSekolah(event){
+    const file=event.target.files?.[0];
+    if(!file)return;
+    const reader=new FileReader();
+    reader.onload=()=>{
+        logoSekolah=reader.result;
+        localStorage.setItem("rapor_pts_logo",logoSekolah);
+        tampilkanLogoPreview();
+        showMessage("Logo sekolah berhasil disimpan di browser ini.","success");
+    };
+    reader.readAsDataURL(file);
+}
+function tampilkanLogoPreview(){
+    const img=document.getElementById("logoPreviewImg");
+    const txt=document.getElementById("logoPreviewText");
+    if(!img||!txt)return;
+    const reportLogo=document.getElementById("reportLogoImg");
+    if(logoSekolah){
+        img.src=logoSekolah;img.style.display="block";txt.textContent="Logo aktif dan akan muncul pada rapor.";
+        if(reportLogo){reportLogo.src=logoSekolah;reportLogo.style.display="block";}
+    }else{
+        img.style.display="none";txt.textContent="Belum ada logo. Logo akan tampil pada rapor.";
+        if(reportLogo)reportLogo.style.display="none";
+    }
+}
+function bukaModalAbsensi(){
+    if(!siswaTerpilih){alert("Pilih siswa terlebih dahulu untuk mengisi absensi.");return;}
+    muatTambahanSiswa();
+    document.getElementById("dataTambahanRapor")?.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function eksporAbsensi(){
+    const kelas=document.getElementById("filterKelas").value;
+    if(!kelas){alert("Pilih kelas terlebih dahulu.");return;}
+    const daftar=semuaSiswa.filter(s=>normalisasiKelas(s.kelas)===normalisasiKelas(kelas));
+    if(!daftar.length){alert("Belum ada data siswa pada kelas ini.");return;}
+    const rows=daftar.map(s=>{const a=ambilAbsensiSiswa(s);return {NISN:s.nisn||"",Nama:s.nama||"",Kelas:s.kelas||kelas,Sakit:a.sakit,Izin:a.izin,Alpa:a.alpa};});
+    if(window.XLSX){const ws=XLSX.utils.json_to_sheet(rows);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Absensi");XLSX.writeFile(wb,`Absensi-${kelas}.xlsx`);}else{const csv=["NISN,Nama,Kelas,Sakit,Izin,Alpa",...rows.map(r=>[r.NISN,r.Nama,r.Kelas,r.Sakit,r.Izin,r.Alpa].map(v=>'"'+String(v).replaceAll('"','""')+'"').join(","))].join("\n");const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Absensi-${kelas}.csv`;a.click();}
+    showMessage("Data absensi berhasil diekspor.","success");
+}
+function imporAbsensi(event){
+    const file=event.target.files?.[0]; if(!file)return;
+    const reader=new FileReader();
+    reader.onload=e=>{
+        try{
+            let rows=[];
+            if(window.XLSX){const wb=XLSX.read(e.target.result,{type:"array"});const ws=wb.Sheets[wb.SheetNames[0]];rows=XLSX.utils.sheet_to_json(ws,{defval:""});}
+            else{alert("Pustaka Excel belum tersedia. Gunakan file CSV atau muat ulang halaman.");return;}
+            let count=0;
+            rows.forEach(r=>{
+                const nisn=String(r.NISN??r.nisn??r.Nisn??"").trim(); if(!nisn)return;
+                const siswa=semuaSiswa.find(s=>String(s.nisn).trim()===nisn); if(!siswa)return;
+                const key=kunciSiswaTambahan(siswa);
+                dataAbsensiRapor[key]={sakit:Math.max(0,Number(r.Sakit??r.sakit??0)||0),izin:Math.max(0,Number(r.Izin??r.izin??0)||0),alpa:Math.max(0,Number(r.Alpa??r.alpa??0)||0)};
+                count++;
+            });
+            simpanTambahanStorage();
+            if(siswaTerpilih)muatTambahanSiswa();
+            showMessage(`${count} data absensi berhasil diimpor. Data dicocokkan berdasarkan NISN.`,"success");
+        }catch(err){console.error(err);showMessage("Gagal mengimpor absensi: "+err.message,"error");}
+        event.target.value="";
+    };
+    reader.readAsArrayBuffer(file);
+}
 
 /* =====================================================
    EDIT RAPOR
@@ -2001,10 +2144,6 @@ async function loadSiswaByKelas(
             password,
             created_at
         `)
-        .eq(
-            "kelas",
-            namaKelas
-        )
         .order(
             "nama",
             {
@@ -2021,7 +2160,7 @@ async function loadSiswaByKelas(
 
 
     semuaSiswa =
-        data || [];
+        (data || []).filter(x => normalisasiKelas(x.kelas) === normalisasiKelas(namaKelas));
 
 
     select.innerHTML = `
@@ -2411,6 +2550,8 @@ function tampilkanIdentitas(){
         ? "Semester 1"
         : "Semester 2";
 
+    muatTambahanSiswa();
+
 }
 
 
@@ -2739,6 +2880,7 @@ function resetTampilanRapor(){
     ).style.display =
         "none";
 
+    document.getElementById("dataTambahanRapor").style.display="none";
 
     document.getElementById(
         "raporBody"
@@ -2777,17 +2919,20 @@ function buatRaporHtml(siswa, hasil, lengkap=true){
         return `<tr><td style="text-align:center">${i+1}</td><td><strong>${escapeHtml(item.mata_pelajaran||"-")}</strong></td><td style="text-align:center;font-weight:bold">${formatNilai(nilai)}</td><td style="text-align:center">${p?p.huruf:"-"}</td><td style="text-align:center">${p?escapeHtml(p.keterangan):"-"}</td><td>${p?escapeHtml(p.deskripsi):"-"}</td></tr>`;
     }).join("");
     const vals=ordered.map(x=>Number(x.nilai)).filter(Number.isFinite); const rata=vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0;
+    const a=ambilAbsensiSiswa(siswa); const catatan=ambilCatatanSiswa(siswa);
+    const logo=logoSekolah?`<img src="${logoSekolah}" alt="Logo" style="width:78px;height:78px;object-fit:contain;position:absolute;left:0;top:0">`:"";
     return `<div class="rapor-print-page" style="font-family:Arial,sans-serif;color:#111;background:#fff;padding:10px;">
-      <div style="text-align:center;border-bottom:2px solid #111;padding-bottom:12px;margin-bottom:18px"><h2 style="margin:0 0 5px">LAPORAN HASIL PENILAIAN</h2><h3 style="margin:0 0 5px">SMP NEGERI 3 SIBOLGA</h3><div>RUANG EXAM</div></div>
+      <div style="text-align:center;border-bottom:2px solid #111;padding:0 90px 12px; margin-bottom:18px;position:relative;min-height:82px">${logo}<h2 style="margin:0 0 5px;font-size:18px">LAPORAN HASIL UJIAN MID SEMESTER</h2><h3 style="margin:0 0 5px;font-size:16px">SMP NEGERI 3 SIBOLGA</h3><div style="font-weight:bold">TAHUN PELAJARAN 2026/2027</div></div>
       <table style="width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px"><tr><td><b>Nama</b></td><td>: ${escapeHtml(siswa?.nama||"-")}</td><td><b>NISN</b></td><td>: ${escapeHtml(siswa?.nisn||"-")}</td></tr><tr><td><b>Kelas</b></td><td>: ${escapeHtml(siswa?.kelas||"-")}</td><td><b>Semester</b></td><td>: ${peng.semester==="1"?"Semester 1":"Semester 2"}</td></tr><tr><td><b>Tanggal</b></td><td colspan="3">: ${escapeHtml(formatTanggalIndonesia(peng.tanggal))}</td></tr></table>
       <table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="background:#eee"><th>No</th><th>Mata Pelajaran</th><th>Nilai</th><th>Huruf</th><th>Keterangan</th><th>Deskripsi</th></tr></thead><tbody>${rows||`<tr><td colspan="6" style="padding:15px;text-align:center">Belum ada nilai.</td></tr>`}</tbody></table>
       <div style="margin-top:12px;text-align:right;font-size:13px"><b>Rata-rata: ${rata.toFixed(2)}</b></div>
+      <table style="width:100%;border-collapse:collapse;margin-top:18px;font-size:12px"><tr><th colspan="4" style="border:1px solid #111;padding:7px;background:#eee">KEHADIRAN</th></tr><tr><td style="border:1px solid #111;padding:7px;text-align:center">Sakit</td><td style="border:1px solid #111;padding:7px;text-align:center">${a.sakit}</td><td style="border:1px solid #111;padding:7px;text-align:center">Izin</td><td style="border:1px solid #111;padding:7px;text-align:center">${a.izin}</td></tr><tr><td style="border:1px solid #111;padding:7px;text-align:center">Alpa</td><td style="border:1px solid #111;padding:7px;text-align:center">${a.alpa}</td><td style="border:1px solid #111;padding:7px;text-align:center">Jumlah</td><td style="border:1px solid #111;padding:7px;text-align:center">${a.sakit+a.izin+a.alpa}</td></tr></table>
+      <div style="margin-top:16px;border:1px solid #111;padding:10px;font-size:12px;min-height:65px"><b>Catatan Wali Kelas</b><div style="margin-top:8px;white-space:pre-wrap">${escapeHtml(catatan||"-")}</div></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:45px;font-size:12px;text-align:center"><div><p>Mengetahui,</p><p>Orang Tua/Wali</p><br><br><p>(________________________)</p></div><div><p>Sibolga, ${escapeHtml(formatTanggalIndonesia(peng.tanggal))}</p><p>Wali Kelas</p><br><br><p><b>${escapeHtml(peng.wali||"-")}</b><br>NIP. ${escapeHtml(peng.nip||"-")}</p></div></div>
-      <div style="margin-top:35px;text-align:center;font-size:12px"><p>Mengetahui,</p><p>Kepala SMP Negeri 3 Sibolga</p><br><br><p><b>Syahrul Mahyuddin Siregar, M.Pd</b><br>NIP. 197708042009031002</p></div>
+      <div style="margin-top:30px;text-align:center;font-size:12px"><p>Mengetahui,</p><p>Kepala SMP Negeri 3 Sibolga</p><br><br><p><b>Syahrul Mahyuddin Siregar, M.Pd</b><br>NIP. 197708042009031002</p></div>
       <div style="margin-top:30px;text-align:center;font-size:10px">Dibuat oleh Mr. Rahmat Batubara, S.T.P</div>
     </div>`;
 }
-
 function ambilPengaturan(){
     const kelas=document.getElementById("filterKelas")?.value||"";
     const all=JSON.parse(localStorage.getItem("rapor_pts_pengaturan")||"{}");
@@ -2811,8 +2956,9 @@ function printPreview(){
 }
 
 async function ambilSemuaNilaiKelas(namaKelas){
-    const {data:siswa,error:errSiswa}=await supabaseClient.from("siswa").select("id,nama,nisn,kelas").eq("kelas",namaKelas).order("nama",{ascending:true});
+    const {data:siswaSemua,error:errSiswa}=await supabaseClient.from("siswa").select("id,nama,nisn,kelas").order("nama",{ascending:true});
     if(errSiswa) throw errSiswa;
+    const siswa=(siswaSemua||[]).filter(x=>normalisasiKelas(x.kelas)===normalisasiKelas(namaKelas));
     const nisns=(siswa||[]).map(x=>x.nisn).filter(Boolean);
     if(!nisns.length) return {siswa:siswa||[],hasil:[]};
     const {data,error}=await supabaseClient.from("hasil_ujian").select("id,siswa_id,ujian_id,nama_siswa,nisn,kelas,jenis_ujian,mata_pelajaran,jumlah_soal,jumlah_benar,jumlah_salah,nilai,status,waktu_mulai,waktu_selesai,created_at").in("nisn",nisns).order("created_at",{ascending:false});
@@ -2842,6 +2988,21 @@ async function tampilkanLegerKelas(){
     }catch(e){console.error(e);showMessage("Gagal memuat leger: "+e.message,"error");}
 }
 
+function downloadLegerKelas(){
+    const kelas=document.getElementById("filterKelas").value;
+    if(!kelas){alert("Pilih kelas terlebih dahulu.");return;}
+    const table=document.querySelector("#legerBox .legger-table");
+    if(!table || !document.getElementById("legerBody").children.length){alert("Tampilkan leger terlebih dahulu.");return;}
+    if(window.XLSX){
+        const wb=XLSX.utils.table_to_book(table,{sheet:"Leger"});
+        XLSX.writeFile(wb,`Leger-${kelas}.xlsx`);
+    }else{
+        const blob=new Blob([`<!doctype html><html><body>${table.outerHTML}</body></html>`],{type:"text/html;charset=utf-8"});
+        const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`Leger-${kelas}.html`;a.click();
+    }
+    showMessage("Leger kelas berhasil di-download.","success");
+}
+
 async function downloadRaporSatuKelas(){
     const kelas=document.getElementById("filterKelas").value;
     if(!kelas){alert("Pilih kelas terlebih dahulu.");return;}
@@ -2860,7 +3021,7 @@ async function downloadRaporSatuKelas(){
 }
 
 function urutkanNamaMapel(mapel,kelas){const p=ambilPengaturan();const order=p.urutan||[];return [...mapel].sort((a,b)=>{const aa=order.findIndex(x=>String(x).toLowerCase()===String(a).toLowerCase());const bb=order.findIndex(x=>String(x).toLowerCase()===String(b).toLowerCase());if(aa>=0||bb>=0)return (aa<0?999:aa)-(bb<0?999:bb);return String(a).localeCompare(String(b),"id");});}
-function bukaPengaturanRapor(){const kelas=document.getElementById("filterKelas").value;if(!kelas){alert("Pilih kelas terlebih dahulu.");return;}const p=ambilPengaturan();document.getElementById("tanggalRapor").value=p.tanggal;document.getElementById("namaWaliKelas").value=p.wali;document.getElementById("nipWaliKelas").value=p.nip;document.getElementById("semesterPengaturan").value=p.semester;const names=urutkanNamaMapel([...new Set(hasilUntukTampilan(hasilSiswa).map(x=>x.mata_pelajaran).filter(Boolean))],kelas);document.getElementById("daftarUrutanMapel").innerHTML=names.map((m,i)=>`<div draggable="true" data-mapel="${escapeHtml(m)}" style="display:flex;align-items:center;gap:8px;background:#f8fafc;border:1px solid #e2e8f0;padding:9px;border-radius:8px;margin:5px 0;cursor:grab"><span>☰</span><b>${i+1}.</b><span>${escapeHtml(m)}</span></div>`).join("");document.getElementById("pengaturanRapor").style.display="block";}
+function bukaPengaturanRapor(){tampilkanLogoPreview();const kelas=document.getElementById("filterKelas").value;if(!kelas){alert("Pilih kelas terlebih dahulu.");return;}const p=ambilPengaturan();document.getElementById("tanggalRapor").value=p.tanggal;document.getElementById("namaWaliKelas").value=p.wali;document.getElementById("nipWaliKelas").value=p.nip;document.getElementById("semesterPengaturan").value=p.semester;const names=urutkanNamaMapel([...new Set(hasilUntukTampilan(hasilSiswa).map(x=>x.mata_pelajaran).filter(Boolean))],kelas);document.getElementById("daftarUrutanMapel").innerHTML=names.map((m,i)=>`<div draggable="true" data-mapel="${escapeHtml(m)}" style="display:flex;align-items:center;gap:8px;background:#f8fafc;border:1px solid #e2e8f0;padding:9px;border-radius:8px;margin:5px 0;cursor:grab"><span>☰</span><b>${i+1}.</b><span>${escapeHtml(m)}</span></div>`).join("");document.getElementById("pengaturanRapor").style.display="block";}
 function tutupPengaturanRapor(){document.getElementById("pengaturanRapor").style.display="none";}
 function simpanUrutanMapel(){simpanPengaturanRapor();}
 document.addEventListener("dragstart",e=>{if(e.target.matches("#daftarUrutanMapel [data-mapel]"))e.dataTransfer.setData("text/plain",e.target.dataset.mapel);});
@@ -2939,6 +3100,7 @@ document
    MULAI
 ===================================================== */
 
+tampilkanLogoPreview();
 loadDataAwal();
 
 </script>
