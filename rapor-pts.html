@@ -36,7 +36,7 @@ textarea{
 }
 
 .header-inner{
-    max-width:1400px;
+    max-width:1450px;
     margin:auto;
     display:flex;
     align-items:center;
@@ -51,7 +51,6 @@ textarea{
 
 .header-title p{
     font-size:14px;
-    opacity:.95;
 }
 
 .header-actions{
@@ -104,8 +103,13 @@ textarea{
     color:#fff;
 }
 
+.btn-info{
+    background:#0dcaf0;
+    color:#053b45;
+}
+
 .container{
-    max-width:1400px;
+    max-width:1450px;
     margin:25px auto;
     padding:0 20px;
 }
@@ -172,6 +176,17 @@ textarea{
     font-family:Arial,sans-serif;
     font-size:13px;
     line-height:1.6;
+}
+
+.warning-box{
+    background:#fff3cd;
+    border-left:5px solid #f59f00;
+    padding:13px 15px;
+    border-radius:7px;
+    font-family:Arial,sans-serif;
+    font-size:13px;
+    line-height:1.6;
+    margin-top:12px;
 }
 
 .student-info{
@@ -267,7 +282,7 @@ td.center{
 }
 
 .nilai-input{
-    width:80px;
+    width:90px;
     text-align:center;
     font-weight:bold;
 }
@@ -325,8 +340,89 @@ td.center{
     margin-top:20px;
 }
 
-.signature-preview{
-    margin-top:30px;
+/* =====================================================
+   MODAL LEGER
+===================================================== */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+    z-index:9999;
+    padding:20px;
+    overflow:auto;
+}
+
+.modal.show{
+    display:block;
+}
+
+.modal-content{
+    max-width:1500px;
+    margin:20px auto;
+    background:#fff;
+    border-radius:12px;
+    padding:20px;
+}
+
+.modal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:15px;
+}
+
+.modal-header h2{
+    font-family:Arial,sans-serif;
+    color:#087f5b;
+}
+
+.modal-actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+}
+
+.leger-wrap{
+    overflow:auto;
+    max-height:70vh;
+}
+
+.leger-table{
+    min-width:1000px;
+    border-collapse:collapse;
+}
+
+.leger-table th,
+.leger-table td{
+    border:1px solid #333;
+    padding:6px 7px;
+    white-space:nowrap;
+}
+
+.leger-table th{
+    background:#087f5b;
+    color:#fff;
+}
+
+.leger-table .nama{
+    min-width:220px;
+    text-align:left;
+}
+
+.leger-table .nilai{
+    text-align:center;
+}
+
+.leger-table .rata{
+    font-weight:bold;
+    background:#e8f7f1;
+}
+
+.leger-table .hadir{
+    text-align:center;
 }
 
 /* =====================================================
@@ -482,20 +578,25 @@ td.center{
     font-size:10pt;
 }
 
+/* =====================================================
+   TANDA TANGAN - WAJIB 3 KOLOM
+===================================================== */
+
 .signature-table{
     width:100%;
     border:0;
     border-collapse:collapse;
+    table-layout:fixed;
     margin-top:30px;
 }
 
 .signature-table td{
-    border:0;
-    width:33.33%;
+    border:0 !important;
+    width:33.333%;
     vertical-align:top;
     text-align:center;
     font-size:10pt;
-    padding:0 5px;
+    padding:0 8px;
 }
 
 .signature-space{
@@ -525,8 +626,70 @@ td.center{
     color:#555;
 }
 
-/* layar saja */
-@media(max-width:1000px){
+/* =====================================================
+   CETAK LEGER
+===================================================== */
+
+.leger-print-page{
+    background:#fff;
+    width:100%;
+    min-height:297mm;
+    padding:12mm;
+    color:#000;
+}
+
+.leger-print-header{
+    text-align:center;
+    border-bottom:2px solid #000;
+    padding-bottom:8px;
+    margin-bottom:10px;
+}
+
+.leger-print-header h1{
+    font-size:16pt;
+}
+
+.leger-print-header h2{
+    font-size:13pt;
+    margin-top:3px;
+}
+
+.leger-print-header p{
+    font-size:10pt;
+    margin-top:3px;
+}
+
+.leger-print-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.leger-print-table th,
+.leger-print-table td{
+    border:1px solid #000;
+    padding:4px;
+    font-size:8pt;
+}
+
+.leger-print-table th{
+    text-align:center;
+    font-weight:bold;
+}
+
+.leger-print-table td.center{
+    text-align:center;
+}
+
+.leger-print-table td.nama{
+    white-space:nowrap;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:1100px){
+
     .filter-grid{
         grid-template-columns:repeat(2,1fr);
     }
@@ -541,6 +704,7 @@ td.center{
 }
 
 @media(max-width:600px){
+
     .app-header{
         padding:15px;
     }
@@ -558,6 +722,14 @@ td.center{
     .student-info,
     .stats{
         grid-template-columns:1fr;
+    }
+
+    .modal{
+        padding:5px;
+    }
+
+    .modal-content{
+        padding:10px;
     }
 }
 
@@ -591,6 +763,25 @@ td.center{
         padding:15mm 15mm 12mm 15mm;
         box-shadow:none;
     }
+
+    /*
+     * Jangan biarkan media query mobile
+     * membuat tanda tangan menjadi vertikal.
+     */
+    .signature-table{
+        display:table !important;
+        width:100% !important;
+        table-layout:fixed !important;
+    }
+
+    .signature-table tr{
+        display:table-row !important;
+    }
+
+    .signature-table td{
+        display:table-cell !important;
+        width:33.333% !important;
+    }
 }
 </style>
 </head>
@@ -598,6 +789,7 @@ td.center{
 <body>
 
 <header class="app-header">
+
     <div class="header-inner">
 
         <div class="header-title">
@@ -606,28 +798,46 @@ td.center{
         </div>
 
         <div class="header-actions">
-            <button class="btn btn-light" onclick="kembaliDashboard()">
+
+            <button class="btn btn-light"
+                    onclick="kembaliDashboard()">
                 ← Dashboard
             </button>
 
-            <button class="btn btn-light" onclick="loadSemuaData()">
+            <button class="btn btn-light"
+                    onclick="loadSemuaData()">
                 🔄 Refresh
             </button>
 
-            <button class="btn btn-light" onclick="cetakRapor()">
+            <button class="btn btn-light"
+                    onclick="cetakRapor()">
                 🖨️ Cetak Rapor
             </button>
+
+            <button class="btn btn-light"
+                    onclick="downloadSemuaRapor()">
+                📥 Download Semua Rapor
+            </button>
+
+            <button class="btn btn-light"
+                    onclick="bukaLeger()">
+                📊 Leger Nilai
+            </button>
+
         </div>
 
     </div>
+
 </header>
+
 
 <div class="container">
 
     <div id="statusBox" class="status"></div>
 
+
     <!-- =================================================
-         FILTER
+         PENGATURAN
     ================================================== -->
 
     <div class="card">
@@ -637,67 +847,125 @@ td.center{
         <div class="filter-grid">
 
             <div class="form-group">
+
                 <label>Kelas</label>
-                <select id="kelasSelect" onchange="loadSiswaByKelas()">
-                    <option value="">-- Pilih Kelas --</option>
+
+                <select id="kelasSelect"
+                        onchange="loadSiswaByKelas()">
+
+                    <option value="">
+                        -- Pilih Kelas --
+                    </option>
+
                 </select>
+
             </div>
 
+
             <div class="form-group">
+
                 <label>Siswa</label>
-                <select id="siswaSelect" onchange="pilihSiswa()">
-                    <option value="">-- Pilih Siswa --</option>
+
+                <select id="siswaSelect"
+                        onchange="pilihSiswa()">
+
+                    <option value="">
+                        -- Pilih Siswa --
+                    </option>
+
                 </select>
+
             </div>
 
+
             <div class="form-group">
+
                 <label>Semester</label>
-                <select id="semesterSelect" onchange="pilihSiswa()">
-                    <option value="1">Semester 1</option>
-                    <option value="2">Semester 2</option>
+
+                <select id="semesterSelect"
+                        onchange="pilihSiswa()">
+
+                    <option value="1">
+                        Semester 1
+                    </option>
+
+                    <option value="2">
+                        Semester 2
+                    </option>
+
                 </select>
+
             </div>
 
+
             <div class="form-group">
+
                 <label>Tahun Pelajaran</label>
-                <input id="tahunPelajaran" value="2026/2027">
+
+                <input id="tahunPelajaran"
+                       value="2026/2027">
+
             </div>
 
+
             <div class="form-group">
+
                 <label>Tempat Rapor</label>
-                <input id="tempatRapor" value="Sibolga">
+
+                <input id="tempatRapor"
+                       value="Sibolga">
+
             </div>
 
         </div>
+
 
         <div class="toolbar">
 
-            <button class="btn btn-primary" onclick="sinkronkanNilai()">
+            <button class="btn btn-primary"
+                    onclick="sinkronkanNilai()">
                 🔄 Sinkronkan Nilai Siswa
             </button>
 
-            <button class="btn btn-success" onclick="sinkronkanSemuaSiswa()">
+            <button class="btn btn-success"
+                    onclick="sinkronkanSemuaSiswa()">
                 🔄 Sinkronkan Semua Siswa
             </button>
 
-            <button class="btn btn-warning" onclick="simpanSemuaPerubahan()">
+            <button class="btn btn-warning"
+                    onclick="simpanSemuaPerubahan()">
                 💾 Simpan Semua Perubahan
+            </button>
+
+            <button class="btn btn-info"
+                    onclick="bukaLeger()">
+                📊 Lihat Leger
             </button>
 
         </div>
 
-        <div class="info-box" style="margin-top:15px;">
-            <b>Sistem Sinkronisasi:</b><br>
-            Nilai diambil dari hasil ujian yang sudah dikerjakan siswa.
-            Sistem mengambil <b>hasil ujian terbaru untuk setiap mata pelajaran</b>.
-            Nilai yang sudah diedit secara manual di rapor <b>tidak akan ditimpa</b>
-            ketika sinkronisasi semua siswa dilakukan.
+
+        <div class="info-box">
+
+            <b>Sistem Nilai:</b><br>
+
+            Nilai diambil dari tabel
+            <b>hasil_ujian</b> berdasarkan
+            <b>siswa_id atau NISN</b>.
+
+            Sistem memilih hasil ujian terbaru untuk setiap
+            mata pelajaran.
+
+            Nilai yang sudah diedit dan tersimpan pada
+            <b>rapot_pts</b> tidak akan ditimpa oleh sinkronisasi.
+
         </div>
 
     </div>
 
+
     <!-- =================================================
-         IDENTITAS SISWA
+         IDENTITAS
     ================================================== -->
 
     <div class="card">
@@ -707,55 +975,127 @@ td.center{
         <div class="student-info">
 
             <div class="info-item">
-                <div class="label">Nama</div>
-                <div class="value" id="infoNama">-</div>
+
+                <div class="label">
+                    Nama
+                </div>
+
+                <div class="value"
+                     id="infoNama">
+                    -
+                </div>
+
             </div>
 
-            <div class="info-item">
-                <div class="label">NISN</div>
-                <div class="value" id="infoNisn">-</div>
-            </div>
 
             <div class="info-item">
-                <div class="label">Kelas</div>
-                <div class="value" id="infoKelas">-</div>
+
+                <div class="label">
+                    NISN
+                </div>
+
+                <div class="value"
+                     id="infoNisn">
+                    -
+                </div>
+
             </div>
 
+
             <div class="info-item">
-                <div class="label">Semester</div>
-                <div class="value" id="infoSemester">-</div>
+
+                <div class="label">
+                    Kelas
+                </div>
+
+                <div class="value"
+                     id="infoKelas">
+                    -
+                </div>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <div class="label">
+                    Semester
+                </div>
+
+                <div class="value"
+                     id="infoSemester">
+                    -
+                </div>
+
             </div>
 
         </div>
 
+
         <div class="stats">
 
             <div class="stat">
-                <div class="stat-label">Mata Pelajaran</div>
-                <div class="stat-value" id="statMapel">0</div>
+
+                <div class="stat-label">
+                    Mata Pelajaran
+                </div>
+
+                <div class="stat-value"
+                     id="statMapel">
+                    0
+                </div>
+
             </div>
 
-            <div class="stat">
-                <div class="stat-label">Ujian Tersinkron</div>
-                <div class="stat-value" id="statUjian">0</div>
-            </div>
 
             <div class="stat">
-                <div class="stat-label">Rata-rata</div>
-                <div class="stat-value" id="statRata">0</div>
+
+                <div class="stat-label">
+                    Ujian Tersinkron
+                </div>
+
+                <div class="stat-value"
+                     id="statUjian">
+                    0
+                </div>
+
             </div>
 
+
             <div class="stat">
-                <div class="stat-label">Nilai Tertinggi</div>
-                <div class="stat-value" id="statTinggi">0</div>
+
+                <div class="stat-label">
+                    Rata-rata
+                </div>
+
+                <div class="stat-value"
+                     id="statRata">
+                    0
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-label">
+                    Nilai Tertinggi
+                </div>
+
+                <div class="stat-value"
+                     id="statTinggi">
+                    0
+                </div>
+
             </div>
 
         </div>
 
     </div>
 
+
     <!-- =================================================
-         DATA NILAI
+         NILAI
     ================================================== -->
 
     <div class="card">
@@ -767,23 +1107,50 @@ td.center{
             <table>
 
                 <thead>
+
                     <tr>
+
                         <th>No</th>
-                        <th>Mata Pelajaran</th>
-                        <th>Nilai Ujian</th>
-                        <th>Nilai Rapor</th>
-                        <th>Predikat</th>
-                        <th>Sumber</th>
-                        <th>Aksi</th>
+
+                        <th>
+                            Mata Pelajaran
+                        </th>
+
+                        <th>
+                            Nilai Ujian
+                        </th>
+
+                        <th>
+                            Nilai Rapor
+                        </th>
+
+                        <th>
+                            Predikat
+                        </th>
+
+                        <th>
+                            Sumber
+                        </th>
+
+                        <th>
+                            Aksi
+                        </th>
+
                     </tr>
+
                 </thead>
 
                 <tbody id="nilaiBody">
 
                     <tr>
-                        <td colspan="7" class="empty">
+
+                        <td colspan="7"
+                            class="empty">
+
                             Pilih siswa terlebih dahulu.
+
                         </td>
+
                     </tr>
 
                 </tbody>
@@ -794,8 +1161,9 @@ td.center{
 
     </div>
 
+
     <!-- =================================================
-         ABSENSI
+         KEHADIRAN
     ================================================== -->
 
     <div class="card">
@@ -805,23 +1173,44 @@ td.center{
         <div class="filter-grid">
 
             <div class="form-group">
+
                 <label>Sakit</label>
-                <input type="number" id="sakitInput" min="0" value="0">
+
+                <input type="number"
+                       id="sakitInput"
+                       min="0"
+                       value="0">
+
             </div>
 
+
             <div class="form-group">
+
                 <label>Izin</label>
-                <input type="number" id="izinInput" min="0" value="0">
+
+                <input type="number"
+                       id="izinInput"
+                       min="0"
+                       value="0">
+
             </div>
 
+
             <div class="form-group">
+
                 <label>Alpa</label>
-                <input type="number" id="alpaInput" min="0" value="0">
+
+                <input type="number"
+                       id="alpaInput"
+                       min="0"
+                       value="0">
+
             </div>
 
         </div>
 
     </div>
+
 
     <!-- =================================================
          CATATAN
@@ -832,12 +1221,18 @@ td.center{
         <h2>🖊️ Catatan Wali Kelas</h2>
 
         <div class="form-group">
-            <label>Catatan</label>
+
+            <label>
+                Catatan
+            </label>
+
             <textarea id="catatanInput"
-                placeholder="Tuliskan catatan wali kelas..."></textarea>
+                      placeholder="Tuliskan catatan wali kelas..."></textarea>
+
         </div>
 
     </div>
+
 
     <!-- =================================================
          INFORMASI RAPOR
@@ -850,13 +1245,26 @@ td.center{
         <div class="filter-grid">
 
             <div class="form-group">
-                <label>Tempat</label>
-                <input id="tempatInput" value="Sibolga">
+
+                <label>
+                    Tempat
+                </label>
+
+                <input id="tempatInput"
+                       value="Sibolga">
+
             </div>
 
+
             <div class="form-group">
-                <label>Tanggal Rapor</label>
-                <input type="date" id="tanggalInput">
+
+                <label>
+                    Tanggal Rapor
+                </label>
+
+                <input type="date"
+                       id="tanggalInput">
+
             </div>
 
         </div>
@@ -865,73 +1273,199 @@ td.center{
 
 </div>
 
+
 <!-- =====================================================
-     AREA CETAK
+     MODAL LEGER
 ====================================================== -->
 
-<div id="printArea" style="display:none;">
+<div id="legerModal"
+     class="modal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>
+                📊 LEGER NILAI
+            </h2>
+
+            <div class="modal-actions">
+
+                <button class="btn btn-success"
+                        onclick="cetakLeger()">
+                    🖨️ Cetak / PDF
+                </button>
+
+                <button class="btn btn-danger"
+                        onclick="tutupLeger()">
+                    ✕ Tutup
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div id="legerInfo"
+             class="info-box"
+             style="margin-bottom:15px;">
+        </div>
+
+
+        <div class="leger-wrap">
+
+            <table class="leger-table">
+
+                <thead id="legerHead">
+                </thead>
+
+                <tbody id="legerBody">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     AREA CETAK RAPOR
+====================================================== -->
+
+<div id="printArea"
+     style="display:none;">
 
     <div class="print-page">
 
         <div class="school-header">
 
-            <h1>SMP NEGERI 3 SIBOLGA</h1>
+            <h1>
+                SMP NEGERI 3 SIBOLGA
+            </h1>
 
-            <h2>LAPORAN HASIL PENILAIAN TENGAH SEMESTER</h2>
+            <h2>
+                LAPORAN HASIL PENILAIAN TENGAH SEMESTER
+            </h2>
 
             <p>
                 Tahun Pelajaran
-                <span id="printTahun">2026/2027</span>
+                <span id="printTahun">
+                    2026/2027
+                </span>
             </p>
 
         </div>
+
 
         <div class="report-title">
 
-            <h3>LAPORAN HASIL PENILAIAN</h3>
+            <h3>
+                LAPORAN HASIL PENILAIAN
+            </h3>
 
             <p>
                 Semester
-                <span id="printSemester">1</span>
+                <span id="printSemester">
+                    1
+                </span>
             </p>
 
         </div>
+
 
         <table class="identity-table">
 
             <tr>
-                <td class="label">Nama</td>
-                <td class="colon">:</td>
-                <td class="value" id="printNama">-</td>
 
-                <td class="label">Kelas</td>
-                <td class="colon">:</td>
-                <td class="value" id="printKelas">-</td>
+                <td class="label">
+                    Nama
+                </td>
+
+                <td class="colon">
+                    :
+                </td>
+
+                <td class="value"
+                    id="printNama">
+                    -
+                </td>
+
+                <td class="label">
+                    Kelas
+                </td>
+
+                <td class="colon">
+                    :
+                </td>
+
+                <td class="value"
+                    id="printKelas">
+                    -
+                </td>
+
             </tr>
 
-            <tr>
-                <td class="label">NISN</td>
-                <td class="colon">:</td>
-                <td class="value" id="printNisn">-</td>
 
-                <td class="label">Semester</td>
-                <td class="colon">:</td>
-                <td class="value" id="printSemester2">-</td>
+            <tr>
+
+                <td class="label">
+                    NISN
+                </td>
+
+                <td class="colon">
+                    :
+                </td>
+
+                <td class="value"
+                    id="printNisn">
+                    -
+                </td>
+
+                <td class="label">
+                    Semester
+                </td>
+
+                <td class="colon">
+                    :
+                </td>
+
+                <td class="value"
+                    id="printSemester2">
+                    -
+                </td>
+
             </tr>
 
         </table>
 
-        <!-- NILAI -->
 
         <table class="report-table">
 
             <thead>
+
                 <tr>
-                    <th style="width:7%;">No</th>
-                    <th>Mata Pelajaran</th>
-                    <th style="width:16%;">Nilai</th>
-                    <th style="width:18%;">Predikat</th>
+
+                    <th style="width:7%;">
+                        No
+                    </th>
+
+                    <th>
+                        Mata Pelajaran
+                    </th>
+
+                    <th style="width:16%;">
+                        Nilai
+                    </th>
+
+                    <th style="width:18%;">
+                        Predikat
+                    </th>
+
                 </tr>
+
             </thead>
 
             <tbody id="printNilaiBody">
@@ -939,66 +1473,113 @@ td.center{
 
         </table>
 
-        <!-- RINGKASAN -->
 
         <table class="summary-table">
 
             <tr>
-                <td class="summary-label">Jumlah Mata Pelajaran</td>
-                <td id="printJumlahMapel">0</td>
+
+                <td class="summary-label">
+                    Jumlah Mata Pelajaran
+                </td>
+
+                <td id="printJumlahMapel">
+                    0
+                </td>
+
             </tr>
 
             <tr>
-                <td class="summary-label">Rata-rata Nilai</td>
-                <td id="printRata">0</td>
+
+                <td class="summary-label">
+                    Rata-rata Nilai
+                </td>
+
+                <td id="printRata">
+                    0
+                </td>
+
             </tr>
 
             <tr>
-                <td class="summary-label">Nilai Tertinggi</td>
-                <td id="printTinggi">0</td>
+
+                <td class="summary-label">
+                    Nilai Tertinggi
+                </td>
+
+                <td id="printTinggi">
+                    0
+                </td>
+
             </tr>
 
         </table>
 
-        <!-- KEHADIRAN -->
 
         <div class="attendance-title">
             Kehadiran
         </div>
 
+
         <table class="attendance-table">
 
             <tr>
-                <th>Sakit</th>
-                <th>Izin</th>
-                <th>Alpa</th>
+
+                <th>
+                    Sakit
+                </th>
+
+                <th>
+                    Izin
+                </th>
+
+                <th>
+                    Alpa
+                </th>
+
             </tr>
 
             <tr>
-                <td style="text-align:center;" id="printSakit">0</td>
-                <td style="text-align:center;" id="printIzin">0</td>
-                <td style="text-align:center;" id="printAlpa">0</td>
+
+                <td style="text-align:center;"
+                    id="printSakit">
+                    0
+                </td>
+
+                <td style="text-align:center;"
+                    id="printIzin">
+                    0
+                </td>
+
+                <td style="text-align:center;"
+                    id="printAlpa">
+                    0
+                </td>
+
             </tr>
 
         </table>
 
-        <!-- CATATAN -->
 
         <div class="note-title">
             Catatan Wali Kelas
         </div>
 
-        <div class="note-box" id="printCatatan">
+
+        <div class="note-box"
+             id="printCatatan">
             -
         </div>
 
-        <!-- TANDA TANGAN -->
+
+        <!-- =============================================
+             TANDA TANGAN 3 KOLOM
+        ============================================== -->
 
         <table class="signature-table">
 
             <tr>
 
-                <!-- KIRI -->
+                <!-- ORANG TUA -->
                 <td>
 
                     <div>
@@ -1009,13 +1590,10 @@ td.center{
 
                     <span class="signature-line"></span>
 
-                    <div>
-                        Orang Tua/Wali
-                    </div>
-
                 </td>
 
-                <!-- TENGAH -->
+
+                <!-- KEPALA SEKOLAH -->
                 <td>
 
                     <div>
@@ -1038,7 +1616,8 @@ td.center{
 
                 </td>
 
-                <!-- KANAN -->
+
+                <!-- WALI KELAS -->
                 <td>
 
                     <div id="printTanggalWali">
@@ -1046,16 +1625,21 @@ td.center{
                     </div>
 
                     <div>
-                        Wali Kelas <span id="printKelasWali">-</span>
+                        Wali Kelas
+                        <span id="printKelasWali">
+                            -
+                        </span>
                     </div>
 
                     <div class="signature-space"></div>
 
-                    <div class="signature-name" id="printWaliNama">
+                    <div class="signature-name"
+                         id="printWaliNama">
                         -
                     </div>
 
-                    <div class="signature-nip" id="printWaliNip">
+                    <div class="signature-nip"
+                         id="printWaliNip">
                         NIP. -
                     </div>
 
@@ -1065,6 +1649,7 @@ td.center{
 
         </table>
 
+
         <div class="print-footer">
             RUANG EXAM Online — SMP Negeri 3 Sibolga
         </div>
@@ -1073,6 +1658,7 @@ td.center{
 
 </div>
 
+
 <footer style="
     text-align:center;
     padding:20px;
@@ -1080,9 +1666,13 @@ td.center{
     color:#777;
     font-size:13px;
 ">
+
     RUANG EXAM Online<br>
+
     Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
 </footer>
+
 
 <script>
 
@@ -1108,13 +1698,19 @@ const supabaseClient =
 ===================================================== */
 
 let semuaKelas = [];
+
 let semuaSiswa = [];
+
 let siswaAktif = null;
 
 let hasilUjian = [];
+
 let dataRapot = [];
 
-let waliKelas = {
+let dataGabunganAktif = [];
+
+
+const waliKelas = {
 
     "Kelas 9A":{
         nama:"Frisnawati Siburian, S.Pd",
@@ -1171,17 +1767,27 @@ function showStatus(message,type="info"){
     box.className =
         "status " + type;
 
-    box.textContent = message;
+    box.textContent =
+        message;
 
-    setTimeout(()=>{
-        box.className="status";
-    },5000);
+    clearTimeout(window.statusTimer);
+
+    window.statusTimer =
+        setTimeout(()=>{
+
+            box.className =
+                "status";
+
+        },7000);
 }
 
 
 function escapeHtml(value){
 
-    if(value === null || value === undefined){
+    if(
+        value === null ||
+        value === undefined
+    ){
         return "";
     }
 
@@ -1227,9 +1833,17 @@ function predikat(nilai){
         return "-";
     }
 
-    if(n >= 90) return "Sangat Baik";
-    if(n >= 80) return "Baik";
-    if(n >= 70) return "Cukup";
+    if(n >= 90){
+        return "Sangat Baik";
+    }
+
+    if(n >= 80){
+        return "Baik";
+    }
+
+    if(n >= 70){
+        return "Cukup";
+    }
 
     return "Perlu Bimbingan";
 }
@@ -1242,7 +1856,13 @@ function formatTanggalIndonesia(tanggal){
     }
 
     const d =
-        new Date(tanggal);
+        new Date(
+            tanggal + (
+                String(tanggal).length === 10
+                    ? "T00:00:00"
+                    : ""
+            )
+        );
 
     if(Number.isNaN(d.getTime())){
         return tanggal;
@@ -1270,7 +1890,9 @@ function formatTanggalIndonesia(tanggal){
 function tanggalDefault(){
 
     const input =
-        document.getElementById("tanggalInput");
+        document.getElementById(
+            "tanggalInput"
+        );
 
     if(!input.value){
 
@@ -1281,10 +1903,14 @@ function tanggalDefault(){
             d.getFullYear();
 
         const mm =
-            String(d.getMonth()+1).padStart(2,"0");
+            String(
+                d.getMonth()+1
+            ).padStart(2,"0");
 
         const dd =
-            String(d.getDate()).padStart(2,"0");
+            String(
+                d.getDate()
+            ).padStart(2,"0");
 
         input.value =
             `${yyyy}-${mm}-${dd}`;
@@ -1292,15 +1918,81 @@ function tanggalDefault(){
 }
 
 
+function normalisasiKelas(kelas){
+
+    if(!kelas){
+        return "-";
+    }
+
+    const text =
+        String(kelas).trim();
+
+    if(
+        text.toLowerCase()
+            .startsWith("kelas ")
+    ){
+        return text;
+    }
+
+    return "Kelas " + text;
+}
+
+
+function kelasTanpaKataKelas(kelas){
+
+    return normalisasiKelas(kelas)
+        .replace(/^Kelas\s*/i,"");
+}
+
+
+function waktuBaris(row){
+
+    const values = [
+        row.updated_at,
+        row.created_at,
+        row.waktu_selesai,
+        row.waktu_mulai
+    ];
+
+    for(const value of values){
+
+        if(value){
+
+            const time =
+                new Date(value).getTime();
+
+            if(Number.isFinite(time)){
+                return time;
+            }
+        }
+    }
+
+    return 0;
+}
+
+
+function mapelKey(value){
+
+    return String(
+        value || ""
+    )
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g," ");
+}
+
+
 /* =====================================================
-   CEK LOGIN
+   LOGIN
 ===================================================== */
 
 function cekLogin(){
 
     const user =
         JSON.parse(
-            localStorage.getItem("exam_user") || "null"
+            localStorage.getItem(
+                "exam_user"
+            ) || "null"
         );
 
     if(!user){
@@ -1313,7 +2005,9 @@ function cekLogin(){
 
     if(user.role !== "admin"){
 
-        alert("Halaman ini hanya untuk Admin.");
+        alert(
+            "Halaman ini hanya untuk Admin."
+        );
 
         window.location.href =
             "login.html";
@@ -1351,7 +2045,20 @@ async function loadSemuaData(){
 
         await loadKelas();
 
-        await loadSiswaByKelas();
+        const kelasId =
+            document.getElementById(
+                "kelasSelect"
+            ).value;
+
+        if(kelasId){
+
+            await loadSiswaByKelas();
+
+        }else{
+
+            resetTampilan();
+
+        }
 
         tanggalDefault();
 
@@ -1385,12 +2092,18 @@ async function loadKelas(){
     } = await supabaseClient
         .from("kelas")
         .select("*")
-        .order("tingkat",{
-            ascending:true
-        })
-        .order("nama_kelas",{
-            ascending:true
-        });
+        .order(
+            "tingkat",
+            {
+                ascending:true
+            }
+        )
+        .order(
+            "nama_kelas",
+            {
+                ascending:true
+            }
+        );
 
     if(error){
         throw error;
@@ -1400,33 +2113,29 @@ async function loadKelas(){
         data || [];
 
     const select =
-        document.getElementById("kelasSelect");
+        document.getElementById(
+            "kelasSelect"
+        );
 
     const nilaiLama =
         select.value;
 
     select.innerHTML =
-        `<option value="">-- Pilih Kelas --</option>`;
+        `<option value="">
+            -- Pilih Kelas --
+        </option>`;
 
     semuaKelas.forEach(kelas=>{
 
-        let nama =
-            kelas.nama_kelas || "";
-
-        /*
-         * Memastikan kelas ditampilkan sebagai
-         * "Kelas 9G", bukan hanya "9G"
-         */
-        if(
-            nama &&
-            !nama.toLowerCase().startsWith("kelas ")
-        ){
-            nama =
-                "Kelas " + nama;
-        }
+        const nama =
+            normalisasiKelas(
+                kelas.nama_kelas
+            );
 
         const option =
-            document.createElement("option");
+            document.createElement(
+                "option"
+            );
 
         option.value =
             kelas.id;
@@ -1437,7 +2146,9 @@ async function loadKelas(){
         option.dataset.nama =
             nama;
 
-        select.appendChild(option);
+        select.appendChild(
+            option
+        );
     });
 
     if(nilaiLama){
@@ -1448,29 +2159,35 @@ async function loadKelas(){
 
 
 /* =====================================================
-   LOAD SISWA BERDASARKAN KELAS
+   LOAD SISWA KELAS
 ===================================================== */
 
 async function loadSiswaByKelas(){
 
     const kelasId =
-        document.getElementById("kelasSelect").value;
+        document.getElementById(
+            "kelasSelect"
+        ).value;
 
     const siswaSelect =
-        document.getElementById("siswaSelect");
+        document.getElementById(
+            "siswaSelect"
+        );
 
     siswaSelect.innerHTML =
-        `<option value="">-- Pilih Siswa --</option>`;
+        `<option value="">
+            -- Pilih Siswa --
+        </option>`;
 
     siswaAktif =
         null;
 
+    semuaSiswa =
+        [];
+
     resetTampilan();
 
     if(!kelasId){
-
-        semuaSiswa = [];
-
         return;
     }
 
@@ -1479,64 +2196,91 @@ async function loadSiswaByKelas(){
             `#kelasSelect option[value="${kelasId}"]`
         );
 
-    let namaKelas =
+    const namaKelas =
         kelasOption?.dataset.nama || "";
 
-    /*
-     * Database mungkin menyimpan "9G",
-     * tetapi tampilan tetap "Kelas 9G".
-     */
-    const variasiKelas =
-        [namaKelas];
+    const variasi =
+        new Set();
 
-    if(namaKelas.toLowerCase().startsWith("kelas ")){
+    variasi.add(
+        namaKelas
+            .trim()
+            .toLowerCase()
+    );
 
-        variasiKelas.push(
-            namaKelas.substring(6)
+    if(
+        namaKelas
+            .toLowerCase()
+            .startsWith("kelas ")
+    ){
+
+        variasi.add(
+            namaKelas
+                .substring(6)
+                .trim()
+                .toLowerCase()
+        );
+
+    }else{
+
+        variasi.add(
+            (
+                "Kelas " +
+                namaKelas
+            )
+            .trim()
+            .toLowerCase()
         );
     }
 
-    let query =
-        supabaseClient
-            .from("siswa")
-            .select("*")
-            .order("nama",{
-                ascending:true
-            });
 
     /*
-     * Ambil berdasarkan beberapa kemungkinan
-     * format kelas.
+     * Kita sengaja mengambil semua siswa,
+     * lalu mencocokkan kelas di browser.
+     * Ini menghindari masalah database
+     * yang kadang menyimpan 9G / Kelas 9G.
      */
+
     const {
         data,
         error
-    } = await query;
+    } = await supabaseClient
+        .from("siswa")
+        .select("*")
+        .order(
+            "nama",
+            {
+                ascending:true
+            }
+        );
 
     if(error){
         throw error;
     }
 
+
     semuaSiswa =
-        (data || []).filter(s=>{
+        (data || []).filter(siswa=>{
 
             const kelasSiswa =
-                String(s.kelas || "")
-                    .trim()
-                    .toLowerCase();
+                String(
+                    siswa.kelas || ""
+                )
+                .trim()
+                .toLowerCase();
 
-            return variasiKelas.some(v=>
-                kelasSiswa ===
-                String(v)
-                    .trim()
-                    .toLowerCase()
+            return variasi.has(
+                kelasSiswa
             );
         });
+
 
     semuaSiswa.forEach(siswa=>{
 
         const option =
-            document.createElement("option");
+            document.createElement(
+                "option"
+            );
 
         option.value =
             siswa.id;
@@ -1544,8 +2288,11 @@ async function loadSiswaByKelas(){
         option.textContent =
             `${siswa.nama || "-"} — ${siswa.nisn || "-"}`;
 
-        siswaSelect.appendChild(option);
+        siswaSelect.appendChild(
+            option
+        );
     });
+
 
     if(semuaSiswa.length === 0){
 
@@ -1554,6 +2301,7 @@ async function loadSiswaByKelas(){
             "info"
         );
     }
+
 }
 
 
@@ -1564,7 +2312,9 @@ async function loadSiswaByKelas(){
 async function pilihSiswa(){
 
     const siswaId =
-        document.getElementById("siswaSelect").value;
+        document.getElementById(
+            "siswaSelect"
+        ).value;
 
     if(!siswaId){
 
@@ -1576,20 +2326,27 @@ async function pilihSiswa(){
         return;
     }
 
+
     siswaAktif =
         semuaSiswa.find(
-            s => String(s.id) === String(siswaId)
+            siswa =>
+                String(siswa.id) ===
+                String(siswaId)
         );
+
 
     if(!siswaAktif){
         return;
     }
+
 
     tampilkanIdentitas();
 
     await loadHasilUjian();
 
     await loadRapotSiswa();
+
+    rebuildDataGabungan();
 
     renderNilai();
 
@@ -1598,6 +2355,12 @@ async function pilihSiswa(){
     isiFormUmum();
 
     updatePrintPreview();
+
+
+    showStatus(
+        `${hasilUjian.length} mata pelajaran ditemukan untuk ${siswaAktif.nama}.`,
+        "success"
+    );
 }
 
 
@@ -1611,42 +2374,40 @@ function tampilkanIdentitas(){
         return;
     }
 
-    document.getElementById("infoNama").textContent =
+    document.getElementById(
+        "infoNama"
+    ).textContent =
         siswaAktif.nama || "-";
 
-    document.getElementById("infoNisn").textContent =
+
+    document.getElementById(
+        "infoNisn"
+    ).textContent =
         siswaAktif.nisn || "-";
 
-    document.getElementById("infoKelas").textContent =
-        normalisasiKelas(siswaAktif.kelas);
 
-    document.getElementById("infoSemester").textContent =
+    document.getElementById(
+        "infoKelas"
+    ).textContent =
+        normalisasiKelas(
+            siswaAktif.kelas
+        );
+
+
+    document.getElementById(
+        "infoSemester"
+    ).textContent =
         "Semester " +
-        document.getElementById("semesterSelect").value;
-}
-
-
-function normalisasiKelas(kelas){
-
-    if(!kelas){
-        return "-";
-    }
-
-    const text =
-        String(kelas).trim();
-
-    if(
-        text.toLowerCase().startsWith("kelas ")
-    ){
-        return text;
-    }
-
-    return "Kelas " + text;
+        document.getElementById(
+            "semesterSelect"
+        ).value;
 }
 
 
 /* =====================================================
    LOAD HASIL UJIAN
+   PENTING:
+   AMBIL BERDASARKAN SISWA_ID DAN NISN
 ===================================================== */
 
 async function loadHasilUjian(){
@@ -1657,74 +2418,138 @@ async function loadHasilUjian(){
         return;
     }
 
-    /*
-     * Prioritas utama berdasarkan siswa_id.
-     */
-    let {
-        data,
-        error
-    } = await supabaseClient
-        .from("hasil_ujian")
-        .select("*")
-        .eq("siswa_id",siswaAktif.id);
 
-    if(error){
-        console.warn(
-            "Query siswa_id:",
-            error.message
-        );
-    }
+    const semuaHasil =
+        new Map();
+
 
     /*
-     * Jika kosong, coba NISN.
+     * QUERY 1:
+     * berdasarkan siswa_id
      */
-    if(!data || data.length === 0){
+
+    if(siswaAktif.id){
 
         const response =
             await supabaseClient
                 .from("hasil_ujian")
                 .select("*")
-                .eq("nisn",siswaAktif.nisn);
+                .eq(
+                    "siswa_id",
+                    siswaAktif.id
+                );
 
         if(!response.error){
-            data =
-                response.data || [];
+
+            (response.data || [])
+                .forEach(row=>{
+
+                    semuaHasil.set(
+                        String(row.id),
+                        row
+                    );
+
+                });
+
+        }else{
+
+            console.warn(
+                "Query siswa_id:",
+                response.error.message
+            );
         }
     }
 
+
     /*
-     * Filter hasil yang memang sudah selesai.
+     * QUERY 2:
+     * berdasarkan NISN
+     *
+     * Ini tetap dijalankan walaupun query
+     * siswa_id sudah menghasilkan data.
      */
-    hasilUjian =
-        (data || []).filter(row=>{
+
+    if(siswaAktif.nisn){
+
+        const response =
+            await supabaseClient
+                .from("hasil_ujian")
+                .select("*")
+                .eq(
+                    "nisn",
+                    siswaAktif.nisn
+                );
+
+        if(!response.error){
+
+            (response.data || [])
+                .forEach(row=>{
+
+                    semuaHasil.set(
+                        String(row.id),
+                        row
+                    );
+
+                });
+
+        }else{
+
+            console.warn(
+                "Query NISN:",
+                response.error.message
+            );
+        }
+    }
+
+
+    /*
+     * FILTER HASIL YANG VALID
+     */
+
+    const validRows =
+        Array.from(
+            semuaHasil.values()
+        )
+        .filter(row=>{
 
             const status =
-                String(row.status || "")
-                    .toLowerCase()
-                    .trim();
+                String(
+                    row.status || ""
+                )
+                .toLowerCase()
+                .trim();
+
 
             if(
                 status.includes("proses") ||
                 status.includes("berlangsung") ||
                 status.includes("mengerjakan")
             ){
+
                 return false;
             }
+
 
             return (
                 row.nilai !== null &&
                 row.nilai !== undefined &&
-                !Number.isNaN(Number(row.nilai))
+                Number.isFinite(
+                    Number(row.nilai)
+                )
             );
+
         });
 
+
     /*
-     * Ambil hanya hasil terbaru per mata pelajaran.
+     * TERBARU PER MATA PELAJARAN
      */
+
     const mapelMap =
         new Map();
 
-    hasilUjian.forEach(row=>{
+
+    validRows.forEach(row=>{
 
         const mapel =
             String(
@@ -1733,28 +2558,27 @@ async function loadHasilUjian(){
                 ""
             ).trim();
 
+
         if(!mapel){
             return;
         }
 
+
         const key =
-            mapel.toLowerCase();
+            mapelKey(mapel);
+
 
         const waktu =
-            new Date(
-                row.updated_at ||
-                row.created_at ||
-                row.waktu_selesai ||
-                row.waktu_mulai ||
-                0
-            ).getTime();
+            waktuBaris(row);
+
 
         const lama =
             mapelMap.get(key);
 
+
         if(
             !lama ||
-            waktu > lama._waktu
+            waktu >= lama._waktu
         ){
 
             row._waktu =
@@ -1765,17 +2589,35 @@ async function loadHasilUjian(){
                 row
             );
         }
+
     });
+
 
     hasilUjian =
         Array.from(
             mapelMap.values()
+        )
+        .sort(
+            (a,b)=>
+                String(
+                    a.mata_pelajaran ||
+                    a.mapel ||
+                    ""
+                )
+                .localeCompare(
+                    String(
+                        b.mata_pelajaran ||
+                        b.mapel ||
+                        ""
+                    ),
+                    "id"
+                )
         );
 }
 
 
 /* =====================================================
-   LOAD DATA RAPOT TERSIMPAN
+   LOAD RAPOT TERSIMPAN
 ===================================================== */
 
 async function loadRapotSiswa(){
@@ -1786,6 +2628,7 @@ async function loadRapotSiswa(){
         return;
     }
 
+
     const semester =
         Number(
             document.getElementById(
@@ -1793,31 +2636,37 @@ async function loadRapotSiswa(){
             ).value
         );
 
+
     const tahun =
         document.getElementById(
             "tahunPelajaran"
         ).value.trim() ||
         "2026/2027";
 
-    const {
-        data,
-        error
-    } = await supabaseClient
-        .from("rapot_pts")
-        .select("*")
-        .eq("siswa_id",siswaAktif.id)
-        .eq("semester",semester)
-        .eq("tahun_pelajaran",tahun);
 
-    if(error){
+    const response =
+        await supabaseClient
+            .from("rapot_pts")
+            .select("*")
+            .eq(
+                "siswa_id",
+                siswaAktif.id
+            )
+            .eq(
+                "semester",
+                semester
+            )
+            .eq(
+                "tahun_pelajaran",
+                tahun
+            );
 
-        /*
-         * Jika tabel belum tersedia,
-         * halaman tetap menampilkan hasil ujian.
-         */
+
+    if(response.error){
+
         console.warn(
-            "Tabel rapot_pts:",
-            error.message
+            "rapot_pts:",
+            response.error.message
         );
 
         dataRapot = [];
@@ -1825,101 +2674,148 @@ async function loadRapotSiswa(){
         return;
     }
 
+
     dataRapot =
-        data || [];
+        response.data || [];
 }
 
 
 /* =====================================================
-   GABUNG DATA UJIAN + RAPOR
+   BANGUN DATA GABUNGAN
 ===================================================== */
 
-function dataGabungan(){
+function rebuildDataGabungan(){
 
-    const hasil =
-        hasilUjian.map(ujian=>{
+    const hasil = [];
 
-            const mapelAsal =
-                String(
-                    ujian.mata_pelajaran ||
-                    ujian.mapel ||
-                    ""
-                ).trim();
 
-            const tersimpan =
-                dataRapot.find(r=>
-                    String(
-                        r.mata_pelajaran_asal || ""
-                    ).trim().toLowerCase()
-                    ===
-                    mapelAsal.toLowerCase()
-                );
+    /*
+     * HASIL UJIAN → RAPOR
+     */
 
-            return {
+    hasilUjian.forEach(ujian=>{
 
-                hasil_id:
-                    ujian.id,
+        const mapelAsal =
+            String(
+                ujian.mata_pelajaran ||
+                ujian.mapel ||
+                ""
+            ).trim();
 
-                mata_pelajaran_asal:
-                    mapelAsal,
 
-                mata_pelajaran:
-                    tersimpan?.mata_pelajaran ||
-                    mapelAsal,
+        if(!mapelAsal){
+            return;
+        }
 
-                nilai_ujian:
-                    Number(ujian.nilai || 0),
 
-                nilai:
-                    tersimpan?.nilai !== null &&
-                    tersimpan?.nilai !== undefined
-                        ? Number(tersimpan.nilai)
-                        : Number(ujian.nilai || 0),
+        const saved =
+            dataRapot.find(
+                row =>
+                    mapelKey(
+                        row.mata_pelajaran_asal
+                    ) ===
+                    mapelKey(
+                        mapelAsal
+                    )
+            );
 
-                sumber:
-                    tersimpan
-                        ? "Tersimpan/Edit"
-                        : "Hasil Ujian",
 
-                rapot_id:
-                    tersimpan?.id || null,
+        const nilaiUjian =
+            Number(
+                ujian.nilai
+            );
 
-                jumlah_soal:
-                    ujian.jumlah_soal || 0,
 
-                jumlah_benar:
-                    ujian.jumlah_benar || 0,
+        const nilaiRapor =
+            saved &&
+            saved.nilai !== null &&
+            saved.nilai !== undefined
 
-                jumlah_salah:
-                    ujian.jumlah_salah || 0
+                ? Number(saved.nilai)
 
-            };
+                : nilaiUjian;
+
+
+        hasil.push({
+
+            hasil_id:
+                ujian.id || null,
+
+            rapot_id:
+                saved?.id || null,
+
+            mata_pelajaran_asal:
+                mapelAsal,
+
+            mata_pelajaran:
+                saved?.mata_pelajaran ||
+                mapelAsal,
+
+            nilai_ujian:
+                Number.isFinite(nilaiUjian)
+                    ? nilaiUjian
+                    : 0,
+
+            nilai:
+                Number.isFinite(
+                    nilaiRapor
+                )
+                    ? nilaiRapor
+                    : 0,
+
+            sumber:
+                saved
+                    ? "Tersimpan/Edit"
+                    : "Hasil Ujian",
+
+            jumlah_soal:
+                angka(
+                    ujian.jumlah_soal
+                ),
+
+            jumlah_benar:
+                angka(
+                    ujian.jumlah_benar
+                ),
+
+            jumlah_salah:
+                angka(
+                    ujian.jumlah_salah
+                )
 
         });
 
+    });
+
+
     /*
-     * Jika ada data rapot yang sudah tersimpan tetapi
-     * hasil ujian aslinya tidak lagi ditemukan,
-     * tetap tampilkan agar data manual tidak hilang.
+     * DATA RAPOR MANUAL YANG SUDAH TERSIMPAN
+     * TETAP DITAMPILKAN WALAU HASIL UJIAN
+     * SUDAH TIDAK ADA.
      */
+
     dataRapot.forEach(saved=>{
 
         const sudahAda =
-            hasil.some(item=>
-                String(
-                    item.mata_pelajaran_asal
-                ).toLowerCase()
-                ===
-                String(
-                    saved.mata_pelajaran_asal
-                ).toLowerCase()
+            hasil.some(
+                item =>
+                    mapelKey(
+                        item.mata_pelajaran_asal
+                    ) ===
+                    mapelKey(
+                        saved.mata_pelajaran_asal
+                    )
             );
+
 
         if(!sudahAda){
 
             hasil.push({
 
                 hasil_id:null,
+
+                rapot_id:
+                    saved.id,
 
                 mata_pelajaran_asal:
                     saved.mata_pelajaran_asal,
@@ -1934,19 +2830,51 @@ function dataGabungan(){
                 nilai:
                     Number(saved.nilai || 0),
 
-                sumber:"Tersimpan",
-
-                rapot_id:saved.id,
+                sumber:
+                    "Tersimpan",
 
                 jumlah_soal:0,
+
                 jumlah_benar:0,
+
                 jumlah_salah:0
+
             });
+
         }
 
     });
 
-    return hasil;
+
+    /*
+     * SORT MAPEL
+     */
+
+    hasil.sort(
+        (a,b)=>
+            String(
+                a.mata_pelajaran
+            )
+            .localeCompare(
+                String(
+                    b.mata_pelajaran
+                ),
+                "id"
+            )
+    );
+
+
+    dataGabunganAktif =
+        hasil;
+
+
+    return dataGabunganAktif;
+}
+
+
+function dataGabungan(){
+
+    return dataGabunganAktif;
 }
 
 
@@ -1961,157 +2889,218 @@ function renderNilai(){
             "nilaiBody"
         );
 
+
     const data =
         dataGabungan();
+
 
     if(data.length === 0){
 
         body.innerHTML =
             `<tr>
-                <td colspan="7" class="empty">
-                    Belum ada hasil ujian yang dapat
-                    disinkronkan untuk siswa ini.
+                <td colspan="7"
+                    class="empty">
+
+                    Belum ada hasil ujian yang
+                    dapat ditampilkan.
+
                 </td>
             </tr>`;
 
         return;
     }
 
+
     body.innerHTML =
-        data.map((item,index)=>{
+        data.map(
+            (item,index)=>{
 
-            return `
-            <tr data-row="${index}">
+                return `
 
-                <td class="center">
-                    ${index+1}
-                </td>
+                <tr>
 
-                <td>
-                    <input
-                        class="edit-input"
-                        data-mapel="${index}"
-                        value="${escapeHtml(item.mata_pelajaran)}"
-                        onchange="ubahMapel(${index},this.value)"
-                    >
-                </td>
+                    <td class="center">
+                        ${index+1}
+                    </td>
 
-                <td class="center">
-                    ${formatNilai(item.nilai_ujian)}
-                </td>
 
-                <td class="center">
+                    <td>
 
-                    <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        step="0.01"
-                        class="edit-input nilai-input"
-                        data-nilai="${index}"
-                        value="${formatNilai(item.nilai)}"
-                        onchange="ubahNilai(${index},this.value)"
-                    >
+                        <input
+                            class="edit-input"
+                            data-mapel="${index}"
+                            value="${escapeHtml(
+                                item.mata_pelajaran
+                            )}"
+                            onchange="ubahMapel(${index},this.value)"
+                        >
 
-                </td>
+                    </td>
 
-                <td class="center"
-                    id="predikat-${index}">
-                    ${predikat(item.nilai)}
-                </td>
 
-                <td class="center">
-                    ${escapeHtml(item.sumber)}
-                </td>
+                    <td class="center">
 
-                <td>
+                        <b>
+                            ${formatNilai(
+                                item.nilai_ujian
+                            )}
+                        </b>
 
-                    <div class="action-row">
+                    </td>
 
-                        <button
-                            class="btn btn-success"
-                            onclick="simpanBaris(${index})">
-                            💾
-                        </button>
 
-                    </div>
+                    <td class="center">
 
-                </td>
+                        <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            step="0.01"
+                            class="edit-input nilai-input"
+                            value="${formatNilai(
+                                item.nilai
+                            )}"
+                            onchange="ubahNilai(${index},this.value)"
+                        >
 
-            </tr>
-            `;
+                    </td>
 
-        }).join("");
+
+                    <td class="center"
+                        id="predikat-${index}">
+
+                        ${predikat(
+                            item.nilai
+                        )}
+
+                    </td>
+
+
+                    <td class="center">
+
+                        ${escapeHtml(
+                            item.sumber
+                        )}
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="action-row">
+
+                            <button
+                                class="btn btn-success"
+                                onclick="simpanBaris(${index})">
+                                💾
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                `;
+
+            }
+        )
+        .join("");
 }
 
 
 /* =====================================================
-   DATA EDIT
+   EDIT MAPEL
 ===================================================== */
 
 function ubahMapel(index,value){
 
-    const data =
-        dataGabungan();
+    if(!dataGabunganAktif[index]){
+        return;
+    }
 
-    if(data[index]){
 
-        data[index].mata_pelajaran =
+    dataGabunganAktif[index]
+        .mata_pelajaran =
             value.trim() ||
-            data[index].mata_pelajaran_asal;
-    }
-}
+            dataGabunganAktif[index]
+                .mata_pelajaran_asal;
 
 
-function ubahNilai(index,value){
+    dataGabunganAktif[index]
+        .sumber =
+            "Edit";
 
-    const data =
-        dataGabungan();
 
-    if(data[index]){
-
-        const nilai =
-            Number(value);
-
-        data[index].nilai =
-            Number.isFinite(nilai)
-                ? nilai
-                : 0;
-
-        const predikatEl =
-            document.getElementById(
-                `predikat-${index}`
-            );
-
-        if(predikatEl){
-            predikatEl.textContent =
-                predikat(data[index].nilai);
-        }
-
-        updateStats();
-    }
+    updatePrintPreview();
 }
 
 
 /* =====================================================
-   SIMPAN SATU BARIS
+   EDIT NILAI
 ===================================================== */
 
-async function simpanBaris(index){
+function ubahNilai(index,value){
+
+    if(!dataGabunganAktif[index]){
+        return;
+    }
+
+
+    let nilai =
+        Number(value);
+
+
+    if(!Number.isFinite(nilai)){
+        nilai = 0;
+    }
+
+
+    if(nilai < 0){
+        nilai = 0;
+    }
+
+
+    if(nilai > 100){
+        nilai = 100;
+    }
+
+
+    dataGabunganAktif[index]
+        .nilai =
+            nilai;
+
+
+    const predikatEl =
+        document.getElementById(
+            `predikat-${index}`
+        );
+
+
+    if(predikatEl){
+
+        predikatEl.textContent =
+            predikat(nilai);
+
+    }
+
+
+    updateStats();
+
+    updatePrintPreview();
+}
+
+
+/* =====================================================
+   PAYLOAD RAPOR
+===================================================== */
+
+function buatPayloadRapot(item){
 
     if(!siswaAktif){
-        return;
+        return null;
     }
 
-    const data =
-        dataGabungan();
-
-    const item =
-        data[index];
-
-    if(!item){
-        return;
-    }
 
     const semester =
         Number(
@@ -2120,13 +3109,15 @@ async function simpanBaris(index){
             ).value
         );
 
+
     const tahun =
         document.getElementById(
             "tahunPelajaran"
         ).value.trim() ||
         "2026/2027";
 
-    const payload = {
+
+    return {
 
         siswa_id:
             siswaAktif.id,
@@ -2154,27 +3145,29 @@ async function simpanBaris(index){
             item.mata_pelajaran,
 
         nilai:
-            Number(item.nilai || 0),
+            Number(
+                item.nilai || 0
+            ),
 
         sakit:
-            Number(
+            angka(
                 document.getElementById(
                     "sakitInput"
-                ).value || 0
+                ).value
             ),
 
         izin:
-            Number(
+            angka(
                 document.getElementById(
                     "izinInput"
-                ).value || 0
+                ).value
             ),
 
         alpa:
-            Number(
+            angka(
                 document.getElementById(
                     "alpaInput"
-                ).value || 0
+                ).value
             ),
 
         catatan_wali_kelas:
@@ -2191,9 +3184,42 @@ async function simpanBaris(index){
         tanggal_rapot:
             document.getElementById(
                 "tanggalInput"
-            ).value || null
+            ).value ||
+            null
 
     };
+}
+
+
+/* =====================================================
+   SIMPAN SATU BARIS
+===================================================== */
+
+async function simpanBaris(index){
+
+    if(!siswaAktif){
+
+        showStatus(
+            "Pilih siswa terlebih dahulu.",
+            "info"
+        );
+
+        return;
+    }
+
+
+    const item =
+        dataGabunganAktif[index];
+
+
+    if(!item){
+        return;
+    }
+
+
+    const payload =
+        buatPayloadRapot(item);
+
 
     try{
 
@@ -2209,20 +3235,28 @@ async function simpanBaris(index){
                 }
             );
 
+
         if(error){
             throw error;
         }
+
 
         showStatus(
             `Nilai ${item.mata_pelajaran} berhasil disimpan.`,
             "success"
         );
 
+
         await loadRapotSiswa();
+
+        rebuildDataGabungan();
 
         renderNilai();
 
         updateStats();
+
+        updatePrintPreview();
+
 
     }catch(error){
 
@@ -2238,7 +3272,7 @@ async function simpanBaris(index){
 
 
 /* =====================================================
-   SIMPAN SEMUA PERUBAHAN
+   SIMPAN SEMUA
 ===================================================== */
 
 async function simpanSemuaPerubahan(){
@@ -2250,11 +3284,13 @@ async function simpanSemuaPerubahan(){
             "info"
         );
 
-        return;
+        return false;
     }
 
+
     const data =
-        dataGabungan();
+        dataGabunganAktif;
+
 
     if(data.length === 0){
 
@@ -2263,93 +3299,18 @@ async function simpanSemuaPerubahan(){
             "info"
         );
 
-        return;
+        return false;
     }
+
 
     try{
 
-        const semester =
-            Number(
-                document.getElementById(
-                    "semesterSelect"
-                ).value
+        const payload =
+            data.map(
+                item =>
+                    buatPayloadRapot(item)
             );
 
-        const tahun =
-            document.getElementById(
-                "tahunPelajaran"
-            ).value.trim() ||
-            "2026/2027";
-
-        const payload =
-            data.map(item=>({
-
-                siswa_id:
-                    siswaAktif.id,
-
-                nisn:
-                    siswaAktif.nisn,
-
-                nama_siswa:
-                    siswaAktif.nama,
-
-                kelas:
-                    normalisasiKelas(
-                        siswaAktif.kelas
-                    ),
-
-                semester,
-
-                tahun_pelajaran:
-                    tahun,
-
-                mata_pelajaran_asal:
-                    item.mata_pelajaran_asal,
-
-                mata_pelajaran:
-                    item.mata_pelajaran,
-
-                nilai:
-                    Number(item.nilai || 0),
-
-                sakit:
-                    Number(
-                        document.getElementById(
-                            "sakitInput"
-                        ).value || 0
-                    ),
-
-                izin:
-                    Number(
-                        document.getElementById(
-                            "izinInput"
-                        ).value || 0
-                    ),
-
-                alpa:
-                    Number(
-                        document.getElementById(
-                            "alpaInput"
-                        ).value || 0
-                    ),
-
-                catatan_wali_kelas:
-                    document.getElementById(
-                        "catatanInput"
-                    ).value || "",
-
-                tempat_rapot:
-                    document.getElementById(
-                        "tempatInput"
-                    ).value ||
-                    "Sibolga",
-
-                tanggal_rapot:
-                    document.getElementById(
-                        "tanggalInput"
-                    ).value || null
-
-            }));
 
         const {
             error
@@ -2363,22 +3324,31 @@ async function simpanSemuaPerubahan(){
                 }
             );
 
+
         if(error){
             throw error;
         }
 
-        showStatus(
-            "Semua perubahan berhasil disimpan.",
-            "success"
-        );
 
         await loadRapotSiswa();
+
+        rebuildDataGabungan();
 
         renderNilai();
 
         updateStats();
 
         updatePrintPreview();
+
+
+        showStatus(
+            "Semua perubahan berhasil disimpan.",
+            "success"
+        );
+
+
+        return true;
+
 
     }catch(error){
 
@@ -2389,12 +3359,14 @@ async function simpanSemuaPerubahan(){
             error.message,
             "error"
         );
+
+        return false;
     }
 }
 
 
 /* =====================================================
-   SINKRONKAN NILAI SISWA
+   SINKRONKAN SATU SISWA
 ===================================================== */
 
 async function sinkronkanNilai(){
@@ -2409,22 +3381,197 @@ async function sinkronkanNilai(){
         return;
     }
 
+
     showStatus(
-        "Mengambil nilai terbaru dari hasil ujian...",
+        "Mengambil nilai dari hasil ujian...",
         "info"
     );
+
 
     await loadHasilUjian();
 
     await loadRapotSiswa();
 
+    rebuildDataGabungan();
+
     renderNilai();
 
     updateStats();
 
+    isiFormUmum();
+
+    updatePrintPreview();
+
+
     showStatus(
-        `${hasilUjian.length} mata pelajaran berhasil disinkronkan.`,
+        `${hasilUjian.length} mata pelajaran ditemukan.`,
         "success"
+    );
+}
+
+
+/* =====================================================
+   AMBIL HASIL UJIAN SISWA
+   UNTUK SINKRONISASI SEMUA
+===================================================== */
+
+async function ambilHasilSiswa(siswa){
+
+    const semua =
+        new Map();
+
+
+    /*
+     * Berdasarkan siswa_id
+     */
+
+    if(siswa.id){
+
+        const response =
+            await supabaseClient
+                .from("hasil_ujian")
+                .select("*")
+                .eq(
+                    "siswa_id",
+                    siswa.id
+                );
+
+
+        if(!response.error){
+
+            (response.data || [])
+                .forEach(row=>{
+
+                    semua.set(
+                        String(row.id),
+                        row
+                    );
+
+                });
+
+        }
+    }
+
+
+    /*
+     * Berdasarkan NISN
+     */
+
+    if(siswa.nisn){
+
+        const response =
+            await supabaseClient
+                .from("hasil_ujian")
+                .select("*")
+                .eq(
+                    "nisn",
+                    siswa.nisn
+                );
+
+
+        if(!response.error){
+
+            (response.data || [])
+                .forEach(row=>{
+
+                    semua.set(
+                        String(row.id),
+                        row
+                    );
+
+                });
+
+        }
+    }
+
+
+    const valid =
+        Array.from(
+            semua.values()
+        )
+        .filter(row=>{
+
+            const status =
+                String(
+                    row.status || ""
+                )
+                .toLowerCase();
+
+
+            if(
+                status.includes("proses") ||
+                status.includes("berlangsung") ||
+                status.includes("mengerjakan")
+            ){
+                return false;
+            }
+
+
+            return (
+                row.nilai !== null &&
+                row.nilai !== undefined &&
+                Number.isFinite(
+                    Number(row.nilai)
+                )
+            );
+
+        });
+
+
+    /*
+     * Terbaru per mapel
+     */
+
+    const mapelMap =
+        new Map();
+
+
+    valid.forEach(row=>{
+
+        const mapel =
+            String(
+                row.mata_pelajaran ||
+                row.mapel ||
+                ""
+            ).trim();
+
+
+        if(!mapel){
+            return;
+        }
+
+
+        const key =
+            mapelKey(mapel);
+
+
+        const waktu =
+            waktuBaris(row);
+
+
+        const lama =
+            mapelMap.get(key);
+
+
+        if(
+            !lama ||
+            waktu >= lama._waktu
+        ){
+
+            row._waktu =
+                waktu;
+
+            mapelMap.set(
+                key,
+                row
+            );
+        }
+
+    });
+
+
+    return Array.from(
+        mapelMap.values()
     );
 }
 
@@ -2440,6 +3587,7 @@ async function sinkronkanSemuaSiswa(){
             "kelasSelect"
         ).value;
 
+
     if(!kelasId){
 
         showStatus(
@@ -2449,6 +3597,7 @@ async function sinkronkanSemuaSiswa(){
 
         return;
     }
+
 
     if(semuaSiswa.length === 0){
 
@@ -2460,15 +3609,18 @@ async function sinkronkanSemuaSiswa(){
         return;
     }
 
+
     const konfirmasi =
         confirm(
             `Sinkronkan hasil ujian untuk ${semuaSiswa.length} siswa?\n\n` +
-            `Nilai rapor yang sudah pernah diedit TIDAK akan ditimpa.`
+            `Nilai rapor yang sudah diedit TIDAK akan ditimpa.`
         );
+
 
     if(!konfirmasi){
         return;
     }
+
 
     const semester =
         Number(
@@ -2477,173 +3629,87 @@ async function sinkronkanSemuaSiswa(){
             ).value
         );
 
+
     const tahun =
         document.getElementById(
             "tahunPelajaran"
         ).value.trim() ||
         "2026/2027";
 
+
     showStatus(
         "Sedang menyinkronkan semua siswa...",
         "info"
     );
 
-    let totalBaris =
-        0;
 
     let totalSiswa =
+        0;
+
+    let totalBaris =
         0;
 
     let gagal =
         0;
 
-    for(const siswa of semuaSiswa){
+
+    for(
+        const siswa
+        of semuaSiswa
+    ){
 
         try{
 
-            /*
-             * Ambil hasil ujian siswa.
-             */
-            let {
-                data,
-                error
-            } = await supabaseClient
-                .from("hasil_ujian")
-                .select("*")
-                .eq("siswa_id",siswa.id);
-
-            if(error){
-                throw error;
-            }
-
-            /*
-             * Fallback NISN.
-             */
-            if(!data || data.length === 0){
-
-                const response =
-                    await supabaseClient
-                        .from("hasil_ujian")
-                        .select("*")
-                        .eq("nisn",siswa.nisn);
-
-                if(response.error){
-                    throw response.error;
-                }
-
-                data =
-                    response.data || [];
-            }
-
-            const selesai =
-                (data || []).filter(row=>{
-
-                    const status =
-                        String(
-                            row.status || ""
-                        ).toLowerCase();
-
-                    if(
-                        status.includes("proses") ||
-                        status.includes("berlangsung") ||
-                        status.includes("mengerjakan")
-                    ){
-                        return false;
-                    }
-
-                    return (
-                        row.nilai !== null &&
-                        row.nilai !== undefined &&
-                        !Number.isNaN(
-                            Number(row.nilai)
-                        )
-                    );
-
-                });
-
-            /*
-             * Ambil terbaru per mapel.
-             */
-            const mapelMap =
-                new Map();
-
-            selesai.forEach(row=>{
-
-                const mapel =
-                    String(
-                        row.mata_pelajaran ||
-                        row.mapel ||
-                        ""
-                    ).trim();
-
-                if(!mapel){
-                    return;
-                }
-
-                const key =
-                    mapel.toLowerCase();
-
-                const waktu =
-                    new Date(
-                        row.updated_at ||
-                        row.created_at ||
-                        row.waktu_selesai ||
-                        row.waktu_mulai ||
-                        0
-                    ).getTime();
-
-                const lama =
-                    mapelMap.get(key);
-
-                if(
-                    !lama ||
-                    waktu > lama._waktu
-                ){
-
-                    row._waktu =
-                        waktu;
-
-                    mapelMap.set(
-                        key,
-                        row
-                    );
-                }
-
-            });
-
-            const hasilTerbaru =
-                Array.from(
-                    mapelMap.values()
+            const hasil =
+                await ambilHasilSiswa(
+                    siswa
                 );
 
-            if(hasilTerbaru.length === 0){
+
+            if(hasil.length === 0){
+
+                totalSiswa++;
+
                 continue;
             }
 
-            /*
-             * Ambil data rapor yang sudah ada.
-             */
-            const {
-                data: saved,
-                error: savedError
-            } = await supabaseClient
-                .from("rapot_pts")
-                .select("*")
-                .eq("siswa_id",siswa.id)
-                .eq("semester",semester)
-                .eq("tahun_pelajaran",tahun);
 
-            if(savedError){
-                throw savedError;
+            /*
+             * Data rapor yang sudah ada
+             */
+
+            const savedResponse =
+                await supabaseClient
+                    .from("rapot_pts")
+                    .select("*")
+                    .eq(
+                        "siswa_id",
+                        siswa.id
+                    )
+                    .eq(
+                        "semester",
+                        semester
+                    )
+                    .eq(
+                        "tahun_pelajaran",
+                        tahun
+                    );
+
+
+            if(savedResponse.error){
+                throw savedResponse.error;
             }
 
-            const savedData =
-                saved || [];
+
+            const saved =
+                savedResponse.data || [];
+
 
             const payload =
                 [];
 
-            hasilTerbaru.forEach(ujian=>{
+
+            hasil.forEach(ujian=>{
 
                 const asal =
                     String(
@@ -2652,26 +3718,33 @@ async function sinkronkanSemuaSiswa(){
                         ""
                     ).trim();
 
+
                 if(!asal){
                     return;
                 }
 
+
                 const existing =
-                    savedData.find(r=>
-                        String(
-                            r.mata_pelajaran_asal || ""
-                        ).trim().toLowerCase()
-                        ===
-                        asal.toLowerCase()
+                    saved.find(
+                        row =>
+                            mapelKey(
+                                row.mata_pelajaran_asal
+                            ) ===
+                            mapelKey(
+                                asal
+                            )
                     );
 
+
                 /*
-                 * Jika sudah ada, jangan overwrite
-                 * nama mapel atau nilai manual.
+                 * SANGAT PENTING:
+                 * Kalau sudah ada, jangan ditimpa.
                  */
+
                 if(existing){
                     return;
                 }
+
 
                 payload.push({
 
@@ -2706,37 +3779,44 @@ async function sinkronkanSemuaSiswa(){
                         ),
 
                     sakit:0,
+
                     izin:0,
+
                     alpa:0,
 
                     catatan_wali_kelas:"",
 
                     tempat_rapot:"Sibolga",
 
-                    tanggal_rapot:
-                        null
+                    tanggal_rapot:null
 
                 });
 
             });
 
+
             if(payload.length > 0){
 
-                const {
-                    error: insertError
-                } = await supabaseClient
-                    .from("rapot_pts")
-                    .insert(payload);
+                const insertResponse =
+                    await supabaseClient
+                        .from("rapot_pts")
+                        .insert(
+                            payload
+                        );
 
-                if(insertError){
-                    throw insertError;
+
+                if(insertResponse.error){
+                    throw insertResponse.error;
                 }
+
 
                 totalBaris +=
                     payload.length;
             }
 
+
             totalSiswa++;
+
 
         }catch(error){
 
@@ -2751,22 +3831,26 @@ async function sinkronkanSemuaSiswa(){
 
     }
 
+
     showStatus(
-        `Sinkronisasi selesai. ${totalSiswa} siswa diproses, ` +
-        `${totalBaris} nilai baru ditambahkan, ${gagal} gagal.`,
+        `Sinkronisasi selesai: ${totalSiswa} siswa diproses, ${totalBaris} nilai baru ditambahkan, ${gagal} gagal.`,
         gagal > 0
             ? "info"
             : "success"
     );
 
+
     /*
-     * Reload siswa aktif jika ada.
+     * Refresh siswa aktif
      */
+
     if(siswaAktif){
 
         await loadHasilUjian();
 
         await loadRapotSiswa();
+
+        rebuildDataGabungan();
 
         renderNilai();
 
@@ -2780,7 +3864,7 @@ async function sinkronkanSemuaSiswa(){
 
 
 /* =====================================================
-   FORM INFORMASI UMUM
+   FORM UMUM
 ===================================================== */
 
 function isiFormUmum(){
@@ -2789,53 +3873,56 @@ function isiFormUmum(){
         return;
     }
 
-    const semester =
-        Number(
-            document.getElementById(
-                "semesterSelect"
-            ).value
-        );
 
     const saved =
-        dataRapot.find(
-            r =>
-                Number(r.semester) === semester
-        );
+        dataRapot[0];
+
 
     document.getElementById(
         "sakitInput"
     ).value =
         saved?.sakit ?? 0;
 
+
     document.getElementById(
         "izinInput"
     ).value =
         saved?.izin ?? 0;
+
 
     document.getElementById(
         "alpaInput"
     ).value =
         saved?.alpa ?? 0;
 
+
     document.getElementById(
         "catatanInput"
     ).value =
         saved?.catatan_wali_kelas || "";
 
+
     document.getElementById(
         "tempatInput"
     ).value =
         saved?.tempat_rapot ||
+        document.getElementById(
+            "tempatRapor"
+        ).value ||
         "Sibolga";
 
-    document.getElementById(
-        "tanggalInput"
-    ).value =
-        saved?.tanggal_rapot ||
+
+    if(saved?.tanggal_rapot){
+
         document.getElementById(
             "tanggalInput"
-        ).value;
+        ).value =
+            saved.tanggal_rapot;
 
+    }else{
+
+        tanggalDefault();
+    }
 }
 
 
@@ -2846,43 +3933,60 @@ function isiFormUmum(){
 function updateStats(){
 
     const data =
-        dataGabungan();
+        dataGabunganAktif;
+
 
     const nilai =
         data
-            .map(x=>Number(x.nilai))
-            .filter(x=>Number.isFinite(x));
+            .map(
+                item =>
+                    Number(item.nilai)
+            )
+            .filter(
+                value =>
+                    Number.isFinite(value)
+            );
+
 
     const jumlah =
         nilai.length;
 
+
     const rata =
         jumlah
             ? nilai.reduce(
-                (a,b)=>a+b,
+                (a,b)=>
+                    a+b,
                 0
             ) / jumlah
             : 0;
 
+
     const tinggi =
         jumlah
-            ? Math.max(...nilai)
+            ? Math.max(
+                ...nilai
+            )
             : 0;
+
 
     document.getElementById(
         "statMapel"
     ).textContent =
         jumlah;
 
+
     document.getElementById(
         "statUjian"
     ).textContent =
         hasilUjian.length;
 
+
     document.getElementById(
         "statRata"
     ).textContent =
         rata.toFixed(2);
+
 
     document.getElementById(
         "statTinggi"
@@ -2892,73 +3996,108 @@ function updateStats(){
 
 
 /* =====================================================
-   RESET TAMPILAN
+   RESET
 ===================================================== */
 
 function resetTampilan(){
 
+    dataGabunganAktif =
+        [];
+
+    hasilUjian =
+        [];
+
+    dataRapot =
+        [];
+
+
     document.getElementById(
         "infoNama"
-    ).textContent = "-";
+    ).textContent =
+        "-";
+
 
     document.getElementById(
         "infoNisn"
-    ).textContent = "-";
+    ).textContent =
+        "-";
+
 
     document.getElementById(
         "infoKelas"
-    ).textContent = "-";
+    ).textContent =
+        "-";
+
 
     document.getElementById(
         "infoSemester"
-    ).textContent = "-";
+    ).textContent =
+        "-";
+
 
     document.getElementById(
         "statMapel"
-    ).textContent = "0";
+    ).textContent =
+        "0";
+
 
     document.getElementById(
         "statUjian"
-    ).textContent = "0";
+    ).textContent =
+        "0";
+
 
     document.getElementById(
         "statRata"
-    ).textContent = "0";
+    ).textContent =
+        "0";
+
 
     document.getElementById(
         "statTinggi"
-    ).textContent = "0";
+    ).textContent =
+        "0";
+
 
     document.getElementById(
         "nilaiBody"
     ).innerHTML =
         `<tr>
-            <td colspan="7" class="empty">
+            <td colspan="7"
+                class="empty">
                 Pilih siswa terlebih dahulu.
             </td>
         </tr>`;
 
+
     document.getElementById(
         "sakitInput"
-    ).value = 0;
+    ).value =
+        0;
+
 
     document.getElementById(
         "izinInput"
-    ).value = 0;
+    ).value =
+        0;
+
 
     document.getElementById(
         "alpaInput"
-    ).value = 0;
+    ).value =
+        0;
+
 
     document.getElementById(
         "catatanInput"
-    ).value = "";
+    ).value =
+        "";
 
 }
 
 
 /* =====================================================
-   UPDATE PREVIEW CETAK
+   UPDATE PRINT PREVIEW
 ===================================================== */
 
 function updatePrintPreview(){
@@ -2967,13 +4106,16 @@ function updatePrintPreview(){
         return;
     }
 
+
     const data =
-        dataGabungan();
+        dataGabunganAktif;
+
 
     const semester =
         document.getElementById(
             "semesterSelect"
         ).value;
+
 
     const tahun =
         document.getElementById(
@@ -2981,10 +4123,12 @@ function updatePrintPreview(){
         ).value ||
         "2026/2027";
 
+
     const kelas =
         normalisasiKelas(
             siswaAktif.kelas
         );
+
 
     const tempat =
         document.getElementById(
@@ -2992,37 +4136,42 @@ function updatePrintPreview(){
         ).value ||
         "Sibolga";
 
+
     const tanggal =
         document.getElementById(
             "tanggalInput"
         ).value;
 
-    /* IDENTITAS */
 
     document.getElementById(
         "printNama"
     ).textContent =
         siswaAktif.nama || "-";
 
+
     document.getElementById(
         "printNisn"
     ).textContent =
         siswaAktif.nisn || "-";
+
 
     document.getElementById(
         "printKelas"
     ).textContent =
         kelas;
 
+
     document.getElementById(
         "printSemester"
     ).textContent =
         semester;
 
+
     document.getElementById(
         "printSemester2"
     ).textContent =
         semester;
+
 
     document.getElementById(
         "printTahun"
@@ -3030,80 +4179,110 @@ function updatePrintPreview(){
         tahun;
 
 
-    /* NILAI */
-
     const nilaiBody =
         document.getElementById(
             "printNilaiBody"
         );
 
-    nilaiBody.innerHTML =
-        data.map((item,index)=>{
 
-            return `
-                <tr>
-                    <td class="center">
-                        ${index+1}
-                    </td>
+    if(data.length === 0){
 
-                    <td class="mapel">
-                        ${escapeHtml(
-                            item.mata_pelajaran
-                        )}
-                    </td>
+        nilaiBody.innerHTML =
+            `<tr>
+                <td colspan="4"
+                    style="text-align:center;">
+                    Belum ada nilai.
+                </td>
+            </tr>`;
 
-                    <td class="center">
-                        ${formatNilai(item.nilai)}
-                    </td>
+    }else{
 
-                    <td class="center">
-                        ${escapeHtml(
-                            predikat(item.nilai)
-                        )}
-                    </td>
-                </tr>
-            `;
+        nilaiBody.innerHTML =
+            data.map(
+                (item,index)=>{
 
-        }).join("");
+                    return `
+                    <tr>
 
+                        <td class="center">
+                            ${index+1}
+                        </td>
 
-    /* STATISTIK */
+                        <td class="mapel">
+                            ${escapeHtml(
+                                item.mata_pelajaran
+                            )}
+                        </td>
+
+                        <td class="center">
+                            ${formatNilai(
+                                item.nilai
+                            )}
+                        </td>
+
+                        <td class="center">
+                            ${escapeHtml(
+                                predikat(
+                                    item.nilai
+                                )
+                            )}
+                        </td>
+
+                    </tr>
+                    `;
+
+                }
+            ).join("");
+    }
+
 
     const nilai =
         data
-            .map(x=>Number(x.nilai))
-            .filter(x=>Number.isFinite(x));
+            .map(
+                item =>
+                    Number(item.nilai)
+            )
+            .filter(
+                value =>
+                    Number.isFinite(value)
+            );
+
 
     const rata =
         nilai.length
             ? nilai.reduce(
-                (a,b)=>a+b,
+                (a,b)=>
+                    a+b,
                 0
             ) / nilai.length
             : 0;
 
+
     const tinggi =
         nilai.length
-            ? Math.max(...nilai)
+            ? Math.max(
+                ...nilai
+            )
             : 0;
+
 
     document.getElementById(
         "printJumlahMapel"
     ).textContent =
         nilai.length;
 
+
     document.getElementById(
         "printRata"
     ).textContent =
         rata.toFixed(2);
+
 
     document.getElementById(
         "printTinggi"
     ).textContent =
         tinggi.toFixed(2);
 
-
-    /* ABSENSI */
 
     document.getElementById(
         "printSakit"
@@ -3112,12 +4291,14 @@ function updatePrintPreview(){
             "sakitInput"
         ).value || 0;
 
+
     document.getElementById(
         "printIzin"
     ).textContent =
         document.getElementById(
             "izinInput"
         ).value || 0;
+
 
     document.getElementById(
         "printAlpa"
@@ -3126,8 +4307,6 @@ function updatePrintPreview(){
             "alpaInput"
         ).value || 0;
 
-
-    /* CATATAN */
 
     document.getElementById(
         "printCatatan"
@@ -3138,36 +4317,34 @@ function updatePrintPreview(){
         "-";
 
 
-    /* TEMPAT & TANGGAL */
-
-    const tanggalTampil =
-        tanggal
-            ? formatTanggalIndonesia(tanggal)
-            : "-";
-
     document.getElementById(
         "printTanggalWali"
     ).textContent =
-        `${tempat}, ${tanggalTampil}`;
+        `${tempat}, ${
+            tanggal
+                ? formatTanggalIndonesia(tanggal)
+                : "-"
+        }`;
 
-
-    /* WALI KELAS */
 
     const wali =
         waliKelas[kelas];
 
+
     document.getElementById(
         "printKelasWali"
     ).textContent =
-        kelas.replace(
-            /^Kelas\s*/i,
-            ""
+        kelasTanpaKataKelas(
+            kelas
         );
+
 
     document.getElementById(
         "printWaliNama"
     ).textContent =
-        wali?.nama || "-";
+        wali?.nama ||
+        "-";
+
 
     document.getElementById(
         "printWaliNip"
@@ -3179,7 +4356,7 @@ function updatePrintPreview(){
 
 
 /* =====================================================
-   CETAK RAPOR
+   CETAK SATU RAPOR
 ===================================================== */
 
 async function cetakRapor(){
@@ -3194,18 +4371,1878 @@ async function cetakRapor(){
         return;
     }
 
-    /*
-     * Simpan perubahan sebelum cetak.
-     */
-    await simpanSemuaPerubahan();
+
+    const berhasil =
+        await simpanSemuaPerubahan();
+
+
+    if(!berhasil){
+        return;
+    }
+
 
     updatePrintPreview();
 
-    setTimeout(()=>{
 
-        window.print();
+    setTimeout(
+        ()=>{
+            window.print();
+        },
+        300
+    );
+}
 
-    },300);
+
+/* =====================================================
+   BUILD HTML RAPOR UNTUK DOWNLOAD SEMUA
+===================================================== */
+
+function buildReportPageForStudent(
+    siswa,
+    data,
+    metadata
+){
+
+    const kelas =
+        normalisasiKelas(
+            siswa.kelas
+        );
+
+
+    const wali =
+        waliKelas[kelas];
+
+
+    const nilai =
+        data
+            .map(
+                item =>
+                    Number(item.nilai)
+            )
+            .filter(
+                value =>
+                    Number.isFinite(value)
+            );
+
+
+    const rata =
+        nilai.length
+            ? nilai.reduce(
+                (a,b)=>a+b,
+                0
+            ) / nilai.length
+            : 0;
+
+
+    const tinggi =
+        nilai.length
+            ? Math.max(
+                ...nilai
+            )
+            : 0;
+
+
+    const rows =
+        data.length
+            ? data.map(
+                (item,index)=>`
+
+                    <tr>
+
+                        <td style="text-align:center;">
+                            ${index+1}
+                        </td>
+
+                        <td>
+                            ${escapeHtml(
+                                item.mata_pelajaran
+                            )}
+                        </td>
+
+                        <td style="text-align:center;">
+                            ${formatNilai(
+                                item.nilai
+                            )}
+                        </td>
+
+                        <td style="text-align:center;">
+                            ${escapeHtml(
+                                predikat(
+                                    item.nilai
+                                )
+                            )}
+                        </td>
+
+                    </tr>
+
+                `
+            ).join("")
+
+            : `
+                <tr>
+                    <td colspan="4"
+                        style="text-align:center;">
+                        Belum ada nilai.
+                    </td>
+                </tr>
+            `;
+
+
+    return `
+
+    <div class="print-page">
+
+        <div class="school-header">
+
+            <h1>
+                SMP NEGERI 3 SIBOLGA
+            </h1>
+
+            <h2>
+                LAPORAN HASIL PENILAIAN TENGAH SEMESTER
+            </h2>
+
+            <p>
+                Tahun Pelajaran
+                ${escapeHtml(
+                    metadata.tahun
+                )}
+            </p>
+
+        </div>
+
+
+        <div class="report-title">
+
+            <h3>
+                LAPORAN HASIL PENILAIAN
+            </h3>
+
+            <p>
+                Semester
+                ${metadata.semester}
+            </p>
+
+        </div>
+
+
+        <table class="identity-table">
+
+            <tr>
+
+                <td class="label">
+                    Nama
+                </td>
+
+                <td class="colon">
+                    :
+                </td>
+
+                <td class="value">
+                    ${escapeHtml(
+                        siswa.nama
+                    )}
+                </td>
+
+                <td class="label">
+                    Kelas
+                </td>
+
+                <td class="colon">
+                    :
+                </td>
+
+                <td class="value">
+                    ${escapeHtml(
+                        kelas
+                    )}
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td class="label">
+                    NISN
+                </td>
+
+                <td class="colon">
+                    :
+                </td>
+
+                <td class="value">
+                    ${escapeHtml(
+                        siswa.nisn
+                    )}
+                </td>
+
+                <td class="label">
+                    Semester
+                </td>
+
+                <td class="colon">
+                    :
+                </td>
+
+                <td class="value">
+                    ${metadata.semester}
+                </td>
+
+            </tr>
+
+        </table>
+
+
+        <table class="report-table">
+
+            <thead>
+
+                <tr>
+
+                    <th style="width:7%;">
+                        No
+                    </th>
+
+                    <th>
+                        Mata Pelajaran
+                    </th>
+
+                    <th style="width:16%;">
+                        Nilai
+                    </th>
+
+                    <th style="width:18%;">
+                        Predikat
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+                ${rows}
+            </tbody>
+
+        </table>
+
+
+        <table class="summary-table">
+
+            <tr>
+
+                <td class="summary-label">
+                    Jumlah Mata Pelajaran
+                </td>
+
+                <td>
+                    ${nilai.length}
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="summary-label">
+                    Rata-rata Nilai
+                </td>
+
+                <td>
+                    ${rata.toFixed(2)}
+                </td>
+
+            </tr>
+
+            <tr>
+
+                <td class="summary-label">
+                    Nilai Tertinggi
+                </td>
+
+                <td>
+                    ${tinggi.toFixed(2)}
+                </td>
+
+            </tr>
+
+        </table>
+
+
+        <div class="attendance-title">
+            Kehadiran
+        </div>
+
+
+        <table class="attendance-table">
+
+            <tr>
+
+                <th>
+                    Sakit
+                </th>
+
+                <th>
+                    Izin
+                </th>
+
+                <th>
+                    Alpa
+                </th>
+
+            </tr>
+
+
+            <tr>
+
+                <td style="text-align:center;">
+                    ${angka(metadata.sakit)}
+                </td>
+
+                <td style="text-align:center;">
+                    ${angka(metadata.izin)}
+                </td>
+
+                <td style="text-align:center;">
+                    ${angka(metadata.alpa)}
+                </td>
+
+            </tr>
+
+        </table>
+
+
+        <div class="note-title">
+            Catatan Wali Kelas
+        </div>
+
+
+        <div class="note-box">
+            ${escapeHtml(
+                metadata.catatan || "-"
+            ).replace(/\n/g,"<br>")}
+        </div>
+
+
+        <table class="signature-table">
+
+            <tr>
+
+                <td>
+
+                    <div>
+                        Orang Tua/Wali
+                    </div>
+
+                    <div class="signature-space"></div>
+
+                    <span class="signature-line"></span>
+
+                </td>
+
+
+                <td>
+
+                    <div>
+                        Mengetahui,
+                    </div>
+
+                    <div>
+                        Kepala Sekolah
+                    </div>
+
+                    <div class="signature-space"></div>
+
+                    <div class="signature-name">
+                        Syahrul Mahyuddin Siregar, M.Pd
+                    </div>
+
+                    <div class="signature-nip">
+                        NIP. 197708042009031002
+                    </div>
+
+                </td>
+
+
+                <td>
+
+                    <div>
+                        ${escapeHtml(
+                            metadata.tempat
+                        )},
+                        ${metadata.tanggal
+                            ? formatTanggalIndonesia(
+                                metadata.tanggal
+                            )
+                            : "-"
+                        }
+                    </div>
+
+                    <div>
+                        Wali Kelas
+                        ${escapeHtml(
+                            kelasTanpaKataKelas(
+                                kelas
+                            )
+                        )}
+                    </div>
+
+                    <div class="signature-space"></div>
+
+                    <div class="signature-name">
+                        ${escapeHtml(
+                            wali?.nama || "-"
+                        )}
+                    </div>
+
+                    <div class="signature-nip">
+                        ${wali
+                            ? "NIP. " + wali.nip
+                            : "NIP. -"
+                        }
+                    </div>
+
+                </td>
+
+            </tr>
+
+        </table>
+
+
+        <div class="print-footer">
+            RUANG EXAM Online — SMP Negeri 3 Sibolga
+        </div>
+
+    </div>
+
+    `;
+}
+
+
+/* =====================================================
+   AMBIL DATA RAPOR SEMUA SISWA
+===================================================== */
+
+async function ambilDataRaporSiswa(siswa){
+
+    const semester =
+        Number(
+            document.getElementById(
+                "semesterSelect"
+            ).value
+        );
+
+
+    const tahun =
+        document.getElementById(
+            "tahunPelajaran"
+        ).value.trim() ||
+        "2026/2027";
+
+
+    /*
+     * HASIL UJIAN
+     */
+
+    const hasil =
+        await ambilHasilSiswa(
+            siswa
+        );
+
+
+    /*
+     * RAPOR TERSIMPAN
+     */
+
+    const response =
+        await supabaseClient
+            .from("rapot_pts")
+            .select("*")
+            .eq(
+                "siswa_id",
+                siswa.id
+            )
+            .eq(
+                "semester",
+                semester
+            )
+            .eq(
+                "tahun_pelajaran",
+                tahun
+            );
+
+
+    const saved =
+        response.error
+            ? []
+            : (
+                response.data || []
+            );
+
+
+    const merged = [];
+
+
+    hasil.forEach(ujian=>{
+
+        const asal =
+            String(
+                ujian.mata_pelajaran ||
+                ujian.mapel ||
+                ""
+            ).trim();
+
+
+        if(!asal){
+            return;
+        }
+
+
+        const savedRow =
+            saved.find(
+                row =>
+                    mapelKey(
+                        row.mata_pelajaran_asal
+                    ) ===
+                    mapelKey(asal)
+            );
+
+
+        merged.push({
+
+            mata_pelajaran_asal:
+                asal,
+
+            mata_pelajaran:
+                savedRow?.mata_pelajaran ||
+                asal,
+
+            nilai:
+                savedRow &&
+                savedRow.nilai !== null &&
+                savedRow.nilai !== undefined
+
+                    ? Number(savedRow.nilai)
+
+                    : Number(
+                        ujian.nilai || 0
+                    )
+
+        });
+
+    });
+
+
+    /*
+     * Tambahkan baris manual yang tersimpan
+     */
+
+    saved.forEach(row=>{
+
+        const exists =
+            merged.some(
+                item =>
+                    mapelKey(
+                        item.mata_pelajaran_asal
+                    ) ===
+                    mapelKey(
+                        row.mata_pelajaran_asal
+                    )
+            );
+
+
+        if(!exists){
+
+            merged.push({
+
+                mata_pelajaran_asal:
+                    row.mata_pelajaran_asal,
+
+                mata_pelajaran:
+                    row.mata_pelajaran ||
+                    row.mata_pelajaran_asal,
+
+                nilai:
+                    Number(
+                        row.nilai || 0
+                    )
+
+            });
+
+        }
+
+    });
+
+
+    merged.sort(
+        (a,b)=>
+            String(
+                a.mata_pelajaran
+            )
+            .localeCompare(
+                String(
+                    b.mata_pelajaran
+                ),
+                "id"
+            )
+    );
+
+
+    const metadata = {
+
+        semester,
+
+        tahun,
+
+        sakit:
+            saved[0]?.sakit ?? 0,
+
+        izin:
+            saved[0]?.izin ?? 0,
+
+        alpa:
+            saved[0]?.alpa ?? 0,
+
+        catatan:
+            saved[0]?.catatan_wali_kelas || "",
+
+        tempat:
+            saved[0]?.tempat_rapot ||
+            document.getElementById(
+                "tempatInput"
+            ).value ||
+            "Sibolga",
+
+        tanggal:
+            saved[0]?.tanggal_rapot ||
+            document.getElementById(
+                "tanggalInput"
+            ).value ||
+            null
+
+    };
+
+
+    return {
+        siswa,
+        data:merged,
+        metadata
+    };
+}
+
+
+/* =====================================================
+   DOWNLOAD SEMUA RAPOR KELAS
+===================================================== */
+
+async function downloadSemuaRapor(){
+
+    const kelasId =
+        document.getElementById(
+            "kelasSelect"
+        ).value;
+
+
+    if(!kelasId){
+
+        showStatus(
+            "Pilih kelas terlebih dahulu.",
+            "info"
+        );
+
+        return;
+    }
+
+
+    if(semuaSiswa.length === 0){
+
+        showStatus(
+            "Tidak ada siswa pada kelas tersebut.",
+            "info"
+        );
+
+        return;
+    }
+
+
+    const konfirmasi =
+        confirm(
+            `Buat semua rapor untuk ${semuaSiswa.length} siswa?\n\n` +
+            `Setelah halaman cetak terbuka, pilih "Save as PDF" untuk mengunduh satu PDF berisi seluruh rapor.`
+        );
+
+
+    if(!konfirmasi){
+        return;
+    }
+
+
+    showStatus(
+        "Menyiapkan semua rapor kelas...",
+        "info"
+    );
+
+
+    const pages = [];
+
+
+    for(
+        const siswa
+        of semuaSiswa
+    ){
+
+        try{
+
+            const result =
+                await ambilDataRaporSiswa(
+                    siswa
+                );
+
+
+            pages.push(
+                buildReportPageForStudent(
+                    result.siswa,
+                    result.data,
+                    result.metadata
+                )
+            );
+
+
+        }catch(error){
+
+            console.error(
+                "Gagal membuat rapor:",
+                siswa.nama,
+                error
+            );
+
+        }
+
+    }
+
+
+    if(pages.length === 0){
+
+        showStatus(
+            "Tidak ada rapor yang dapat dibuat.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const kelas =
+        document.querySelector(
+            "#kelasSelect option:checked"
+        )?.textContent ||
+        "";
+
+
+    const html = `
+
+<!DOCTYPE html>
+
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>
+Rapor ${escapeHtml(kelas)}
+</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:#fff;
+    font-family:"Times New Roman",Georgia,serif;
+    color:#000;
+}
+
+.print-page{
+    background:#fff;
+    width:210mm;
+    min-height:297mm;
+    margin:0 auto;
+    padding:15mm 15mm 12mm 15mm;
+    page-break-after:always;
+    break-after:page;
+}
+
+.print-page:last-child{
+    page-break-after:auto;
+    break-after:auto;
+}
+
+.school-header{
+    text-align:center;
+    border-bottom:3px solid #000;
+    padding-bottom:7px;
+    margin-bottom:10px;
+}
+
+.school-header h1{
+    font-size:17pt;
+    margin:0;
+}
+
+.school-header h2{
+    font-size:15pt;
+    margin:2px 0 0;
+}
+
+.school-header p{
+    font-size:10pt;
+    margin-top:3px;
+}
+
+.report-title{
+    text-align:center;
+    margin:13px 0;
+}
+
+.report-title h3{
+    font-size:14pt;
+    text-decoration:underline;
+    margin:0;
+}
+
+.report-title p{
+    font-size:11pt;
+    margin-top:3px;
+}
+
+.identity-table{
+    width:100%;
+    border:0;
+    margin-bottom:12px;
+    border-collapse:collapse;
+}
+
+.identity-table td{
+    border:0;
+    padding:2px 3px;
+    font-size:10.5pt;
+}
+
+.identity-table .label{
+    width:18%;
+}
+
+.identity-table .colon{
+    width:2%;
+}
+
+.identity-table .value{
+    width:30%;
+    font-weight:bold;
+}
+
+.report-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.report-table th,
+.report-table td{
+    border:1px solid #000;
+    padding:5px 6px;
+    font-size:9.5pt;
+}
+
+.report-table th{
+    background:#fff;
+    color:#000;
+    font-weight:bold;
+    text-align:center;
+}
+
+.report-table td.center{
+    text-align:center;
+}
+
+.summary-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:12px;
+}
+
+.summary-table td{
+    border:1px solid #000;
+    padding:5px;
+    font-size:10pt;
+}
+
+.summary-label{
+    font-weight:bold;
+    width:25%;
+}
+
+.attendance-title{
+    font-weight:bold;
+    margin-top:13px;
+    margin-bottom:4px;
+    font-size:10.5pt;
+}
+
+.attendance-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.attendance-table th,
+.attendance-table td{
+    border:1px solid #000;
+    padding:5px;
+    font-size:10pt;
+}
+
+.note-title{
+    font-weight:bold;
+    margin-top:13px;
+    margin-bottom:4px;
+    font-size:10.5pt;
+}
+
+.note-box{
+    border:1px solid #000;
+    min-height:55px;
+    padding:7px;
+    font-size:10pt;
+}
+
+.signature-table{
+    width:100%;
+    border:0;
+    border-collapse:collapse;
+    table-layout:fixed;
+    margin-top:30px;
+}
+
+.signature-table td{
+    border:0 !important;
+    width:33.333%;
+    vertical-align:top;
+    text-align:center;
+    font-size:10pt;
+    padding:0 8px;
+}
+
+.signature-space{
+    height:58px;
+}
+
+.signature-line{
+    border-bottom:1px solid #000;
+    display:block;
+    width:85%;
+    margin:0 auto 4px;
+    height:1px;
+}
+
+.signature-name{
+    font-weight:bold;
+}
+
+.signature-nip{
+    font-size:9pt;
+}
+
+.print-footer{
+    margin-top:15px;
+    text-align:center;
+    font-size:8pt;
+    color:#555;
+}
+
+@page{
+    size:A4 portrait;
+    margin:0;
+}
+
+@media print{
+
+    .signature-table{
+        display:table !important;
+        width:100% !important;
+        table-layout:fixed !important;
+    }
+
+    .signature-table tr{
+        display:table-row !important;
+    }
+
+    .signature-table td{
+        display:table-cell !important;
+        width:33.333% !important;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+${pages.join("")}
+
+<script>
+
+window.onload=function(){
+
+    setTimeout(
+        function(){
+            window.print();
+        },
+        700
+    );
+
+};
+
+<\/script>
+
+</body>
+
+</html>
+`;
+
+
+    const printWindow =
+        window.open(
+            "",
+            "_blank"
+        );
+
+
+    if(!printWindow){
+
+        showStatus(
+            "Pop-up diblokir browser. Izinkan pop-up lalu coba lagi.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    printWindow.document.open();
+
+    printWindow.document.write(
+        html
+    );
+
+    printWindow.document.close();
+
+
+    showStatus(
+        `${pages.length} rapor siap dicetak / disimpan sebagai PDF.`,
+        "success"
+    );
+}
+
+
+/* =====================================================
+   LEGER NILAI
+===================================================== */
+
+async function buatDataLeger(){
+
+    const siswaList =
+        semuaSiswa;
+
+
+    const semuaMapel =
+        new Map();
+
+
+    const hasilSiswa =
+        [];
+
+
+    const semester =
+        Number(
+            document.getElementById(
+                "semesterSelect"
+            ).value
+        );
+
+
+    const tahun =
+        document.getElementById(
+            "tahunPelajaran"
+        ).value.trim() ||
+        "2026/2027";
+
+
+    for(
+        const siswa
+        of siswaList
+    ){
+
+        const result =
+            await ambilDataRaporSiswa(
+                siswa
+            );
+
+
+        const nilaiMap =
+            new Map();
+
+
+        result.data.forEach(item=>{
+
+            const key =
+                mapelKey(
+                    item.mata_pelajaran
+                );
+
+
+            semuaMapel.set(
+                key,
+                item.mata_pelajaran
+            );
+
+
+            nilaiMap.set(
+                key,
+                Number(item.nilai || 0)
+            );
+
+        });
+
+
+        const nilai =
+            Array.from(
+                nilaiMap.values()
+            )
+            .filter(
+                n =>
+                    Number.isFinite(n)
+            );
+
+
+        const rata =
+            nilai.length
+                ? nilai.reduce(
+                    (a,b)=>a+b,
+                    0
+                ) / nilai.length
+                : 0;
+
+
+        hasilSiswa.push({
+
+            siswa,
+
+            nilaiMap,
+
+            rata,
+
+            sakit:
+                result.metadata.sakit,
+
+            izin:
+                result.metadata.izin,
+
+            alpa:
+                result.metadata.alpa
+
+        });
+
+    }
+
+
+    const mapelList =
+        Array.from(
+            semuaMapel.entries()
+        )
+        .sort(
+            (a,b)=>
+                String(a[1])
+                    .localeCompare(
+                        String(b[1]),
+                        "id"
+                    )
+        );
+
+
+    return {
+
+        semester,
+
+        tahun,
+
+        mapelList,
+
+        hasilSiswa
+
+    };
+}
+
+
+/* =====================================================
+   BUKA LEGER
+===================================================== */
+
+async function bukaLeger(){
+
+    const kelasId =
+        document.getElementById(
+            "kelasSelect"
+        ).value;
+
+
+    if(!kelasId){
+
+        showStatus(
+            "Pilih kelas terlebih dahulu.",
+            "info"
+        );
+
+        return;
+    }
+
+
+    if(semuaSiswa.length === 0){
+
+        showStatus(
+            "Tidak ada siswa pada kelas tersebut.",
+            "info"
+        );
+
+        return;
+    }
+
+
+    showStatus(
+        "Menyiapkan leger nilai...",
+        "info"
+    );
+
+
+    try{
+
+        const leger =
+            await buatDataLeger();
+
+
+        renderLeger(
+            leger
+        );
+
+
+        document.getElementById(
+            "legerModal"
+        ).classList.add(
+            "show"
+        );
+
+
+        showStatus(
+            `Leger ${semuaSiswa.length} siswa berhasil dibuat.`,
+            "success"
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+        showStatus(
+            "Gagal membuat leger: " +
+            error.message,
+            "error"
+        );
+    }
+}
+
+
+/* =====================================================
+   RENDER LEGER
+===================================================== */
+
+function renderLeger(leger){
+
+    const kelas =
+        document.querySelector(
+            "#kelasSelect option:checked"
+        )?.textContent ||
+        "-";
+
+
+    const info =
+        document.getElementById(
+            "legerInfo"
+        );
+
+
+    info.innerHTML = `
+
+        <b>SMP NEGERI 3 SIBOLGA</b><br>
+
+        Kelas:
+        <b>${escapeHtml(kelas)}</b><br>
+
+        Semester:
+        <b>${leger.semester}</b><br>
+
+        Tahun Pelajaran:
+        <b>${escapeHtml(leger.tahun)}</b><br>
+
+        Jumlah Siswa:
+        <b>${leger.hasilSiswa.length}</b>
+
+    `;
+
+
+    const head =
+        document.getElementById(
+            "legerHead"
+        );
+
+
+    const body =
+        document.getElementById(
+            "legerBody"
+        );
+
+
+    head.innerHTML = `
+
+        <tr>
+
+            <th>
+                No
+            </th>
+
+            <th>
+                NISN
+            </th>
+
+            <th>
+                Nama Siswa
+            </th>
+
+            ${
+                leger.mapelList
+                    .map(
+                        ([key,nama]) =>
+                            `<th>
+                                ${escapeHtml(nama)}
+                            </th>`
+                    )
+                    .join("")
+            }
+
+            <th>
+                Rata-rata
+            </th>
+
+            <th>
+                Sakit
+            </th>
+
+            <th>
+                Izin
+            </th>
+
+            <th>
+                Alpa
+            </th>
+
+        </tr>
+
+    `;
+
+
+    if(leger.hasilSiswa.length === 0){
+
+        body.innerHTML =
+            `<tr>
+                <td colspan="${
+                    7 + leger.mapelList.length
+                }"
+                    class="empty">
+                    Tidak ada data siswa.
+                </td>
+            </tr>`;
+
+        return;
+    }
+
+
+    body.innerHTML =
+        leger.hasilSiswa
+            .map(
+                (item,index)=>{
+
+                    return `
+
+                    <tr>
+
+                        <td class="nilai">
+                            ${index+1}
+                        </td>
+
+                        <td class="nilai">
+                            ${escapeHtml(
+                                item.siswa.nisn
+                            )}
+                        </td>
+
+                        <td class="nama">
+                            ${escapeHtml(
+                                item.siswa.nama
+                            )}
+                        </td>
+
+                        ${
+                            leger.mapelList
+                                .map(
+                                    ([key])=>{
+
+                                        const nilai =
+                                            item.nilaiMap.has(
+                                                key
+                                            )
+                                                ? item.nilaiMap.get(
+                                                    key
+                                                )
+                                                : null;
+
+
+                                        return `
+
+                                        <td class="nilai">
+
+                                            ${
+                                                nilai === null
+                                                    ? "-"
+                                                    : formatNilai(
+                                                        nilai
+                                                    )
+                                            }
+
+                                        </td>
+
+                                        `;
+
+                                    }
+                                )
+                                .join("")
+                        }
+
+                        <td class="nilai rata">
+
+                            ${formatNilai(
+                                item.rata
+                            )}
+
+                        </td>
+
+                        <td class="hadir">
+                            ${angka(
+                                item.sakit
+                            )}
+                        </td>
+
+                        <td class="hadir">
+                            ${angka(
+                                item.izin
+                            )}
+                        </td>
+
+                        <td class="hadir">
+                            ${angka(
+                                item.alpa
+                            )}
+                        </td>
+
+                    </tr>
+
+                    `;
+
+                }
+            )
+            .join("");
+}
+
+
+/* =====================================================
+   TUTUP LEGER
+===================================================== */
+
+function tutupLeger(){
+
+    document.getElementById(
+        "legerModal"
+    ).classList.remove(
+        "show"
+    );
+}
+
+
+/* =====================================================
+   CETAK LEGER
+===================================================== */
+
+async function cetakLeger(){
+
+    const kelas =
+        document.querySelector(
+            "#kelasSelect option:checked"
+        )?.textContent ||
+        "-";
+
+
+    const leger =
+        await buatDataLeger();
+
+
+    let html = `
+
+<!DOCTYPE html>
+
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>
+Leger Nilai ${escapeHtml(kelas)}
+</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    font-family:"Times New Roman",Georgia,serif;
+    color:#000;
+    margin:0;
+}
+
+.leger-print-page{
+    padding:10mm;
+}
+
+.header{
+    text-align:center;
+    border-bottom:2px solid #000;
+    padding-bottom:7px;
+    margin-bottom:10px;
+}
+
+.header h1{
+    margin:0;
+    font-size:16pt;
+}
+
+.header h2{
+    margin:3px 0 0;
+    font-size:13pt;
+}
+
+.header p{
+    margin:3px 0 0;
+    font-size:10pt;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    border:1px solid #000;
+    padding:4px;
+    font-size:7.5pt;
+}
+
+th{
+    text-align:center;
+}
+
+.center{
+    text-align:center;
+}
+
+.nama{
+    white-space:nowrap;
+}
+
+.rata{
+    font-weight:bold;
+}
+
+.footer{
+    margin-top:10px;
+    text-align:center;
+    font-size:8pt;
+}
+
+@page{
+    size:A4 landscape;
+    margin:0;
+}
+
+@media print{
+
+    .leger-print-page{
+        padding:10mm;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="leger-print-page">
+
+    <div class="header">
+
+        <h1>
+            SMP NEGERI 3 SIBOLGA
+        </h1>
+
+        <h2>
+            LEGER NILAI
+        </h2>
+
+        <p>
+            Kelas ${escapeHtml(kelas)}
+            &nbsp; | &nbsp;
+            Semester ${leger.semester}
+            &nbsp; | &nbsp;
+            Tahun Pelajaran ${escapeHtml(
+                leger.tahun
+            )}
+        </p>
+
+    </div>
+
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    No
+                </th>
+
+                <th>
+                    NISN
+                </th>
+
+                <th>
+                    Nama Siswa
+                </th>
+
+                ${
+                    leger.mapelList
+                        .map(
+                            ([key,nama])=>
+                                `<th>
+                                    ${escapeHtml(nama)}
+                                </th>`
+                        )
+                        .join("")
+                }
+
+                <th>
+                    Rata-rata
+                </th>
+
+                <th>
+                    S
+                </th>
+
+                <th>
+                    I
+                </th>
+
+                <th>
+                    A
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            ${
+                leger.hasilSiswa
+                    .map(
+                        (item,index)=>`
+
+                        <tr>
+
+                            <td class="center">
+                                ${index+1}
+                            </td>
+
+                            <td class="center">
+                                ${escapeHtml(
+                                    item.siswa.nisn
+                                )}
+                            </td>
+
+                            <td class="nama">
+                                ${escapeHtml(
+                                    item.siswa.nama
+                                )}
+                            </td>
+
+                            ${
+                                leger.mapelList
+                                    .map(
+                                        ([key])=>{
+
+                                            const nilai =
+                                                item.nilaiMap.has(
+                                                    key
+                                                )
+                                                    ? item.nilaiMap.get(
+                                                        key
+                                                    )
+                                                    : null;
+
+
+                                            return `
+
+                                            <td class="center">
+
+                                                ${
+                                                    nilai === null
+                                                        ? "-"
+                                                        : formatNilai(
+                                                            nilai
+                                                        )
+                                                }
+
+                                            </td>
+
+                                            `;
+
+                                        }
+                                    )
+                                    .join("")
+                            }
+
+                            <td class="center rata">
+
+                                ${formatNilai(
+                                    item.rata
+                                )}
+
+                            </td>
+
+                            <td class="center">
+                                ${angka(
+                                    item.sakit
+                                )}
+                            </td>
+
+                            <td class="center">
+                                ${angka(
+                                    item.izin
+                                )}
+                            </td>
+
+                            <td class="center">
+                                ${angka(
+                                    item.alpa
+                                )}
+                            </td>
+
+                        </tr>
+
+                        `
+                    )
+                    .join("")
+            }
+
+        </tbody>
+
+    </table>
+
+
+    <div class="footer">
+
+        RUANG EXAM Online — SMP Negeri 3 Sibolga<br>
+
+        Dibuat oleh Mr. Rahmat Batubara, S.T.P
+
+    </div>
+
+</div>
+
+
+<script>
+
+window.onload=function(){
+
+    setTimeout(
+        function(){
+            window.print();
+        },
+        700
+    );
+
+};
+
+<\/script>
+
+</body>
+
+</html>
+
+`;
+
+
+    const win =
+        window.open(
+            "",
+            "_blank"
+        );
+
+
+    if(!win){
+
+        showStatus(
+            "Pop-up diblokir browser.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    win.document.open();
+
+    win.document.write(
+        html
+    );
+
+    win.document.close();
 }
 
 
@@ -3222,10 +6259,14 @@ async function cetakRapor(){
     "izinInput",
     "alpaInput",
     "catatanInput"
-].forEach(id=>{
+]
+.forEach(id=>{
 
     const el =
-        document.getElementById(id);
+        document.getElementById(
+            id
+        );
+
 
     if(el){
 
@@ -3236,15 +6277,87 @@ async function cetakRapor(){
             }
         );
 
+
         el.addEventListener(
             "change",
-            ()=>{
+            async ()=>{
+
+                /*
+                 * Kalau semester/tahun berubah,
+                 * muat ulang rapor siswa.
+                 */
+
+                if(
+                    (
+                        id === "semesterSelect" ||
+                        id === "tahunPelajaran"
+                    ) &&
+                    siswaAktif
+                ){
+
+                    await loadRapotSiswa();
+
+                    rebuildDataGabungan();
+
+                    renderNilai();
+
+                    updateStats();
+
+                    isiFormUmum();
+                }
+
+
                 updatePrintPreview();
+
             }
         );
+
     }
 
 });
+
+
+/* =====================================================
+   TEMPAT RAPOR → TEMPAT INPUT
+===================================================== */
+
+document.getElementById(
+    "tempatRapor"
+)
+.addEventListener(
+    "input",
+    function(){
+
+        document.getElementById(
+            "tempatInput"
+        ).value =
+            this.value;
+
+        updatePrintPreview();
+
+    }
+);
+
+
+/* =====================================================
+   CLOSE MODAL KLIK LUAR
+===================================================== */
+
+document.getElementById(
+    "legerModal"
+)
+.addEventListener(
+    "click",
+    function(event){
+
+        if(
+            event.target === this
+        ){
+            tutupLeger();
+        }
+
+    }
+);
 
 
 /* =====================================================
@@ -3259,7 +6372,9 @@ document.addEventListener(
             return;
         }
 
+
         tanggalDefault();
+
 
         await loadSemuaData();
 
