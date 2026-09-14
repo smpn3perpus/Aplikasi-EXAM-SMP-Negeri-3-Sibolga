@@ -2486,4 +2486,5630 @@ function hashSeed(text){
 
     for(
         let i = 0;
-        i < 
+        i < value.length;
+        i++
+    ){
+
+        hash ^=
+            value.charCodeAt(i);
+
+        hash =
+            Math.imul(
+                hash,
+                16777619
+            );
+
+    }
+
+
+    return hash >>> 0;
+
+}
+
+
+function seededRandom(seed){
+
+    return function(){
+
+        seed +=
+            0x6D2B79F5;
+
+        let t =
+            seed;
+
+
+        t =
+            Math.imul(
+                t ^ (t >>> 15),
+                t | 1
+            );
+
+
+        t ^=
+            t +
+            Math.imul(
+                t ^ (t >>> 7),
+                t | 61
+            );
+
+
+        return (
+            (
+                t ^
+                (t >>> 14)
+            ) >>> 0
+        ) /
+        4294967296;
+
+    };
+
+}
+
+
+/* =====================================================
+   ACAK SOAL UNTUK SISWA
+===================================================== */
+
+function acakSoalUntukSiswa(){
+
+    if(
+        !semuaSoal.length ||
+        !siswaAktif ||
+        !ujianAktif
+    ){
+
+        return;
+
+    }
+
+
+    const nisn =
+        ambilNisnAktif();
+
+
+    if(!nisn){
+
+        console.warn(
+            "NISN tidak ditemukan. Soal tidak diacak."
+        );
+
+        return;
+
+    }
+
+
+    const seedText =
+        nisn +
+        "|" +
+        String(
+            ujianAktif.id
+        );
+
+
+    const random =
+        seededRandom(
+            hashSeed(
+                seedText
+            )
+        );
+
+
+    for(
+        let i =
+            semuaSoal.length - 1;
+
+        i > 0;
+
+        i--
+    ){
+
+        const j =
+            Math.floor(
+                random() *
+                (i + 1)
+            );
+
+
+        [
+            semuaSoal[i],
+            semuaSoal[j]
+        ] =
+        [
+            semuaSoal[j],
+            semuaSoal[i]
+        ];
+
+    }
+
+}
+
+
+/* =====================================================
+   CEK SUDAH UJIAN
+===================================================== */
+
+async function cekSudahUjian(
+    ujianId
+){
+
+    if(!ujianId){
+
+        return {
+            sudah:false,
+            data:null,
+            error:null
+        };
+
+    }
+
+
+    const nisn =
+        ambilNisnAktif();
+
+
+    if(!nisn){
+
+        return {
+
+            sudah:false,
+
+            data:null,
+
+            error:
+                new Error(
+                    "NISN siswa tidak ditemukan."
+                )
+
+        };
+
+    }
+
+
+    try{
+
+        const result =
+            await supabaseClient
+            .from("hasil_ujian")
+            .select(`
+                id,
+                siswa_id,
+                ujian_id,
+                nama_siswa,
+                nisn,
+                nilai,
+                waktu_mulai,
+                waktu_selesai
+            `)
+            .eq(
+                "ujian_id",
+                ujianId
+            )
+            .eq(
+                "nisn",
+                nisn
+            )
+            .limit(1);
+
+
+        if(result.error){
+
+            console.error(
+                "CEK HASIL UJIAN:",
+                result.error
+            );
+
+
+            return {
+
+                sudah:false,
+
+                data:null,
+
+                error:
+                    result.error
+
+            };
+
+        }
+
+
+        const data =
+            result.data || [];
+
+
+        if(data.length){
+
+            return {
+
+                sudah:true,
+
+                data:data[0],
+
+                error:null
+
+            };
+
+        }
+
+
+        return {
+
+            sudah:false,
+
+            data:null,
+
+            error:null
+
+        };
+
+    }catch(error){
+
+        console.error(
+            "CEK SUDAH UJIAN:",
+            error
+        );
+
+
+        return {
+
+            sudah:false,
+
+            data:null,
+
+            error:error
+
+        };
+
+    }
+
+}
+
+
+/* =====================================================
+   AMBIL UJIAN TERBARU
+===================================================== */
+
+async function ambilUjianTerbaru(
+    ujianId
+){
+
+    if(!ujianId){
+
+        throw new Error(
+            "ID ujian tidak ditemukan."
+        );
+
+    }
+
+
+    const result =
+        await supabaseClient
+        .from("ujian")
+        .select(`
+            id,
+            judul,
+            mata_pelajaran_id,
+            kelas_id,
+            guru_id,
+            durasi_menit,
+            tanggal_mulai,
+            tanggal_selesai,
+            status,
+            status_kontrol,
+            token,
+            waktu_mulai_aktif,
+            waktu_terpakai_detik,
+            created_at
+        `)
+        .eq(
+            "id",
+            ujianId
+        )
+        .limit(1)
+        .maybeSingle();
+
+
+    if(result.error){
+
+        console.error(
+            "AMBIL UJIAN TERBARU:",
+            result.error
+        );
+
+        throw result.error;
+
+    }
+
+
+    if(!result.data){
+
+        throw new Error(
+            "Data ujian tidak ditemukan."
+        );
+
+    }
+
+
+    return result.data;
+
+}
+
+
+/* =====================================================
+   AUTOSAVE SATU JAWABAN
+===================================================== */
+
+async function autosaveJawaban(
+    soalId,
+    jawaban
+){
+
+    if(
+        !ujianAktif ||
+        !soalId
+    ){
+
+        return;
+
+    }
+
+
+    const nisn =
+        ambilNisnAktif();
+
+
+    if(!nisn){
+
+        return;
+
+    }
+
+
+    simpanBackupLocal();
+
+
+    const data = {
+
+        ujian_id:
+            ujianAktif.id,
+
+        soal_id:
+            soalId,
+
+        nisn:
+            nisn,
+
+        siswa_id:
+            siswaAktif?.id ||
+            examUser?.siswa_id ||
+            null,
+
+        jawaban:
+            jawaban === null ||
+            jawaban === undefined
+            ? ""
+            : String(jawaban),
+
+        waktu_update:
+            new Date().toISOString()
+
+    };
+
+
+    try{
+
+        const result =
+            await supabaseClient
+            .from(AUTOSAVE_TABLE)
+            .upsert(
+                data,
+                {
+                    onConflict:
+                        "ujian_id,soal_id,nisn"
+                }
+            );
+
+
+        if(result.error){
+
+            console.error(
+                "AUTOSAVE JAWABAN:",
+                result.error
+            );
+
+            return false;
+
+        }
+
+
+        return true;
+
+    }catch(error){
+
+        console.error(
+            "AUTOSAVE EXCEPTION:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/* =====================================================
+   AUTOSAVE SEMUA JAWABAN
+===================================================== */
+
+async function sinkronkanSemuaJawaban(){
+
+    if(
+        !ujianAktif ||
+        !semuaSoal.length
+    ){
+
+        return true;
+
+    }
+
+
+    const nisn =
+        ambilNisnAktif();
+
+
+    if(!nisn){
+
+        return false;
+
+    }
+
+
+    simpanBackupLocal();
+
+
+    const rows =
+        semuaSoal.map(
+            soal => ({
+
+                ujian_id:
+                    ujianAktif.id,
+
+                soal_id:
+                    soal.id,
+
+                nisn:
+                    nisn,
+
+                siswa_id:
+                    siswaAktif?.id ||
+                    examUser?.siswa_id ||
+                    null,
+
+                jawaban:
+                    jawabanSiswa[
+                        soal.id
+                    ] === undefined ||
+                    jawabanSiswa[
+                        soal.id
+                    ] === null
+                    ? ""
+                    : String(
+                        jawabanSiswa[
+                            soal.id
+                        ]
+                    ),
+
+                waktu_update:
+                    new Date().toISOString()
+
+            })
+        );
+
+
+    try{
+
+        const result =
+            await supabaseClient
+            .from(AUTOSAVE_TABLE)
+            .upsert(
+                rows,
+                {
+                    onConflict:
+                        "ujian_id,soal_id,nisn"
+                }
+            );
+
+
+        if(result.error){
+
+            console.error(
+                "SINKRON SEMUA JAWABAN:",
+                result.error
+            );
+
+            return false;
+
+        }
+
+
+        return true;
+
+    }catch(error){
+
+        console.error(
+            "SINKRON SEMUA EXCEPTION:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+/* =====================================================
+   MUAT JAWABAN TERSIMPAN
+===================================================== */
+
+async function muatJawabanTersimpan(){
+
+    if(
+        !ujianAktif
+    ){
+
+        return;
+
+    }
+
+
+    /*
+       1. Ambil backup local terlebih dahulu.
+    */
+
+    const backup =
+        bacaBackupLocal();
+
+
+    if(
+        backup &&
+        typeof backup === "object"
+    ){
+
+        Object.assign(
+            jawabanSiswa,
+            backup
+        );
+
+    }
+
+
+    /*
+       2. Ambil dari Supabase.
+    */
+
+    const nisn =
+        ambilNisnAktif();
+
+
+    if(!nisn){
+
+        return;
+
+    }
+
+
+    try{
+
+        const result =
+            await supabaseClient
+            .from(AUTOSAVE_TABLE)
+            .select(`
+                soal_id,
+                jawaban,
+                waktu_update
+            `)
+            .eq(
+                "ujian_id",
+                ujianAktif.id
+            )
+            .eq(
+                "nisn",
+                nisn
+            );
+
+
+        if(result.error){
+
+            console.warn(
+                "LOAD AUTOSAVE:",
+                result.error
+            );
+
+            /*
+               Backup local tetap dipakai.
+            */
+
+            return;
+
+        }
+
+
+        const data =
+            result.data || [];
+
+
+        data.forEach(
+            row => {
+
+                if(
+                    row.soal_id
+                ){
+
+                    jawabanSiswa[
+                        row.soal_id
+                    ] =
+                        row.jawaban ?? "";
+
+                }
+
+            }
+        );
+
+
+        /*
+           Simpan kembali gabungan ke local.
+        */
+
+        simpanBackupLocal();
+
+
+    }catch(error){
+
+        console.warn(
+            "MUAT JAWABAN TERSIMPAN:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   HAPUS AUTOSAVE SETELAH SELESAI
+===================================================== */
+
+async function hapusAutosaveDatabase(){
+
+    if(
+        !ujianAktif ||
+        !ambilNisnAktif()
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        const result =
+            await supabaseClient
+            .from(AUTOSAVE_TABLE)
+            .delete()
+            .eq(
+                "ujian_id",
+                ujianAktif.id
+            )
+            .eq(
+                "nisn",
+                ambilNisnAktif()
+            );
+
+
+        if(result.error){
+
+            console.warn(
+                "HAPUS AUTOSAVE:",
+                result.error
+            );
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "HAPUS AUTOSAVE EXCEPTION:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   SIMPAN JAWABAN + BACKUP
+===================================================== */
+
+function simpanJawabanDanAutosave(
+    soalId,
+    jawaban
+){
+
+    jawabanSiswa[
+        soalId
+    ] =
+        jawaban;
+
+
+    /*
+       Backup local dilakukan SEBELUM request database.
+       Jadi walaupun internet putus, jawaban tetap ada.
+    */
+
+    simpanBackupLocal();
+
+
+    /*
+       Autosave ke database tidak mengganggu tampilan.
+    */
+
+    autosaveJawaban(
+        soalId,
+        jawaban
+    );
+
+
+    simpanSesiUjian();
+
+}
+
+
+/* =====================================================
+   DOM READY
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function(){
+
+        setupKeyboard();
+
+        setupVisibilityProtection();
+
+        await loadSiswaDanUjian();
+
+    }
+);
+
+
+/* =====================================================
+   LOAD SISWA + UJIAN
+===================================================== */
+
+async function loadSiswaDanUjian(){
+
+    try{
+
+        const siswa =
+            await ambilDataSiswa();
+
+
+        if(!siswa){
+
+            showMessage(
+                "Data siswa tidak ditemukan. Pastikan NISN pada akun sesuai dengan tabel siswa.",
+                "error"
+            );
+
+
+            document.getElementById(
+                "examList"
+            ).innerHTML = `
+
+                <div class="empty-box">
+
+                    <div class="empty-icon">
+                        ⚠️
+                    </div>
+
+                    <h3>
+                        Data siswa tidak ditemukan
+                    </h3>
+
+                    <p>
+                        Silakan keluar dan login kembali
+                        menggunakan akun siswa yang benar.
+                    </p>
+
+                </div>
+
+            `;
+
+
+            return;
+
+        }
+
+
+        await cariKelasSiswa();
+
+        await loadUjian();
+
+
+    }catch(error){
+
+        console.error(
+            "LOAD SISWA/UJIAN:",
+            error
+        );
+
+
+        showMessage(
+            "Gagal memuat data: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   AMBIL DATA SISWA
+===================================================== */
+
+async function ambilDataSiswa(){
+
+    let siswa = null;
+
+
+    const nisn =
+        examUser?.nisn ||
+        examUser?.username ||
+        examUser?.no_induk ||
+        null;
+
+
+    if(nisn){
+
+        const result =
+            await supabaseClient
+            .from("siswa")
+            .select("*")
+            .eq(
+                "nisn",
+                String(nisn)
+            )
+            .maybeSingle();
+
+
+        if(result.error){
+
+            console.error(
+                "ERROR CARI SISWA NISN:",
+                result.error
+            );
+
+        }else{
+
+            siswa =
+                result.data;
+
+        }
+
+    }
+
+
+    if(
+        !siswa &&
+        examUser?.siswa_id
+    ){
+
+        const result =
+            await supabaseClient
+            .from("siswa")
+            .select("*")
+            .eq(
+                "id",
+                examUser.siswa_id
+            )
+            .maybeSingle();
+
+
+        if(!result.error){
+
+            siswa =
+                result.data;
+
+        }
+
+    }
+
+
+    if(
+        !siswa &&
+        examUser?.auth_user_id
+    ){
+
+        const result =
+            await supabaseClient
+            .from("siswa")
+            .select("*")
+            .eq(
+                "auth_user_id",
+                examUser.auth_user_id
+            )
+            .maybeSingle();
+
+
+        if(!result.error){
+
+            siswa =
+                result.data;
+
+        }
+
+    }
+
+
+    if(!siswa){
+
+        return null;
+
+    }
+
+
+    siswaAktif =
+        siswa;
+
+
+    document.getElementById(
+        "namaSiswa"
+    ).textContent =
+        siswa.nama || "-";
+
+
+    document.getElementById(
+        "nisnSiswa"
+    ).textContent =
+        "NISN: " +
+        (
+            siswa.nisn ||
+            "-"
+        );
+
+
+    const kelasDariSession =
+        examUser?.kelas ||
+        examUser?.nama_kelas ||
+        "-";
+
+
+    document.getElementById(
+        "kelasSiswa"
+    ).textContent =
+        "Kelas: " +
+        kelasDariSession;
+
+
+    return siswa;
+
+}
+
+
+/* =====================================================
+   CARI KELAS SISWA
+===================================================== */
+
+async function cariKelasSiswa(){
+
+    if(!siswaAktif){
+
+        return {
+            id:null,
+            nama:null
+        };
+
+    }
+
+
+    let kelas = null;
+
+
+    if(
+        siswaAktif.kelas_id !== null &&
+        siswaAktif.kelas_id !== undefined
+    ){
+
+        const result =
+            await supabaseClient
+            .from("kelas")
+            .select("*");
+
+
+        if(result.error){
+
+            console.error(
+                "ERROR LOAD KELAS:",
+                result.error
+            );
+
+        }else{
+
+            kelas =
+                (result.data || [])
+                .find(
+                    item =>
+                        String(item.id) ===
+                        String(
+                            siswaAktif.kelas_id
+                        )
+                );
+
+        }
+
+    }
+
+
+    if(!kelas){
+
+        const namaKelas =
+            siswaAktif.kelas ||
+            examUser?.kelas ||
+            examUser?.nama_kelas ||
+            null;
+
+
+        if(namaKelas){
+
+            const result =
+                await supabaseClient
+                .from("kelas")
+                .select("*");
+
+
+            if(!result.error){
+
+                const target =
+                    String(
+                        namaKelas
+                    )
+                    .trim()
+                    .toLowerCase();
+
+
+                kelas =
+                    (result.data || [])
+                    .find(item => {
+
+                        const nama =
+                            item.nama ||
+                            item.nama_kelas ||
+                            "";
+
+
+                        return String(nama)
+                            .trim()
+                            .toLowerCase() ===
+                            target;
+
+                    });
+
+            }
+
+        }
+
+    }
+
+
+    if(kelas){
+
+        kelasSiswaAktif = {
+
+            id:
+                kelas.id,
+
+            nama:
+                kelas.nama ||
+                kelas.nama_kelas ||
+                "-"
+
+        };
+
+
+        document.getElementById(
+            "kelasSiswa"
+        ).textContent =
+            "Kelas: " +
+            kelasSiswaAktif.nama;
+
+
+        return kelasSiswaAktif;
+
+    }
+
+
+    kelasSiswaAktif = {
+        id:null,
+        nama:null
+    };
+
+
+    console.warn(
+        "Kelas siswa tidak ditemukan.",
+        {
+            siswa_kelas_id:
+                siswaAktif.kelas_id,
+
+            session_kelas:
+                examUser?.kelas
+        }
+    );
+
+
+    return kelasSiswaAktif;
+
+}
+
+
+/* =====================================================
+   LOAD UJIAN
+===================================================== */
+
+async function loadUjian(){
+
+    const examList =
+        document.getElementById(
+            "examList"
+        );
+
+
+    examList.innerHTML = `
+
+        <div class="loading">
+
+            <div class="spinner"></div>
+
+            Memuat ujian untuk kelas Anda...
+
+        </div>
+
+    `;
+
+
+    if(
+        !kelasSiswaAktif.id
+    ){
+
+        examList.innerHTML = `
+
+            <div class="empty-box">
+
+                <div class="empty-icon">
+                    🏫
+                </div>
+
+                <h3>
+                    Kelas belum ditemukan
+                </h3>
+
+                <p>
+                    Data siswa belum memiliki
+                    kelas yang sesuai.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    try{
+
+        const relasiResult =
+            await supabaseClient
+            .from("ujian_kelas")
+            .select(
+                "id,ujian_id,kelas_id"
+            );
+
+
+        if(relasiResult.error){
+
+            throw relasiResult.error;
+
+        }
+
+
+        const semuaRelasi =
+            relasiResult.data || [];
+
+
+        const relasiKelas =
+            semuaRelasi.filter(
+                row =>
+                    String(row.kelas_id) ===
+                    String(
+                        kelasSiswaAktif.id
+                    )
+            );
+
+
+        const ujianIds =
+            [
+                ...new Set(
+                    relasiKelas
+                    .map(
+                        row =>
+                            row.ujian_id
+                    )
+                    .filter(Boolean)
+                )
+            ];
+
+
+        const ujianResult =
+            await supabaseClient
+            .from("ujian")
+            .select(`
+                id,
+                judul,
+                mata_pelajaran_id,
+                kelas_id,
+                guru_id,
+                durasi_menit,
+                tanggal_mulai,
+                tanggal_selesai,
+                status,
+                status_kontrol,
+                token,
+                waktu_mulai_aktif,
+                waktu_terpakai_detik,
+                created_at
+            `)
+            .order(
+                "tanggal_mulai",
+                {
+                    ascending:true
+                }
+            );
+
+
+        if(ujianResult.error){
+
+            throw ujianResult.error;
+
+        }
+
+
+        const semuaDataUjian =
+            ujianResult.data || [];
+
+
+        semuaUjian =
+            semuaDataUjian.filter(
+                ujian => {
+
+                    const melaluiRelasi =
+                        ujianIds.includes(
+                            ujian.id
+                        );
+
+
+                    const melaluiKelasLangsung =
+                        ujian.kelas_id !== null &&
+                        ujian.kelas_id !== undefined &&
+                        String(
+                            ujian.kelas_id
+                        ) ===
+                        String(
+                            kelasSiswaAktif.id
+                        );
+
+
+                    return (
+                        melaluiRelasi ||
+                        melaluiKelasLangsung
+                    );
+
+                }
+            );
+
+
+        const mapelIds =
+            [
+                ...new Set(
+                    semuaUjian
+                    .map(
+                        u =>
+                            u.mata_pelajaran_id
+                    )
+                    .filter(Boolean)
+                )
+            ];
+
+
+        let mapelMap = {};
+
+
+        if(mapelIds.length){
+
+            const mapelResult =
+                await supabaseClient
+                .from("mata_pelajaran")
+                .select(
+                    "id,nama"
+                );
+
+
+            if(
+                !mapelResult.error
+            ){
+
+                (mapelResult.data || [])
+                .forEach(
+                    item => {
+
+                        mapelMap[
+                            String(item.id)
+                        ] =
+                            item.nama;
+
+                    }
+                );
+
+            }
+
+        }
+
+
+        semuaUjian =
+            semuaUjian.map(
+                ujian => ({
+
+                    ...ujian,
+
+                    mata_pelajaran:
+                        mapelMap[
+                            String(
+                                ujian.mata_pelajaran_id
+                            )
+                        ] || "-"
+
+                })
+            );
+
+
+        await tampilkanDaftarUjian();
+
+
+    }catch(error){
+
+        console.error(
+            "LOAD UJIAN ERROR:",
+            error
+        );
+
+
+        examList.innerHTML = `
+
+            <div class="empty-box">
+
+                <div class="empty-icon">
+                    ❌
+                </div>
+
+                <h3>
+                    Gagal memuat ujian
+                </h3>
+
+                <p>
+                    ${escapeHtml(
+                        error.message ||
+                        "Terjadi kesalahan."
+                    )}
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   STATUS UJIAN
+===================================================== */
+
+function statusUjian(ujian){
+
+    const status =
+        String(
+            ujian.status ||
+            "draft"
+        ).toLowerCase();
+
+
+    const kontrol =
+        String(
+            ujian.status_kontrol ||
+            "draft"
+        ).toLowerCase();
+
+
+    const sekarang =
+        new Date();
+
+
+    if(
+        status === "selesai" ||
+        kontrol === "selesai"
+    ){
+
+        return {
+
+            key:"done",
+
+            text:"Ujian Selesai",
+
+            canStart:false
+
+        };
+
+    }
+
+
+    if(ujian.tanggal_selesai){
+
+        const selesai =
+            new Date(
+                ujian.tanggal_selesai
+            );
+
+
+        if(
+            sekarang >= selesai
+        ){
+
+            return {
+
+                key:"done",
+
+                text:"Waktu Berakhir",
+
+                canStart:false
+
+            };
+
+        }
+
+    }
+
+
+    if(ujian.tanggal_mulai){
+
+        const mulai =
+            new Date(
+                ujian.tanggal_mulai
+            );
+
+
+        if(
+            sekarang < mulai
+        ){
+
+            return {
+
+                key:"wait",
+
+                text:"Menunggu Waktu Mulai",
+
+                canStart:false
+
+            };
+
+        }
+
+    }
+
+
+    if(
+        kontrol === "dibuka"
+    ){
+
+        return {
+
+            key:"ready",
+
+            text:"Ujian Dibuka",
+
+            canStart:true
+
+        };
+
+    }
+
+
+    if(
+        kontrol === "dijeda"
+    ){
+
+        return {
+
+            key:"pause",
+
+            text:"Ujian Dijeda",
+
+            canStart:false
+
+        };
+
+    }
+
+
+    if(
+        status === "aktif"
+    ){
+
+        return {
+
+            key:"wait",
+
+            text:"Menunggu Dibuka",
+
+            canStart:false
+
+        };
+
+    }
+
+
+    return {
+
+        key:"draft",
+
+        text:"Belum Dibuka",
+
+        canStart:false
+
+    };
+
+}
+
+
+/* =====================================================
+   TAMPILKAN DAFTAR UJIAN
+===================================================== */
+
+async function tampilkanDaftarUjian(){
+
+    const container =
+        document.getElementById(
+            "examList"
+        );
+
+
+    if(!semuaUjian.length){
+
+        container.innerHTML = `
+
+            <div class="empty-box">
+
+                <div class="empty-icon">
+                    📭
+                </div>
+
+                <h3>
+                    Belum ada ujian
+                </h3>
+
+                <p>
+                    Belum ada ujian yang dibuat
+                    untuk kelas
+                    <strong>
+                        ${escapeHtml(
+                            kelasSiswaAktif.nama ||
+                            "-"
+                        )}
+                    </strong>.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    const hasilPengecekan =
+        await Promise.all(
+            semuaUjian.map(
+                async ujian => {
+
+                    const hasil =
+                        await cekSudahUjian(
+                            ujian.id
+                        );
+
+
+                    return {
+
+                        ujian:ujian,
+
+                        hasil:hasil
+
+                    };
+
+                }
+            )
+        );
+
+
+    const adaError =
+        hasilPengecekan.some(
+            item =>
+                item.hasil.error
+        );
+
+
+    if(adaError){
+
+        console.warn(
+            "Sebagian status hasil ujian tidak dapat diperiksa."
+        );
+
+    }
+
+
+    container.innerHTML = `
+
+        <div class="exam-grid">
+
+            ${
+                hasilPengecekan
+                .map(
+                    (item,index) =>
+                        buatKartuUjian(
+                            item.ujian,
+                            index,
+                            item.hasil
+                        )
+                )
+                .join("")
+            }
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   BUAT KARTU UJIAN
+===================================================== */
+
+function buatKartuUjian(
+    ujian,
+    index,
+    hasilCek
+){
+
+    const status =
+        statusUjian(
+            ujian
+        );
+
+
+    const sudahUjian =
+        hasilCek?.sudah === true;
+
+
+    const adaError =
+        !!hasilCek?.error;
+
+
+    const mulai =
+        formatTanggal(
+            ujian.tanggal_mulai
+        );
+
+
+    const selesai =
+        formatTanggal(
+            ujian.tanggal_selesai
+        );
+
+
+    let tombol = "";
+
+
+    if(sudahUjian){
+
+        tombol = `
+
+            <button
+                class="start-btn"
+                disabled>
+
+                🔒 Sudah Dikerjakan
+
+            </button>
+
+        `;
+
+    }
+
+    else if(adaError){
+
+        tombol = `
+
+            <button
+                class="start-btn"
+                disabled>
+
+                ⚠️ Status Tidak Dapat Diperiksa
+
+            </button>
+
+        `;
+
+    }
+
+    else{
+
+        tombol = `
+
+            <button
+                class="start-btn"
+                ${
+                    status.canStart
+                    ? ""
+                    : "disabled"
+                }
+                onclick="
+                    bukaTokenModal(
+                        '${escapeJs(
+                            ujian.id
+                        )}'
+                    )
+                ">
+
+                ${
+                    status.canStart
+                    ? "🔐 Mulai Ujian"
+                    : escapeHtml(
+                        status.text
+                    )
+                }
+
+            </button>
+
+        `;
+
+    }
+
+
+    return `
+
+        <div class="exam-card">
+
+            <div class="exam-top">
+
+                <div class="exam-icon">
+                    📝
+                </div>
+
+                <div class="exam-title">
+
+                    <h3>
+                        ${escapeHtml(
+                            ujian.judul ||
+                            "Ujian"
+                        )}
+                    </h3>
+
+                    <p>
+                        📚
+                        ${escapeHtml(
+                            ujian.mata_pelajaran ||
+                            "-"
+                        )}
+                    </p>
+
+                </div>
+
+                <span
+                    class="
+                        status-badge
+                        ${
+                            sudahUjian
+                            ? "status-already"
+                            : "status-" +
+                              status.key
+                        }
+                    ">
+
+                    ${
+                        sudahUjian
+                        ? "Sudah Dikerjakan"
+                        : escapeHtml(
+                            status.text
+                        )
+                    }
+
+                </span>
+
+            </div>
+
+
+            <div class="exam-info">
+
+                <div class="info-item">
+
+                    <span>
+                        Kelas
+                    </span>
+
+                    <strong>
+                        ${escapeHtml(
+                            kelasSiswaAktif.nama ||
+                            "-"
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <span>
+                        Durasi
+                    </span>
+
+                    <strong>
+                        ${Number(
+                            ujian.durasi_menit ||
+                            0
+                        )}
+                        menit
+                    </strong>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <span>
+                        Mulai
+                    </span>
+
+                    <strong>
+                        ${escapeHtml(
+                            mulai
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="info-item">
+
+                    <span>
+                        Selesai
+                    </span>
+
+                    <strong>
+                        ${escapeHtml(
+                            selesai
+                        )}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="exam-action">
+
+                ${tombol}
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   TOKEN MODAL
+===================================================== */
+
+async function bukaTokenModal(
+    ujianId
+){
+
+    const ujian =
+        semuaUjian.find(
+            item =>
+                String(item.id) ===
+                String(ujianId)
+        );
+
+
+    if(!ujian){
+
+        alert(
+            "Data ujian tidak ditemukan."
+        );
+
+        return;
+
+    }
+
+
+    const status =
+        statusUjian(
+            ujian
+        );
+
+
+    if(!status.canStart){
+
+        alert(
+            status.text
+        );
+
+        return;
+
+    }
+
+
+    const cek =
+        await cekSudahUjian(
+            ujian.id
+        );
+
+
+    if(cek.error){
+
+        alert(
+            "Tidak dapat memeriksa status ujian.\n\n" +
+            "Silakan coba lagi atau hubungi Admin."
+        );
+
+        return;
+
+    }
+
+
+    if(cek.sudah){
+
+        alert(
+            "🔒 Anda sudah mengikuti ujian ini.\n\n" +
+            "Ujian tidak dapat dikerjakan kembali.\n\n" +
+            "Jika perlu mengikuti kembali, silakan hubungi Admin untuk melakukan reset."
+        );
+
+
+        await loadUjian();
+
+        return;
+
+    }
+
+
+    ujianAktif =
+        ujian;
+
+
+    document.getElementById(
+        "tokenInput"
+    ).value = "";
+
+
+    document.getElementById(
+        "tokenModal"
+    ).style.display =
+        "flex";
+
+
+    setTimeout(
+        () => {
+
+            const input =
+                document.getElementById(
+                    "tokenInput"
+                );
+
+
+            input.focus();
+
+        },
+        100
+    );
+
+}
+
+
+/* =====================================================
+   TUTUP TOKEN
+===================================================== */
+
+function tutupTokenModal(){
+
+    document.getElementById(
+        "tokenModal"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "tokenInput"
+    ).value = "";
+
+}
+
+
+/* =====================================================
+   PROSES TOKEN MASUK
+===================================================== */
+
+async function prosesTokenMasuk(){
+
+    if(!ujianAktif){
+
+        alert(
+            "Data ujian tidak aktif. Silakan pilih ujian kembali."
+        );
+
+        return;
+
+    }
+
+
+    const input =
+        document.getElementById(
+            "tokenInput"
+        );
+
+
+    const tokenInput =
+        normalisasiToken(
+            input.value
+        );
+
+
+    if(!tokenInput){
+
+        alert(
+            "Masukkan token ujian."
+        );
+
+        input.focus();
+
+        return;
+
+    }
+
+
+    const tombol =
+        document.querySelector(
+            ".token-submit"
+        );
+
+
+    const teksTombol =
+        tombol
+        ? tombol.textContent
+        : "";
+
+
+    if(tombol){
+
+        tombol.disabled = true;
+
+        tombol.textContent =
+            "Memverifikasi...";
+
+    }
+
+
+    try{
+
+        const cekHasil =
+            await cekSudahUjian(
+                ujianAktif.id
+            );
+
+
+        if(cekHasil.error){
+
+            console.error(
+                "ERROR CEK HASIL SEBELUM TOKEN:",
+                cekHasil.error
+            );
+
+
+            alert(
+                "Tidak dapat memeriksa status ujian.\n\n" +
+                "Kemungkinan koneksi/database sedang bermasalah.\n\n" +
+                "Silakan coba lagi."
+            );
+
+            return;
+
+        }
+
+
+        if(cekHasil.sudah){
+
+            alert(
+                "🔒 Anda sudah mengikuti ujian ini.\n\n" +
+                "Ujian tidak dapat dikerjakan kembali.\n\n" +
+                "Jika Anda perlu mengikuti kembali, silakan hubungi Admin untuk melakukan reset."
+            );
+
+
+            tutupTokenModal();
+
+            await loadUjian();
+
+            return;
+
+        }
+
+
+        const dataUjian =
+            await ambilUjianTerbaru(
+                ujianAktif.id
+            );
+
+
+        const tokenDatabase =
+            normalisasiToken(
+                dataUjian.token
+            );
+
+
+        if(!tokenDatabase){
+
+            console.error(
+                "TOKEN DATABASE KOSONG:",
+                {
+                    ujian_id:dataUjian.id,
+                    judul:dataUjian.judul
+                }
+            );
+
+
+            alert(
+                "Token ujian belum tersedia di database.\n\n" +
+                "Silakan hubungi Admin/Guru."
+            );
+
+            return;
+
+        }
+
+
+        const tokenCocok =
+            tokenDatabase ===
+            tokenInput;
+
+
+        if(!tokenCocok){
+
+            console.warn(
+                "TOKEN TIDAK COCOK",
+                {
+                    ujian_id:dataUjian.id,
+                    panjangInput:
+                        tokenInput.length,
+                    panjangDatabase:
+                        tokenDatabase.length
+                }
+            );
+
+
+            alert(
+                "❌ Token ujian salah.\n\n" +
+                "Periksa kembali token yang diberikan Guru/Admin."
+            );
+
+
+            input.select();
+
+            return;
+
+        }
+
+
+        const status =
+            statusUjian(
+                dataUjian
+            );
+
+
+        if(!status.canStart){
+
+            alert(
+                "Token benar, tetapi ujian belum dapat dimulai.\n\n" +
+                status.text
+            );
+
+
+            tutupTokenModal();
+
+            await loadUjian();
+
+            return;
+
+        }
+
+
+        const cekHasilAkhir =
+            await cekSudahUjian(
+                dataUjian.id
+            );
+
+
+        if(cekHasilAkhir.error){
+
+            console.error(
+                "CEK HASIL AKHIR:",
+                cekHasilAkhir.error
+            );
+
+
+            alert(
+                "Token benar, tetapi sistem tidak dapat memastikan status ujian.\n\n" +
+                "Ujian belum dimulai.\n\n" +
+                "Silakan coba lagi."
+            );
+
+            return;
+
+        }
+
+
+        if(cekHasilAkhir.sudah){
+
+            alert(
+                "🔒 Ujian ini sudah pernah Anda kerjakan."
+            );
+
+
+            tutupTokenModal();
+
+            await loadUjian();
+
+            return;
+
+        }
+
+
+        ujianAktif =
+            {
+                ...ujianAktif,
+                ...dataUjian
+            };
+
+
+        tokenUjianAktif =
+            tokenDatabase;
+
+
+        tutupTokenModal();
+
+
+        await masukFullscreen();
+
+
+        await mulaiUjian();
+
+
+    }catch(error){
+
+        console.error(
+            "TOKEN ERROR:",
+            error
+        );
+
+
+        alert(
+            "Gagal memverifikasi token.\n\n" +
+            (
+                error.message ||
+                "Terjadi kesalahan."
+            )
+        );
+
+    }finally{
+
+        if(tombol){
+
+            tombol.disabled = false;
+
+            tombol.textContent =
+                teksTombol ||
+                "Masuk Ujian";
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   MULAI / LANJUTKAN UJIAN
+===================================================== */
+
+async function mulaiUjian(){
+
+    if(!ujianAktif){
+
+        return;
+
+    }
+
+
+    sudahDikirim = false;
+
+    jawabanSiswa = {};
+
+    soalAktifIndex = 0;
+
+
+    /*
+       CEK APAKAH ADA SESI SEBELUMNYA.
+       Ini mencegah refresh mengembalikan timer
+       menjadi durasi penuh.
+    */
+
+    const sesi =
+        bacaSesiUjian();
+
+
+    let durasiDetik =
+        Number(
+            ujianAktif.durasi_menit ||
+            60
+        ) * 60;
+
+
+    if(
+        sesi &&
+        sesi.waktu_mulai &&
+        sesi.ujian_id &&
+        String(sesi.ujian_id) ===
+        String(ujianAktif.id)
+    ){
+
+        waktuMulaiExam =
+            new Date(
+                sesi.waktu_mulai
+            );
+
+
+        durasiDetik =
+            Number(
+                sesi.durasi_detik ||
+                durasiDetik
+            );
+
+
+        window.__penaltiUjianDetik =
+            Number(
+                sesi.penalti_detik ||
+                0
+            );
+
+    }else{
+
+        waktuMulaiExam =
+            new Date();
+
+
+        window.__penaltiUjianDetik =
+            0;
+
+
+        simpanSesiUjian();
+
+    }
+
+
+    /*
+       Hitung waktu berdasarkan waktu nyata,
+       bukan sekadar countdown.
+    */
+
+    const sekarang =
+        Date.now();
+
+
+    const mulaiMs =
+        waktuMulaiExam.getTime();
+
+
+    const elapsed =
+        Math.floor(
+            (
+                sekarang -
+                mulaiMs
+            ) / 1000
+        );
+
+
+    sisaDetik =
+        Math.max(
+            0,
+            durasiDetik -
+            elapsed -
+            Number(
+                window.__penaltiUjianDetik ||
+                0
+            )
+        );
+
+
+    document.getElementById(
+        "homeArea"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "resultBox"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "examArea"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "examTitle"
+    ).textContent =
+        ujianAktif.judul ||
+        "Ujian";
+
+
+    document.getElementById(
+        "examSubject"
+    ).textContent =
+        "📚 " +
+        (
+            ujianAktif.mata_pelajaran ||
+            "Ujian"
+        );
+
+
+    await muatSoalUjian();
+
+
+    if(!semuaSoal.length){
+
+        await keluarFullscreen();
+
+        return;
+
+    }
+
+
+    /*
+       Muat jawaban dari database/localStorage
+       SEBELUM menampilkan soal.
+    */
+
+    await muatJawabanTersimpan();
+
+
+    buatNomorSoal();
+
+    tampilkanSoal(
+        soalAktifIndex
+    );
+
+
+    if(
+        sisaDetik <= 0
+    ){
+
+        updateTimer();
+
+
+        alert(
+            "⏰ Waktu ujian telah habis."
+        );
+
+
+        await kirimUjian(
+            true
+        );
+
+
+        return;
+
+    }
+
+
+    mulaiTimer();
+
+
+    window.scrollTo(
+        0,
+        0
+    );
+
+}
+
+
+/* =====================================================
+   LOAD SOAL
+===================================================== */
+
+async function muatSoalUjian(){
+
+    const container =
+        document.getElementById(
+            "questionContainer"
+        );
+
+
+    container.innerHTML = `
+
+        <div class="loading">
+
+            <div class="spinner"></div>
+
+            Memuat soal ujian...
+
+        </div>
+
+    `;
+
+
+    try{
+
+        const soalResult =
+            await supabaseClient
+            .from("soal")
+            .select(`
+                id,
+                ujian_id,
+                nomor,
+                pertanyaan,
+                tipe,
+                pilihan_a,
+                pilihan_b,
+                pilihan_c,
+                pilihan_d,
+                bobot,
+                created_at,
+                gambar_url,
+                gambar_soal,
+                gambar_a,
+                gambar_b,
+                gambar_c,
+                gambar_d,
+                teks_tertaut,
+                teks_mulai,
+                teks_sampai,
+                literasi_id,
+                kunci_jawaban
+            `)
+            .eq(
+                "ujian_id",
+                ujianAktif.id
+            )
+            .order(
+                "nomor",
+                {
+                    ascending:true
+                }
+            );
+
+
+        if(soalResult.error){
+
+            throw soalResult.error;
+
+        }
+
+
+        semuaSoal =
+            soalResult.data || [];
+
+
+        acakSoalUntukSiswa();
+
+
+        const modernResult =
+            await supabaseClient
+            .from("literasi_soal")
+            .select(`
+                id,
+                ujian_id,
+                judul,
+                isi_literasi,
+                nomor_mulai,
+                nomor_selesai,
+                created_at,
+                updated_at,
+                gambar_literasi
+            `)
+            .eq(
+                "ujian_id",
+                ujianAktif.id
+            );
+
+
+        if(
+            modernResult.error &&
+            !String(
+                modernResult.error.message ||
+                ""
+            )
+            .toLowerCase()
+            .includes(
+                "does not exist"
+            )
+        ){
+
+            console.warn(
+                "Literasi modern:",
+                modernResult.error
+            );
+
+        }
+
+
+        semuaLiterasiModern =
+            modernResult.data || [];
+
+
+        const legacyResult =
+            await supabaseClient
+            .from("literasi")
+            .select(`
+                id,
+                ujian_id,
+                guru_id,
+                judul,
+                isi,
+                created_at,
+                updated_at
+            `)
+            .eq(
+                "ujian_id",
+                ujianAktif.id
+            );
+
+
+        if(
+            legacyResult.error &&
+            !String(
+                legacyResult.error.message ||
+                ""
+            )
+            .toLowerCase()
+            .includes(
+                "does not exist"
+            )
+        ){
+
+            console.warn(
+                "Literasi legacy:",
+                legacyResult.error
+            );
+
+        }
+
+
+        semuaLiterasiLegacy =
+            legacyResult.data || [];
+
+
+        if(!semuaSoal.length){
+
+            container.innerHTML = `
+
+                <div class="empty-box">
+
+                    <div class="empty-icon">
+                        📝
+                    </div>
+
+                    <h3>
+                        Belum ada soal
+                    </h3>
+
+                    <p>
+                        Ujian ini belum memiliki soal.
+                    </p>
+
+                </div>
+
+            `;
+
+            document.getElementById(
+                "questionNumbers"
+            ).innerHTML = "";
+
+            return;
+
+        }
+
+
+        buatNomorSoal();
+
+        tampilkanSoal(
+            soalAktifIndex
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "LOAD SOAL:",
+            error
+        );
+
+
+        container.innerHTML = `
+
+            <div class="empty-box">
+
+                <div class="empty-icon">
+                    ❌
+                </div>
+
+                <h3>
+                    Gagal memuat soal
+                </h3>
+
+                <p>
+                    ${escapeHtml(
+                        error.message ||
+                        "Terjadi kesalahan."
+                    )}
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   NOMOR SOAL
+===================================================== */
+
+function buatNomorSoal(){
+
+    const container =
+        document.getElementById(
+            "questionNumbers"
+        );
+
+    container.innerHTML =
+        semuaSoal
+        .map(
+            (soal,index) => {
+
+                const answered =
+                    jawabanSiswa[
+                        soal.id
+                    ] !== undefined &&
+                    jawabanSiswa[
+                        soal.id
+                    ] !== null &&
+                    String(
+                        jawabanSiswa[
+                            soal.id
+                        ]
+                    ).trim() !== "";
+
+
+                const nomorTampil =
+                    index + 1;
+
+
+                return `
+
+                    <button
+                        class="
+                            question-number
+                            ${
+                                index ===
+                                soalAktifIndex
+                                ? "active"
+                                : ""
+                            }
+                            ${
+                                answered
+                                ? "answered"
+                                : ""
+                            }
+                        "
+                        onclick="
+                            pindahSoal(
+                                ${index}
+                            )
+                        ">
+
+                        ${nomorTampil}
+
+                    </button>
+
+                `;
+
+            }
+        )
+        .join("");
+
+}
+
+
+/* =====================================================
+   TAMPILKAN SOAL
+===================================================== */
+
+function tampilkanSoal(index){
+
+    if(
+        index < 0 ||
+        index >= semuaSoal.length
+    ){
+
+        return;
+
+    }
+
+
+    soalAktifIndex =
+        index;
+
+
+    const soal =
+        semuaSoal[index];
+
+
+    const nomorTampil =
+        index + 1;
+
+
+    document.getElementById(
+        "questionLabel"
+    ).textContent =
+        "Soal " +
+        nomorTampil;
+
+
+    document.getElementById(
+        "questionType"
+    ).textContent =
+        namaTipeSoal(
+            soal.tipe
+        );
+
+
+    const container =
+        document.getElementById(
+            "questionContainer"
+        );
+
+
+    let html = "";
+
+
+    const literasi =
+        cariLiterasiUntukSoalSiswa(
+            soal
+        );
+
+
+    if(literasi){
+
+        html += `
+
+            <div class="literasi-box">
+
+                <div class="literasi-title">
+
+                    📖
+                    ${escapeHtml(
+                        literasi.judul ||
+                        "Literasi"
+                    )}
+
+                </div>
+
+        `;
+
+
+        if(
+            literasi.gambar
+        ){
+
+            html += `
+
+                <img
+                    class="literasi-image"
+                    src="${escapeAttr(
+                        literasi.gambar
+                    )}"
+                    alt="Gambar literasi"
+                    onerror="
+                        this.style.display='none'
+                    ">
+
+            `;
+
+        }
+
+
+        html += `
+
+                <div class="literasi-content">
+
+                    ${renderIsiLiterasi(
+                        literasi.isi
+                    )}
+
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    const gambarSoal =
+        soal.gambar_soal ||
+        soal.gambar_url ||
+        null;
+
+
+    if(gambarSoal){
+
+        html += `
+
+            <img
+                class="literasi-image"
+                src="${escapeAttr(
+                    gambarSoal
+                )}"
+                alt="Gambar soal"
+                onerror="
+                    this.style.display='none'
+                ">
+
+        `;
+
+    }
+
+
+    html += `
+
+        <div class="question-text">
+
+            ${renderIsiLiterasi(
+                soal.pertanyaan ||
+                ""
+            )}
+
+        </div>
+
+    `;
+
+
+    const tipe =
+        String(
+            soal.tipe ||
+            "pg"
+        )
+        .toLowerCase();
+
+
+    if(
+        tipe === "pg" ||
+        tipe === "pilihan_ganda" ||
+        tipe === "pilihan ganda" ||
+        tipe === "multiple_choice"
+    ){
+
+        html +=
+            buatPilihanGanda(
+                soal
+            );
+
+    }
+
+    else if(
+        tipe === "true_false" ||
+        tipe === "benar_salah" ||
+        tipe === "benar/salah" ||
+        tipe === "boolean"
+    ){
+
+        html +=
+            buatBenarSalah(
+                soal
+            );
+
+    }
+
+    else if(
+        tipe === "essay" ||
+        tipe === "uraian" ||
+        tipe === "esai"
+    ){
+
+        html +=
+            buatEssay(
+                soal
+            );
+
+    }
+
+    else{
+
+        html +=
+            buatPilihanGanda(
+                soal
+            );
+
+    }
+
+
+    container.innerHTML =
+        html;
+
+
+    buatNomorSoal();
+
+
+    document.getElementById(
+        "prevBtn"
+    ).style.display =
+        index === 0
+        ? "none"
+        : "block";
+
+
+    const terakhir =
+        index ===
+        semuaSoal.length - 1;
+
+
+    document.getElementById(
+        "nextBtn"
+    ).style.display =
+        terakhir
+        ? "none"
+        : "block";
+
+
+    document.getElementById(
+        "submitBtn"
+    ).style.display =
+        terakhir
+        ? "block"
+        : "none";
+
+}
+
+
+/* =====================================================
+   PILIHAN GANDA
+===================================================== */
+
+function buatPilihanGanda(soal){
+
+    const pilihan = [
+
+        {
+            key:"A",
+            value:soal.pilihan_a,
+            gambar:soal.gambar_a
+        },
+
+        {
+            key:"B",
+            value:soal.pilihan_b,
+            gambar:soal.gambar_b
+        },
+
+        {
+            key:"C",
+            value:soal.pilihan_c,
+            gambar:soal.gambar_c
+        },
+
+        {
+            key:"D",
+            value:soal.pilihan_d,
+            gambar:soal.gambar_d
+        }
+
+    ];
+
+
+    const jawaban =
+        jawabanSiswa[
+            soal.id
+        ];
+
+
+    return `
+
+        <div class="options">
+
+            ${
+                pilihan
+                .map(
+                    item => {
+
+                        if(
+                            !item.value &&
+                            !item.gambar
+                        ){
+
+                            return "";
+
+                        }
+
+
+                        const selected =
+                            String(
+                                jawaban ||
+                                ""
+                            ).toUpperCase() ===
+                            item.key;
+
+
+                        return `
+
+                            <label
+                                class="
+                                    option
+                                    ${
+                                        selected
+                                        ? "selected"
+                                        : ""
+                                    }
+                                "
+                                onclick="
+                                    pilihJawaban(
+                                        '${escapeJs(
+                                            soal.id
+                                        )}',
+                                        '${item.key}'
+                                    )
+                                ">
+
+                                <input
+                                    type="radio"
+                                    name="soal_${escapeAttr(
+                                        soal.id
+                                    )}"
+                                    ${
+                                        selected
+                                        ? "checked"
+                                        : ""
+                                    }
+                                    onchange="
+                                        pilihJawaban(
+                                            '${escapeJs(
+                                                soal.id
+                                            )}',
+                                            '${item.key}'
+                                        )
+                                    ">
+
+                                <span class="option-letter">
+
+                                    ${item.key}
+
+                                </span>
+
+                                <span class="option-content">
+
+                                    ${
+                                        item.value
+                                        ? renderIsiLiterasi(
+                                            item.value
+                                        )
+                                        : ""
+                                    }
+
+                                    ${
+                                        item.gambar
+                                        ? `
+                                            <img
+                                                src="${escapeAttr(
+                                                    item.gambar
+                                                )}"
+                                                alt="
+                                                    Gambar pilihan
+                                                "
+                                                onerror="
+                                                    this.style.display='none'
+                                                ">
+                                          `
+                                        : ""
+                                    }
+
+                                </span>
+
+                            </label>
+
+                        `;
+
+                    }
+                )
+                .join("")
+            }
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   BENAR SALAH
+===================================================== */
+
+function buatBenarSalah(soal){
+
+    const jawaban =
+        String(
+            jawabanSiswa[
+                soal.id
+            ] || ""
+        ).toUpperCase();
+
+
+    return `
+
+        <div class="options">
+
+            <label
+                class="
+                    option
+                    ${
+                        jawaban === "BENAR"
+                        ? "selected"
+                        : ""
+                    }
+                "
+                onclick="
+                    pilihJawaban(
+                        '${escapeJs(
+                            soal.id
+                        )}',
+                        'BENAR'
+                    )
+                ">
+
+                <input
+                    type="radio"
+                    name="soal_${escapeAttr(
+                        soal.id
+                    )}"
+                    ${
+                        jawaban === "BENAR"
+                        ? "checked"
+                        : ""
+                    }>
+
+                <span class="option-letter">
+                    B
+                </span>
+
+                <span class="option-content">
+                    Benar
+                </span>
+
+            </label>
+
+
+            <label
+                class="
+                    option
+                    ${
+                        jawaban === "SALAH"
+                        ? "selected"
+                        : ""
+                    }
+                "
+                onclick="
+                    pilihJawaban(
+                        '${escapeJs(
+                            soal.id
+                        )}',
+                        'SALAH'
+                    )
+                ">
+
+                <input
+                    type="radio"
+                    name="soal_${escapeAttr(
+                        soal.id
+                    )}"
+                    ${
+                        jawaban === "SALAH"
+                        ? "checked"
+                        : ""
+                    }>
+
+                <span class="option-letter">
+                    S
+                </span>
+
+                <span class="option-content">
+                    Salah
+                </span>
+
+            </label>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   ESSAY
+===================================================== */
+
+function buatEssay(soal){
+
+    const jawaban =
+        jawabanSiswa[
+            soal.id
+        ] || "";
+
+
+    return `
+
+        <textarea
+            class="essay-input"
+            id="essay_${escapeAttr(
+                soal.id
+            )}"
+            placeholder="Tuliskan jawaban Anda..."
+            oninput="
+                simpanJawabanEssay(
+                    '${escapeJs(
+                        soal.id
+                    )}',
+                    this.value
+                )
+            ">${escapeHtml(
+                jawaban
+            )}</textarea>
+
+    `;
+
+}
+
+
+/* =====================================================
+   PILIH JAWABAN
+===================================================== */
+
+function pilihJawaban(
+    soalId,
+    jawaban
+){
+
+    simpanJawabanDanAutosave(
+        soalId,
+        jawaban
+    );
+
+
+    tampilkanSoal(
+        soalAktifIndex
+    );
+
+}
+
+
+/* =====================================================
+   ESSAY + AUTOSAVE DEBOUNCE
+===================================================== */
+
+function simpanJawabanEssay(
+    soalId,
+    value
+){
+
+    jawabanSiswa[
+        soalId
+    ] =
+        value;
+
+
+    /*
+       Backup browser langsung.
+    */
+
+    simpanBackupLocal();
+
+
+    /*
+       Simpan sesi timer.
+    */
+
+    simpanSesiUjian();
+
+
+    /*
+       Tunggu 700 ms setelah siswa berhenti mengetik
+       sebelum mengirim ke database.
+    */
+
+    if(
+        autosaveEssayTimers[
+            soalId
+        ]
+    ){
+
+        clearTimeout(
+            autosaveEssayTimers[
+                soalId
+            ]
+        );
+
+    }
+
+
+    autosaveEssayTimers[
+        soalId
+    ] =
+        setTimeout(
+            () => {
+
+                autosaveJawaban(
+                    soalId,
+                    value
+                );
+
+            },
+            700
+        );
+
+}
+
+
+/* =====================================================
+   PINDAH SOAL
+===================================================== */
+
+function pindahSoal(
+    index
+){
+
+    if(
+        index < 0 ||
+        index >= semuaSoal.length
+    ){
+
+        return;
+
+    }
+
+
+    tampilkanSoal(
+        index
+    );
+
+
+    window.scrollTo(
+        0,
+        0
+    );
+
+}
+
+
+/* =====================================================
+   SOAL SEBELUMNYA
+===================================================== */
+
+function soalSebelumnya(){
+
+    if(
+        soalAktifIndex > 0
+    ){
+
+        pindahSoal(
+            soalAktifIndex - 1
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   SOAL BERIKUTNYA
+===================================================== */
+
+function soalBerikutnya(){
+
+    if(
+        soalAktifIndex <
+        semuaSoal.length - 1
+    ){
+
+        pindahSoal(
+            soalAktifIndex + 1
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   TIMER
+===================================================== */
+
+function mulaiTimer(){
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    updateTimer();
+
+
+    timerInterval =
+        setInterval(
+            () => {
+
+                if(sudahDikirim){
+
+                    clearInterval(
+                        timerInterval
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                   Hitung ulang berdasarkan waktu nyata.
+                   Ini membuat timer lebih tahan terhadap
+                   refresh/background HP.
+                */
+
+                if(waktuMulaiExam){
+
+                    const durasiDetik =
+                        Number(
+                            ujianAktif?.durasi_menit ||
+                            60
+                        ) * 60;
+
+
+                    const elapsed =
+                        Math.floor(
+                            (
+                                Date.now() -
+                                waktuMulaiExam.getTime()
+                            ) / 1000
+                        );
+
+
+                    sisaDetik =
+                        Math.max(
+                            0,
+                            durasiDetik -
+                            elapsed -
+                            Number(
+                                window.__penaltiUjianDetik ||
+                                0
+                            )
+                        );
+
+                }else{
+
+                    sisaDetik--;
+
+                }
+
+
+                if(
+                    sisaDetik <= 0
+                ){
+
+                    sisaDetik = 0;
+
+                    updateTimer();
+
+                    clearInterval(
+                        timerInterval
+                    );
+
+
+                    alert(
+                        "⏰ Waktu ujian telah habis."
+                    );
+
+
+                    kirimUjian(
+                        true
+                    );
+
+
+                    return;
+
+                }
+
+
+                updateTimer();
+
+            },
+            1000
+        );
+
+}
+
+
+/* =====================================================
+   UPDATE TIMER
+===================================================== */
+
+function updateTimer(){
+
+    const menit =
+        Math.floor(
+            sisaDetik / 60
+        );
+
+
+    const detik =
+        sisaDetik % 60;
+
+
+    document.getElementById(
+        "timer"
+    ).textContent =
+        String(
+            menit
+        ).padStart(
+            2,
+            "0"
+        ) +
+        ":" +
+        String(
+            detik
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    const timerBox =
+        document.getElementById(
+            "timerBox"
+        );
+
+
+    if(
+        sisaDetik <= 300
+    ){
+
+        timerBox.classList.add(
+            "timer-danger"
+        );
+
+    }else{
+
+        timerBox.classList.remove(
+            "timer-danger"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   PENALTI FULLSCREEN
+===================================================== */
+
+function beriPenaltiFullscreen(
+    alasan
+){
+
+    if(
+        !ujianAktif ||
+        sudahDikirim ||
+        document.getElementById(
+            "examArea"
+        ).style.display === "none"
+    ){
+
+        return;
+
+    }
+
+
+    const sekarang =
+        Date.now();
+
+
+    /*
+       fullscreenchange + visibilitychange + blur
+       bisa terjadi hampir bersamaan.
+       Jangan hitung sebagai tiga pelanggaran.
+    */
+
+    if(
+        sekarang -
+        waktuPelanggaranTerakhir <
+        2000
+    ){
+
+        return;
+
+    }
+
+
+    waktuPelanggaranTerakhir =
+        sekarang;
+
+
+    window.__penaltiUjianDetik =
+        Number(
+            window.__penaltiUjianDetik ||
+            0
+        ) +
+        PENALTI_FULLSCREEN_DETIK;
+
+
+    /*
+       Kurangi waktu ujian 5 menit.
+    */
+
+    sisaDetik =
+        Math.max(
+            0,
+            sisaDetik -
+            PENALTI_FULLSCREEN_DETIK
+        );
+
+
+    simpanSesiUjian();
+
+    simpanBackupLocal();
+
+    updateTimer();
+
+
+    const warningText =
+        document.getElementById(
+            "fullscreenWarningText"
+        );
+
+
+    if(warningText){
+
+        warningText.innerHTML = `
+
+            <strong style="color:#dc2626;">
+                ⚠️ PENALTI 5 MENIT DITERAPKAN
+            </strong>
+
+            <br><br>
+
+            Sistem mendeteksi Anda keluar dari
+            Full Screen
+            ${
+                alasan
+                ? "(" +
+                  escapeHtml(
+                      alasan
+                  ) +
+                  ")"
+                : ""
+            }.
+
+            <br><br>
+
+            <strong>
+                Waktu ujian Anda dikurangi 5 menit.
+            </strong>
+
+            <br>
+
+            Untuk melanjutkan, masukkan kembali
+            token ujian.
+
+        `;
+
+    }
+
+
+    document.getElementById(
+        "fullscreenWarning"
+    ).style.display =
+        "flex";
+
+
+    setTimeout(
+        () => {
+
+            const input =
+                document.getElementById(
+                    "fullscreenToken"
+                );
+
+
+            if(input){
+
+                input.focus();
+
+            }
+
+        },
+        100
+    );
+
+
+    if(
+        sisaDetik <= 0
+    ){
+
+        setTimeout(
+            () => {
+
+                if(
+                    !sudahDikirim
+                ){
+
+                    alert(
+                        "⏰ Waktu ujian habis karena penalti."
+                    );
+
+                    kirimUjian(
+                        true
+                    );
+
+                }
+
+            },
+            300
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   FULLSCREEN
+===================================================== */
+
+async function masukFullscreen(){
+
+    try{
+
+        if(
+            !document.fullscreenElement
+        ){
+
+            await document
+                .documentElement
+                .requestFullscreen();
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Fullscreen tidak tersedia:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   KELUAR FULLSCREEN
+===================================================== */
+
+async function keluarFullscreen(){
+
+    try{
+
+        if(
+            document.fullscreenElement
+        ){
+
+            await document.exitFullscreen();
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Keluar fullscreen:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   FULLSCREEN CHANGE
+===================================================== */
+
+document.addEventListener(
+    "fullscreenchange",
+    function(){
+
+        if(
+            ujianAktif &&
+            !sudahDikirim &&
+            document.getElementById(
+                "examArea"
+            ).style.display !== "none"
+        ){
+
+            if(
+                !document.fullscreenElement
+            ){
+
+                beriPenaltiFullscreen(
+                    "Full Screen ditutup"
+                );
+
+            }else{
+
+                /*
+                   Kalau kembali fullscreen,
+                   warning ditutup.
+                */
+
+                document.getElementById(
+                    "fullscreenWarning"
+                ).style.display =
+                    "none";
+
+            }
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   DETEKSI PINDAH APLIKASI / TAB / PANGGILAN
+===================================================== */
+
+function setupVisibilityProtection(){
+
+    document.addEventListener(
+        "visibilitychange",
+        function(){
+
+            if(
+                document.hidden &&
+                ujianAktif &&
+                !sudahDikirim &&
+                document.getElementById(
+                    "examArea"
+                ).style.display !== "none"
+            ){
+
+                /*
+                   Simpan jawaban secepat mungkin
+                   sebelum halaman menjadi background.
+                */
+
+                simpanBackupLocal();
+
+                simpanSesiUjian();
+
+
+                /*
+                   Catat pelanggaran.
+                */
+
+                beriPenaltiFullscreen(
+                    "Meninggalkan halaman ujian"
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+       BLUR digunakan sebagai lapisan tambahan.
+       Tidak langsung menghukum jika terjadi terlalu
+       dekat dengan fullscreenchange/visibilitychange.
+    */
+
+    window.addEventListener(
+        "blur",
+        function(){
+
+            if(
+                ujianAktif &&
+                !sudahDikirim &&
+                document.getElementById(
+                    "examArea"
+                ).style.display !== "none"
+            ){
+
+                simpanBackupLocal();
+
+                simpanSesiUjian();
+
+
+                setTimeout(
+                    () => {
+
+                        if(
+                            ujianAktif &&
+                            !sudahDikirim &&
+                            !document.hasFocus()
+                        ){
+
+                            beriPenaltiFullscreen(
+                                "Jendela/aplikasi kehilangan fokus"
+                            );
+
+                        }
+
+                    },
+                    250
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   VERIFIKASI TOKEN FULLSCREEN
+===================================================== */
+
+async function verifikasiTokenKeluar(){
+
+    if(!ujianAktif){
+
+        return;
+
+    }
+
+
+    const input =
+        document.getElementById(
+            "fullscreenToken"
+        );
+
+
+    const tokenInput =
+        normalisasiToken(
+            input.value
+        );
+
+
+    if(!tokenInput){
+
+        alert(
+            "Masukkan token ujian."
+        );
+
+        input.focus();
+
+        return;
+
+    }
+
+
+    const tombol =
+        document.querySelector(
+            ".fullscreen-btn"
+        );
+
+
+    const teksTombol =
+        tombol
+        ? tombol.textContent
+        : "";
+
+
+    if(tombol){
+
+        tombol.disabled = true;
+
+        tombol.textContent =
+            "Memverifikasi...";
+
+    }
+
+
+    try{
+
+        const dataUjian =
+            await ambilUjianTerbaru(
+                ujianAktif.id
+            );
+
+
+        const tokenDatabase =
+            normalisasiToken(
+                dataUjian.token
+            );
+
+
+        if(!tokenDatabase){
+
+            alert(
+                "Token ujian tidak tersedia.\n\n" +
+                "Hubungi Guru/Admin."
+            );
+
+            return;
+
+        }
+
+
+        if(
+            tokenDatabase !==
+            tokenInput
+        ){
+
+            alert(
+                "❌ Token salah."
+            );
+
+            input.select();
+
+            return;
+
+        }
+
+
+        const status =
+            statusUjian(
+                {
+                    ...ujianAktif,
+                    ...dataUjian
+                }
+            );
+
+
+        if(!status.canStart){
+
+            alert(
+                "Ujian tidak dapat dilanjutkan.\n\n" +
+                status.text
+            );
+
+            return;
+
+        }
+
+
+        ujianAktif =
+            {
+                ...ujianAktif,
+                ...dataUjian
+            };
+
+
+        tokenUjianAktif =
+            tokenDatabase;
+
+
+        input.value = "";
+
+
+        await masukFullscreen();
+
+
+        /*
+           Jika browser berhasil kembali fullscreen,
+           warning akan ditutup melalui fullscreenchange.
+        */
+
+        if(
+            document.fullscreenElement
+        ){
+
+            document.getElementById(
+                "fullscreenWarning"
+            ).style.display =
+                "none";
+
+        }
+
+    }catch(error){
+
+        console.error(
+            "FULLSCREEN TOKEN ERROR:",
+            error
+        );
+
+
+        alert(
+            "Gagal memverifikasi token:\n\n" +
+            (
+                error.message ||
+                "Terjadi kesalahan."
+            )
+        );
+
+    }finally{
+
+        if(tombol){
+
+            tombol.disabled = false;
+
+            tombol.textContent =
+                teksTombol ||
+                "🔐 Verifikasi & Kembali ke Ujian";
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   KIRIM UJIAN
+===================================================== */
+
+async function kirimUjian(
+    otomatis=false
+){
+
+    if(sudahDikirim){
+
+        return;
+
+    }
+
+
+    if(
+        !semuaSoal.length
+    ){
+
+        return;
+
+    }
+
+
+    if(!otomatis){
+
+        const yakin =
+            confirm(
+                "Apakah Anda yakin ingin mengumpulkan ujian?"
+            );
+
+
+        if(!yakin){
+
+            return;
+
+        }
+
+    }
+
+
+    /*
+       Backup local terlebih dahulu.
+    */
+
+    simpanBackupLocal();
+
+
+    /*
+       Sinkronisasi semua jawaban sebelum mengirim hasil.
+    */
+
+    const autosaveBerhasil =
+        await sinkronkanSemuaJawaban();
+
+
+    if(!autosaveBerhasil){
+
+        if(!otomatis){
+
+            const lanjut =
+                confirm(
+                    "Sebagian jawaban belum berhasil disinkronkan ke database.\n\n" +
+                    "Jawaban tetap tersimpan di browser sementara.\n\n" +
+                    "Tetap kumpulkan ujian?"
+                );
+
+
+            if(!lanjut){
+
+                return;
+
+            }
+
+        }
+
+    }
+
+
+    sudahDikirim = true;
+
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    waktuSelesai =
+        new Date();
+
+
+    try{
+
+        const cekTerakhir =
+            await cekSudahUjian(
+                ujianAktif.id
+            );
+
+
+        if(cekTerakhir.error){
+
+            throw new Error(
+                "Tidak dapat memastikan status hasil ujian. " +
+                "Hasil belum disimpan. Silakan coba lagi."
+            );
+
+        }
+
+
+        if(cekTerakhir.sudah){
+
+            await keluarFullscreen();
+
+
+            sudahDikirim = true;
+
+
+            hapusSesiUjian();
+
+            hapusBackupLocal();
+
+
+            alert(
+                "🔒 Hasil ujian untuk NISN ini sudah tersimpan.\n\n" +
+                "Ujian tidak dapat disimpan dua kali."
+            );
+
+
+            document.getElementById(
+                "examArea"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "homeArea"
+            ).style.display =
+                "block";
+
+
+            ujianAktif = null;
+
+            semuaSoal = [];
+
+            jawabanSiswa = {};
+
+
+            await loadUjian();
+
+            return;
+
+        }
+
+
+        let jumlahBenar = 0;
+
+        let totalBobotObjektif = 0;
+
+        let totalBobotBenar = 0;
+
+
+        semuaSoal.forEach(
+            soal => {
+
+                const tipe =
+                    String(
+                        soal.tipe ||
+                        "pg"
+                    )
+                    .toLowerCase();
+
+
+                const jawaban =
+                    String(
+                        jawabanSiswa[
+                            soal.id
+                        ] || ""
+                    )
+                    .trim()
+                    .toUpperCase();
+
+
+                const kunci =
+                    String(
+                        soal.kunci_jawaban ||
+                        ""
+                    )
+                    .trim()
+                    .toUpperCase();
+
+
+                const objektif =
+                    ![
+                        "essay",
+                        "esai",
+                        "uraian"
+                    ].includes(
+                        tipe
+                    );
+
+
+                if(
+                    objektif &&
+                    kunci
+                ){
+
+                    const bobot =
+                        Number(
+                            soal.bobot ||
+                            0
+                        );
+
+
+                    if(
+                        bobot > 0
+                    ){
+
+                        totalBobotObjektif +=
+                            bobot;
+
+                    }
+
+
+                    if(
+                        jawaban &&
+                        jawaban ===
+                        kunci
+                    ){
+
+                        jumlahBenar++;
+
+
+                        if(
+                            bobot > 0
+                        ){
+
+                            totalBobotBenar +=
+                                bobot;
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+
+        let nilai = 0;
+
+
+        if(
+            totalBobotObjektif > 0
+        ){
+
+            nilai =
+                (
+                    totalBobotBenar /
+                    totalBobotObjektif
+                ) *
+                100;
+
+        }else{
+
+            const soalObjektif =
+                semuaSoal.filter(
+                    soal => {
+
+                        const tipe =
+                            String(
+                                soal.tipe ||
+                                "pg"
+                            )
+                            .toLowerCase();
+
+
+                        return ![
+                            "essay",
+                            "esai",
+                            "uraian"
+                        ].includes(
+                            tipe
+                        );
+
+                    }
+                );
+
+
+            const jumlahSoalObjektif =
+                soalObjektif.length;
+
+
+            nilai =
+                jumlahSoalObjektif > 0
+                ? (
+                    jumlahBenar /
+                    jumlahSoalObjektif
+                  ) *
+                  100
+                : 0;
+
+        }
+
+
+        nilai =
+            Math.round(
+                nilai * 100
+            ) / 100;
+
+
+        const nisnSiswa =
+            ambilNisnAktif();
+
+
+        if(!nisnSiswa){
+
+            throw new Error(
+                "NISN siswa tidak ditemukan."
+            );
+
+        }
+
+
+        const dataHasil = {
+
+            siswa_id:
+                siswaAktif?.id ||
+                examUser?.siswa_id ||
+                null,
+
+            ujian_id:
+                ujianAktif.id,
+
+            nama_siswa:
+                siswaAktif?.nama ||
+                examUser?.nama ||
+                "",
+
+            nisn:
+                nisnSiswa,
+
+            kelas:
+                kelasSiswaAktif.nama ||
+                siswaAktif?.kelas ||
+                examUser?.kelas ||
+                "",
+
+            nilai:
+                nilai,
+
+            jumlah_benar:
+                jumlahBenar,
+
+            jumlah_soal:
+                semuaSoal.length,
+
+            jawaban:
+                jawabanSiswa,
+
+            waktu_mulai:
+                waktuMulaiExam
+                ? waktuMulaiExam.toISOString()
+                : null,
+
+            waktu_selesai:
+                waktuSelesai
+                ? waktuSelesai.toISOString()
+                : null
+
+        };
+
+
+        const result =
+            await supabaseClient
+            .from("hasil_ujian")
+            .insert(
+                dataHasil
+            );
+
+
+        if(result.error){
+
+            if(
+                result.error.code ===
+                "23505"
+            ){
+
+                throw new Error(
+                    "Ujian ini sudah tersimpan untuk NISN Anda. " +
+                    "Anda tidak dapat mengerjakan ujian yang sama dua kali."
+                );
+
+            }
+
+
+            throw result.error;
+
+        }
+
+
+        /*
+           HASIL SUDAH BERHASIL DISIMPAN.
+           Baru sekarang autosave boleh dibersihkan.
+        */
+
+        await hapusAutosaveDatabase();
+
+
+        hapusSesiUjian();
+
+        hapusBackupLocal();
+
+
+        await keluarFullscreen();
+
+
+        tampilkanHasil(
+            nilai,
+            jumlahBenar
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "KIRIM UJIAN ERROR:",
+            error
+        );
+
+
+        sudahDikirim = false;
+
+
+        /*
+           Jawaban TETAP disimpan di localStorage.
+           Jadi kalau penyimpanan hasil gagal,
+           jawaban tidak hilang.
+        */
+
+        simpanBackupLocal();
+
+        simpanSesiUjian();
+
+
+        alert(
+            "Gagal menyimpan hasil ujian:\n\n" +
+            error.message +
+            "\n\n" +
+            "Jawaban Anda tetap disimpan sementara. " +
+            "Silakan coba kumpulkan kembali."
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   TAMPILKAN HASIL
+===================================================== */
+
+function tampilkanHasil(
+    nilai,
+    jumlahBenar
+){
+
+    document.getElementById(
+        "examArea"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "homeArea"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "resultBox"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "resultValue"
+    ).textContent =
+        nilai;
+
+
+    document.getElementById(
+        "resultDetail"
+    ).innerHTML = `
+
+        <strong>
+            ${jumlahBenar}
+        </strong>
+        jawaban benar dari
+        <strong>
+            ${semuaSoal.length}
+        </strong>
+        soal.<br>
+
+        Hasil ujian telah disimpan.
+
+    `;
+
+
+    window.scrollTo(
+        0,
+        0
+    );
+
+}
+
+
+/* =====================================================
+   KEMBALI DAFTAR
+===================================================== */
+
+async function kembaliDaftarUjian(){
+
+    document.getElementById(
+        "resultBox"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "homeArea"
+    ).style.display =
+        "block";
+
+
+    ujianAktif = null;
+
+    semuaSoal = [];
+
+    semuaLiterasiModern = [];
+
+    semuaLiterasiLegacy = [];
+
+    jawabanSiswa = {};
+
+    sudahDikirim = false;
+
+
+    window.__penaltiUjianDetik =
+        0;
+
+
+    await loadUjian();
+
+
+    window.scrollTo(
+        0,
+        0
+    );
+
+}
+
+
+/* =====================================================
+   CARI LITERASI UNTUK SOAL
+===================================================== */
+
+function cariLiterasiUntukSoalSiswa(
+    soal
+){
+
+    if(!soal){
+
+        return null;
+
+    }
+
+
+    if(
+        soal.literasi_id
+    ){
+
+        const modern =
+            semuaLiterasiModern.find(
+                item =>
+                    String(item.id) ===
+                    String(
+                        soal.literasi_id
+                    )
+            );
+
+
+        if(modern){
+
+            return {
+
+                judul:
+                    modern.judul,
+
+                isi:
+                    modern.isi_literasi,
+
+                gambar:
+                    modern.gambar_literasi
+
+            };
+
+        }
+
+
+        const legacy =
+            semuaLiterasiLegacy.find(
+                item =>
+                    String(item.id) ===
+                    String(
+                        soal.literasi_id
+                    )
+            );
+
+
+        if(legacy){
+
+            return {
+
+                judul:
+                    legacy.judul,
+
+                isi:
+                    legacy.isi,
+
+                gambar:null
+
+            };
+
+        }
+
+    }
+
+
+    const nomor =
+        Number(
+            soal.nomor
+        );
+
+
+    const modernRange =
+        semuaLiterasiModern.find(
+            item => {
+
+                const mulai =
+                    Number(
+                        item.nomor_mulai
+                    );
+
+
+                const sampai =
+                    Number(
+                        item.nomor_selesai
+                    );
+
+
+                if(
+                    !Number.isNaN(mulai) &&
+                    !Number.isNaN(sampai)
+                ){
+
+                    return (
+                        nomor >= mulai &&
+                        nomor <= sampai
+                    );
+
+                }
+
+
+                return false;
+
+            }
+        );
+
+
+    if(modernRange){
+
+        return {
+
+            judul:
+                modernRange.judul,
+
+            isi:
+                modernRange.isi_literasi,
+
+            gambar:
+                modernRange.gambar_literasi
+
+        };
+
+    }
+
+
+    if(
+        soal.teks_tertaut
+    ){
+
+        const modernByTitle =
+            semuaLiterasiModern.find(
+                item =>
+                    String(
+                        item.judul ||
+                        ""
+                    )
+                    .trim()
+                    .toLowerCase() ===
+                    String(
+                        soal.teks_tertaut
+                    )
+                    .trim()
+                    .toLowerCase()
+            );
+
+
+        if(modernByTitle){
+
+            return {
+
+                judul:
+                    modernByTitle.judul,
+
+                isi:
+                    modernByTitle.isi_literasi,
+
+                gambar:
+                    modernByTitle.gambar_literasi
+
+            };
+
+        }
+
+
+        const legacyByTitle =
+            semuaLiterasiLegacy.find(
+                item =>
+                    String(
+                        item.judul ||
+                        ""
+                    )
+                    .trim()
+                    .toLowerCase() ===
+                    String(
+                        soal.teks_tertaut
+                    )
+                    .trim()
+                    .toLowerCase()
+            );
+
+
+        if(legacyByTitle){
+
+            return {
+
+                judul:
+                    legacyByTitle.judul,
+
+                isi:
+                    legacyByTitle.isi,
+
+                gambar:null
+
+            };
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =====================================================
+   RENDER LITERASI / TEXT
+===================================================== */
+
+function renderIsiLiterasi(
+    value
+){
+
+    if(
+        value === null ||
+        value === undefined
+    ){
+
+        return "";
+
+    }
+
+
+    let html =
+        String(value);
+
+
+    html =
+        html.replace(
+            /<script[\s\S]*?>[\s\S]*?<\/script>/gi,
+            ""
+        );
+
+
+    html =
+        html.replace(
+            /<style[\s\S]*?>[\s\S]*?<\/style>/gi,
+            ""
+        );
+
+
+    html =
+        html.replace(
+            /<iframe[\s\S]*?>[\s\S]*?<\/iframe>/gi,
+            ""
+        );
+
+
+    html =
+        html.replace(
+            /<object[\s\S]*?>[\s\S]*?<\/object>/gi,
+            ""
+        );
+
+
+    html =
+        html.replace(
+            /<embed[\s\S]*?>/gi,
+            ""
+        );
+
+
+    html =
+        html.replace(
+            /<form[\s\S]*?>[\s\S]*?<\/form>/gi,
+            ""
+        );
+
+
+    html =
+        html.replace(
+            /\son[a-z]+\s*=\s*"[^"]*"/gi,
+            ""
+        );
+
+
+    html =
+        html.replace(
+            /\son[a-z]+\s*=\s*'[^']*'/gi,
+            ""
+        );
+
+
+    html =
+        html.replace(
+            /\son[a-z]+\s*=\s*[^\s>]+/gi,
+            ""
+        );
+
+
+    html =
+        html.replace(
+            /javascript\s*:/gi,
+            ""
+        );
+
+
+    return html;
+
+}
+
+
+/* =====================================================
+   TIPE SOAL
+===================================================== */
+
+function namaTipeSoal(
+    tipe
+){
+
+    const t =
+        String(
+            tipe ||
+            ""
+        )
+        .toLowerCase();
+
+
+    if(
+        t === "essay" ||
+        t === "esai" ||
+        t === "uraian"
+    ){
+
+        return "Uraian";
+
+    }
+
+
+    if(
+        t === "true_false" ||
+        t === "benar_salah" ||
+        t === "benar/salah"
+    ){
+
+        return "Benar / Salah";
+
+    }
+
+
+    return "Pilihan Ganda";
+
+}
+
+
+/* =====================================================
+   FORMAT TANGGAL
+===================================================== */
+
+function formatTanggal(
+    value
+){
+
+    if(!value){
+
+        return "-";
+
+    }
+
+
+    try{
+
+        return new Date(
+            value
+        ).toLocaleString(
+            "id-ID",
+            {
+                day:"2-digit",
+                month:"2-digit",
+                year:"numeric",
+                hour:"2-digit",
+                minute:"2-digit"
+            }
+        );
+
+    }catch(error){
+
+        return "-";
+
+    }
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(
+    value
+){
+
+    return String(
+        value ??
+        ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* =====================================================
+   ESCAPE ATTRIBUTE
+===================================================== */
+
+function escapeAttr(
+    value
+){
+
+    return escapeHtml(
+        value
+    );
+
+}
+
+
+/* =====================================================
+   ESCAPE JS
+===================================================== */
+
+function escapeJs(
+    value
+){
+
+    return String(
+        value ??
+        ""
+    )
+    .replace(
+        /\\/g,
+        "\\\\"
+    )
+    .replace(
+        /'/g,
+        "\\'"
+    )
+    .replace(
+        /"/g,
+        '\\"'
+    )
+    .replace(
+        /\r/g,
+        "\\r"
+    )
+    .replace(
+        /\n/g,
+        "\\n"
+    );
+
+}
+
+
+/* =====================================================
+   LOGIN / LOGOUT
+===================================================== */
+
+function logout(){
+
+    if(
+        ujianAktif &&
+        !sudahDikirim
+    ){
+
+        alert(
+            "Anda sedang mengerjakan ujian. Ujian harus diselesaikan terlebih dahulu."
+        );
+
+        return;
+
+    }
+
+
+    localStorage.removeItem(
+        "exam_user"
+    );
+
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =====================================================
+   PESAN
+===================================================== */
+
+function showMessage(
+    text,
+    type
+){
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.textContent =
+        text;
+
+
+    message.className =
+        "message " +
+        type;
+
+
+    setTimeout(
+        () => {
+
+            message.textContent =
+                "";
+
+            message.className =
+                "message";
+
+        },
+        4000
+    );
+
+}
+
+
+/* =====================================================
+   KEYBOARD
+===================================================== */
+
+function setupKeyboard(){
+
+    document.addEventListener(
+        "keydown",
+        function(e){
+
+            if(
+                e.key === "Enter"
+            ){
+
+                const tokenModal =
+                    document.getElementById(
+                        "tokenModal"
+                    );
+
+
+                const warning =
+                    document.getElementById(
+                        "fullscreenWarning"
+                    );
+
+
+                if(
+                    tokenModal.style.display ===
+                    "flex"
+                ){
+
+                    e.preventDefault();
+
+                    prosesTokenMasuk();
+
+                    return;
+
+                }
+
+
+                if(
+                    warning.style.display ===
+                    "flex"
+                ){
+
+                    e.preventDefault();
+
+                    verifikasiTokenKeluar();
+
+                    return;
+
+                }
+
+            }
+
+
+            if(
+                e.key === "F11" &&
+                ujianAktif &&
+                !sudahDikirim
+            ){
+
+                e.preventDefault();
+
+            }
+
+
+            if(
+                e.ctrlKey &&
+                (
+                    e.key.toLowerCase() === "u" ||
+                    e.key.toLowerCase() === "s" ||
+                    e.key.toLowerCase() === "p"
+                )
+            ){
+
+                e.preventDefault();
+
+            }
+
+        }
+    );
+
+
+    document.addEventListener(
+        "contextmenu",
+        function(e){
+
+            if(
+                ujianAktif &&
+                !sudahDikirim
+            ){
+
+                e.preventDefault();
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   BEFORE UNLOAD
+===================================================== */
+
+window.addEventListener(
+    "beforeunload",
+    function(e){
+
+        if(
+            ujianAktif &&
+            !sudahDikirim
+        ){
+
+            /*
+               Jangan mencoba await Supabase di sini.
+               Browser tidak menjamin request async selesai.
+
+               Tetapi backup local sudah dilakukan setiap
+               perubahan jawaban.
+            */
+
+            simpanBackupLocal();
+
+            simpanSesiUjian();
+
+
+            e.preventDefault();
+
+            e.returnValue =
+                "";
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   PAGEHIDE
+===================================================== */
+
+window.addEventListener(
+    "pagehide",
+    function(){
+
+        if(
+            ujianAktif &&
+            !sudahDikirim
+        ){
+
+            simpanBackupLocal();
+
+            simpanSesiUjian();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   KLIK LUAR TOKEN MODAL
+===================================================== */
+
+document.addEventListener(
+    "click",
+    function(e){
+
+        const modal =
+            document.getElementById(
+                "tokenModal"
+            );
+
+
+        if(
+            e.target === modal
+        ){
+
+            tutupTokenModal();
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
