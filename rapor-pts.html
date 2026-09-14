@@ -4,13 +4,21 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Rapor PTS - Admin | RUANG EXAM</title>
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Rapot PTS - Admin | RUANG EXAM</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+
+/* =====================================================
+   RESET
+===================================================== */
 
 *{
     box-sizing:border-box;
@@ -18,12 +26,18 @@
     padding:0;
 }
 
+
+/* =====================================================
+   BODY
+===================================================== */
+
 body{
     font-family:Arial,Helvetica,sans-serif;
     background:#f1f5f9;
     color:#0f172a;
     min-height:100vh;
 }
+
 
 /* =====================================================
    HEADER
@@ -73,6 +87,7 @@ body{
     flex-wrap:wrap;
 }
 
+
 /* =====================================================
    BUTTON
 ===================================================== */
@@ -89,10 +104,19 @@ body{
     font-weight:bold;
 
     font-size:13px;
+
+    transition:.2s;
 }
 
 .btn:hover{
     opacity:.9;
+    transform:translateY(-1px);
+}
+
+.btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+    transform:none;
 }
 
 .btn-back{
@@ -120,6 +144,7 @@ body{
     color:white;
 }
 
+
 /* =====================================================
    CONTAINER
 ===================================================== */
@@ -131,6 +156,7 @@ body{
 
     padding:0 20px;
 }
+
 
 /* =====================================================
    MESSAGE
@@ -182,6 +208,7 @@ body{
     border:1px solid #93c5fd;
 }
 
+
 /* =====================================================
    INFO
 ===================================================== */
@@ -207,6 +234,7 @@ body{
 .info strong{
     font-size:14px;
 }
+
 
 /* =====================================================
    FILTER
@@ -297,6 +325,7 @@ input:focus{
     margin-top:15px;
 }
 
+
 /* =====================================================
    IDENTITAS SISWA
 ===================================================== */
@@ -361,6 +390,7 @@ input:focus{
     color:#0f172a;
 }
 
+
 /* =====================================================
    STATISTIK
 ===================================================== */
@@ -410,8 +440,9 @@ input:focus{
     margin-top:4px;
 }
 
+
 /* =====================================================
-   RAPOR
+   RAPOT
 ===================================================== */
 
 .report-box{
@@ -488,8 +519,9 @@ input:focus{
     flex:1;
 }
 
+
 /* =====================================================
-   TABLE RAPOR
+   TABLE RAPOT
 ===================================================== */
 
 .table-box{
@@ -579,6 +611,7 @@ td.nilai.kosong{
     color:#64748b;
 }
 
+
 /* =====================================================
    RATA-RATA
 ===================================================== */
@@ -622,6 +655,7 @@ td.nilai.kosong{
     color:#15803d;
 }
 
+
 /* =====================================================
    EMPTY
 ===================================================== */
@@ -636,6 +670,7 @@ td.nilai.kosong{
     line-height:1.7;
 }
 
+
 /* =====================================================
    LOADING
 ===================================================== */
@@ -647,6 +682,7 @@ td.nilai.kosong{
 
     color:#64748b;
 }
+
 
 /* =====================================================
    FOOTER
@@ -663,6 +699,7 @@ td.nilai.kosong{
 
     padding:30px;
 }
+
 
 /* =====================================================
    PRINT
@@ -757,6 +794,7 @@ td.nilai.kosong{
 
 }
 
+
 /* =====================================================
    RESPONSIVE
 ===================================================== */
@@ -816,7 +854,9 @@ td.nilai.kosong{
 
 </head>
 
+
 <body>
+
 
 <!-- =====================================================
      HEADER
@@ -827,7 +867,7 @@ td.nilai.kosong{
     <div>
 
         <h1>
-            📋 RAPOR PTS
+            📋 RAPOT PTS
         </h1>
 
         <p>
@@ -835,6 +875,7 @@ td.nilai.kosong{
         </p>
 
     </div>
+
 
     <div class="header-buttons">
 
@@ -846,6 +887,7 @@ td.nilai.kosong{
 
         </button>
 
+
         <button
             class="btn btn-refresh"
             onclick="loadDataAwal()">
@@ -854,11 +896,12 @@ td.nilai.kosong{
 
         </button>
 
+
         <button
             class="btn btn-print"
             onclick="cetakRapor()">
 
-            🖨️ Cetak Rapor
+            🖨️ Cetak Rapot
 
         </button>
 
@@ -867,7 +910,9 @@ td.nilai.kosong{
 </header>
 
 
+
 <main class="container">
+
 
 <!-- =====================================================
      MESSAGE
@@ -877,6 +922,7 @@ td.nilai.kosong{
     id="message"
     class="message">
 </div>
+
 
 
 <!-- =====================================================
@@ -891,9 +937,14 @@ td.nilai.kosong{
 
     <br>
 
-    Nilai rapor diambil langsung dari tabel
-    <strong>hasil_ujian</strong> pada kolom
-    <strong>nilai</strong>.
+    Nilai rapot diambil langsung dari
+    <strong>hasil ujian yang benar-benar diikuti siswa</strong>
+    pada tabel <strong>hasil_ujian</strong>.
+
+    <br>
+
+    Sistem mencocokkan hasil berdasarkan
+    <strong>siswa_id</strong>.
 
     <br>
 
@@ -908,20 +959,24 @@ td.nilai.kosong{
 </div>
 
 
+
 <!-- =====================================================
      FILTER
 ===================================================== -->
 
 <section class="filter-box">
 
+
     <div class="filter-title">
 
-        🔎 Pilih Data Rapor
+        🔎 Pilih Data Rapot
 
     </div>
 
 
+
     <div class="filter-grid">
+
 
         <!-- KELAS -->
 
@@ -942,6 +997,7 @@ td.nilai.kosong{
             </select>
 
         </div>
+
 
 
         <!-- SISWA -->
@@ -966,6 +1022,7 @@ td.nilai.kosong{
         </div>
 
 
+
         <!-- JENIS UJIAN -->
 
         <div class="form-group">
@@ -974,8 +1031,7 @@ td.nilai.kosong{
                 Jenis Ujian
             </label>
 
-            <select
-                id="filterJenis">
+            <select id="filterJenis">
 
                 <option value="PTS">
                     MID / PTS
@@ -984,6 +1040,7 @@ td.nilai.kosong{
             </select>
 
         </div>
+
 
 
         <!-- SEMESTER -->
@@ -1009,12 +1066,16 @@ td.nilai.kosong{
 
         </div>
 
+
     </div>
+
 
 
     <div class="filter-actions">
 
+
         <button
+            id="btnSync"
             class="btn btn-sync"
             onclick="sinkronkanNilai()">
 
@@ -1023,17 +1084,21 @@ td.nilai.kosong{
         </button>
 
 
+
         <button
             class="btn btn-print"
             onclick="cetakRapor()">
 
-            🖨️ Cetak Rapor
+            🖨️ Cetak Rapot
 
         </button>
 
+
     </div>
 
+
 </section>
+
 
 
 <!-- =====================================================
@@ -1045,11 +1110,13 @@ td.nilai.kosong{
     class="student-card"
     style="display:none;">
 
+
     <div class="student-title">
 
         👨‍🎓 Identitas Peserta Didik
 
     </div>
+
 
 
     <div class="student-grid">
@@ -1064,10 +1131,13 @@ td.nilai.kosong{
             <div
                 id="identitasNama"
                 class="identity-value">
+
                 -
+
             </div>
 
         </div>
+
 
 
         <div class="identity-item">
@@ -1079,10 +1149,13 @@ td.nilai.kosong{
             <div
                 id="identitasNisn"
                 class="identity-value">
+
                 -
+
             </div>
 
         </div>
+
 
 
         <div class="identity-item">
@@ -1094,10 +1167,13 @@ td.nilai.kosong{
             <div
                 id="identitasKelas"
                 class="identity-value">
+
                 -
+
             </div>
 
         </div>
+
 
 
         <div class="identity-item">
@@ -1109,7 +1185,9 @@ td.nilai.kosong{
             <div
                 id="identitasSemester"
                 class="identity-value">
+
                 -
+
             </div>
 
         </div>
@@ -1117,7 +1195,9 @@ td.nilai.kosong{
 
     </div>
 
+
 </section>
+
 
 
 <!-- =====================================================
@@ -1139,7 +1219,9 @@ td.nilai.kosong{
         <div
             id="totalMapel"
             class="stat-number">
+
             0
+
         </div>
 
         <div class="stat-label">
@@ -1147,6 +1229,7 @@ td.nilai.kosong{
         </div>
 
     </div>
+
 
 
     <div class="stat">
@@ -1158,7 +1241,9 @@ td.nilai.kosong{
         <div
             id="totalUjian"
             class="stat-number">
+
             0
+
         </div>
 
         <div class="stat-label">
@@ -1166,6 +1251,7 @@ td.nilai.kosong{
         </div>
 
     </div>
+
 
 
     <div class="stat">
@@ -1177,7 +1263,9 @@ td.nilai.kosong{
         <div
             id="rataNilai"
             class="stat-number">
+
             0
+
         </div>
 
         <div class="stat-label">
@@ -1185,6 +1273,7 @@ td.nilai.kosong{
         </div>
 
     </div>
+
 
 
     <div class="stat">
@@ -1196,7 +1285,9 @@ td.nilai.kosong{
         <div
             id="nilaiTertinggi"
             class="stat-number">
+
             0
+
         </div>
 
         <div class="stat-label">
@@ -1205,16 +1296,19 @@ td.nilai.kosong{
 
     </div>
 
+
 </section>
 
 
+
 <!-- =====================================================
-     RAPOR
+     RAPOT
 ===================================================== -->
 
 <section
     id="reportBox"
     class="report-box">
+
 
     <div class="report-header">
 
@@ -1232,6 +1326,9 @@ td.nilai.kosong{
 
     </div>
 
+
+
+    <!-- REPORT META -->
 
     <div
         id="reportMeta"
@@ -1252,10 +1349,13 @@ td.nilai.kosong{
             <div
                 id="reportNama"
                 class="meta-value">
+
                 -
+
             </div>
 
         </div>
+
 
 
         <div class="meta-row">
@@ -1271,10 +1371,13 @@ td.nilai.kosong{
             <div
                 id="reportNisn"
                 class="meta-value">
+
                 -
+
             </div>
 
         </div>
+
 
 
         <div class="meta-row">
@@ -1290,10 +1393,13 @@ td.nilai.kosong{
             <div
                 id="reportKelas"
                 class="meta-value">
+
                 -
+
             </div>
 
         </div>
+
 
 
         <div class="meta-row">
@@ -1309,7 +1415,9 @@ td.nilai.kosong{
             <div
                 id="reportSemester"
                 class="meta-value">
+
                 -
+
             </div>
 
         </div>
@@ -1318,18 +1426,22 @@ td.nilai.kosong{
     </div>
 
 
+
+    <!-- TABLE -->
+
     <div
         id="tableContainer"
         class="table-box">
 
+
         <table>
+
 
             <thead>
 
                 <tr>
 
-                    <th
-                        style="width:60px;">
+                    <th style="width:60px;">
                         No
                     </th>
 
@@ -1337,33 +1449,27 @@ td.nilai.kosong{
                         Mata Pelajaran
                     </th>
 
-                    <th
-                        style="width:130px;">
+                    <th style="width:130px;">
                         Jenis Ujian
                     </th>
 
-                    <th
-                        style="width:110px;">
+                    <th style="width:110px;">
                         Jumlah Soal
                     </th>
 
-                    <th
-                        style="width:100px;">
+                    <th style="width:100px;">
                         Benar
                     </th>
 
-                    <th
-                        style="width:100px;">
+                    <th style="width:100px;">
                         Salah
                     </th>
 
-                    <th
-                        style="width:100px;">
+                    <th style="width:100px;">
                         Nilai
                     </th>
 
-                    <th
-                        style="width:100px;">
+                    <th style="width:100px;">
                         Predikat
                     </th>
 
@@ -1372,8 +1478,8 @@ td.nilai.kosong{
             </thead>
 
 
-            <tbody
-                id="raporBody">
+
+            <tbody id="raporBody">
 
                 <tr>
 
@@ -1390,9 +1496,12 @@ td.nilai.kosong{
 
             </tbody>
 
+
         </table>
 
+
     </div>
+
 
 
     <!-- SUMMARY -->
@@ -1412,10 +1521,13 @@ td.nilai.kosong{
             <div
                 id="summaryMapel"
                 class="summary-value">
+
                 0
+
             </div>
 
         </div>
+
 
 
         <div class="summary">
@@ -1427,10 +1539,13 @@ td.nilai.kosong{
             <div
                 id="summaryRata"
                 class="summary-value">
+
                 0
+
             </div>
 
         </div>
+
 
 
         <div class="summary">
@@ -1442,7 +1557,9 @@ td.nilai.kosong{
             <div
                 id="summaryTinggi"
                 class="summary-value">
+
                 0
+
             </div>
 
         </div>
@@ -1450,9 +1567,12 @@ td.nilai.kosong{
 
     </div>
 
+
 </section>
 
+
 </main>
+
 
 
 <!-- =====================================================
@@ -1462,11 +1582,13 @@ td.nilai.kosong{
 <footer class="footer">
 
     RUANG EXAM Online
+
     <br>
 
     Dibuat oleh Mr. Rahmat Batubara, S.T.P
 
 </footer>
+
 
 
 <script>
@@ -1509,7 +1631,10 @@ try{
     const user =
         JSON.parse(sessionRaw);
 
-    if(user.role !== "admin"){
+    if(
+        !user ||
+        user.role !== "admin"
+    ){
 
         localStorage.removeItem(
             "exam_user"
@@ -1617,21 +1742,31 @@ async function loadDataAwal(){
         );
 
 
+        resetTampilanRapor();
+
+
         await Promise.all([
+
             loadKelas(),
+
             loadHasilUjian()
+
         ]);
 
 
         showMessage(
-            "Data berhasil dimuat. Pilih kelas dan siswa.",
+            "Data berhasil dimuat. Silakan pilih kelas dan siswa.",
             "success"
         );
 
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "LOAD DATA ERROR:",
+            error
+        );
+
 
         showMessage(
             "Gagal memuat data: " +
@@ -1712,18 +1847,29 @@ async function loadKelas(){
 
 
     semuaKelas.forEach(
-        kelas=>{
+        kelas => {
 
             const option =
                 document.createElement(
                     "option"
                 );
 
+
+            /*
+             * PENTING:
+             * value menggunakan nama_kelas
+             * sebagaimana tersimpan di tabel siswa.
+             *
+             * Jadi 9G tetap 9G.
+             */
+
             option.value =
                 kelas.nama_kelas;
 
+
             option.textContent =
                 kelas.nama_kelas;
+
 
             select.appendChild(
                 option
@@ -1736,7 +1882,7 @@ async function loadKelas(){
 
 
 /* =====================================================
-   LOAD SISWA
+   LOAD SISWA BERDASARKAN KELAS
 ===================================================== */
 
 async function loadSiswaByKelas(
@@ -1788,7 +1934,6 @@ async function loadSiswaByKelas(
             nama,
             nisn,
             kelas,
-            password,
             created_at
         `)
         .eq(
@@ -1841,20 +1986,30 @@ async function loadSiswaByKelas(
 
 
     semuaSiswa.forEach(
-        siswa=>{
+        siswa => {
 
             const option =
                 document.createElement(
                     "option"
                 );
 
+
+            /*
+             * VALUE = ID SISWA
+             *
+             * Ini penting karena sinkronisasi
+             * hasil ujian menggunakan siswa_id.
+             */
+
             option.value =
                 siswa.id;
+
 
             option.textContent =
                 siswa.nama +
                 " — " +
                 siswa.nisn;
+
 
             select.appendChild(
                 option
@@ -1936,11 +2091,19 @@ async function kelasBerubah(){
     siswaTerpilih =
         null;
 
+
     hasilSiswa =
         [];
 
 
     resetTampilanRapor();
+
+
+    if(!namaKelas){
+
+        return;
+
+    }
 
 
     try{
@@ -1950,9 +2113,18 @@ async function kelasBerubah(){
         );
 
 
+        showMessage(
+            "Kelas " +
+            namaKelas +
+            " berhasil dipilih. Silakan pilih siswa.",
+            "success"
+        );
+
+
     }catch(error){
 
         console.error(error);
+
 
         showMessage(
             "Gagal memuat siswa: " +
@@ -2009,20 +2181,28 @@ function siswaBerubah(){
 
     tampilkanIdentitas();
 
+
+    /*
+     * Langsung sinkronkan ketika siswa dipilih.
+     */
+
     sinkronkanNilai();
 
 }
 
 
 /* =====================================================
-   CEK APAKAH JENIS UJIAN ADALAH PTS
+   CEK JENIS UJIAN PTS
 ===================================================== */
 
 function isUjianPTS(
     jenis
 ){
 
-    if(!jenis){
+    if(
+        jenis === null ||
+        jenis === undefined
+    ){
 
         return false;
 
@@ -2036,11 +2216,69 @@ function isUjianPTS(
 
 
     return (
+
         teks.includes("pts") ||
+
         teks.includes("mid") ||
+
         teks.includes("tengah semester") ||
+
         teks.includes("penilaian tengah")
+
     );
+
+}
+
+
+/* =====================================================
+   VALIDASI HASIL UJIAN
+===================================================== */
+
+function hasilUntukSiswa(
+    item
+){
+
+    if(!siswaTerpilih){
+
+        return false;
+
+    }
+
+
+    /*
+     * PRIORITAS UTAMA:
+     * siswa_id
+     */
+
+    if(
+        item.siswa_id !== null &&
+        item.siswa_id !== undefined
+    ){
+
+        return (
+            String(item.siswa_id) ===
+            String(siswaTerpilih.id)
+        );
+
+    }
+
+
+    /*
+     * FALLBACK jika data lama belum
+     * memiliki siswa_id.
+     */
+
+    if(item.nisn){
+
+        return (
+            String(item.nisn) ===
+            String(siswaTerpilih.nisn)
+        );
+
+    }
+
+
+    return false;
 
 }
 
@@ -2064,8 +2302,8 @@ async function sinkronkanNilai(){
 
 
     const tombol =
-        document.querySelector(
-            ".btn-sync"
+        document.getElementById(
+            "btnSync"
         );
 
 
@@ -2088,16 +2326,28 @@ async function sinkronkanNilai(){
 
     try{
 
+        showMessage(
+            "⏳ Mengambil nilai ujian siswa dari database...",
+            "info"
+        );
+
+
         /*
-         * Ambil ulang hasil ujian langsung
-         * dari database supaya nilai terbaru
-         * selalu digunakan.
+         * =================================================
+         * AMBIL LANGSUNG BERDASARKAN SISWA_ID
+         * =================================================
+         *
+         * Ini bagian utama yang diperbaiki.
+         *
+         * Nilai tidak lagi hanya mencari berdasarkan NISN.
          */
 
-        const {
-            data,
-            error
-        } =
+        let data = null;
+
+        let error = null;
+
+
+        const hasilDenganSiswaId =
             await supabaseClient
             .from("hasil_ujian")
             .select(`
@@ -2119,8 +2369,8 @@ async function sinkronkanNilai(){
                 created_at
             `)
             .eq(
-                "nisn",
-                siswaTerpilih.nisn
+                "siswa_id",
+                siswaTerpilih.id
             )
             .order(
                 "created_at",
@@ -2130,6 +2380,13 @@ async function sinkronkanNilai(){
             );
 
 
+        data =
+            hasilDenganSiswaId.data;
+
+        error =
+            hasilDenganSiswaId.error;
+
+
         if(error){
 
             throw error;
@@ -2137,13 +2394,73 @@ async function sinkronkanNilai(){
         }
 
 
+        /*
+         * Jika tidak ada hasil berdasarkan siswa_id,
+         * lakukan fallback berdasarkan NISN.
+         *
+         * Ini berguna untuk hasil ujian lama yang
+         * mungkin belum menyimpan siswa_id dengan benar.
+         */
+
+        if(
+            (!data || !data.length) &&
+            siswaTerpilih.nisn
+        ){
+
+            const fallback =
+                await supabaseClient
+                .from("hasil_ujian")
+                .select(`
+                    id,
+                    siswa_id,
+                    ujian_id,
+                    nama_siswa,
+                    nisn,
+                    kelas,
+                    jenis_ujian,
+                    mata_pelajaran,
+                    jumlah_soal,
+                    jumlah_benar,
+                    jumlah_salah,
+                    nilai,
+                    status,
+                    waktu_mulai,
+                    waktu_selesai,
+                    created_at
+                `)
+                .eq(
+                    "nisn",
+                    siswaTerpilih.nisn
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending:false
+                    }
+                );
+
+
+            if(fallback.error){
+
+                throw fallback.error;
+
+            }
+
+
+            data =
+                fallback.data || [];
+
+        }
+
+
+        /*
+         * Update cache global.
+         */
+
         semuaHasil =
             semuaHasil.filter(
-                x =>
-                    String(x.nisn) !==
-                    String(
-                        siswaTerpilih.nisn
-                    )
+                item =>
+                    !hasilUntukSiswa(item)
             )
             .concat(
                 data || []
@@ -2151,38 +2468,93 @@ async function sinkronkanNilai(){
 
 
         /*
-         * Hanya ambil hasil ujian
-         * yang termasuk MID / PTS.
+         * =================================================
+         * FILTER MID / PTS
+         * =================================================
          */
 
         hasilSiswa =
             (data || [])
             .filter(
-                x =>
+                item =>
                     isUjianPTS(
-                        x.jenis_ujian
+                        item.jenis_ujian
                     )
             );
 
 
         /*
-         * Pastikan hanya siswa yang sama.
-         * NISN menjadi pencocokan utama.
+         * Pastikan data memang milik siswa yang dipilih.
          */
 
         hasilSiswa =
             hasilSiswa.filter(
-                x =>
-                    String(x.nisn) ===
-                    String(
-                        siswaTerpilih.nisn
-                    )
+                item =>
+                    hasilUntukSiswa(item)
             );
 
 
         /*
-         * Jika ada hasil ganda untuk mapel
-         * yang sama, gunakan hasil terbaru.
+         * =================================================
+         * FILTER STATUS
+         * =================================================
+         *
+         * Jangan menampilkan hasil ujian yang belum
+         * selesai jika statusnya jelas menunjukkan
+         * belum selesai.
+         */
+
+        hasilSiswa =
+            hasilSiswa.filter(
+                item => {
+
+                    const status =
+                        String(
+                            item.status ||
+                            ""
+                        )
+                        .toLowerCase()
+                        .trim();
+
+
+                    if(!status){
+
+                        return true;
+
+                    }
+
+
+                    const statusBelumSelesai = [
+
+                        "belum",
+
+                        "belum selesai",
+
+                        "pending",
+
+                        "started",
+
+                        "ongoing",
+
+                        "berlangsung",
+
+                        "aktif"
+
+                    ];
+
+
+                    return !statusBelumSelesai.includes(
+                        status
+                    );
+
+                }
+            );
+
+
+        /*
+         * =================================================
+         * PILIH HASIL TERBARU PER MAPEL
+         * =================================================
          */
 
         hasilSiswa =
@@ -2190,6 +2562,10 @@ async function sinkronkanNilai(){
                 hasilSiswa
             );
 
+
+        /*
+         * Tampilkan identitas dan rapot.
+         */
 
         tampilkanIdentitas();
 
@@ -2199,7 +2575,7 @@ async function sinkronkanNilai(){
         if(!hasilSiswa.length){
 
             showMessage(
-                "Tidak ditemukan hasil ujian MID/PTS untuk siswa " +
+                "Tidak ditemukan hasil ujian MID/PTS yang sudah selesai untuk siswa " +
                 siswaTerpilih.nama +
                 ".",
                 "info"
@@ -2208,7 +2584,9 @@ async function sinkronkanNilai(){
         }else{
 
             showMessage(
-                "Nilai MID/PTS berhasil disinkronkan dari hasil ujian.",
+                "Nilai MID/PTS " +
+                hasilSiswa.length +
+                " mata pelajaran berhasil disinkronkan dari hasil ujian.",
                 "success"
             );
 
@@ -2217,13 +2595,18 @@ async function sinkronkanNilai(){
 
     }catch(error){
 
-        console.error(error);
+        console.error(
+            "SINKRONISASI ERROR:",
+            error
+        );
+
 
         showMessage(
             "Gagal sinkronisasi nilai: " +
             error.message,
             "error"
         );
+
 
     }finally{
 
@@ -2256,7 +2639,11 @@ function pilihHasilTerbaru(
 
 
     data.forEach(
-        item=>{
+        item => {
+
+            /*
+             * Gunakan nama mapel sebagai kelompok.
+             */
 
             const mapel =
                 String(
@@ -2287,6 +2674,7 @@ function pilihHasilTerbaru(
                 new Date(
                     lama.created_at ||
                     lama.waktu_selesai ||
+                    lama.waktu_mulai ||
                     0
                 )
                 .getTime();
@@ -2296,10 +2684,15 @@ function pilihHasilTerbaru(
                 new Date(
                     item.created_at ||
                     item.waktu_selesai ||
+                    item.waktu_mulai ||
                     0
                 )
                 .getTime();
 
+
+            /*
+             * Hasil terbaru digunakan.
+             */
 
             if(
                 tanggalBaru >=
@@ -2321,13 +2714,15 @@ function pilihHasilTerbaru(
         map.values()
     )
     .sort(
-        (a,b)=>
+        (a,b) =>
             String(
-                a.mata_pelajaran || ""
+                a.mata_pelajaran ||
+                ""
             )
             .localeCompare(
                 String(
-                    b.mata_pelajaran || ""
+                    b.mata_pelajaran ||
+                    ""
                 ),
                 "id"
             )
@@ -2337,7 +2732,7 @@ function pilihHasilTerbaru(
 
 
 /* =====================================================
-   IDENTITAS
+   TAMPILKAN IDENTITAS
 ===================================================== */
 
 function tampilkanIdentitas(){
@@ -2422,7 +2817,7 @@ function tampilkanIdentitas(){
 
 
 /* =====================================================
-   TAMPILKAN RAPOR
+   TAMPILKAN RAPOT
 ===================================================== */
 
 function tampilkanRapor(){
@@ -2458,7 +2853,8 @@ function tampilkanRapor(){
                     <br><br>
 
                     Pastikan siswa telah
-                    mengikuti ujian MID/PTS.
+                    mengikuti dan menyelesaikan
+                    ujian MID/PTS.
 
                 </td>
 
@@ -2487,7 +2883,7 @@ function tampilkanRapor(){
     body.innerHTML =
         hasilSiswa
         .map(
-            (item,index)=>{
+            (item,index) => {
 
                 const nilai =
                     Number(
@@ -2538,17 +2934,25 @@ function tampilkanRapor(){
                     <tr>
 
                         <td class="center">
+
                             ${index + 1}
+
                         </td>
 
+
                         <td>
+
                             <strong>
+
                                 ${escapeHtml(
                                     item.mata_pelajaran ||
                                     "-"
                                 )}
+
                             </strong>
+
                         </td>
+
 
                         <td class="center">
 
@@ -2559,17 +2963,27 @@ function tampilkanRapor(){
 
                         </td>
 
+
                         <td class="center">
+
                             ${jumlahSoal}
+
                         </td>
 
+
                         <td class="center">
+
                             ${benar}
+
                         </td>
 
+
                         <td class="center">
+
                             ${salah}
+
                         </td>
+
 
                         <td
                             class="nilai ${
@@ -2585,6 +2999,7 @@ function tampilkanRapor(){
                             }
 
                         </td>
+
 
                         <td class="center">
 
@@ -2612,7 +3027,7 @@ function tampilkanRapor(){
 
 
 /* =====================================================
-   STATISTIK RAPOR
+   UPDATE STATISTIK
 ===================================================== */
 
 function updateStatistikRapor(){
@@ -2620,12 +3035,16 @@ function updateStatistikRapor(){
     const nilai =
         hasilSiswa
         .map(
-            x =>
-                Number(x.nilai)
+            item =>
+                Number(
+                    item.nilai
+                )
         )
         .filter(
-            x =>
-                Number.isFinite(x)
+            value =>
+                Number.isFinite(
+                    value
+                )
         );
 
 
@@ -2636,7 +3055,8 @@ function updateStatistikRapor(){
     const rata =
         nilai.length
         ? nilai.reduce(
-            (a,b)=>a+b,
+            (total,value) =>
+                total + value,
             0
         ) / nilai.length
         : 0;
@@ -2644,7 +3064,9 @@ function updateStatistikRapor(){
 
     const tertinggi =
         nilai.length
-        ? Math.max(...nilai)
+        ? Math.max(
+            ...nilai
+        )
         : 0;
 
 
@@ -2791,7 +3213,7 @@ function resetTampilanRapor(){
 
 
 /* =====================================================
-   CETAK RAPOR
+   CETAK RAPOT
 ===================================================== */
 
 function cetakRapor(){
