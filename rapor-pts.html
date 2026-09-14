@@ -2224,51 +2224,29 @@ async function loadSiswaByKelas(
 ===================================================== */
 
 async function loadHasilUjian(){
-
-    const {
-        data,
-        error
-    } =
-        await supabaseClient
-        .from("hasil_ujian")
-        .select(`
-            id,
-            siswa_id,
-            ujian_id,
-            nama_siswa,
-            nisn,
-            kelas,
-            jenis_ujian,
-            mata_pelajaran,
-            jumlah_soal,
-            jumlah_benar,
-            jumlah_salah,
-            nilai,
-            status,
-            waktu_mulai,
-            waktu_selesai,
-            created_at
-        `)
-        .order(
-            "created_at",
-            {
-                ascending:false
-            }
-        );
-
-
-    if(error){
-
-        throw error;
-
-    }
-
-
-    semuaHasil =
-        data || [];
-
+    const {data,error}=await supabaseClient.from("hasil_ujian").select(`id,siswa_id,ujian_id,nama_siswa,nisn,kelas,jenis_ujian,mata_pelajaran,jumlah_soal,jumlah_benar,jumlah_salah,nilai,status,waktu_mulai,waktu_selesai,created_at`).order("created_at",{ascending:false});
+    if(error) throw error;
+    semuaHasil=await lengkapiNamaMapel(data||[]);
 }
 
+/* LENGKAPI NAMA MAPEL DARI TABEL UJIAN */
+async function lengkapiNamaMapel(data){
+    const hasil=Array.isArray(data)?data.map(x=>({...x})):[];
+    const ids=[...new Set(hasil.map(x=>x.ujian_id).filter(Boolean).map(String))];
+    if(!ids.length) return hasil;
+    let res=await supabaseClient.from("ujian").select("id,nama_ujian,mata_pelajaran").in("id",ids);
+    if(res.error) res=await supabaseClient.from("ujian").select("id,nama_ujian").in("id",ids);
+    if(res.error){ console.warn("Nama mapel dari tabel ujian tidak dapat dibaca:",res.error.message); return hasil; }
+    const byId=new Map((res.data||[]).map(u=>[String(u.id),u]));
+    return hasil.map(item=>{
+        if(String(item.mata_pelajaran||"").trim()) return item;
+        const u=byId.get(String(item.ujian_id||""));
+        if(!u) return item;
+        const mapel=String(u.mata_pelajaran||"").trim();
+        const namaUjian=String(u.nama_ujian||"").trim();
+        return {...item,mata_pelajaran:mapel||namaUjian||"Tanpa Mata Pelajaran",nama_ujian:namaUjian};
+    });
+}
 
 /* =====================================================
    KELAS BERUBAH
@@ -2963,8 +2941,7 @@ async function ambilSemuaNilaiKelas(namaKelas){
     if(!nisns.length) return {siswa:siswa||[],hasil:[]};
     const {data,error}=await supabaseClient.from("hasil_ujian").select("id,siswa_id,ujian_id,nama_siswa,nisn,kelas,jenis_ujian,mata_pelajaran,jumlah_soal,jumlah_benar,jumlah_salah,nilai,status,waktu_mulai,waktu_selesai,created_at").in("nisn",nisns).order("created_at",{ascending:false});
     if(error) throw error;
-    const hasil=(data||[]);
-    return {siswa:siswa||[],hasil};
+    const hasil=await lengkapiNamaMapel(data||[]); return {siswa:siswa||[],hasil};
 }
 
 async function tampilkanLegerKelas(){
